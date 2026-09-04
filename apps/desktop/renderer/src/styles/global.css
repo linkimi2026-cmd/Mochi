@@ -1,0 +1,43 @@
+/* Mochi 全局基础样式
+ *
+ * 用户视觉红线（每次改 UI 都自检）：
+ *   1. 不能有塑料感      —— 用纸面/墨色层次与柔和阴影，不用高饱和纯色 + 硬边
+ *   2. 不许横向滚动条    —— 全局 overflow-x: hidden
+ *   3. 有字的地方加圆角矩形 —— 所有文字容器有背景 + border-radius
+ *   4. 颜色跨度不要太大  —— 同一屏内色相收敛，靠明度分层
+ */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  overflow-x: hidden;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--ink);
+  background: var(--canvas);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* 桌面端不需要移动端那种点击高亮 */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background: var(--accent-soft);
+  color: var(--ink-strong);
+}

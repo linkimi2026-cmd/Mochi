@@ -1,0 +1,116 @@
+/* Mochi 主界面
+ *
+ * 视觉红线自检：
+ *   1. 无塑料感 —— 深绿画布 + 纸面浮层，阴影用 calm-tokens 的 --shadow-float，不用硬边高饱和
+ *   2. 无横向滚动条 —— 所有容器 max-width: 100%，flex 不溢出
+ *   3. 有字的地方都有圆角矩形 —— .mochi-status / .mochi-chip / .mochi-meta 全部有底色 + radius
+ *   4. 颜色跨度小 —— 整屏只有深绿画布 + 奶油纸面 + 焦糖点缀三档
+ */
+
+.mochi-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  background: var(--sage-800); /* 用户确认保留的深绿画布 */
+  overflow: hidden;
+}
+
+.mochi-canvas {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  padding: 32px 24px;
+  max-width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.orb-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  border-radius: var(--radius-xl);
+  background: rgba(255, 253, 248, 0.06);
+  box-shadow: var(--shadow-float);
+}
+
+/* 状态文字：圆角矩形纸面 */
+.mochi-status {
+  padding: 10px 20px;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 15px;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+  max-width: min(460px, 100%);
+  text-align: center;
+  box-shadow: var(--shadow-card);
+}
+
+.mochi-moodbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  max-width: 100%;
+}
+
+.mochi-chip {
+  padding: 6px 14px;
+  border: 1px solid rgba(255, 253, 248, 0.18);
+  border-radius: var(--radius-pill);
+  background: rgba(255, 253, 248, 0.08);
+  color: rgba(255, 253, 248, 0.72);
+  font-family: inherit;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition:
+    background var(--control-surface-duration) var(--spring),
+    color var(--control-surface-duration) var(--spring),
+    border-color var(--control-surface-duration) var(--spring);
+}
+
+.mochi-chip:hover {
+  background: rgba(255, 253, 248, 0.14);
+  color: rgba(255, 253, 248, 0.92);
+}
+
+.mochi-chip.is-on {
+  background: var(--accent-soft);
+  border-color: transparent;
+  color: #6b3f16;
+}
+
+.mochi-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 22px;
+  border-top: 1px solid rgba(255, 253, 248, 0.1);
+  max-width: 100%;
+}
+
+.mochi-brand {
+  font-family: var(--font-title);
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  color: rgba(255, 253, 248, 0.66);
+}
+
+.mochi-meta {
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 253, 248, 0.08);
+  color: rgba(255, 253, 248, 0.52);
+  font-size: 11px;
+  letter-spacing: 0.02em;
+}

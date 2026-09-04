@@ -1,0 +1,42 @@
+# 依赖
+node_modules/
+**/node_modules/
+
+# iCloud 不外同步的大件（.nosync 后缀本身就是为了这个，但仍显式排除）
+*.nosync/
+dsh-src.nosync/
+.dsh-home.nosync/
+probe-log.nosync/
+
+# 构建产物
+dist/
+dist-electron/
+release/
+out/
+
+# 本地数据与凭据（校园数据不出校、不出仓库）
+**/.credentials.yaml
+**/*.db
+**/*.db-journal
+**/*.db-wal
+**/*.db-shm
+**/storages/
+
+# 日志
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# 系统
+.DS_Store
+Thumbs.db
+
+# 编辑器
+.vscode/
+.idea/
+*.swp
+
+# 环境变量
+.env
+.env.local
+.env.*.local
