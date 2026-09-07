@@ -1,0 +1,14 @@
+{
+  "name": "mochi-dispatch",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "index.mjs",
+  "description": "Mochi 任务域：MochiTask 状态机 + ASK/REQUEST/FIND/APPROVE 原语（Relay 为底层特例）",
+  "scripts": {
+    "test": "node test.mjs"
+  },
+  "dependencies": {
+    "@deepseek-ai/dsh-tools": "0.1.3-alpha.1"
+  }
+}

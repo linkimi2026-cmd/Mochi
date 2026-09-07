@@ -1,0 +1,11 @@
+{
+  "name": "mochi-llm-mimo",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "index.mjs",
+  "mochi": {
+    "role": "llm-provider-route",
+    "description": "注册 mochi-mimo LLM 路由（mimo.ezlook.top OpenAI 兼容端点），复用 DeepSeekAdapter"
+  }
+}

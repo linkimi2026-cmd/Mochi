@@ -1,0 +1,32 @@
+/* 对话历史滚动区
+ * 关键约束：
+ *   - max-height: 60vh，超出纵向滚动
+ *   - overflow-x: hidden（红线 2：无横向滚动条）
+ *   - 内部列 gap 用纵向间距，绝不产生横向溢出
+ */
+
+.chat-log {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: min(720px, 100%);
+  max-width: 100%;
+  max-height: 60vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 4px 2px 4px 0;
+  /* 滚动条也做成不抢戏的细条 */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 253, 248, 0.25) transparent;
+}
+
+.chat-log::-webkit-scrollbar {
+  width: 8px;
+}
+.chat-log::-webkit-scrollbar-thumb {
+  background: rgba(255, 253, 248, 0.22);
+  border-radius: 999px;
+}
+.chat-log::-webkit-scrollbar-track {
+  background: transparent;
+}

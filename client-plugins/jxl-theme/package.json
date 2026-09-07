@@ -1,0 +1,17 @@
+{
+  "name": "jxl-theme",
+  "private": true,
+  "version": "0.2.0",
+  "description": "JiaXingLian design sovereignty for the dsh web client: token bridge + fonts + document chrome.",
+  "main": "index.mjs",
+  "type": "module",
+  "dsh": {
+    "client": {
+      "platform": "web"
+    }
+  },
+  "exports": {
+    ".": "./index.mjs",
+    "./client": "./client.js"
+  }
+}

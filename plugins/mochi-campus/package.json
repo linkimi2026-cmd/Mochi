@@ -1,0 +1,18 @@
+{
+  "name": "mochi-campus",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "index.mjs",
+  "files": [
+    "index.mjs",
+    "connection.mjs"
+  ],
+  "description": "Mochi 嘉行联适配器：复用校园 API、登录身份与智能摘要",
+  "scripts": {
+    "test": "node test.mjs"
+  },
+  "dependencies": {
+    "@deepseek-ai/dsh-tools": "0.1.3-alpha.1"
+  }
+}

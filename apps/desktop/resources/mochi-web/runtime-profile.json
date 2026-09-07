@@ -1,0 +1,174 @@
+{
+  "schemaVersion": 1,
+  "serviceDefaults": {
+    "campusApiUrl": null,
+    "searxngEndpoint": null
+  },
+  "profiles": {
+    "headless": {
+      "bundles": [
+        "@deepseek-ai/dsh-base",
+        "@deepseek-ai/dsh-headless"
+      ],
+      "templates": [
+        "patches/core.patch.yml",
+        "patches/headless.patch.yml"
+      ],
+      "plugins": [
+        "mochi-hello",
+        "mochi-dispatch",
+        "mochi-campus",
+        "mochi-web-search",
+        "mochi-llm-mimo",
+        "mochi-grades",
+        "mochi-presentations",
+        "mochi-modeling",
+        "mochi-memory"
+      ]
+    },
+    "mochi": {
+      "bundles": [
+        "@deepseek-ai/dsh-base",
+        "@deepseek-ai/dsh-headless"
+      ],
+      "templates": [
+        "patches/core.patch.yml",
+        "patches/headless.patch.yml"
+      ],
+      "plugins": [
+        "mochi-hello",
+        "mochi-dispatch",
+        "mochi-campus",
+        "mochi-web-search",
+        "mochi-llm-mimo",
+        "mochi-grades",
+        "mochi-presentations",
+        "mochi-modeling",
+        "mochi-memory",
+        "mochi-approval"
+      ]
+    },
+    "mochi-web": {
+      "bundles": [
+        "@deepseek-ai/dsh-base",
+        "@deepseek-ai/dsh-web-app"
+      ],
+      "templates": [
+        "patches/core.patch.yml",
+        "patches/web.patch.yml"
+      ],
+      "plugins": [
+        "mochi-hello",
+        "mochi-dispatch",
+        "mochi-campus",
+        "mochi-web-search",
+        "mochi-llm-mimo",
+        "mochi-grades",
+        "mochi-presentations",
+        "mochi-modeling",
+        "mochi-memory",
+        "jxl-theme",
+        "jxl-brand",
+        "jxl-campus",
+        "mochi-workbench",
+        "mochi-model-presets",
+        "dsh-better-sidebar"
+      ]
+    }
+  },
+  "plugins": {
+    "mochi-hello": {
+      "workspacePath": "plugins/mochi-hello",
+      "resourcePath": "mochi-hello"
+    },
+    "mochi-dispatch": {
+      "workspacePath": "plugins/mochi-dispatch",
+      "resourcePath": "mochi-dispatch"
+    },
+    "mochi-campus": {
+      "workspacePath": "plugins/mochi-campus",
+      "resourcePath": "mochi-campus"
+    },
+    "mochi-web-search": {
+      "workspacePath": "plugins/mochi-web-search",
+      "resourcePath": "mochi-web-search"
+    },
+    "mochi-grades": {
+      "workspacePath": "plugins/mochi-grades",
+      "resourcePath": "mochi-grades"
+    },
+    "mochi-presentations": {
+      "workspacePath": "plugins/mochi-presentations",
+      "resourcePath": "mochi-presentations"
+    },
+    "mochi-modeling": {
+      "workspacePath": "plugins/mochi-modeling",
+      "resourcePath": "mochi-modeling"
+    },
+    "mochi-memory": {
+      "workspacePath": "plugins/mochi-memory",
+      "resourcePath": "mochi-memory"
+    },
+    "mochi-llm-mimo": {
+      "workspacePath": "plugins/mochi-llm-mimo",
+      "resourcePath": "mochi-llm-mimo",
+      "initialConfig": {
+        "apiKeyEnv": "MIMO_API_KEY",
+        "baseURL": "https://mimo.ezlook.top/v1",
+        "reasoningEffort": "low",
+        "models": [
+          {
+            "id": "mimo-v2.5",
+            "contextWindow": 131072,
+            "maxTokens": 8192,
+            "reasoningEfforts": [
+              "off",
+              "low",
+              "medium",
+              "high"
+            ]
+          },
+          {
+            "id": "mimo-v2.5-pro",
+            "contextWindow": 131072,
+            "maxTokens": 8192,
+            "reasoningEfforts": [
+              "off",
+              "low",
+              "medium",
+              "high"
+            ]
+          }
+        ]
+      }
+    },
+    "mochi-approval": {
+      "workspacePath": "apps/desktop/electron/dsh/mochi-approval",
+      "resourcePath": "mochi-approval"
+    },
+    "jxl-theme": {
+      "workspacePath": "client-plugins/jxl-theme",
+      "resourcePath": "jxl-theme"
+    },
+    "jxl-brand": {
+      "workspacePath": "client-plugins/jxl-brand",
+      "resourcePath": "jxl-brand"
+    },
+    "jxl-campus": {
+      "workspacePath": "client-plugins/jxl-campus",
+      "resourcePath": "jxl-campus"
+    },
+    "mochi-workbench": {
+      "workspacePath": "client-plugins/mochi-workbench",
+      "resourcePath": "mochi-workbench"
+    },
+    "mochi-model-presets": {
+      "workspacePath": "client-plugins/mochi-model-presets",
+      "resourcePath": "mochi-model-presets"
+    },
+    "dsh-better-sidebar": {
+      "workspacePath": "plugins/dsh-better-sidebar",
+      "resourcePath": "dsh-better-sidebar"
+    }
+  }
+}

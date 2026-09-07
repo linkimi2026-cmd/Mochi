@@ -1,0 +1,310 @@
+/* ═══════════════════════════════════════════════════════════════════
+ * JiaXingLian → Mochi Harness 主题桥（jxl-theme-bridge）
+ * 版本：v2（2026-09-04 晚，界面主权迁移第一版）
+ * 依据：foundation/07_JIAXINGLIAN_DESIGN_EXTRACTION.md（令牌值原样）
+ *       + packages/client/ui-theme/src/styles/ 实测 80 个 --dsw-alias-*
+ *       + theme-presenter.ts 暗色钩子 = body[data-ds-dark-theme]（源码实证）
+ *       + 官方 brand-official bundle 实证 slot 注册形态
+ *
+ * v2 变化：
+ *  · 全部自定义属性 !important + :root/body 双层声明——压过官方运行时
+ *    后注入的同名定义（层叠顺序不再依赖注入时序）。
+ *  · 字体整体切到嘉行联栈；标题类用 Songti 衬线。
+ *  · 全局细节：滚动条、选区、focus 环、加速度曲线。
+ *  · 品牌名换装由 jxl-brand client 插件经 slot 系统完成（本文件只管皮肤）。
+ *
+ * 纪律：嘉行联源值原样入境（--sage-800 / --accent 用户确认不许调）；
+ *       【派生】= 官方别名没有嘉行联对应源时的补足插值，非新设计。
+ * ═══════════════════════════════════════════════════════════════════ */
+
+/* ── 亮色（calm-tokens.css :root 原值） ─────────────────────────────── */
+:root,
+body {
+  /* 画布与表面 */
+  --dsw-alias-bg-base: #f5f2e9 !important;            /* --canvas 暖米白 */
+  --dsw-alias-bg-layer-1: #fcfaf4 !important;         /* --surface 暖白 */
+  --dsw-alias-bg-layer-2: #ffffff !important;         /* --surface-strong */
+  --dsw-alias-bg-layer-3: #eeede5 !important;         /* --surface-soft */
+
+  /* 文字（label 阶梯） */
+  --dsw-alias-label-primary: #2d3833 !important;      /* --ink 墨绿灰 */
+  --dsw-alias-label-primary-inverted: #fcfaf4 !important;
+  --dsw-alias-label-secondary: #55605a !important;    /* 【派生】ink↔muted 之间 */
+  --dsw-alias-label-tertiary: #747c76 !important;     /* --muted */
+  --dsw-alias-label-caption: #747c76 !important;
+  --dsw-alias-label-dimmed: rgba(116, 124, 118, 0.72) !important;
+
+  /* 品牌与交互（鼠尾草绿体系） */
+  --dsw-alias-brand-primary: #45584e !important;      /* --sage-solid（原值） */
+  --dsw-alias-brand-text: #45584e !important;         /* --sage-800（原值） */
+  --dsw-alias-link: #45584e !important;
+  --dsw-alias-button-primary-fill: #45584e !important;
+  --dsw-alias-button-primary-hover: #3d4d44 !important; /* 【派生】加深一档 */
+  --dsw-alias-interactive-bg-hover: rgba(69, 88, 78, 0.08) !important;
+  --dsw-alias-interactive-bg-hover-accent: rgba(217, 135, 62, 0.12) !important; /* accent 微染 */
+
+  /* 边框（--line 阶梯化） */
+  --dsw-alias-border-l1: rgba(57, 72, 63, 0.08) !important;
+  --dsw-alias-border-l2: rgba(57, 72, 63, 0.12) !important;  /* --line 原值 */
+  --dsw-alias-border-l3: rgba(57, 72, 63, 0.18) !important;
+  --dsw-alias-border-l4: rgba(57, 72, 63, 0.26) !important;
+
+  /* Markdown 代码面 */
+  --dsw-alias-markdown-inline-code: #eeede5 !important;
+  --dsw-alias-markdown-code-block: #eeede5 !important;
+
+  /* 玻璃与阴影（calm-tokens 原值） */
+  --jxl-glass-bg: linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(255, 253, 248, 0.78));
+  --jxl-glass-border: rgba(255, 255, 255, 0.55);
+  --jxl-shadow-card: 0 8px 24px rgba(50, 61, 54, 0.075);
+  --jxl-shadow-float: 0 16px 40px rgba(43, 54, 48, 0.14);
+  --jxl-control-top-rim: rgba(255, 255, 255, 0.6);
+
+  /* 动效（motion.ts：spring + Apple 公开曲线） */
+  --jxl-spring: cubic-bezier(0.22, 0.78, 0.24, 1);
+  --jxl-ease-default: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --jxl-dur-control: 100ms;
+  --jxl-dur-ui: 200ms;
+  --jxl-dur-implicit: 250ms;
+}
+
+/* ── 暗色（body[data-ds-dark-theme]；calm-tokens [data-theme="dark"] 原值） ── */
+body[data-ds-dark-theme] {
+  --dsw-alias-bg-base: #1b211e !important;
+  --dsw-alias-bg-layer-1: #242c28 !important;
+  --dsw-alias-bg-layer-2: #2a332e !important;
+  --dsw-alias-bg-layer-3: #303833 !important;
+
+  --dsw-alias-label-primary: #e7ebe7 !important;
+  --dsw-alias-label-primary-inverted: #17221e !important;
+  --dsw-alias-label-secondary: #c2cbc4 !important;    /* 【派生】 */
+  --dsw-alias-label-tertiary: #aeb8b1 !important;     /* --muted 暗 */
+  --dsw-alias-label-caption: #aeb8b1 !important;
+  --dsw-alias-label-dimmed: rgba(174, 184, 177, 0.72) !important;
+
+  --dsw-alias-brand-primary: #6f806f !important;      /* --cozy-sage-strong */
+  --dsw-alias-brand-text: #cad5cd !important;         /* 暗 sage-800（阶梯反转） */
+  --dsw-alias-link: #b6dcc7 !important;               /* --rui-deep 暗值 */
+  --dsw-alias-button-primary-fill: #6f806f !important;
+  --dsw-alias-button-primary-hover: #7d9082 !important; /* 【派生】提亮一档 */
+  --dsw-alias-interactive-bg-hover: rgba(202, 213, 205, 0.08) !important;
+  --dsw-alias-interactive-bg-hover-accent: rgba(217, 135, 62, 0.16) !important;
+
+  --dsw-alias-border-l1: rgba(255, 255, 255, 0.06) !important;
+  --dsw-alias-border-l2: rgba(255, 255, 255, 0.10) !important;
+  --dsw-alias-border-l3: rgba(255, 255, 255, 0.16) !important;
+  --dsw-alias-border-l4: rgba(255, 255, 255, 0.24) !important;
+
+  --dsw-alias-markdown-inline-code: #303833 !important;
+  --dsw-alias-markdown-code-block: #303833 !important;
+
+  --jxl-glass-bg: linear-gradient(145deg, rgba(30, 47, 43, 0.92), rgba(22, 40, 36, 0.86));
+  --jxl-glass-border: rgba(255, 255, 255, 0.14);
+  --jxl-shadow-card: 0 8px 24px rgba(0, 0, 0, 0.2);
+  --jxl-shadow-float: 0 16px 40px rgba(0, 0, 0, 0.35);
+  --jxl-control-top-rim: rgba(255, 255, 255, 0.14);
+}
+
+/* ── 字体主权（calm-tokens --font-sans / --font-title 原栈） ─────────── */
+:root,
+body {
+  --dsw-font-family: "PingFang SC", "Noto Sans CJK SC", "Microsoft YaHei", system-ui, sans-serif !important;
+  --dsw-font-serif: "Songti SC", "STSong", "Noto Serif CJK SC", "Source Han Serif SC", serif !important;
+}
+
+body,
+button,
+input,
+textarea,
+select {
+  font-family: "PingFang SC", "Noto Sans CJK SC", "Microsoft YaHei", system-ui, sans-serif !important;
+}
+
+/* ── 全局质感细节 ────────────────────────────────────────────────────── */
+
+/* 选区：鼠尾草微染 */
+::selection {
+  background: rgba(69, 88, 78, 0.22);
+}
+
+/* 滚动条：细、鼠尾草 */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(69, 88, 78, 0.28);
+  border-radius: 999px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(69, 88, 78, 0.45);
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+body[data-ds-dark-theme] ::-webkit-scrollbar-thumb {
+  background: rgba(202, 213, 205, 0.24);
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+body[data-ds-dark-theme] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(202, 213, 205, 0.4);
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+
+/* focus 环：暖橙（--accent），可访问性不牺牲 */
+:focus-visible {
+  outline: 2px solid rgba(217, 135, 62, 0.65) !important;
+  outline-offset: 2px;
+}
+
+/* 动效节奏对齐：过渡统一走 spring 曲线（尊重减弱动效偏好） */
+*,
+*::before,
+*::after {
+  transition-timing-function: cubic-bezier(0.22, 0.78, 0.24, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+/* ── 底层色板主权（v2.1）：--dsw-static-neutral-bluish-* → 嘉行联暖沙绿阶 ──
+ * 官方 80 个别名全部指向这套 static 阶梯；替换阶梯 = 一次翻转全部表面。
+ * 命名沿用官方变量名（不改组件层），值 = calm-tokens 体系推演（标注【派生】）。 */
+:root,
+body {
+  --dsw-static-neutral-bluish-00: #ffffff !important;
+  --dsw-static-neutral-bluish-50: #faf9f4 !important;   /* 【派生】 */
+  --dsw-static-neutral-bluish-60: #f5f2e9 !important;   /* --canvas 原值 */
+  --dsw-static-neutral-bluish-75: #f3f0e5 !important;   /* 【派生】 */
+  --dsw-static-neutral-bluish-100: #eeede5 !important;  /* --surface-soft */
+  --dsw-static-neutral-bluish-150: #e7ebe4 !important;  /* --sage-100 */
+  --dsw-static-neutral-bluish-200: #dde3de !important;  /* --rui-line */
+  --dsw-static-neutral-bluish-300: #c9d0c6 !important;  /* --sage-200 */
+  --dsw-static-neutral-bluish-400: #a8b3a9 !important;  /* 【派生】sage-400 邻域 */
+  --dsw-static-neutral-bluish-500: #8a968c !important;  /* 【派生】 */
+  --dsw-static-neutral-bluish-600: #687a6e !important;  /* --sage-600 */
+  --dsw-static-neutral-bluish-700: #556158 !important;  /* 【派生】 */
+  --dsw-static-neutral-bluish-750: #4a5a51 !important;  /* 【派生】sage-800 邻域 */
+  --dsw-static-neutral-bluish-800: #3f4d45 !important;  /* 【派生】 */
+  --dsw-static-neutral-bluish-850: #33403a !important;  /* 【派生】 */
+  --dsw-static-neutral-bluish-875: #2b3731 !important;  /* 【派生】 */
+  --dsw-static-neutral-bluish-900: #242e28 !important;  /* 【派生】 */
+  --dsw-static-neutral-bluish-950: #1c2620 !important;  /* 【派生】 */
+  --dsw-static-neutral-bluish-1000: #17221e !important; /* --ink-strong */
+
+  /* DeepSeek 蓝 → 嘉行联深绿（--rui-deep #315f50 家族） */
+  --dsw-static-deepseek-50: #eef4ef !important;
+  --dsw-static-deepseek-100: #dfeae2 !important;
+  --dsw-static-deepseek-200: #c4d8ca !important;
+  --dsw-static-deepseek-300: #9cc2a6 !important;
+  --dsw-static-deepseek-400: #6f9f7e !important;
+  --dsw-static-deepseek-450: #5c9270 !important;
+  --dsw-static-deepseek-500: #4d8261 !important;
+  --dsw-static-deepseek-600: #45684f !important;
+  --dsw-static-deepseek-800: #35473b !important;
+  --dsw-static-deepseek-900: #2b3a31 !important;
+
+  /* 状态色 → calm-tokens 语义色（原值） */
+  --dsw-static-green-500: #698c70 !important;   /* --success */
+  --dsw-static-amber-500: #c9873e !important;   /* 【派生】accent 暗一档 */
+  --dsw-static-red-400: #c97862 !important;     /* 【派生】danger 邻域 */
+  --dsw-static-red-600: #bf6048 !important;     /* --danger */
+  --dsw-static-blue-900: #315f50 !important;    /* --rui-deep */
+
+  /* 滚动条 / 提示层 */
+  --dsw-static-neutral-200: #d5d2c4 !important; /* 【派生】 */
+  --dsw-static-neutral-700: #4a5a51 !important; /* 【派生】 */
+}
+
+/* 暗色主题：中性阶梯【不】重定义——官方机制是一套固定阶梯，亮暗靠别名选档
+ * （实证：暗色侧栏 bg 走 900 档；若暗色反转阶梯会把表面刷成近白）。
+ * 暗色只微调语义/品牌色的明度。 */
+body[data-ds-dark-theme] {
+  --dsw-static-deepseek-50: #26302a !important;
+  --dsw-static-deepseek-100: #2b3a31 !important;
+  --dsw-static-deepseek-200: #35473b !important;
+  --dsw-static-deepseek-300: #45684f !important;
+  --dsw-static-deepseek-400: #6f9f7e !important;
+  --dsw-static-deepseek-450: #7fb48d !important;
+  --dsw-static-deepseek-500: #8fbf9d !important;
+  --dsw-static-deepseek-600: #a5cfaf !important;
+  --dsw-static-deepseek-800: #c4d8ca !important;
+  --dsw-static-deepseek-900: #dfeae2 !important;
+
+  --dsw-static-green-500: #7da284 !important;   /* 【派生】暗下 success 提亮 */
+  --dsw-static-amber-500: #d9973e !important;
+  --dsw-static-red-400: #d08a74 !important;
+  --dsw-static-red-600: #bf6048 !important;
+  --dsw-static-blue-900: #b6dcc7 !important;    /* --rui-deep 暗值 */
+}
+
+/* ── 品牌字标（jxl-brand 挂进 sidebar.brand.name 的内容上样） ─────────── */
+.jxl-brand-name {
+  font-family: "Songti SC", "STSong", "Noto Serif CJK SC", "Source Han Serif SC", serif !important;
+  font-weight: 600;
+  color: var(--dsw-alias-brand-text, #45584e);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.jxl-brand-name .jxl-brand-en {
+  font-family: "PingFang SC", "Noto Sans CJK SC", system-ui, sans-serif;
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--dsw-alias-link, #45584e);
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   嘉行联按钮语言迁入 Mochi 侧栏（2026-09-04，用户裁定：
+   "特别按左半边的按钮样式"——联动计划侧栏 nav-pill）
+   源：联动计划/src/styles.css .nav-pill
+   - 16px 圆角胶囊；激活 = --sage-800 实底 + 顶部内高光 + 深投影
+   - 非激活透明底，仅前景变化；悬停 = 柔和填充
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* 新会话主按钮：nav-pill 主胶囊语言 */
+[data-slot="sidebar.workspaces"] [class*="newSession"],
+[class*="sidebar"] [class*="newSession"] {
+  border-radius: 16px !important;
+  background: var(--sage-800, #315f50) !important;
+  color: #f5f2e9 !important;
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, #ffffff 14%, transparent),
+    0 10px 22px -14px color-mix(in srgb, var(--sage-800, #315f50) 60%, transparent) !important;
+  border: 0 !important;
+}
+[data-slot="sidebar.workspaces"] [class*="newSession"]:hover,
+[class*="sidebar"] [class*="newSession"]:hover {
+  background: #3c6f5e !important;
+}
+
+/* 工作区/会话行：透明底 + 柔和悬停 + 激活胶囊 */
+[data-slot="sidebar.workspaces"] [class*="projectRow"] {
+  border-radius: 16px !important;
+  transition: background-color 160ms ease, color 160ms ease !important;
+}
+[data-slot="sidebar.workspaces"] [class*="projectRow"]:hover {
+  background: color-mix(in srgb, var(--sage-800, #315f50) 10%, transparent) !important;
+}
+[data-slot="sidebar.workspaces"] [class*="projectRow"][aria-current="true"],
+[data-slot="sidebar.workspaces"] [class*="projectRow"][aria-current="page"],
+[data-slot="sidebar.workspaces"] [class*="projectRow"][data-active="true"],
+[data-slot="sidebar.workspaces"] [class*="projectRow"].active {
+  background: var(--sage-800, #315f50) !important;
+  color: #f5f2e9 !important;
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, #ffffff 14%, transparent),
+    0 10px 22px -14px color-mix(in srgb, var(--sage-800, #315f50) 60%, transparent) !important;
+}
+

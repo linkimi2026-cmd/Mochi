@@ -1,0 +1,23 @@
+{
+  "name": "jxl-campus",
+  "private": true,
+  "version": "0.1.0",
+  "description": "JiaXingLian campus system entry: sidebar footer action opens the full campus app (local copy, vite+workerd) inside the Mochi shell.",
+  "main": "index.mjs",
+  "type": "module",
+  "dsh": {
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-renderer",
+        "@deepseek-ai/dsh-client-ui-sidebar",
+        "@deepseek-ai/dsh-client-locale",
+        "jxl-brand"
+      ]
+    }
+  },
+  "exports": {
+    ".": "./index.mjs",
+    "./client": "./client.js"
+  }
+}

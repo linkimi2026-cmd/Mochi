@@ -1,0 +1,21 @@
+services:
+  documentserver:
+    image: onlyoffice/documentserver:9.4.0.1
+    platform: linux/arm64
+    container_name: mochi-office-documentserver
+    ports:
+      - "127.0.0.1:18080:80"
+    environment:
+      JWT_ENABLED: "true"
+      JWT_SECRET: "${MOCHI_OFFICE_JWT_SECRET:?set MOCHI_OFFICE_JWT_SECRET}"
+      JWT_HEADER: Authorization
+      JWT_IN_BODY: "true"
+    mem_limit: 5g
+    cpus: 4
+    restart: "no"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/info/info.json"]
+      interval: 15s
+      timeout: 5s
+      retries: 12
+      start_period: 90s

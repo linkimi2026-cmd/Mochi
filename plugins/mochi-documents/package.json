@@ -1,0 +1,20 @@
+{
+  "name": "mochi-documents",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "index.mjs",
+  "description": "Mochi 本机结构化文档生成：可编辑 DOCX、纯 JS 嵌入字体 PDF 与疑点清单",
+  "packageManager": "pnpm@11.19.0",
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "dependencies": {
+    "@mochi/pdf-layout": "file:../../packages/mochi-pdf-layout",
+    "docx": "9.7.1",
+    "pdf-lib": "1.17.1"
+  },
+  "devDependencies": {
+    "jszip": "3.10.1"
+  }
+}

@@ -1,0 +1,142 @@
+/* Mochi × 嘉行联：Harness 工作骨架 + 原有视觉资源。
+ * 依据：联动计划/docs/JIAXING_VISUAL_SYSTEM.md、REFERENCE_TRANSLATION_RULES.md。
+ * 原则：12/16/22 圆角；实体内容；少量场景；可操作控件即时反馈。
+ * 宿主结构选择器经过当前锁定版 HeroShell/ConversationView 核验。 */
+[class*="_root"]:has(> [class*="_body"] [data-slot="conversation.hero.brand.mark"]) {
+  background: var(--dsw-alias-bg-base) url('/jxl-assets/campus/jxl-campus-watercolor-v1.webp') center / cover no-repeat;
+}
+body[data-ds-dark-theme] [class*="_root"]:has(> [class*="_body"] [data-slot="conversation.hero.brand.mark"]) {
+  background-image: linear-gradient(rgba(27,33,30,.82),rgba(27,33,30,.65)),url('/jxl-assets/campus/jxl-campus-watercolor-v1.webp');
+}
+[class*="_headline"]:has(.jxl-hero-mark) {
+  grid-template-columns: 56px minmax(0,auto); justify-content: start;
+  column-gap: 16px; row-gap: 6px; padding: 16px 20px; margin-bottom: 8px;
+  border-radius: 16px; background: var(--dsw-alias-bg-layer-1); border: 1px solid var(--dsw-alias-border-l1);
+}
+[class*="_headline"]:has(.jxl-hero-mark) > [class*="_fishHitbox"] { grid-row: 1 / 3; }
+[class*="_headline"]:has(.jxl-hero-mark) > [class*="_headlineText"] {
+  font: 600 clamp(24px,3vw,28px)/1.35 "Songti SC","STSong",serif; letter-spacing: -.01em;
+}
+[class*="_headline"]:has(.jxl-hero-mark) > [class*="_previewBadge"] {
+  grid-column: 2; grid-row: 2; justify-self: start; margin: 0; padding: 3px 10px;
+  font: 400 12px/1.5 "PingFang SC",sans-serif; color: var(--dsw-alias-label-secondary);
+}
+.jxl-hero-mark { animation: none !important; }
+/* The campus plugin owns its grouped row states; this source only keeps the
+   common minimum hit target intact for its dynamically injected controls. */
+.jxl-campus-entry { min-height: 40px; width: 100%; text-align: left; border-radius: 12px !important; }
+
+#jxl-campus-widgets-host {
+  --jxl-radius-sm: 12px; --jxl-radius-md: 16px; --jxl-radius-lg: 22px;
+  --jxl-page-gutter: clamp(20px,3vw,32px);
+}
+#jxl-campus-widgets-host .jxl-widget-panel {
+  inset: 8px; border-radius: var(--jxl-radius-lg); box-shadow: none;
+  background: var(--dsw-alias-bg-base); color: var(--dsw-alias-label-primary);
+  border: 1px solid var(--dsw-alias-border-l2);
+  animation: jxl-workspace-enter 180ms ease-out;
+}
+#jxl-campus-widgets-host .jxl-widget-panel__head {
+  min-height: 52px; padding: 8px 20px; background: var(--jxl-glass-bg);
+  backdrop-filter: blur(16px); border-color: var(--dsw-alias-border-l2);
+}
+#jxl-campus-widgets-host .jxl-widget-panel__title { color: var(--dsw-alias-label-primary); font-size: 14px; }
+#jxl-campus-widgets-host :is(.jxl-widget-panel__desc,.jxl-widget-panel__logo,.jxl-widget-panel__close img) { display: none; }
+#jxl-campus-widgets-host .jxl-widget-panel__close {
+  min-height: 36px; border-radius: 99px; box-shadow: none;
+  background: var(--dsw-alias-bg-layer-1); color: var(--dsw-alias-link); border-color: var(--dsw-alias-border-l2);
+}
+#jxl-campus-widgets-host .painterly-page {
+  --rui-canvas: var(--dsw-alias-bg-base); --rui-surface: var(--dsw-alias-bg-layer-1);
+  --rui-subtle: var(--dsw-alias-bg-layer-3); --rui-ink: var(--dsw-alias-label-primary);
+  --rui-muted: var(--dsw-alias-label-secondary); --rui-line: var(--dsw-alias-border-l2);
+  --rui-brand: var(--dsw-alias-brand-primary); --rui-deep: var(--dsw-alias-link);
+  --rui-on-deep: var(--dsw-alias-bg-layer-1);
+  --painterly-paper-overlap: 0px; --painterly-home-paper-overlap: 0px;
+  background: var(--dsw-alias-bg-base);
+}
+/* The standalone page cancels its outer mobile gutter. Inside Mochi the widget
+ * root already begins at the panel edge, so keep the page within that boundary;
+ * the hero and paper retain the existing --jxl-page-gutter for their content. */
+#jxl-campus-widgets-host .mochi-widget-content > .rui-scope.painterly-page {
+  inline-size: 100%;
+  max-inline-size: 100%;
+  margin-inline: 0;
+}
+#jxl-campus-widgets-host .painterly-page__stage { background: var(--dsw-alias-bg-base); border: 0; border-radius: 0; box-shadow: none; }
+#jxl-campus-widgets-host .painterly-page__hero,
+#jxl-campus-widgets-host .painterly-page--home .painterly-page__hero {
+  margin: 16px var(--jxl-page-gutter) 0; min-block-size: 148px; padding: 20px;
+  align-items: center; background: var(--dsw-alias-bg-layer-1); color: var(--dsw-alias-label-primary);
+  border-radius: var(--jxl-radius-md); overflow: hidden; box-shadow: none;
+}
+#jxl-campus-widgets-host .painterly-page__hero-image {
+  left: auto; width: 44%; object-fit: cover; opacity: .9;
+  mask-image: linear-gradient(90deg,transparent,#000 28%);
+}
+#jxl-campus-widgets-host :is(.painterly-page__hero-veil,.painterly-page__hero-light,.painterly-page__hero-edge) { display: none; }
+#jxl-campus-widgets-host .painterly-page__hero-copy {
+  padding: 8px 12px; width: fit-content; max-inline-size: 58%; border-radius: var(--jxl-radius-sm);
+  background: var(--dsw-alias-bg-layer-1);
+}
+#jxl-campus-widgets-host .painterly-page__hero h1 {
+  color: var(--dsw-alias-label-primary); font-size: 28px; line-height: 1.35; letter-spacing: -.01em;
+}
+#jxl-campus-widgets-host .painterly-page__hero p { color: var(--dsw-alias-label-secondary); font-size: 13px; line-height: 1.6; }
+#jxl-campus-widgets-host .painterly-page__eyebrow { color: var(--dsw-alias-label-secondary); background: var(--dsw-alias-bg-layer-3); font-size: 11px; font-weight: 500; }
+#jxl-campus-widgets-host .painterly-page__paper {
+  margin: 0; padding: 24px var(--jxl-page-gutter) 32px; border: 0; border-radius: 0;
+  background: var(--dsw-alias-bg-base); box-shadow: none;
+}
+#jxl-campus-widgets-host .reference-dashboard .painterly-page__paper { display: flex; flex-direction: column; align-items: stretch; gap: 24px; }
+#jxl-campus-widgets-host .reference-dashboard__welcome { display: none; }
+#jxl-campus-widgets-host .reference-dashboard__events { width: 100%; margin: 0; }
+#jxl-campus-widgets-host :is(.rui-list,.rui-metrics,.rui-state,.state-card,.reference-dashboard__status-line,.reference-dashboard__message-line) {
+  border-radius: var(--jxl-radius-md); box-shadow: none;
+  background: var(--dsw-alias-bg-layer-1); border: 1px solid var(--dsw-alias-border-l2);
+}
+#jxl-campus-widgets-host .rui-list { overflow: hidden; }
+#jxl-campus-widgets-host .rui-list__item { border-radius: 0; }
+#jxl-campus-widgets-host .rui-list-row { border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+#jxl-campus-widgets-host .rui-section-header h2 { font-size: 17px; line-height: 1.4; }
+#jxl-campus-widgets-host .rui-section-header__copy > p { font-size: 12px; }
+#jxl-campus-widgets-host .rui-metrics { padding-block: 12px; }
+#jxl-campus-widgets-host .rui-metrics__value { font-size: 28px; }
+#jxl-campus-widgets-host .rui-state__icon:has(.mochi-loading) { width: auto; height: auto; padding: 0; background: transparent; }
+#jxl-campus-widgets-host .mochi-campus-details { border-top: 1px solid var(--dsw-alias-border-l2); padding-top: 12px; }
+#jxl-campus-widgets-host .mochi-campus-details > summary { cursor: pointer; padding: 10px 12px; border-radius: 12px; color: var(--dsw-alias-label-secondary); font-size: 13px; }
+#jxl-campus-widgets-host .mochi-campus-details[open] > section { margin-block: 24px; }
+#jxl-campus-widgets-host .mochi-widget-content > .mochi-loading { display: flex; min-height: min(420px,70vh); }
+#jxl-campus-widgets-host :is(.auth-support-reference__context,.auth-support-reference__overline) { display: none; }
+#jxl-campus-widgets-host .auth-support-reference__login-layout { grid-template-columns: minmax(0,1fr); }
+#jxl-campus-widgets-host .auth-support-reference__form { width: min(100%,480px); margin-inline: auto; padding: 24px; border-radius: 16px; box-shadow: none; }
+#jxl-campus-widgets-host :is(.painterly-page__back,.painterly-page__actions > button) {
+  border-radius: 12px; background: var(--dsw-alias-bg-layer-1); color: var(--dsw-alias-link); border-color: var(--dsw-alias-border-l2);
+}
+#jxl-campus-widgets-host :is(button,summary,a):focus-visible { outline: 2px solid var(--dsw-alias-link); outline-offset: 3px; }
+#jxl-campus-widgets-host :is(button,summary):active { transform: scale(.97); transition-duration: 90ms; }
+@keyframes jxl-workspace-enter { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (max-width: 600px) {
+  [class*="_headline"]:has(.jxl-hero-mark) { padding: 16px; grid-template-columns: 48px minmax(0,1fr); gap: 6px 12px; }
+  [class*="_headline"]:has(.jxl-hero-mark) > [class*="_headlineText"] { font-size: 22px; }
+  #jxl-campus-widgets-host { --jxl-page-gutter: 16px; }
+  #jxl-campus-widgets-host .jxl-widget-panel { inset: 0; border-radius: 0; border: 0; }
+  #jxl-campus-widgets-host .jxl-widget-panel__head { padding: 8px 16px; }
+  #jxl-campus-widgets-host .jxl-widget-panel__title { white-space: normal; }
+  #jxl-campus-widgets-host .jxl-widget-panel__close { min-height: 40px; padding-inline: 12px; }
+  #jxl-campus-widgets-host .painterly-page__hero,
+  #jxl-campus-widgets-host .painterly-page--home .painterly-page__hero { min-block-size: 140px; padding: 12px; }
+  #jxl-campus-widgets-host .painterly-page__hero-copy { max-inline-size: 72%; padding: 8px; }
+  #jxl-campus-widgets-host .painterly-page__hero h1 { font-size: 24px; }
+  #jxl-campus-widgets-host .painterly-page__hero-image { width: 50%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #jxl-campus-widgets-host .jxl-widget-panel { animation: none; }
+  #jxl-campus-widgets-host :is(button,summary):active { transform: none; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  #jxl-campus-widgets-host .jxl-widget-panel__head { background: var(--dsw-alias-bg-layer-1); backdrop-filter: none; }
+}
+@media (prefers-contrast: more) {
+  #jxl-campus-widgets-host :is(.rui-list,.rui-metrics,.jxl-widget-panel) { border-color: var(--dsw-alias-label-primary); }
+}

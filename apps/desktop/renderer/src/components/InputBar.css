@@ -1,0 +1,86 @@
+/* 底部输入栏
+ * 视觉红线自检：
+ *   - 圆角矩形输入框（很大圆角，纸面底色，无硬边高饱和）
+ *   - 焦糖色发送按钮，按下 spring 反馈（缩放回弹）
+ *   - 容器自身也是圆角矩形，文字有底色
+ */
+
+.mochi-inputbar {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  width: min(720px, 100%);
+  padding: 10px 10px 10px 18px;
+  /* 有字的地方都加圆角矩形：整条输入栏是纸面浮层 */
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-float);
+  border: 1px solid var(--line);
+}
+
+.mochi-inputbar__field {
+  flex: 1;
+  min-width: 0; /* 防止 flex 子项把容器撑出横向滚动 */
+  resize: none;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 15px;
+  line-height: 1.55;
+  letter-spacing: 0.01em;
+  max-height: 140px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 8px 2px;
+}
+
+.mochi-inputbar__field::placeholder {
+  color: var(--muted);
+}
+
+.mochi-inputbar__field:disabled {
+  opacity: 0.6;
+}
+
+/* 焦糖色发送按钮：圆角矩形 + spring 反馈 */
+.mochi-inputbar__send {
+  flex: none;
+  align-self: stretch;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 64px;
+  padding: 0 18px;
+  border: none;
+  border-radius: var(--radius-lg);
+  background: var(--accent); /* 焦糖 */
+  color: #fff7ec;
+  font-family: var(--font-title);
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(217, 135, 62, 0.34);
+  transition:
+    transform var(--control-press-duration) var(--spring),
+    background var(--control-surface-duration) var(--spring),
+    box-shadow var(--control-surface-duration) var(--spring),
+    opacity var(--control-surface-duration) var(--spring);
+}
+
+.mochi-inputbar__send:hover:not(:disabled) {
+  background: #e0924a;
+  box-shadow: 0 8px 20px rgba(217, 135, 62, 0.42);
+}
+
+/* 按下：弹一下再回落，spring 反馈 */
+.mochi-inputbar__send:active:not(:disabled) {
+  transform: scale(0.93);
+}
+
+.mochi-inputbar__send:disabled {
+  opacity: 0.45;
+  cursor: default;
+  box-shadow: none;
+}

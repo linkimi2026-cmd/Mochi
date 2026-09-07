@@ -1,0 +1,149 @@
+/* 表情球工作台模组：球 + 小电脑。动作模组借自开源桌宠 Clawd（MIT），
+   本体为项目自绘焦糖色系。全部动画为 CSS keyframes，无脚本循环。 */
+
+.orb-companion {
+  position: relative;
+  display: inline-grid;
+  place-items: start center;
+}
+
+.orb-companion__orb {
+  position: relative;
+  z-index: 1;
+  display: block;
+  transform-origin: 50% 86%;
+}
+
+.orb-companion__laptop {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  z-index: 2;
+  width: 78%;
+  transform: translateX(-50%);
+}
+
+.companion-float {
+  position: absolute;
+  display: none;
+}
+
+/* ---------- idle：球静止呼吸（引擎自带），电脑静置 ---------- */
+.orb-companion--idle .companion-laptop {
+  transform-origin: 50% 100%;
+  animation: companion-laptop-breathe 4.6s ease-in-out infinite;
+}
+
+/* ---------- thinking：球表情由引擎驱动，右上角冒泡泡 ---------- */
+.orb-companion--thinking .companion-float--think {
+  display: block;
+  top: -14%;
+  right: -22%;
+  width: 46%;
+  animation: companion-float-in 0.4s ease-out both;
+}
+.orb-companion--thinking .companion-float--think circle { animation: companion-bubble 1.8s ease-in-out infinite; }
+.orb-companion--thinking .companion-float--think circle:nth-child(2) { animation-delay: 0.3s; }
+.orb-companion--thinking .companion-float--think circle:nth-child(3) { animation-delay: 0.6s; }
+
+/* ---------- typing：球左右摇摆模拟敲键盘，电脑轻微反向点头，屏幕字符闪动 ---------- */
+.orb-companion--typing .orb-companion__orb { animation: companion-rock 0.92s ease-in-out infinite; }
+.orb-companion--typing .companion-laptop { animation: companion-laptop-nudge 0.92s ease-in-out infinite; }
+.orb-companion--typing .companion-glyph { animation: companion-glyph-blink 1.15s steps(2, jump-none) infinite; }
+.orb-companion--typing .companion-glyph:nth-child(2) { animation-delay: 0.14s; }
+.orb-companion--typing .companion-glyph:nth-child(3) { animation-delay: 0.28s; }
+.orb-companion--typing .companion-glyph:nth-child(4) { animation-delay: 0.42s; }
+.orb-companion--typing .companion-glyph:nth-child(5) { animation-delay: 0.57s; }
+
+/* ---------- celebrate：开心跳 ---------- */
+.orb-companion--celebrate .orb-companion__orb { animation: companion-hop 0.72s cubic-bezier(0.22, 1, 0.36, 1) infinite; }
+.orb-companion--celebrate .companion-laptop { animation: companion-laptop-hop 0.72s ease-in-out infinite; }
+
+/* ---------- alert：惊叹泡泡 ---------- */
+.orb-companion--alert .companion-float--alert {
+  display: block;
+  top: -12%;
+  right: -18%;
+  width: 40%;
+  animation: companion-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.orb-companion--alert .orb-companion__orb { animation: companion-shiver 0.6s ease-in-out infinite; }
+
+/* ---------- sleep：球静止（引擎 active=false），Zzz 浮动 ---------- */
+.orb-companion--sleep .orb-companion__orb { transform: scale(0.94); transition: transform 1.2s ease; }
+.orb-companion--sleep .companion-float--zzz {
+  display: block;
+  top: -16%;
+  right: -14%;
+  width: 44%;
+  animation: companion-zzz 2.6s ease-in-out infinite;
+}
+
+/* ---------- keyframes ---------- */
+@keyframes companion-rock {
+  0%, 100% { transform: rotate(5deg); }
+  50% { transform: rotate(-5deg); }
+}
+@keyframes companion-laptop-nudge {
+  0%, 100% { transform: translateX(-50%) rotate(-1.4deg); }
+  50% { transform: translateX(-50%) rotate(1.4deg); }
+}
+@keyframes companion-laptop-breathe {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(0.8px); }
+}
+/* 作用于 svg 本体（自带 translateX(-50%) 居中），keyframe 必须保留它 */
+@keyframes companion-laptop-hop {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(1.4px); }
+}
+@keyframes companion-glyph-blink {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 1; }
+}
+@keyframes companion-bubble {
+  0%, 100% { opacity: 0.45; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(-1.5px); }
+}
+@keyframes companion-float-in {
+  from { opacity: 0; transform: translateY(4px) scale(0.9); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes companion-pop {
+  from { opacity: 0; transform: scale(0.4); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes companion-hop {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  30% { transform: translateY(-14%) rotate(-4deg); }
+  55% { transform: translateY(0) rotate(0deg); }
+  75% { transform: translateY(-7%) rotate(3deg); }
+}
+@keyframes companion-shiver {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-2.6deg); }
+  75% { transform: rotate(2.6deg); }
+}
+@keyframes companion-zzz {
+  0% { opacity: 0; transform: translateY(3px); }
+  35% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-7px); }
+}
+
+/* ---------- 减弱动态 ---------- */
+.orb-companion--still .orb-companion__orb,
+.orb-companion--still .orb-companion__laptop,
+.orb-companion--still .companion-glyph,
+.orb-companion--still .companion-float--think circle,
+.orb-companion--still .companion-float--zzz {
+  animation: none !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .orb-companion .orb-companion__orb,
+  .orb-companion .orb-companion__laptop,
+  .orb-companion .companion-glyph,
+  .orb-companion .companion-float--think circle,
+  .orb-companion .companion-float--zzz {
+    animation: none !important;
+  }
+}

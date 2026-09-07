@@ -1,0 +1,19 @@
+# Teacher-facing one-shot runtime. The web profile deliberately keeps the
+# standard Agent preset tools active; this profile has no preset realm.
+
+- id: tool-bash
+  disabled: true
+- id: tool-pwsh
+  disabled: true
+- id: tool-jobs
+  disabled: true
+- id: plan-mode
+  disabled: true
+- id: goal
+  disabled: true
+- id: goal-round-driver
+  disabled: true
+- id: command-goal
+  disabled: true
+- id: tool-goal
+  disabled: true

@@ -1,0 +1,15 @@
+{
+  "name": "mochi-modeling",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "index.mjs",
+  "description": "Mochi 教学建模工作空间：交互数学模型生成（首样：椭圆切线 conic-tangent，JSXGraph 离线零依赖）",
+  "scripts": {
+    "test": "node test.mjs",
+    "verify": "node verify.mjs"
+  },
+  "dependencies": {
+    "@deepseek-ai/dsh-tools": "0.1.3-alpha.1"
+  }
+}

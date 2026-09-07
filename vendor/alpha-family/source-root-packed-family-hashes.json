@@ -1,0 +1,1801 @@
+[
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh",
+    "version": "0.1.3-alpha.1",
+    "sha256": "625ab8186ef48848ba11fcd7f2682a03a04c403bfe1824f4c8072e92545ace3a"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-acp-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-acp",
+    "version": "0.1.3-alpha.1",
+    "sha256": "d0d64bed6e9b27decd92a5081d0ad899acc890c818205463415634b9e551af21"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-acp-app-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-acp-app",
+    "version": "0.1.3-alpha.1",
+    "sha256": "b6bfeddf4ad5d3219134aecbaf2b69fccf97b522f5e9488c93a833de40c9fa63"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-agent-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-agent",
+    "version": "0.1.3-alpha.1",
+    "sha256": "7854ebb9da05199bf6c44c2876827692267ad58f034e34599653bdba5c6317ad"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-agent-default-model-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-agent-default-model",
+    "version": "0.1.3-alpha.1",
+    "sha256": "f8f44bbfe6c4221c8088fe36659ad1139ee5ba0b37fe665858d2d703167f2a0b"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-agent-instructions-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-agent-instructions",
+    "version": "0.1.3-alpha.1",
+    "sha256": "c3c1ff07fb3d73a7b52e08c7e744ecbe1731e554bfdf444b9ced45506a547938"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-agent-loop-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-agent-loop",
+    "version": "0.1.3-alpha.1",
+    "sha256": "580851f2cea7cea399b17fc5d4a84820093c3b105c3bb4a94e9ea4303e2ed14f"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-agent-loop-testkit-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-agent-loop-testkit",
+    "version": "0.1.3-alpha.1",
+    "sha256": "4953c3798dcb1f8b29f50a2206e35efe5593df0fcf0423445475dffa34b912ea"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-agent-presets-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-agent-presets",
+    "version": "0.1.3-alpha.1",
+    "sha256": "bda63a37672ec59b53c4dbdb792063bdeb3d813461d165413e743f806a6861bd"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-agent-tool-presentation-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-agent-tool-presentation",
+    "version": "0.1.3-alpha.1",
+    "sha256": "4dd0289cd003f174a3b59f61d4fb83a721ec463aaa31105514d65fa9cadf2021"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-anonymous-user-id-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-anonymous-user-id",
+    "version": "0.1.3-alpha.1",
+    "sha256": "9c48b6fea16367908adbae0511343f4ecf7e7c6d6f8c5d79943fe388dc12ddcb"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-api-gateway-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-api-gateway",
+    "version": "0.1.3-alpha.1",
+    "sha256": "5b38d877feb57beb1f8820c3faf492612dad396bc273b03c14175cbc5fae8b43"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-api-remotes-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-api-remotes",
+    "version": "0.1.3-alpha.1",
+    "sha256": "d9adfd4e26363958b400a66510f588e9633f7e3c12fe7dd4260ed0b13a6023d6"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-api-session-controller-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-api-session-controller",
+    "version": "0.1.3-alpha.1",
+    "sha256": "5ee49777ac40aecb26565e4f2b2a571334499994cf2551087ada943c0cdbb773"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-api-settings-controller-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-api-settings-controller",
+    "version": "0.1.3-alpha.1",
+    "sha256": "60352fa9731206b215a4281759c0c60c685071d7d450cd487fb89b163af7f161"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-api-workspace-controller-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-api-workspace-controller",
+    "version": "0.1.3-alpha.1",
+    "sha256": "ab058a1e974d4595ed9f42ca038a36c6b8d3f41924e2eec7f68717233068bb2a"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-app-boot-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-app-boot",
+    "version": "0.1.3-alpha.1",
+    "sha256": "5f391f211d85c1cf856734379272e5aa954ff9866b1ce3601e5685ee274b5cd7"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-atomic-write-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-atomic-write",
+    "version": "0.1.3-alpha.1",
+    "sha256": "dd7b5133312c091f66568b84f6369b3cf45390a64dd4724b253716f9f4ac1a5f"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-attachment-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-attachment",
+    "version": "0.1.3-alpha.1",
+    "sha256": "aeb4776296d1e03402a7751df3ace05b5c659c50103b35e434f3f7e880819779"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-attachment-local-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-attachment-local",
+    "version": "0.1.3-alpha.1",
+    "sha256": "66edab1bd448e91cb0f8bdf4b62183595c4d8e2c70141d05fa44ea7a5caad6c5"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-authorization-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-authorization",
+    "version": "0.1.3-alpha.1",
+    "sha256": "a4c6a08e057b7c2fdfba7377a0a5e5e9b92988ea11245992cc7b66a1ef66daa2"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-base-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-base",
+    "version": "0.1.3-alpha.1",
+    "sha256": "f92421053707adccccb17fa1d6cc81ad783d57f32b85218310330afd8cd13799"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-bash-local-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-bash-local",
+    "version": "0.1.3-alpha.1",
+    "sha256": "8537d6aac041fb695b84ed5e454ec48a7e92f93f657668a2482f0ea2b869df8c"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-bash-sandbox-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-bash-sandbox",
+    "version": "0.1.3-alpha.1",
+    "sha256": "d8211b23dbf3579cf0e4b7817f350200f23fe78dbc7edf922efe2ba420b6339a"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-brand-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-brand",
+    "version": "0.1.3-alpha.1",
+    "sha256": "46f2b6313b514544499c67a9a3472e5ce01ccb169be8ededa88b9873c819d87a"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-connection-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-connection",
+    "version": "0.1.3-alpha.1",
+    "sha256": "775c8bdcd766b146e6a319eef51768e46a7ef1a6496a4e92c0411d5d22aebb6d"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-file-upload-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-file-upload",
+    "version": "0.1.3-alpha.1",
+    "sha256": "7cb696c50b49860bb1506caf2ed81317b1e42377df823ca0948ba6a948e094e1"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-hmr-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-hmr",
+    "version": "0.1.3-alpha.1",
+    "sha256": "8d87ccb2d09d9cb0936625cc5d04f50cfda08c6955b77183fd367081c43b345f"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-locale-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-locale",
+    "version": "0.1.3-alpha.1",
+    "sha256": "2c8c52caae81ed42d9a7327df63472bd399b2ac61d17e7f598481c3c81ec5911"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-modules-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-modules",
+    "version": "0.1.3-alpha.1",
+    "sha256": "e1e55407f7a03aaab770494f1f0ca8e184758037fd8df2f978631694192bae89"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-store-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-store",
+    "version": "0.1.3-alpha.1",
+    "sha256": "3b3e159406c2e8f90712138c0f8796e70b3a7d0d5ed8747cd257556c3f2aba15"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-test-runtime-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-test-runtime",
+    "version": "0.1.3-alpha.1",
+    "sha256": "80938f81440f7ca0f675ed19daf89f7d8fb4fa05de0e95e9b17470a25f7f82e5"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-ui-agent-preset-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-ui-agent-preset",
+    "version": "0.1.3-alpha.1",
+    "sha256": "5b1d95d1a538a4f8257c52181a9f788b4e4e0c253e6173c32a55bf43b0b78dff"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-ui-approval-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-ui-approval",
+    "version": "0.1.3-alpha.1",
+    "sha256": "861473aea3d6a3283a09d0648f2e3825c8f6f8ffc7b0f4a94d628f84580a7cf1"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-ui-attachment-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-ui-attachment",
+    "version": "0.1.3-alpha.1",
+    "sha256": "aef900e9499d5f0cdd85ffd3e9a433febbbd9dcffcfa370333fdc12bc54aa618"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-ui-brand-official-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-ui-brand-official",
+    "version": "0.1.3-alpha.1",
+    "sha256": "644e4904b68242e005bbd06d8be21d1ce4cc7230fdd818b19982f7a71f3dc7f8"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-ui-chat-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-ui-chat",
+    "version": "0.1.3-alpha.1",
+    "sha256": "8f68da2f858178ee022e8371bf3362d5dcf88ccd17f994769149f33047f39d84"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-ui-commands-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-ui-commands",
+    "version": "0.1.3-alpha.1",
+    "sha256": "153cac3e8f23ff6092024e10882781b45f9313dcadf137154aa9d65095a57972"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-ui-conversation-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-ui-conversation",
+    "version": "0.1.3-alpha.1",
+    "sha256": "d21d4c09c60b9db167c2c9ad16ed1459b13dbc421f4a0839a93782974b35bb1d"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-ui-cordis-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-ui-cordis",
+    "version": "0.1.3-alpha.1",
+    "sha256": "0cd96093dbd6e958eb9e535ef1954c2c1b10b01a35189e03393be04a7dcfe511"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-ui-deliverables-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-ui-deliverables",
+    "version": "0.1.3-alpha.1",
+    "sha256": "87a7bbedaf8ed578f0f6af831ff8be54e041795c6944ed2aadcb8c0b5404a55f"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-ui-directory-picker-browse-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-ui-directory-picker-browse",
+    "version": "0.1.3-alpha.1",
+    "sha256": "d5ce4132f2aa2d35b6d957d4bb69cab2966d384212f5ead8268d81a487e8260b"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-ui-directory-picker-native-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-ui-directory-picker-native",
+    "version": "0.1.3-alpha.1",
+    "sha256": "6cdb8b828741113379b66ca10e9d2a60f5b513dfcca46a2ab234f03562d0a2a0"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-ui-goal-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-ui-goal",
+    "version": "0.1.3-alpha.1",
+    "sha256": "e7d202c581cdb87a5c1ea0658a2f0d8f819af9c5052b48a7dbec37e49e3b43d6"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-ui-input-trigger-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-ui-input-trigger",
+    "version": "0.1.3-alpha.1",
+    "sha256": "37ab35d07f4b29a52a6df7ea4a015a0e8c7d3fe885a32bc5e05a2604149b14c0"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-ui-jobs-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-ui-jobs",
+    "version": "0.1.3-alpha.1",
+    "sha256": "c9570d357965683f57526778f1136d3b21f9fe7b749f65bd0edb98e5246c54c8"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-ui-layout-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-ui-layout",
+    "version": "0.1.3-alpha.1",
+    "sha256": "494420dbd4c5b184efd14e0798bc826a7f31647df56fe936de2ea0d9f14ff6c9"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-ui-message-feedback-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-ui-message-feedback",
+    "version": "0.1.3-alpha.1",
+    "sha256": "a9def253c4b1421b1acc82c1ae6d49a9c703e877a0d25cf9952e3f36217b24ca"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-ui-model-selection-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-ui-model-selection",
+    "version": "0.1.3-alpha.1",
+    "sha256": "f37e6f64370ca9346b2327eab5d8073e44bb468305965ddc0de2b6bd3eb8344c"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-ui-permission-presets-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-ui-permission-presets",
+    "version": "0.1.3-alpha.1",
+    "sha256": "436c6b980aae263e0a6149c5560f5ff5d9f65a3c0c15e7bb8629435ad0f5e312"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-ui-plan-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-ui-plan",
+    "version": "0.1.3-alpha.1",
+    "sha256": "3701a6dccf33136d347370a7469688825a83900b4f23a475677a95f30757af48"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-ui-primitives-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-ui-primitives",
+    "version": "0.1.3-alpha.1",
+    "sha256": "5adf9be886d258076bd5262b2aa3a4f41c4c1e9ed29ef6f0d63f4d82cedcd344"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-ui-reference-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-ui-reference",
+    "version": "0.1.3-alpha.1",
+    "sha256": "ff219402fbad5f850de682cbed7eafc9d1ee0c7be587e0028787c2acc68e76ce"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-ui-renderer-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-ui-renderer",
+    "version": "0.1.3-alpha.1",
+    "sha256": "a0a4b5cb39475c73522f5f57a76b9ac341d58225eceffc32f0f1f18f6c6af83b"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-ui-schedule-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-ui-schedule",
+    "version": "0.1.3-alpha.1",
+    "sha256": "45c3ee4287f9dfc2063075a9a6d2803b03f731cdf4b76c7a961073e8c1c5b4df"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-ui-session-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-ui-session",
+    "version": "0.1.3-alpha.1",
+    "sha256": "ff57e2a583f0f81ba214aade22d9d0af19ee8555939916aa38372bb5340e3894"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-ui-settings-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-ui-settings",
+    "version": "0.1.3-alpha.1",
+    "sha256": "223dc15dbddde4d333e4f241b5627e96bff223baa99340f11c8a86465e716d14"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-ui-settings-general-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-ui-settings-general",
+    "version": "0.1.3-alpha.1",
+    "sha256": "f353282b0fdfe77a5a1a3c3228d01648f705d5a523506e3569dc9b50209ea8d2"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-ui-settings-models-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-ui-settings-models",
+    "version": "0.1.3-alpha.1",
+    "sha256": "e1e4db98ee5019125ccd8de594ffeb218d1b93417071152b03263b697102e20d"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-ui-settings-plugin-inventory-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-ui-settings-plugin-inventory",
+    "version": "0.1.3-alpha.1",
+    "sha256": "9c93a171faef78b389fe030c06ed6ea726925cfc9a3511816715782ecb8d95ba"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-ui-settings-plugins-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-ui-settings-plugins",
+    "version": "0.1.3-alpha.1",
+    "sha256": "dc8c87e0b719024f74bc5e1f1a645f851d4cf4cde7c8abfb0be8c3a5998f71b1"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-ui-sidebar-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-ui-sidebar",
+    "version": "0.1.3-alpha.1",
+    "sha256": "a4e0de23e130dee472c1b68bb08dd6ea1d5df9a085887559dfe651d4e2077938"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-ui-skill-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-ui-skill",
+    "version": "0.1.3-alpha.1",
+    "sha256": "4673b81e02ff42288c456ea17a966e2d59b20ea0ecf8bfd2ef78aee2a8fc3a3b"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-ui-slots-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-ui-slots",
+    "version": "0.1.3-alpha.1",
+    "sha256": "3f60f122132905bb852ea214f3a58414f056e8250e38f689e12bb98bba9f572a"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-ui-subagent-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-ui-subagent",
+    "version": "0.1.3-alpha.1",
+    "sha256": "9b16bc0eb990cdd5e3ae1a49f295fd6d6cdf40e488221f517fb05fdfbe1773e7"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-ui-theme-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-ui-theme",
+    "version": "0.1.3-alpha.1",
+    "sha256": "cbb42dd63e6298284392c73a4aebbab1d8862728f944224bb20f53d8ea7b927d"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-ui-tool-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-ui-tool",
+    "version": "0.1.3-alpha.1",
+    "sha256": "8efc9fba5a5db5583a1a0c55dfa8adc35928f7787988c09fc420741d97e26b9d"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-ui-trajectory-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-ui-trajectory",
+    "version": "0.1.3-alpha.1",
+    "sha256": "dcd6cfd31744b9cb538ee6d85c7e763ce0b894b85c1a722b8754c994c51611fe"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-ui-user-questions-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-ui-user-questions",
+    "version": "0.1.3-alpha.1",
+    "sha256": "ee78c58a7d8c3e16b5734e8e69b5de9051a37d494732417c064e1deedbfd97a2"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-ui-workflow-run-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-ui-workflow-run",
+    "version": "0.1.3-alpha.1",
+    "sha256": "576c6eb527ff2b1300a977d47aee90c88ad819a81ec686a9e098448b3b23f7b0"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-ui-workspace-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-ui-workspace",
+    "version": "0.1.3-alpha.1",
+    "sha256": "7688d421baa3564c350ed0d4dfbf044718d0f9a30dcc300883ee30eb7ae578e9"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-client-web-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-client-web",
+    "version": "0.1.3-alpha.1",
+    "sha256": "d6b66dd0156fffd6180f08c42f8d2356a1614ace520d049c9c151085633fb117"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-cmdline-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-cmdline",
+    "version": "0.1.3-alpha.1",
+    "sha256": "11f585f248be6ccab6fea5b5811c15a777c42472ae5b2d33c5defdee3e3e08cc"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-code-runtime-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-code-runtime",
+    "version": "0.1.3-alpha.1",
+    "sha256": "aed84c9a861c263449456c954db79be93576efcda9e930be8db92d208955d5b1"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-code-runtime-worker-thread-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-code-runtime-worker-thread",
+    "version": "0.1.3-alpha.1",
+    "sha256": "31af6f1f0ea488cd3e2b5836954e725f22e84a45ea2172097f798c32119f1c76"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-command-compact-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-command-compact",
+    "version": "0.1.3-alpha.1",
+    "sha256": "f1432900da1b251f0b2fb2f9d6e75319c8214fe21badb846b4fd21d2e5422361"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-command-feedback-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-command-feedback",
+    "version": "0.1.3-alpha.1",
+    "sha256": "3ebf522a39debd8d70f0e9e99ed0a56e0a167545bc101ba7cb3a7409acf99ba7"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-command-goal-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-command-goal",
+    "version": "0.1.3-alpha.1",
+    "sha256": "bb761bc52d6475d54d978f05cda8f9c7dbb9c7e952d20688b6322b13e1e67346"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-commands-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-commands",
+    "version": "0.1.3-alpha.1",
+    "sha256": "2896a701081f3c34f41e51acea0d7a5b4cbb75fefdd12f69cbd05b08b301860a"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-compaction-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-compaction",
+    "version": "0.1.3-alpha.1",
+    "sha256": "9fa0cd21137328868f112ffc1923c2b23ecfc62e13efebc9cfbf88915e04fc77"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-compaction-basic-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-compaction-basic",
+    "version": "0.1.3-alpha.1",
+    "sha256": "c689cb8bb4e0937cabfbecd3c84236e4168235ca2405d4f786ee47d4239e7dca"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-compaction-tool-result-pruner-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-compaction-tool-result-pruner",
+    "version": "0.1.3-alpha.1",
+    "sha256": "14c3cd2f19687c8f40d6fe6f272f70fa7df6f2a90db55fc4d2074682ede75e04"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-cordis-client-runner-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-cordis-client-runner",
+    "version": "0.1.3-alpha.1",
+    "sha256": "ea30dbfe420b0ddf55aa743fb4f64197d462f6cc804f1996d28f792427813f4d"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-cordis-host-runner-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-cordis-host-runner",
+    "version": "0.1.3-alpha.1",
+    "sha256": "78dcb607f5dc86d70062fcffc11c6d8674cb24bd52272f66ffa06c9ceebbb928"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-credentials-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-credentials",
+    "version": "0.1.3-alpha.1",
+    "sha256": "204731e382ab2d9b712e9e20fcaf82d31d36f91e38728d1403f4909997be4906"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-credentials-local-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-credentials-local",
+    "version": "0.1.3-alpha.1",
+    "sha256": "012be07a8aeb4bb1eaba56a21360703e897ca2c04e8078ebcf1f5f976dd94579"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-deepseek-llm-api-extensions-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-deepseek-llm-api-extensions",
+    "version": "0.1.3-alpha.1",
+    "sha256": "a6d7ec7be5d6094ae60304ed1ec29026e047e609d6bdb264cb3e0711116e56c0"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-deque-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-deque",
+    "version": "0.1.3-alpha.1",
+    "sha256": "18519c151aa97d7eff32d1f6533c7d49eb31acb0f94182e086192633fa013685"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-e2b-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-e2b",
+    "version": "0.1.3-alpha.1",
+    "sha256": "1f52596a1b124697b7da25ff94a91914124080d0f87b98c7268208170f97ab40"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-file-reference-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-file-reference",
+    "version": "0.1.3-alpha.1",
+    "sha256": "510d1ab4e6383d9d4435c027a59b1d7db4e1035948da178d9d9e153515573f2c"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-file-reference-local-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-file-reference-local",
+    "version": "0.1.3-alpha.1",
+    "sha256": "030de3e5c6c877cf5737d0b1aad813e683ba240c864c5aa28da1f5439ec8c77a"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-fs-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-fs",
+    "version": "0.1.3-alpha.1",
+    "sha256": "2162ebc584448c2ce21628be1d6ed2acb0218c02575ba220ae981c7c0b79d45a"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-fs-e2b-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-fs-e2b",
+    "version": "0.1.3-alpha.1",
+    "sha256": "06b1ab7801dcd5d08b6e40c52278401971b893bcc0a31755c21e4a43f4fd185d"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-fs-local-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-fs-local",
+    "version": "0.1.3-alpha.1",
+    "sha256": "45e95bfd23d347dcc5e8a87a576808207136960f370ff5d692b4c1d1185d52e2"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-fs-observation-policy-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-fs-observation-policy",
+    "version": "0.1.3-alpha.1",
+    "sha256": "8f63285b37bdf66ecce136251a8d44892ea759ab277b623c1e90549a2b2c333e"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-fs-sandbox-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-fs-sandbox",
+    "version": "0.1.3-alpha.1",
+    "sha256": "beb5047f60708accd50ed38430e9986da3f995a990a33da5f537e51ae532512b"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-goal-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-goal",
+    "version": "0.1.3-alpha.1",
+    "sha256": "4f857753635dd8b9b695f58c9cd55da473a0105189fd19026044a0b123b32121"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-goal-round-driver-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-goal-round-driver",
+    "version": "0.1.3-alpha.1",
+    "sha256": "f6be91dd954daf3bc6954f6d491c12d9bfc70bda5938cf7b2134315d559f5bde"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-headless-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-headless",
+    "version": "0.1.3-alpha.1",
+    "sha256": "fd44486c6ec74b9c24e8cb16930a188c0ef37350602e617c22edd573afa5daed"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-home-paths-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-home-paths",
+    "version": "0.1.3-alpha.1",
+    "sha256": "9b9595ad013c6729714ea22a95e311598c3ea6ca1b90d82784271e528d773218"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-hook-protocol-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-hook-protocol",
+    "version": "0.1.3-alpha.1",
+    "sha256": "769640ddbbf5280a5a19d0ccff2ddbb1d18fb32400f2c876d73cb4d811bf8387"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-hooks-claude-code-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-hooks-claude-code",
+    "version": "0.1.3-alpha.1",
+    "sha256": "b183012d2b3e9a77d14ad1970373f9360da89ce6803c6d809211923341172f80"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-hooks-codex-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-hooks-codex",
+    "version": "0.1.3-alpha.1",
+    "sha256": "2a304a68793af115f7493fb42b449a370fde15331c8b4328a6db3bd57f889a05"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-host-directory-picker-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-host-directory-picker",
+    "version": "0.1.3-alpha.1",
+    "sha256": "f3506bc6cab1360f86bcb714ed277fc7de61ecee8a662fe41472843242ad1472"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-host-directory-picker-auto-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-host-directory-picker-auto",
+    "version": "0.1.3-alpha.1",
+    "sha256": "64afc1ee21961f409b56d69749869a041409d52057ea204a5f8a11ddb75ef08d"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-host-directory-picker-browse-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-host-directory-picker-browse",
+    "version": "0.1.3-alpha.1",
+    "sha256": "5752e196c06a371bdeecb55002bdb89e13da4c16276f1e699726a47dcc92a62c"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-host-directory-picker-native-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-host-directory-picker-native",
+    "version": "0.1.3-alpha.1",
+    "sha256": "df523f56d9d95241a99eb4bc347a10d69a424de2e5dc18575214d8644d340456"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-host-frontend-static-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-host-frontend-static",
+    "version": "0.1.3-alpha.1",
+    "sha256": "acc392a157f7fdcfcc955895fd143f16e1788f4c8defed62344eab8724bb424a"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-host-plugin-inventory-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-host-plugin-inventory",
+    "version": "0.1.3-alpha.1",
+    "sha256": "7ecda0e31d056dec87a390c2e7a6ee609acda6b8696daf4c56750fc8520c8ae3"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-host-webserver-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-host-webserver",
+    "version": "0.1.3-alpha.1",
+    "sha256": "e9e5ff2456bab40eb33841e4d9c89eb5635a3e19fa36c9fc55aa7bf45e306681"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-http-proxy-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-http-proxy",
+    "version": "0.1.3-alpha.1",
+    "sha256": "ba3cafc559411fc88e8f9aaa504d6ecc22f390384d84e52490210418fa021e9e"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-invariants-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-invariants",
+    "version": "0.1.3-alpha.1",
+    "sha256": "c36ed37430946180ce20dbbaeebc2962b85f89d7664133ee038dfe54559bdc6a"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-jobs-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-jobs",
+    "version": "0.1.3-alpha.1",
+    "sha256": "8a65c318003b13edd11aac6ea0456384b8cf117084625a3219753906af5d266a"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-jobs-local-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-jobs-local",
+    "version": "0.1.3-alpha.1",
+    "sha256": "87dad1d681fc5cfa63c7ae3591f178bac5b1f5c048b2f0785daa4a8bdf9b5142"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-launch-environment-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-launch-environment",
+    "version": "0.1.3-alpha.1",
+    "sha256": "c95ac1ef48fec2dc2c11cf899f59438d0b4abb866ac057adb9275ce0356d1077"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-llm-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-llm",
+    "version": "0.1.3-alpha.1",
+    "sha256": "0386240ecff65de246fbb9fc0c32213e706cd918b13db2b12612d97db9554652"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-llm-deepseek-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-llm-deepseek",
+    "version": "0.1.3-alpha.1",
+    "sha256": "d0eb06000a67233fbf8c7bfc4589b116380cad9e810054ef9f3616f3556ccb34"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-llm-mock-server-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-llm-mock-server",
+    "version": "0.1.3-alpha.1",
+    "sha256": "59e6904df5f7ad44236c1837af02b929caf695d755071a26a5b7eaf5893ed0a3"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-llm-pi-ai-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-llm-pi-ai",
+    "version": "0.1.3-alpha.1",
+    "sha256": "ec6fca62212bdeabec05124eae64075ea91e7f0efa5fb9247927f75115e884ce"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-llm-replay-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-llm-replay",
+    "version": "0.1.3-alpha.1",
+    "sha256": "d59daa56b260afb889d76b462efc70eabd2dd0f6ad828a9517163ad2c66f3655"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-llm-retry-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-llm-retry",
+    "version": "0.1.3-alpha.1",
+    "sha256": "5d03aaf9e9235e39bfb291775b7af5942475ac778b4f7c21c6a5aba346b0572a"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-loader-smoke-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-loader-smoke",
+    "version": "0.1.3-alpha.1",
+    "sha256": "3f4e2f3c43ff26b967ca8f6483771777c98ecbb339ee6a39e7bf82308acfdc4a"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-lsp-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-lsp",
+    "version": "0.1.3-alpha.1",
+    "sha256": "a11e2533b7083bc1a8e70aa1795e8ed1bb60da5ae2bfe4b8399a04a64ac1160e"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-lsp-stdio-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-lsp-stdio",
+    "version": "0.1.3-alpha.1",
+    "sha256": "1985a5b7b98446daebee63e6afce642e941501878fa1e65b1bcfbeb52692de15"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-mcp-client-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-mcp-client",
+    "version": "0.1.3-alpha.1",
+    "sha256": "cffd28a7b8cb57bfcd034af30641a8029fc2e619498c7651637bd86829714916"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-message-feedback-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-message-feedback",
+    "version": "0.1.3-alpha.1",
+    "sha256": "513912cb38f25650668143c5aab7ccb30e12ac70e6fa3437f4ad356ed91bf1b8"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-native-command-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-native-command",
+    "version": "0.1.3-alpha.1",
+    "sha256": "4f0622109d51a7d646c181b66a4623f3409f08db481f47b2e058f9a69b3aa069"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-output-retention-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-output-retention",
+    "version": "0.1.3-alpha.1",
+    "sha256": "9fc5a2ac3e27b15d3a857ffcccb2e83ab0c32da3b46f3015e136dd7f70653adf"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-permission-presets-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-permission-presets",
+    "version": "0.1.3-alpha.1",
+    "sha256": "a5d9b262bb4e1b561e0a7205239229a7e07557dadd09ddbeebd06caeb0744c75"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-persona-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-persona",
+    "version": "0.1.3-alpha.1",
+    "sha256": "f7f2afdae6eb0c5783e76bffc73a2c277f85d2b72a1692c330664d75eff5194a"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-plan-mode-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-plan-mode",
+    "version": "0.1.3-alpha.1",
+    "sha256": "9bf525a383bed1ea5cfbc5c48441852e83844b3d7a96eec3a011a6d380d1180f"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-plugin-package-inventory-deepseek-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-plugin-package-inventory-deepseek",
+    "version": "0.1.3-alpha.1",
+    "sha256": "cf1356d5df03dbb637ac5144507094292ac47f449da71b9a0c15363031792e2e"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-pwsh-local-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-pwsh-local",
+    "version": "0.1.3-alpha.1",
+    "sha256": "d90319c94a32f577611e1b968b7ab2e6d59830c8b8d8c35fd2731fc1937830fa"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-pwsh-sandbox-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-pwsh-sandbox",
+    "version": "0.1.3-alpha.1",
+    "sha256": "5e32b592db40841eec3647b004d51c9c513b913c20cbb11b6e9687d795eee854"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-repeat-tool-reminder-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-repeat-tool-reminder",
+    "version": "0.1.3-alpha.1",
+    "sha256": "13c0b8fd0e60547de413d1696ab1afe5f1adf2aeb0d02ae5283927ec4b8dd9ca"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-sandbox-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-sandbox",
+    "version": "0.1.3-alpha.1",
+    "sha256": "44b089f73f8f86df0ffe0004244bf3cdfed4b890b8fbbbd43af45e44e9298af2"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-sandbox-local-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-sandbox-local",
+    "version": "0.1.3-alpha.1",
+    "sha256": "45b86b19eda1c947aa628d53316f0e2534c46339629b9e73fc8b20106cfab0cf"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-sandbox-policy-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-sandbox-policy",
+    "version": "0.1.3-alpha.1",
+    "sha256": "8d9315deac15c207334a0e5cf9cd7715782bd19a14ad82584de0928c634aca02"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-sandbox-windows-acl-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-sandbox-windows-acl",
+    "version": "0.1.3-alpha.1",
+    "sha256": "ce9345d0711f23d943ca32bc9a9d45de0a3bf96c6e8ed8b850ef72c37dadf44c"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-schedule-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-schedule",
+    "version": "0.1.3-alpha.1",
+    "sha256": "bd20ddca5a4b327171dcc877de9e2ef902715687097740316e9dff380d142d56"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-scope-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-scope",
+    "version": "0.1.3-alpha.1",
+    "sha256": "48d3bb7864d15a48c2c0dba4e7096b2d844078f4e2e70138d6d94a93e0e3d845"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-sdk-app-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-sdk-app",
+    "version": "0.1.3-alpha.1",
+    "sha256": "023c65878298bd531d363a608f586a49b2e6b4003b4e839e8186bab6b8bd0d8b"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-sdk-client-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-sdk-client",
+    "version": "0.1.3-alpha.1",
+    "sha256": "81f28f73b0c74f6ce090aa0062e03faff6cc806b13b257e81936969ffdf3de2e"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-sdk-jsonrpc-server-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-sdk-jsonrpc-server",
+    "version": "0.1.3-alpha.1",
+    "sha256": "7bbe1c61c8ee4dbc754655e42ce2a1db2d7605c37d86cddd6f1fb44ac90d4b4f"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-sdk-minimal-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-sdk-minimal",
+    "version": "0.1.3-alpha.1",
+    "sha256": "e20e4c1784d9e09fdcd7fca21827a0b4b7c8fd7b6cdadb62cb443149dba3e82f"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-sdk-protocol-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-sdk-protocol",
+    "version": "0.1.3-alpha.1",
+    "sha256": "d3d7a4a2203bffc78c6272897544edb6ffc065d35bca2a3929e8198ffa65a6d9"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-session-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-session",
+    "version": "0.1.3-alpha.1",
+    "sha256": "a4bd4effc0aa71ba8b9ec6f68c0df08371e1182198fe6de3b931592b64af0160"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-session-checkpoint-policy-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-session-checkpoint-policy",
+    "version": "0.1.3-alpha.1",
+    "sha256": "521f408cdb1de1204bfbba4d0bc795d6f7ec7defa6f947aa3b2dabab17760d3a"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-session-format-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-session-format",
+    "version": "0.1.3-alpha.1",
+    "sha256": "855828f0fb5af5a8ca0e02024c5f6dd216aa6da253221060c910e4f8647ebc24"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-session-format-catalog-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-session-format-catalog",
+    "version": "0.1.3-alpha.1",
+    "sha256": "97a19d9a5d009ccdb098ff255ae074fffd2dba79ae3a82d8352a4064623cfb3b"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-session-format-v0-to-v1-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-session-format-v0-to-v1",
+    "version": "0.1.3-alpha.1",
+    "sha256": "d2806721ac9389711a396b21f9a282e6b1b9b2da264ef775a2d8b944f323e31f"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-session-format-v1-to-v2-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-session-format-v1-to-v2",
+    "version": "0.1.3-alpha.1",
+    "sha256": "eb54da67aa16ed4241524f5bc1e5b6b69a62b3c848e19dc6d9aeecb2d5c0b808"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-session-log-deepseek-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-session-log-deepseek",
+    "version": "0.1.3-alpha.1",
+    "sha256": "78349edb76ba867bf035b7d902f6da6f30ba76e60a3c77796b37a393dd24d348"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-session-log-export-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-session-log-export",
+    "version": "0.1.3-alpha.1",
+    "sha256": "9d3b5d723b94a3fdb51f1d3f4f8952e62868a9106cd56acf68c7e0107cc2be04"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-session-persistence-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-session-persistence",
+    "version": "0.1.3-alpha.1",
+    "sha256": "fa5afeab4ddece6174a82e1f61a4c0ae04466b6507f039ee1e7df78ed3cb57cf"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-session-persistence-jsonl-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-session-persistence-jsonl",
+    "version": "0.1.3-alpha.1",
+    "sha256": "70846125b69c50f190336cdc8abc3e3bc7a4e02523ad46754bc9e0f9dc63f481"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-session-projection-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-session-projection",
+    "version": "0.1.3-alpha.1",
+    "sha256": "2c42a55b6070aee40a7fa6d7acbd04d54f072a497d4b0f8b2ba91f182c6cca63"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-session-projection-cache-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-session-projection-cache",
+    "version": "0.1.3-alpha.1",
+    "sha256": "323c9f55cc71e7f5d2551b3b3f45dcca586c10d5a87fe9187699015ffc2b0674"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-session-query-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-session-query",
+    "version": "0.1.3-alpha.1",
+    "sha256": "ddbc1f52b4fd0f08aeb8c01e3e57612dd5892d43f49a466e4f05b21ed0cf3665"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-session-query-sqlite-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-session-query-sqlite",
+    "version": "0.1.3-alpha.1",
+    "sha256": "b51a7b243b51324efe7b07e64d6c0b3a5ee397d35b5cb2c0a9c672ea14541b31"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-session-reference-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-session-reference",
+    "version": "0.1.3-alpha.1",
+    "sha256": "dc367de4293a2792c0eaba30c21fa7ca483edad66d62f8d882c20eaec77b0cc1"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-session-snapshot-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-session-snapshot",
+    "version": "0.1.3-alpha.1",
+    "sha256": "a2b60fbd9646f43a240986c75d27bc7bbea9741c9ab9fc5dc60d53f02f9a69d1"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-session-stats-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-session-stats",
+    "version": "0.1.3-alpha.1",
+    "sha256": "e88667ba98378d8a6199b08f4c065c05b68b0f625aa6a708f4c2f44e21a168b0"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-session-telemetry-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-session-telemetry",
+    "version": "0.1.3-alpha.1",
+    "sha256": "ff39f6e1d08ba5e3ddf64a499f53a7f4818eb46d8157ff6ef350c533aad8526b"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-session-telemetry-otel-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-session-telemetry-otel",
+    "version": "0.1.3-alpha.1",
+    "sha256": "d3801fc00323ce5348d12d08464c9c5d4e2d0402466a23312843354485e5fb0f"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-session-title-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-session-title",
+    "version": "0.1.3-alpha.1",
+    "sha256": "9f2f2306b689a2ed6156efe5b1e504cc4455886b6dbabb40cee72e759482fc57"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-session-title-all-prompts-llm-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-session-title-all-prompts-llm",
+    "version": "0.1.3-alpha.1",
+    "sha256": "369f868996ae02f39ac0f4f9705778df69042e954edbfa343cfd5293200d9bb1"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-session-title-first-prompt-llm-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-session-title-first-prompt-llm",
+    "version": "0.1.3-alpha.1",
+    "sha256": "189608091d38445f97c07fca3f54b242c969878da8060ef11e19b9a75377de93"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-session-title-llm-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-session-title-llm",
+    "version": "0.1.3-alpha.1",
+    "sha256": "8b6ef54f2dfbb35dc62fbe3dd981774b2047c68c180ce345b76301a4d6109023"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-session-turn-outline-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-session-turn-outline",
+    "version": "0.1.3-alpha.1",
+    "sha256": "616388a2dbdd98cea1ab47a712632cc6ea4f2fe19db9f09d93ea642fed0b6d25"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-settings-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-settings",
+    "version": "0.1.3-alpha.1",
+    "sha256": "e8b0afc3e1bd19f52e9327ee238828a045a91505b335f0138a468e53204d803a"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-settings-file-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-settings-file",
+    "version": "0.1.3-alpha.1",
+    "sha256": "748771a46a755d610650090f0c5612a4a7637f41387f6788730197eb4b2a421d"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-shell-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-shell",
+    "version": "0.1.3-alpha.1",
+    "sha256": "a380fc24e7999c1bbb0e9df5efae2a52796c09a172f486142ce8a33b39307559"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-shell-env-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-shell-env",
+    "version": "0.1.3-alpha.1",
+    "sha256": "2f1d09d5d61003962073840a4a01cf8a7ad4f41bfcb37ef05ceda97c6268ae91"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-skill-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-skill",
+    "version": "0.1.3-alpha.1",
+    "sha256": "3805097fc1ad3d922c55563e066e7078cca5252fb68ab3052f7af3af08de093b"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-skill-badge-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-skill-badge",
+    "version": "0.1.3-alpha.1",
+    "sha256": "8378c99bbf95f5765b12ab2fc2094aee0f7a6f12dea9b3c344e0b8b9ec86cb06"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-skill-filesystem-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-skill-filesystem",
+    "version": "0.1.3-alpha.1",
+    "sha256": "dab56836ccda3ee2d70c258a7866f210ef3c9d201e101435f3e8c0f6416826c9"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-spill-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-spill",
+    "version": "0.1.3-alpha.1",
+    "sha256": "634a87803caf2c2da91bae6515acdbb2d2c85f52ee5abca7650a43d3182cdece"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-spill-local-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-spill-local",
+    "version": "0.1.3-alpha.1",
+    "sha256": "805a8b27f98d09b7e541388310807a6103c68f7ba8e8f28a8792478847bc07ec"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-spill-policy-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-spill-policy",
+    "version": "0.1.3-alpha.1",
+    "sha256": "07f8c7086415b023e4d89f2681c034d8f0b9dbf06e08b1b5046c1a6415d025c5"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-storage-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-storage",
+    "version": "0.1.3-alpha.1",
+    "sha256": "b80692c6256f6954ab9d693d188c57e878c90401b91c98b2215c76d7f277d373"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-storage-domain-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-storage-domain",
+    "version": "0.1.3-alpha.1",
+    "sha256": "3aac26431940c351109cfefbe3e1c4b13182135d5bd907bd7a6e3df314b3ac87"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-storage-json-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-storage-json",
+    "version": "0.1.3-alpha.1",
+    "sha256": "e55415d79cdec2696965e1c59c3ca9c2040158295067a30bc8aebbf6dd91c286"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-storage-sqlite-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-storage-sqlite",
+    "version": "0.1.3-alpha.1",
+    "sha256": "8015540ddd5fa990031ba21435e6ecc7849c425bc052c20d8a4e14e71619473d"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-subagent-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-subagent",
+    "version": "0.1.3-alpha.1",
+    "sha256": "6f671d807711fc42c6ba8a492a8c912f695e811eef58b2c097ff7b201cb68c62"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-subagent-acp-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-subagent-acp",
+    "version": "0.1.3-alpha.1",
+    "sha256": "c5ce7a4ec201d02278f5e95e4ce7fda6e26d6105e7fc76fd66261944a6e58a8a"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-subagent-claude-code-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-subagent-claude-code",
+    "version": "0.1.3-alpha.1",
+    "sha256": "6a78722366dd5d3b56084c213065252a798dcde5fab8997a7723f9de39303cec"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-subagent-codex-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-subagent-codex",
+    "version": "0.1.3-alpha.1",
+    "sha256": "bc425c0d50d2b067931157cb14f8299a10ce1a1bdee6273aba6da8ea50f6b2a1"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-subagent-dsh-sdk-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-subagent-dsh-sdk",
+    "version": "0.1.3-alpha.1",
+    "sha256": "3059ff4501a3e2e8f790c9bc55fbe97bdc7ece8c02ff850ec6ec888b36136d3d"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-subagent-fork-in-process-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-subagent-fork-in-process",
+    "version": "0.1.3-alpha.1",
+    "sha256": "49941343b84633ea6bf6dfe40f8659bd2b7f54927dfdb11bb6b35f53ded6cf00"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-subagent-in-process-driver-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-subagent-in-process-driver",
+    "version": "0.1.3-alpha.1",
+    "sha256": "dc8a2b50811143c3f9a18b10f881f0d24d27e7fed68d2848c3a72d5f392e7586"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-subagent-spawn-in-process-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-subagent-spawn-in-process",
+    "version": "0.1.3-alpha.1",
+    "sha256": "c822b5091962fccc8dcaea37fb6c5bf03212de8fede2632e902d3da34f791382"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-subprocess-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-subprocess",
+    "version": "0.1.3-alpha.1",
+    "sha256": "481488dd17c6895f81e2209772273d5490046af588b583db670d54a8e1bae462"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-subprocess-e2b-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-subprocess-e2b",
+    "version": "0.1.3-alpha.1",
+    "sha256": "c2a76c3549b116842a84a9bbca584420496aeba3e3273130587f98a1162f82b5"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-subprocess-local-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-subprocess-local",
+    "version": "0.1.3-alpha.1",
+    "sha256": "dc0dc32c3ced10eb1c956d35f85b0b23f119f3936505c219ed01d2ec98baf0dd"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-system-prompt-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-system-prompt",
+    "version": "0.1.3-alpha.1",
+    "sha256": "e424a672d5fbd6174e51ffffe233d644f71c6548a0f917baccad46adfb9a7011"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-terminal-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-terminal",
+    "version": "0.1.3-alpha.1",
+    "sha256": "f3b93721db29400df51f9574ad59cc537ab037578fc5ac11f1890af2b61eec48"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-terminal-bash-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-terminal-bash",
+    "version": "0.1.3-alpha.1",
+    "sha256": "24a8dcb24961e6839fe04ec5cef9179278f76edb8113624917f1e213d396e306"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-time-context-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-time-context",
+    "version": "0.1.3-alpha.1",
+    "sha256": "3206710bf20c9c3567ee137c2118cd38fc1d7bc11958e08cdf9993fcd950581b"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-timeout-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-timeout",
+    "version": "0.1.3-alpha.1",
+    "sha256": "cda2110672899157f15043db826d0140d53c302243e3f0f2bc695966daf08a8c"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-tmux-context-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-tmux-context",
+    "version": "0.1.3-alpha.1",
+    "sha256": "b5c80a17d6e831dd42c1fa1ffd976ba4c89460ae53e1c00a8fe68f54f903de0b"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-token-meter-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-token-meter",
+    "version": "0.1.3-alpha.1",
+    "sha256": "02ff1594f1b08e46d6e6afbb390502a3969200820b4ffa0374de7664407d14da"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-tool-ask-user-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-tool-ask-user",
+    "version": "0.1.3-alpha.1",
+    "sha256": "0980a0ebbf6ac6293af2837f004e123e013a9f66e96dd56e6da5cdc22df68ee8"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-tool-bash-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-tool-bash",
+    "version": "0.1.3-alpha.1",
+    "sha256": "9e5b924c710b06e4e19ca4bbaffdd597a4481bbb5b2ee2516c7a7b3bde7c182e"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-tool-bash-persistent-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-tool-bash-persistent",
+    "version": "0.1.3-alpha.1",
+    "sha256": "2a153a972a373bee78037ef4957cc26c9a8e543397667e0ba6c7bce9db00e8fd"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-tool-call-timeout-policy-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-tool-call-timeout-policy",
+    "version": "0.1.3-alpha.1",
+    "sha256": "f4cf71a2c589f8181b698fb0ef94f530282baabe28f22081be9e9f0a408cbd9c"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-tool-cordis-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-tool-cordis",
+    "version": "0.1.3-alpha.1",
+    "sha256": "b87118302ae7b1ccf34167ae68355f09eeeb0d4e4b8ba32bcb4aa3e2a076e60a"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-tool-fs-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-tool-fs",
+    "version": "0.1.3-alpha.1",
+    "sha256": "d7a6142a2876040435b7c973826dd4b9d9b92a20767483263cc015c2d68727ec"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-tool-fs-search-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-tool-fs-search",
+    "version": "0.1.3-alpha.1",
+    "sha256": "0188a9e764f22de7bd43e809dc3af5df4017f99d4d6ec941648ed472238cb2d3"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-tool-goal-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-tool-goal",
+    "version": "0.1.3-alpha.1",
+    "sha256": "a2fff60eaa86eb399c739244f6f2581e5e86be429d092930d1dbc78c777d2f3a"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-tool-jobs-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-tool-jobs",
+    "version": "0.1.3-alpha.1",
+    "sha256": "4219b9cd52a2b6eae25eb33040d0a01644b70096f74c6419853732a1a9113a2e"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-tool-lsp-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-tool-lsp",
+    "version": "0.1.3-alpha.1",
+    "sha256": "eca08ebeaa37e38e3ed32c1e7403725da428bf9487f3c3a7f4825be1816cbc9d"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-tool-pwsh-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-tool-pwsh",
+    "version": "0.1.3-alpha.1",
+    "sha256": "a5ec2286de6c0ee2111c9bca1e26db5ac5c315c7a4340e09a543dfc7c4a73a3f"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-tool-pwsh-persistent-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-tool-pwsh-persistent",
+    "version": "0.1.3-alpha.1",
+    "sha256": "f21ccb9e4734d38ced47a858890358c6aebe487b64f0c1722261998e46b5a257"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-tool-ralph-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-tool-ralph",
+    "version": "0.1.3-alpha.1",
+    "sha256": "6499eb1fea939c1cd1602ac980a35542084aba72ae66f23eedc0023dab1744cb"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-tool-session-query-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-tool-session-query",
+    "version": "0.1.3-alpha.1",
+    "sha256": "5146a9684d43a10bd85fa7c7603229bc3b9ae0ed6caa069662b6506b16210cb6"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-tool-skill-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-tool-skill",
+    "version": "0.1.3-alpha.1",
+    "sha256": "08260a5a3ed9d622d3022143c6c10dc90667f71198ce0222685a5b2df14ccfc0"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-tool-str-replace-editor-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-tool-str-replace-editor",
+    "version": "0.1.3-alpha.1",
+    "sha256": "c55fa85f0f47d7dac1d9a1ef90387d6f9dc315cd553e49e255e67b394ccb4afe"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-tool-subagent-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-tool-subagent",
+    "version": "0.1.3-alpha.1",
+    "sha256": "32f096b2fdef502d4129c78db4f6c85490071073cab8bd9dcd227edd9f23e443"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-tool-subagent-control-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-tool-subagent-control",
+    "version": "0.1.3-alpha.1",
+    "sha256": "99f21a19daff0d90f562384b0f9a64d078cad6edbceff272ebc9729c4bc5e0ed"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-tool-terminal-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-tool-terminal",
+    "version": "0.1.3-alpha.1",
+    "sha256": "8e8d3560b56044760bad23a804c06814ba2c09a0055d3cac4af94e5e315d1c8e"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-tool-todo-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-tool-todo",
+    "version": "0.1.3-alpha.1",
+    "sha256": "2a5c8c68bcc94c9f07aa55224d87a61bf6de78a5bb145aa7dce84e91e8fb6099"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-tool-web-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-tool-web",
+    "version": "0.1.3-alpha.1",
+    "sha256": "583cff725aea565ed1a02e0c36df5c807fa71c68d64410f7758a9658fa5fdc03"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-tool-workflow-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-tool-workflow",
+    "version": "0.1.3-alpha.1",
+    "sha256": "63feb99484c8f47693d6d9ce10cecfb04e4928acaddb5881ec64d32ac382f2d6"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-tools-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-tools",
+    "version": "0.1.3-alpha.1",
+    "sha256": "a3ccccb2b1f526d2237b50339e586077e627b990bba0b40b4b09f841b5a1b7e9"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-typert-generator-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-typert-generator",
+    "version": "0.1.3-alpha.1",
+    "sha256": "c25d3253a53fb360d406ada024e16f81bacb9528df691e9ce0d232526a6d028f"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-typert-loader-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-typert-loader",
+    "version": "0.1.3-alpha.1",
+    "sha256": "5a3b7c487818280c9761c04bcdd80efd24504e243dff99985662a787ea3d63c8"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-typert-protocol-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-typert-protocol",
+    "version": "0.1.3-alpha.1",
+    "sha256": "58efa6d907853aac3c5fba1e4f50a79f4964d4378cf57c9299d7b205fffcc90d"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-typert-registry-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-typert-registry",
+    "version": "0.1.3-alpha.1",
+    "sha256": "4eb51b2bbdfc2fac97b3c0e2a8bdf0f9e86ff0b9c0ba98eb07c02023e8d67680"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-user-approval-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-user-approval",
+    "version": "0.1.3-alpha.1",
+    "sha256": "776b2b2f23cba35acf177977d3bd0fcb701d62abcae09dde2b187ba86492e4e5"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-user-questions-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-user-questions",
+    "version": "0.1.3-alpha.1",
+    "sha256": "7bcb9be7f0faa8852951f1565de1a9775889f33b66abe102b8c53a8d8e3b14f6"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-util-crypto-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-util-crypto",
+    "version": "0.1.3-alpha.1",
+    "sha256": "c5ae3ae9553e9f6e7d7d8beb215b14f8b16ef7336f983eb4323916f8a3cd1f9f"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-util-time-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-util-time",
+    "version": "0.1.3-alpha.1",
+    "sha256": "b65903aa9d477f91df58e6721608d105de2cc6ca3d9ed2d13719ea98ffa42374"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-util-values-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-util-values",
+    "version": "0.1.3-alpha.1",
+    "sha256": "0f527fe46f54e3e0485dc3e60b9e0f3a2c9e611137678d88f729957194a7a214"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-util-workspace-path-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-util-workspace-path",
+    "version": "0.1.3-alpha.1",
+    "sha256": "f7e26debb068bcfa8001678bb40efd4e0cce5e3dca21f9b675805334494790fd"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-web-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-web",
+    "version": "0.1.3-alpha.1",
+    "sha256": "3a3c7caa09d0d00f8d771e805974c195c40fc901aac89a47928e25f8d64e4d0a"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-web-app-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-web-app",
+    "version": "0.1.3-alpha.1",
+    "sha256": "06212e36aba8266761cee637a73d45858e7465ddfec53e8f56cfe96c92e98bba"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-web-fetch-http-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-web-fetch-http",
+    "version": "0.1.3-alpha.1",
+    "sha256": "397644fea00e08c01cb29001d439a6bc21afcaa2b246511db53abafb3953237d"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-web-frontend-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-web-frontend",
+    "version": "0.1.3-alpha.1",
+    "sha256": "50e5ab114a6ec6e066de17f408e255d8424ce4e377ebb0a6e4f28c6c2231dfa9"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-web-search-deepseek-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-web-search-deepseek",
+    "version": "0.1.3-alpha.1",
+    "sha256": "22566a5ff419284eae079871bfa8737c93d2c89666e0d2a5f05aa2cc4a8c2b65"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-web-search-exa-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-web-search-exa",
+    "version": "0.1.3-alpha.1",
+    "sha256": "9d1a408a03d1d6943142fe3484406b83e88d22b0a79fcfb659574b5fd4887106"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-web-search-perplexity-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-web-search-perplexity",
+    "version": "0.1.3-alpha.1",
+    "sha256": "ba4c5275446ca906e96447464ff894b5fc05627366aa197c96403bad0e271260"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-webhook-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-webhook",
+    "version": "0.1.3-alpha.1",
+    "sha256": "2bcfe85027a64413d28f8336a83fa2b5bb4bb326dcfb36181952ce21d8086d08"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-webhook-github-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-webhook-github",
+    "version": "0.1.3-alpha.1",
+    "sha256": "04f69618cf8023815b7555aa5a4ede3f5d64277f446b20f214554bcd613fb142"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-win32-process-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-win32-process",
+    "version": "0.1.3-alpha.1",
+    "sha256": "c86c055dc0261a666821e25c337ac546c230ea30e0bbe074be8348072544b8a4"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-workflow-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-workflow",
+    "version": "0.1.3-alpha.1",
+    "sha256": "d2a5bc70fbd1c9f4b77d1d8904ce96d195beb26daea8c8f3682407f7b106a587"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-workflow-worker-thread-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-workflow-worker-thread",
+    "version": "0.1.3-alpha.1",
+    "sha256": "1c27d3562f7028b291c69717e5c63719e9773287decf57bd607f15d88cce0bfe"
+  },
+  {
+    "family": "dsh",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/dsh/deepseek-ai-dsh-workspace-0.1.3-alpha.1.tgz",
+    "name": "@deepseek-ai/dsh-workspace",
+    "version": "0.1.3-alpha.1",
+    "sha256": "f52e4d8c4b2a02251a11e5ba6435cce7cfeb458a82739cf9e30902758b18d72c"
+  },
+  {
+    "family": "vendor",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/vendor/deepseek-ai-cordis-4.0.2.tgz",
+    "name": "@deepseek-ai/cordis",
+    "version": "4.0.2",
+    "sha256": "c6024f94c92a83933b9f7cb99d2abf43401016194f40246934af1f82eb634eee"
+  },
+  {
+    "family": "vendor",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/vendor/deepseek-ai-cordis-plugin-group-1.0.2.tgz",
+    "name": "@deepseek-ai/cordis-plugin-group",
+    "version": "1.0.2",
+    "sha256": "7f8e4061f7a8af3487688e4037db73134cc25fd6be71a7220bbedef1e3f1c110"
+  },
+  {
+    "family": "vendor",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/vendor/deepseek-ai-cordis-plugin-hmr-1.0.17.tgz",
+    "name": "@deepseek-ai/cordis-plugin-hmr",
+    "version": "1.0.17",
+    "sha256": "4f15e46d1f0a4bda6b368ecc5cb733e7fa052a5f328f39d308b0544565a4bd5d"
+  },
+  {
+    "family": "vendor",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/vendor/deepseek-ai-cordis-plugin-include-1.0.7.tgz",
+    "name": "@deepseek-ai/cordis-plugin-include",
+    "version": "1.0.7",
+    "sha256": "97d4510bd23a68fae207e943e5bd2b582f2aaffb367b248ddead170da80a424f"
+  },
+  {
+    "family": "vendor",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/vendor/deepseek-ai-cordis-plugin-loader-1.0.3.tgz",
+    "name": "@deepseek-ai/cordis-plugin-loader",
+    "version": "1.0.3",
+    "sha256": "def0501705149b8d5b85315e3ce435ae07d46cbaf966155fb400ed4530cf3a5e"
+  },
+  {
+    "family": "vendor",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/vendor/deepseek-ai-cordis-plugin-logger-console-1.0.2.tgz",
+    "name": "@deepseek-ai/cordis-plugin-logger-console",
+    "version": "1.0.2",
+    "sha256": "c89fc10f23af669cc6c8e3140c88eeb8d13353dbc8dcbaf2c9798f647d564be1"
+  },
+  {
+    "family": "vendor",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/vendor/deepseek-ai-cordis-plugin-timer-1.1.4.tgz",
+    "name": "@deepseek-ai/cordis-plugin-timer",
+    "version": "1.1.4",
+    "sha256": "b13ee9d69d3730894e73ac14b4f2362dfbded7fad156b13f45538c1731bbc72c"
+  },
+  {
+    "family": "vendor",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/vendor/deepseek-ai-cosmokit-1.8.3.tgz",
+    "name": "@deepseek-ai/cosmokit",
+    "version": "1.8.3",
+    "sha256": "6642644c5a70b48867d7c01d175bd5598a39181646315cc8d265ca4f6af58c77"
+  },
+  {
+    "family": "vendor",
+    "file": "/private/tmp/mochi-alpha-reasoning01.NRLa4C/patched-pack-20260906T221101Z/vendor/deepseek-ai-schemastery-3.18.2.tgz",
+    "name": "@deepseek-ai/schemastery",
+    "version": "3.18.2",
+    "sha256": "33462096cb3ef0c03bf51aa50cc54f735d46a8ab53cb095df8835096fb81a567"
+  }
+]

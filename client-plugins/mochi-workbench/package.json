@@ -1,0 +1,26 @@
+{
+  "name": "mochi-workbench",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Mochi teacher workbench: official Harness slots, bounded Office entry, and auditable local preview selections.",
+  "main": "index.mjs",
+  "type": "module",
+  "dsh": {
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-renderer",
+        "@deepseek-ai/dsh-client-ui-conversation",
+        "@deepseek-ai/dsh-client-ui-layout",
+        "jxl-brand"
+      ]
+    }
+  },
+  "exports": {
+    ".": "./index.mjs",
+    "./client": "./client.js"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  }
+}

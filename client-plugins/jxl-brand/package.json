@@ -1,0 +1,24 @@
+{
+  "name": "jxl-brand",
+  "private": true,
+  "version": "0.1.0",
+  "description": "JiaXingLian x Mochi brand: occupies the official sidebar brand slots (replaces dsh-client-ui-brand-official).",
+  "main": "index.mjs",
+  "type": "module",
+  "dsh": {
+    "client": {
+      "platform": "web",
+      "inject": ["@deepseek-ai/dsh-client-ui-renderer", "@deepseek-ai/dsh-client-ui-sidebar", "@deepseek-ai/dsh-client-locale"]
+    }
+  },
+  "exports": {
+    ".": "./index.mjs",
+    "./client": "./client.js"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
+  }
+}

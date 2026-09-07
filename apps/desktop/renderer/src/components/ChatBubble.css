@@ -1,0 +1,75 @@
+/* 对话气泡
+ * 视觉红线：
+ *   - 气泡是圆角矩形、有底色（--surface / 焦糖描边）
+ *   - 头像圆形，自身也是带圆角的容器
+ *   - 整列仅纵向滚动，横向永远 hidden
+ */
+
+.chat-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  max-width: 100%;
+}
+
+.chat-row--teacher {
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.chat-row--mochi {
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
+/* 头像：固定尺寸、不缩放，避免把行撑出横向滚动 */
+.chat-avatar {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.chat-avatar--teacher {
+  background: var(--accent-soft);
+  color: #7a4a1c;
+  font-family: var(--font-title);
+  font-size: 14px;
+  border: 1px solid rgba(217, 135, 62, 0.4);
+}
+
+.chat-avatar--mochi {
+  background: transparent;
+  padding: 0;
+}
+
+/* 气泡本体：圆角矩形 + 纸面底色 + 柔和阴影 */
+.chat-bubble {
+  max-width: min(560px, 78%);
+  padding: 11px 15px;
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 14.5px;
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+  box-shadow: var(--shadow-card);
+  word-break: break-word;
+  overflow-wrap: anywhere; /* 长串不撑破容器 */
+  white-space: pre-wrap;
+}
+
+/* 老师气泡：偏焦糖的暖底，靠明度与 Mochi 区分，不跳色相 */
+.chat-row--teacher .chat-bubble {
+  background: var(--accent-soft);
+  color: #4a2c10;
+  border-bottom-right-radius: var(--radius-xs);
+}
+
+.chat-row--mochi .chat-bubble {
+  border-bottom-left-radius: var(--radius-xs);
+}

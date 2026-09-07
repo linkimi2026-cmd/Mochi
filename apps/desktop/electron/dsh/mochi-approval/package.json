@@ -1,0 +1,8 @@
+{
+  "name": "mochi-approval",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "index.mjs",
+  "description": "Mochi 审批 waterfall 安全委托适配器（无 answerer 时 fail-closed）"
+}

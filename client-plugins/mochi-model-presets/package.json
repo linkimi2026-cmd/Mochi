@@ -1,0 +1,25 @@
+{
+  "name": "mochi-model-presets",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Chinese provider guide that adds catalog-backed presets to the official Harness Models settings page.",
+  "main": "index.mjs",
+  "type": "module",
+  "dsh": {
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-api-remotes",
+        "@deepseek-ai/dsh-client-ui-settings-models"
+      ]
+    }
+  },
+  "exports": {
+    ".": "./index.mjs",
+    "./client": "./client.js"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node scripts/build.mjs && node --test test/client.test.mjs"
+  }
+}

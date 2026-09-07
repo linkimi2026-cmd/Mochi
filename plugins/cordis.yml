@@ -1,0 +1,3 @@
+- insert:
+    - id: mochi-hello
+      name: 'file:///Users/a1379/Documents/Mochi/plugins/mochi-hello/index.mjs'

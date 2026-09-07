@@ -1,0 +1,59 @@
+.expressive-orb {
+  /* Caramel ball with cream eyes: warm, picture-book, on-palette. No
+     gradient body, no highlight — colour lives on the ball itself and is
+     lerped per frame by the component. */
+  --orb-eye: #fff6e6;
+  --orb-rim: rgb(255 246 230 / 14%);
+  --orb-shadow: rgb(69 88 78 / 18%);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--orb-size, 48px);
+  block-size: var(--orb-size, 48px);
+  flex: none;
+  line-height: 0;
+}
+
+.expressive-orb__svg {
+  inline-size: 100%;
+  block-size: 100%;
+  overflow: visible;
+}
+
+/* Body fill is driven per frame (mood colour lerp). The hairline rim keeps
+   the dark ball legible on dark surfaces without acting as a highlight. */
+.expressive-orb__body {
+  stroke: var(--orb-rim);
+  stroke-width: 0.9;
+}
+
+/* Bottom inner shade only — weight, not a highlight. */
+.expressive-orb__depth {
+  opacity: 0.55;
+}
+
+.expressive-orb__shadow {
+  fill: var(--orb-shadow);
+}
+
+.expressive-orb__eye {
+  fill: var(--orb-eye);
+}
+
+/* Success settles warm and still; the reduced-motion path lands here too.
+   Still orbs keep a gentle CSS press so even the quiet ones feel alive. */
+.expressive-orb[data-still="true"] .expressive-orb__svg {
+  transform: none;
+  transition: transform 150ms ease;
+}
+
+.expressive-orb[data-still="true"]:active .expressive-orb__svg {
+  transform: scale(0.93);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .expressive-orb__svg {
+    transform: none;
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "lastVerified": "2026-09-06",
+  "purpose": "教师资料来源与版权状态索引；不存储教材全文，不替代逐页授权核验。",
+  "defaults": {
+    "educationStage": "高中",
+    "mainPublisher": "人民教育出版社",
+    "englishPublisher": "外语教学与研究出版社",
+    "englishEditionAndVolumeStatus": "teacher_confirmation_required"
+  },
+  "publisherSources": [
+    {
+      "id": "pep-high-school-subject-index",
+      "title": "人教版高中教材学科入口",
+      "publisher": "人民教育出版社",
+      "educationStage": "高中",
+      "sourceUrl": "https://www.pep.com.cn/xxjs/",
+      "authorityDomains": [
+        "pep.com.cn"
+      ],
+      "subjectsListedBySource": [
+        "思想政治",
+        "语文",
+        "数学",
+        "英语",
+        "物理",
+        "化学",
+        "生物",
+        "历史",
+        "地理",
+        "日语",
+        "俄语",
+        "音乐",
+        "美术",
+        "体育与健康",
+        "信息技术"
+      ],
+      "useAs": "首批高中人教版资料的出版社入口；具体教材册次仍以教师提供或官方具体页面为准。",
+      "rights": "出版社版权所有。仅建立来源索引；不得因链接存在而下载、复制、入库或声称已获得教材正文授权。"
+    },
+    {
+      "id": "fltrp-high-school-english-source",
+      "title": "外研版高中英语教材出版社来源入口",
+      "publisher": "外语教学与研究出版社",
+      "educationStage": "高中",
+      "subject": "英语",
+      "sourceUrl": "https://www.fltrp.com/",
+      "authorityDomains": [
+        "fltrp.com"
+      ],
+      "useAs": "英语首批资料的出版社来源入口。",
+      "teacherConfirmationRequired": [
+        "教材版本",
+        "册次"
+      ],
+      "rights": "外研社网站标明版权所有。未核实具体高中教材版本和册次；仅建立来源索引，不下载或复制教材正文。"
+    }
+  ],
+  "officialPlatformSources": [
+    {
+      "id": "smartedu-textbook-catalog-entry",
+      "title": "国家中小学智慧教育平台教材入口",
+      "sourceUrl": "https://basic.smartedu.cn/",
+      "authorityDomains": [
+        "basic.smartedu.cn"
+      ],
+      "useAs": "权威平台入口和具体教材条目的人工核对起点。",
+      "rights": "平台和每个具体条目的使用条件分别适用；不得批量下载，也不得把平台可访问性等同于开放许可。"
+    },
+    {
+      "id": "moe-curriculum-source",
+      "title": "教育部课程与政策来源入口",
+      "sourceUrl": "https://www.moe.gov.cn/",
+      "authorityDomains": [
+        "moe.gov.cn"
+      ],
+      "useAs": "课程政策、标准和公告的权威来源入口。",
+      "rights": "按具体页面的公开和转载条件使用；不把检索摘要当作完整规范文本。"
+    }
+  ],
+  "openLicensedSupplementaryResources": [
+    {
+      "id": "openstax-biology-2e",
+      "title": "OpenStax Biology 2e",
+      "provider": "OpenStax / Rice University",
+      "sourceUrl": "https://openstax.org/details/books/biology-2e/",
+      "authorityDomains": [
+        "openstax.org"
+      ],
+      "license": "CC BY-NC-SA 4.0",
+      "useAs": "英文生物补充参考，不替代中国高中教材或课程标准。",
+      "licenseConditions": "保留署名；仅在符合非商业和相同方式共享条件的场景使用；实际使用前核对该书页面及完整许可。"
+    }
+  ],
+  "metadataOnlyIndexes": [
+    {
+      "id": "textbook-library-catalog-index",
+      "title": "textbook-library 教材目录索引",
+      "sourceUrl": "https://github.com/pengboyjak/textbook-library",
+      "codeLicense": "MIT",
+      "useAs": "可用于人工查找教材目录和平台条目；不加入权威来源白名单。",
+      "rights": "该项目声明只提供教材目录索引、不含教材正文。代码的 MIT 许可不覆盖任何教材正文或配套资源。"
+    }
+  ]
+}

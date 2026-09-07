@@ -1,6 +1,8 @@
 # 依赖
 node_modules/
 **/node_modules/
+# Git 的目录规则不匹配同名符号链接；保留链接也不入仓。
+**/node_modules
 
 # iCloud 不外同步的大件（.nosync 后缀本身就是为了这个，但仍显式排除）
 *.nosync/
@@ -20,7 +22,25 @@ out/
 **/*.db-journal
 **/*.db-wal
 **/*.db-shm
+**/*.sqlite
+**/*.sqlite-journal
+**/*.sqlite-wal
+**/*.sqlite-shm
 **/storages/
+
+# 本机协作元数据与可重取的源码快照
+/.workbuddy/
+/mochi-harness-source.zip
+
+# 审计与验证产物（体积大、过程性，留在本地不入仓；关键结论已沉淀进 docs/ 与 WORKLOG）
+artifacts/
+
+# 可再取的第三方源码克隆（上游与固定 commit 见 WORKLOG / docs/reuse-audit.md）
+tools/searxng/
+plugins/dsh-better-sidebar/
+
+# 打包资源备份目录（时间戳后缀，未被 *.nosync/ 规则覆盖）
+**/.mochi-package-resources*.backup-*/
 
 # 日志
 *.log

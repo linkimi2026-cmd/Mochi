@@ -1,20 +1,16 @@
 #!/usr/bin/env node
 /**
- * 开发环境启动器：编译主进程 → 起 Vite dev server → 就绪后拉起 Electron。
- *
- * 为什么不用 concurrently：Electron 在 Vite 还没监听完就去 loadURL，会白屏一次。
- * 这里显式探活 5178 后再启动，并且先 tsc 编译 main/preload
- *（package.json 的 main 指向 dist-electron/main.js，没编译会直接报找不到模块）。
+ * 开发环境启动器：编译主进程 → 拉起 Electron。
+ * Electron 主进程自己启动 `dsh --profile mochi-web --port 0`，不再维护第二套
+ * Vite renderer；网页端和桌面端使用同一个 Harness SPA 与同一组插件。
  */
 import { spawn } from "node:child_process";
-import { setTimeout as delay } from "node:timers/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 // 本文件在 scripts/ 下，项目根是上一层
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const NODE = process.execPath;
-const DEV_URL = "http://127.0.0.1:5178";
 
 const bin = (rel) => join(ROOT, "node_modules", ...rel.split("/"));
 
@@ -32,20 +28,6 @@ function run(cmd, args, opts = {}) {
   });
   children.push(child);
   return child;
-}
-
-async function waitForVite(timeoutMs = 60_000) {
-  const deadline = Date.now() + timeoutMs;
-  while (Date.now() < deadline) {
-    try {
-      const res = await fetch(DEV_URL, { signal: AbortSignal.timeout(1000) });
-      if (res.ok) return true;
-    } catch {
-      // 还没起来，继续等
-    }
-    await delay(300);
-  }
-  return false;
 }
 
 function shutdown(code = 0) {
@@ -70,16 +52,7 @@ if (tscCode !== 0) {
   process.exit(tscCode ?? 1);
 }
 
-// 2) 起 Vite
-console.log("[mochi] 启动 Vite dev server …");
-run(NODE, [bin("vite/bin/vite.js")]);
-
-if (!(await waitForVite())) {
-  console.error("[mochi] Vite 未能在 60s 内就绪，放弃启动 Electron");
-  shutdown(1);
-}
-
-// 3) 拉起 Electron
+// 2) 拉起 Electron；主进程内部等待 mochi-web Host 就绪后再载入窗口。
 //
 // MOCHI_NO_SANDBOX=1 是一个**仅用于调试**的逃生开关：在容器/受限终端里，
 // Chromium 自己的沙箱会初始化失败并反复重启 GPU/网络服务，导致窗口起不来。
@@ -90,16 +63,22 @@ const extraArgs = process.env.MOCHI_NO_SANDBOX === "1" ? ["--no-sandbox"] : [];
 // 运行：require("electron") 返回 Node 内置模块而非 Electron API，
 // 表现为主进程里 app 是 undefined。从 IDE 集成终端启动时尤其容易踩到。
 const cleanEnv = { ...process.env, DSH_TELEMETRY_DISABLED: "1" };
+// DSH_HOME (or MOCHI_RUNTIME_HOME) remains an explicit override. Otherwise the
+// Electron host and mochi.sh both use workspace/.mochi-home.nosync in dev.
+// 允许通过环境变量覆盖 dsh / node 二进制（打包态走随包路径）。
+for (const k of ["MOCHI_DSH_BIN", "MOCHI_DSH_NODE"]) {
+  if (process.env[k]) cleanEnv[k] = process.env[k];
+}
 for (const key of Object.keys(cleanEnv)) {
   if (key === "ELECTRON_RUN_AS_NODE" || key.startsWith("ELECTRON_")) {
     delete cleanEnv[key];
   }
 }
 
-console.log("[mochi] Vite 就绪，拉起 Electron …");
+console.log("[mochi] 拉起 Electron + mochi-web …");
 const electron = run(bin(".bin/electron"), [".", ...extraArgs], { env: cleanEnv });
 
 electron.on("exit", (code) => {
-  console.log(`[mochi] Electron 退出（code=${code}），关闭 Vite`);
+  console.log(`[mochi] Electron 退出（code=${code}）`);
   shutdown(code ?? 0);
 });
