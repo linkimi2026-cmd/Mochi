@@ -289,65 +289,47 @@ cd ../.. && node scripts/check-snapshot-manifest.mjs --fail
 
 ---
 
-## 8. Playwright 资源根的许可文件：本机与 CI 不一致（2026-09-12 查清）
+## 8. Playwright 资源根的第三方许可文件（2026-09-12 定案：统一走 playwright-core）
 
 `prepare-mochi-resources.cjs` 会校验资源根里的 `LICENSE` / `credits.html` / `credits.txt`
 三个文件的 sha256 与 `metadata.json` 是否自洽。**校验的是"自洽"，不是"内容对不对"** ——
-所以内容错了不会有任何报错。查下来确实错了。
+所以内容错了不会有任何报错。查下来确实错过一轮，弯路见 §8.2。
 
-### 8.1 事实（用 sha256 逐字节确证，不是推测）
+### 8.1 最终形态（本机与 CI 同源）
 
-| 本机资源根的文件 | 实为 |
+| 文件 | 来源 |
 |---|---|
-| `LICENSE`（11,601 B） | `node_modules/playwright-core/LICENSE` 的逐字节拷贝 |
-| `credits.txt`（70,260 B） | `node_modules/playwright-core/ThirdPartyNotices.txt` 的逐字节拷贝 |
-| `credits.html`（72,062 B） | 上面那份套了个 `<title>Chromium credits</title>` 外壳 |
+| `LICENSE`（1,536 B） | `.github/windows-native-package-assets/chromium-140.0.7339.16-LICENSE` |
+| `credits.txt`（70,260 B / 49 处 `Copyright`） | `node_modules/playwright-core/ThirdPartyNotices.txt` 逐字节拷贝 |
+| `credits.html` | 同一份声明套 HTML 外壳，文件头写明它是 Playwright 的 NOTICE、不是 `chrome://credits` |
 
-而 **CI 在同一槽位放的是别的东西**（`windows-native-package.yml`）：
-`LICENSE` ← `.github/windows-native-package-assets/chromium-140.0.7339.16-LICENSE`（1,536 B）；
-`credits.*` ← 在 runner 上 `chrome --headless=new --dump-dom chrome://credits` 现取。
+CI 侧（`windows-native-package.yml` 第 9 步）现在**同样**以 `playwright-core/ThirdPartyNotices.txt`
+为主源：构建 `<!doctype html>…<body><pre>` + `WebUtility.HtmlEncode(文本)` + `</pre>` 外壳，
+`metadata.json` 写入 `creditsProvenance` 记录实际走的哪条路。判据统一为
+**≥50000 字符 且 ≥10 处 `Copyright`**，不满足直接 throw。
 
-**即有 3 处不一致**，其中 `credits.*` 是**贴错标签**：文件说自己是 Chromium 的归属清单，
-内容是 Playwright 的。
+> 📌 **为什么可以接受"不是 Chromium 的 credits"**：包里随附的浏览器就是 Playwright 下载的
+> Chromium，`playwright-core/ThirdPartyNotices.txt` 正是微软为这份发行物给出的第三方归属清单 ——
+> 版本精确、随依赖落在磁盘上、不需要浏览器。**留一份贴错标签的清单才是真问题。**
 
-### 8.2 本机为什么生不成真的 `chrome://credits`
+### 8.2 走过的弯路：`chrome://credits` 在这两个环境里都拿不到
 
-已实测（`tools/fetch-chromium-credits.mjs`）：Chromium **能**启动、CDP **能**连上，
-但 `Page.navigate('chrome://credits')` 之后 `Runtime.evaluate` 取回的文档**长度为 0**。
-同一个坑还有第二种触发方式：命令行 `--dump-dom chrome://credits` 在 Chromium 140/macOS 上
-会**静默地 dump 新标签页**（26 KB、标题「新标签页」、`Copyright` 零命中）。
+一度以为正解是"把真的 `chrome://credits` 取回来"。三个坑逐层暴露之后才放弃：
 
-> 🐛 **顺手修掉的一个真 bug**：这个脚本原来 `socket.onopen` 那一步**没有超时**，
-> 连不上就永久挂住、看起来像"还在跑"。已加总看门狗（`--watchdog`，默认 120s）+ 每步超时，
-> 现在会在 29 秒内**明确失败**而不是挂着。脚本**拒绝写占位内容**（阈值：≥200,000 字符且 ≥100 处
-> `Copyright`）—— 许可清单造假比缺文件更糟。
+| # | 现象 | 证据 |
+|---|---|---|
+| 1 | 本机 CDP `Page.navigate('chrome://credits')` 之后文档长度为 **0** | `tools/fetch-chromium-credits.mjs` 实测 |
+| 2 | 本机 `--dump-dom chrome://credits` **静默 dump 新标签页**（约 26 KB、`Copyright` 零命中） | Chromium 140 / macOS |
+| 3 | **CI runner 上更彻底**：`--dump-dom` 只回 **41 字节空骨架**（`<html><head></head><body></body></html>`）；chrome 与 headless_shell 两个二进制 × 3 轮 = **6/6 次全空**，加 `--virtual-time-budget` 反而更空 —— **是系统性失败，不是竞态** | run #30 日志 |
 
-### 8.3 已做的处置
+第 3 条同时暴露一个**一直没被抓住的假绿**：旧断言只查 `$creditsHtml -notmatch "<html"`，
+而**空骨架也含 `<html`** —— 也就是说在此之前跑绿的那些包，credits 文件一直是空的。
+已换成体积 + 指纹双判据（见 §8.1）。
 
-1. **本机资源根按「与 CI 产出形态一致」对齐**：`LICENSE` 换成 Chromium 那份；
-   `credits.txt` **逐字节保留**微软的真实声明（不动一个字）；
-   `credits.html` 只把标题改成 `Playwright third-party notices`，并在文件头写明
-   **它不是 `chrome://credits`、由 CI 现取覆盖**；`metadata.json` 重算哈希并新增
-   `creditsProvenance` 字段如实记录来源。
-2. **加固了 CI 的校验**（这是本次发现里最有价值的一条）：原来只断言
-   `$creditsHtml -notmatch "<html"`。**新标签页同样含 `<html`，所以这条校验抓不住"导错了页"** ——
-   会把一份假许可清单静默打进安装包。已改为同时卡**体量 ≥200,000 字符**与
-   **`Copyright` 指纹**，并在报错信息里直接点明「约 26 KB 且零命中 = dump 到了新标签页」。
+### 8.3 历史遗留
 
-> ⚠️ `windows-native-package.yml` 是**复制到私有构建分支**使用的模板。
-> 这个加固**要跟着复制过去**才生效，只改本机仓库不够。
-
-### 8.4 要本机生成真的 credits（在**你自己的终端**里跑）
-
-Chromium 在受限沙箱里起不来，但在有 WindowServer 的普通终端里可以：
-
-```bash
-cd /Users/a1379/Documents/Mochi
-mv apps/desktop/.mochi-package-resources-v1.nosync/playwright /tmp/mochi-pw-hold
-node tools/fetch-chromium-credits.mjs \
-  --chrome /tmp/mochi-pw-hold/browsers/chromium-1187/chrome-mac/Chromium.app/Contents/MacOS/Chromium \
-  --out /tmp/mochi-pw-hold
-# 然后重算 metadata.json 的两个 credits 哈希（LICENSE 不用动），再：
-MOCHI_PLAYWRIGHT_BROWSER_RESOURCE_ROOT=/tmp/mochi-pw-hold \
-  node apps/desktop/scripts/prepare-mochi-resources.cjs
-```
+- `tools/fetch-chromium-credits.mjs` **保留但已无调用方**（CI 与本机都不再走 `chrome://credits`）。
+  它自带看门狗（`--watchdog`，默认 120s）并**拒绝写占位内容**（阈值 ≥200,000 字符且 ≥100 处
+  `Copyright`）—— 留作"万一某天真需要"的取证工具；**别删，也别接回正常流程**。
+- 本机资源根的 `credits.html` 头部注释已同步改正（2026-09-12）。
+- 手工热修包路线已被否决：所有修复走「源码 → CI → 安装包」，见 `docs/build-standard.md`。
