@@ -229,7 +229,7 @@ node tools/verify-deck-render.mjs --out <目录> --page 3
 | 深底页对比度下限（PPTX + PDF 同口径） | `plugins/mochi-presentations/index.mjs` | 该插件测试 19/19 |
 | 渲染自查工具转正 | `tools/verify-deck-render.mjs` | 端到端跑通，7 页 PNG 人工看图确认 |
 | `@mochi/pdf-layout` tarball 重打包 | `vendor/local-plugins/mochi-pdf-layout-0.1.0-c4a3d2c2.tgz` + `apps/desktop/package.json` + lockfile | `test-package-resources` PASS（26/29/106） |
-| 快照清单收敛工具支持 tarball 改名 | `scripts/reconcile-snapshot-manifest.mjs` | `check-snapshot-manifest --fail` → **OK，492 条，字节差 ±0** |
+| 快照清单收敛工具支持 tarball 改名 | `scripts/reconcile-snapshot-manifest.mjs` | `check-snapshot-manifest --fail` → **OK，496 条，字节差 ±0**（2026-09-12 23:0x；该脚本同日补上了 `directories:` 递归展开） |
 | 清理临时探查脚本 | `plugins/mochi-presentations/.probe-*.mjs` 等 13 个 + `.conv/.pdftext/.png/.render-check` 4 个 | 已删，共 17 个 |
 | `mochi-memory` 测试断言点号工具名（真红） | `plugins/mochi-memory/test-active-context.mjs` | 改为 `mochi_memory_note` + 负向断言 |
 | `test-runtime-profile` 期望值缺 `inputModalities` | `apps/desktop/scripts/test-runtime-profile.mjs` | PASS |

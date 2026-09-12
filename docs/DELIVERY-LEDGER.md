@@ -96,6 +96,8 @@
 | 14 | **本机两个安装包不含 9/12 的能力** | 包内 20 插件 / 7 技能 vs 源码 26 插件 / 8 技能 | 现场用旧包演示"PPT 二次编辑"等场景会当场失效（见 `参赛材料/演示脚本与降级路径.md` 的降级路径） |
 | 15 | **开放决策：`campusApiUrl` 仍为 null** | `runtime-profile.json` 的 `campusApiUrl: null` → 打包版校园功能兜回 `127.0.0.1:8787`；而已部署的公网后端是 `jyl-campus-health-entry.pages.dev` | 连不连公网后端是**产品决策**（数据边界），未由本轮回合擅自改；演示机上必须先起 wrangler dev 或显式配置 |
 | 16 | **开放决策：敏感记忆护栏边界** | `mem-store.mjs` 的关键词正则只能挡一部分（"张三是全班第 3 名"这类放行） | 属有意取舍，需产品决策；边界已在伦理材料里如实写明 |
+| 17 | 🔴 **已交付的安装包里，Chromium credits 是空文件** | 2026-09-12 run #30 实测证据：`--dump-dom chrome://credits` 在该环境只回来 **41 字节空骨架**（6/6 失败）。旧断言只有 `-notmatch "<html"`，而空骨架同样含 `<html` ⇒ **一路绿灯放行**。断言加严后立刻暴露（§九） | 两个已交付包（macOS dmg / Windows exe）的 `resources/mochi/playwright/credits.html` 内容为空骨架。**属许可合规问题**，不是功能问题；修法已定（改用 `playwright-core/ThirdPartyNotices.txt`），**随下一轮重出包自动带修复** |
+| 18 | **本机 Playwright 资源根里那句注释已过时** | `apps/desktop/.mochi-package-resources-v1.nosync/playwright/credits.html` 的注释仍写「那份清单由 CI 在 runner 上 `chrome://credits` 现取后覆盖本槽位」 | 与 §九 定案矛盾；影响的是**开发机资源根**，不影响 CI 与交付物。待改（改后需同步重算 `metadata.json` 的 `creditsHtmlSha256`） |
 
 ---
 
@@ -220,6 +222,12 @@ CI 的 credits 校验原来只断言 `$creditsHtml -notmatch "<html"`。
 已改为同时卡**体量 ≥200,000 字符**与 **`Copyright` 指纹**，报错信息直接点明判据。
 ⚠️ `windows-native-package.yml` 是**复制到私有构建分支**用的模板，**这个加固要跟着复制过去才生效**。
 
+> 🔄 **2026-09-12 22:5x 更新**：这条加固在 run #29/#30 上被证明**还不够** ——
+> `chrome://credits` 在本环境**根本 dump 不出内容**（41 字节空骨架，6/6 失败），
+> 且旧断言之所以"一直没报错"，正是因为它形同虚设。已改为**换来源**：
+> 取 `playwright-core/ThirdPartyNotices.txt`。阈值也从 200,000 改为
+> **≥50000 且 `Copyright` ≥10**。详见 **§九**。
+
 ### 8.4 本轮**没做**的事
 
 - **没有重出 Windows 安装包** —— 需要 `windows-2022` runner，本机 `gh` **未登录**（`gh auth status` 报
@@ -282,34 +290,107 @@ Exception calling "Matches" with "2" argument(s): "Value cannot be null. (Parame
 2. **真缺陷（更值钱的那个）**：`chrome://credits` 是**异步渲染**页，`--dump-dom` 会在数据源就绪前序列化。
    证据：run #28 与 #29 用**同一条命令、同一个 runner 镜像**，前者拿到真页面、后者拿到**空文件** —— 这是竞态，不是配置错。
 
-### 9.4 修复、重推与绕过 502
+### 9.4 重推撞上第二堵墙：`github.com` 502
 
-修复内容（**私有副本与模板两边都改了**，见 `docs/build-standard.md` §5.4）：
+第一轮修复（`--virtual-time-budget` + 重试 + `[string]` 转型）提交后，
+`git push` 对本机代理**持续**报 `CONNECT tunnel failed, response 502`
+（重试 4 次、非沙箱也一样），而同一条代理下 `api.github.com` 是通的。
 
-| 手段 | 解决什么 |
-|---|---|
-| `--virtual-time-budget=8000` | 给异步数据源留渲染时间 |
-| 同一二进制最多重试 3 轮，失败后换 `headless_shell.exe` 再来 | 竞态是概率性的 |
-| 成功判据 `-match "<html" -and .Length -ge 100000` 提前结束 | 拿到合格文档就不再多跑 |
-| `$creditsHtml = [string](…)` 强制转型 | 挡住 `$null` 抛异常 |
-| 体量阈值 **200000 → 100000** | 新标签页约 26 KB 已被稳稳卡住；200000 对"渲染到一半"有误杀风险 |
+改用 **Git Data API** 手工搭提交绕开：建 blob（base64）→ 建 tree（`base_tree`）→
+建 commit → PATCH ref。**关键校验**：API 返回的 blob sha 与本地那个 blob 的 sha
+**完全一致**（`e23a264b…`），证明送上去的字节就是本地那份。提交 `5f25be3`，
+**PATCH 即触发 run #30**。（做法已固化进 `docs/build-standard.md` §5.6。）
 
 顺手修掉一个**模板自身的历史缺陷**：模板里探针用的是**顶格 `@'…'@` here-string**，
-这让整个文件**根本不是合法 YAML**（PyYAML 在 295 行报 `could not find expected ':'`）。
+让整个文件**根本不是合法 YAML**（PyYAML 在 295 行报 `could not find expected ':'`）。
 已换成私有副本那套"行数组拼接"写法，模板现在能正常解析（12 个 step）。
 
-**重推时撞上第二堵墙**：`git push` 对本机代理**持续**报
-`CONNECT tunnel failed, response 502`（重试 4 次、非沙箱也一样，而 `api.github.com` 正常）。
-改用 **Git Data API** 手工搭提交绕开：建 blob（base64）→ 建 tree（`base_tree`）→ 建 commit → PATCH ref。
-**关键校验**：API 返回的 blob sha 与本地 `git hash-object` **完全一致**（`e23a264b…`），
-证明送上去的字节就是本地那份。提交 `5f25be3`，分支指针快进更新，**PATCH 即触发 run #30**。
-（做法已写进 `docs/build-standard.md` §5.6。）
+### 9.5 run #30：credits 的真相，与换来源
 
-### 9.5 run #30 结果
+run #30 走到第 8 步全绿（依赖闭包 164s），仍倒在第 9 步，但这次日志**给出了定案证据**：
 
-_（本轮跑完后回写）_
+```
+credits attempts: 6; last exit code: 0
+credits stdout bytes: 41
+```
 
-### 9.6 本轮**没做**的事
+**41 字节** = `<html><head></head><body></body></html>` 空骨架。chrome 与 headless_shell
+各 3 轮、带虚拟时间预算，**6 次全部如此** ⇒ 不是竞态，是 `--dump-dom chrome://credits`
+**在这个环境里根本不通**（虚拟时间预算反而让内容更空，是反效果）。
+
+> **由此推出一件更重要的事**：run #28 之所以"绿"，是因为旧断言只有 `-notmatch "<html"`，
+> 而**空骨架同样含 `<html`**。也就是说此前打进安装包的 credits **一直是空文件**。
+> 这不是本轮引入的，是断言加严才**暴露**的老问题 —— §8.3 那句"会把一份假许可清单静默
+> 打进安装包"当时是**预测**，现在**证实在发生**。
+
+**定案：主来源改用 `node_modules/playwright-core/ThirdPartyNotices.txt`**
+（70,260 B / 49 个 `Copyright` 命中）。它是 Playwright 官方分发的 Chromium 第三方许可清单 ——
+在磁盘上、与 chromium 构建版本严格对应、不需要启动浏览器，
+而且**本机资源根用的就是它**，CI 与本机从此一致。`chrome://credits` 降为**备选**。
+
+统一判据（两个来源共用）：**体量 ≥50000 且 `Copyright` 命中 ≥10**
+（空骨架 41 B 与新标签页约 26 KB 都不达标）。
+`metadata.json` 新增 **`creditsProvenance`** 如实记录走的是哪条路 —— 不伪造来源。
+
+重推（同样走 API，因 `github.com` 仍 502；远程 5f25be3 与本地 8c172c5 内容等价，脚本按
+"tree 相同"判定放行）→ 提交 `d72ffbca` → **run #31**。
+
+### 9.6 run #31：credits 过了，露出 references 缺口
+
+重推（`d72ffbca`，同样走 API）后 run #31 **第 9 步全绿**：
+
+```
+credits source: playwright-core/ThirdPartyNotices.txt (70249 chars, 49 Copyright hits)
+```
+
+这是本轮第一个真正的转折 —— credits 从"每次都静默拿到空文件"变成"确定拿到真清单"。
+
+然后在**新的第 10 步**（`Validate staged desktop resources`）倒下：
+
+```
+Error: Mochi 打包目录不存在：
+  ...mochi-source/plugins/mochi-presentations/references
+    at copyDirectory (prepare-mochi-resources.cjs:349)
+```
+
+**根因**：`PLUGINS` 里有 4 处整目录拷贝（`mochi-presentations/references`、
+`jxl-theme/assets`、`mochi-modeling/assets`、`dsh-better-sidebar/lib`），
+而 `scripts/reconcile-snapshot-manifest.mjs` 的 `readPluginWhitelist()` **只解析 `files:`**，
+`directories:` 一个字都没读 —— 这些目录里的文件**既进不了清单、也进不了快照**。
+`assets` / `lib` 那三处之所以没出事，是它们的文件**早先被手工登记过**；
+`references/`（PPT 设计规范，18:3x 新增）没有，于是第一次出包就炸。
+
+> ⚠️ 这条教训值得单独记：**本机测试全绿 ≠ CI 能过**。
+> `test:package-resources` 读的是**本机源码**（有那 4 个文件），查不出"快照缺文件"。
+> 两件事必须分别验：本机验行为，`reconcile` 验清单完整性。
+
+### 9.7 修法与重推
+
+**Mochi 仓**（`scripts/reconcile-snapshot-manifest.mjs`）：
+- 解析 `directories:`，用新增的 `walkFiles()` 递归展开其中的文件
+  （跳过符号链接与 `.DS_Store` / `Thumbs.db`）
+- 分类仍用 `staged-plugin:<id>` → 4 个文件**自动登记**，
+  同时原先那 22 条"白名单外但已登记"的噪音**自动消失**（它们现在都在 expected 里了）
+
+**私有出包分支**：
+- 清单 **492 → 496 条**，91,919,236 → **91,962,273 B**（`--fail` 复核 ±0）
+- 快照重新物化：**497 文件 / 逐字节一致 / 0 多余 0 缺失 0 符号链接**
+- 提交 `52c6259` → API 推送（`7fd66612`）→ **run #32**
+
+新增的 4 个文件（PPT 设计规范，模型生成课件前要读）：
+
+```
+plugins/mochi-presentations/references/design-principle.md                   (21,626 B)
+plugins/mochi-presentations/references/designs/design-principle.classroom.md ( 9,948 B)
+plugins/mochi-presentations/references/designs/design-principle.document.md  ( 5,835 B)
+plugins/mochi-presentations/references/story-principle.md                    ( 5,628 B)
+```
+
+### 9.8 run #32 结果
+
+_（跑完回写）_
+
+### 9.9 本轮**没做**的事
 
 - **没动 `asarUnpack`** —— 已查清不是配置级改动（§四#8）。
 - **没删 `release/` 里 7.1 GB 历史构建** —— 待作者拍板（§8.4）。

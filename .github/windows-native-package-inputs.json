@@ -5,8 +5,8 @@
   "verification": {
     "manifestPath": ".github/windows-native-package-inputs.json",
     "manifestIsTheOnlyUnhashedSnapshotFile": true,
-    "expectedFileCount": 492,
-    "expectedFileBytes": 91919236
+    "expectedFileCount": 496,
+    "expectedFileBytes": 91962273
   },
   "externalBuildInputs": [
     {
@@ -3985,6 +3985,38 @@
       "bytes": 6320052,
       "categories": [
         "vendored-tarball"
+      ]
+    },
+    {
+      "path": "plugins/mochi-presentations/references/design-principle.md",
+      "sha256": "68510e1990da439e16f2a83cd641237a04155bf49436a89144a24d01c8e3a35a",
+      "bytes": 21626,
+      "categories": [
+        "staged-plugin:mochi-presentations"
+      ]
+    },
+    {
+      "path": "plugins/mochi-presentations/references/designs/design-principle.classroom.md",
+      "sha256": "3848a0085dffbe73835622c0e03c8ad59e954c950ab652e14cbbaee70bc2ec91",
+      "bytes": 9948,
+      "categories": [
+        "staged-plugin:mochi-presentations"
+      ]
+    },
+    {
+      "path": "plugins/mochi-presentations/references/designs/design-principle.document.md",
+      "sha256": "935b8de9c47c923debd2fa636307150b434cb8c4ee8c6b77aa8df1df719d2a0d",
+      "bytes": 5835,
+      "categories": [
+        "staged-plugin:mochi-presentations"
+      ]
+    },
+    {
+      "path": "plugins/mochi-presentations/references/story-principle.md",
+      "sha256": "f89fcfcf06fba26c454167d13232031e721a081d775a065e1b3849d7f9683e56",
+      "bytes": 5628,
+      "categories": [
+        "staged-plugin:mochi-presentations"
       ]
     }
   ]

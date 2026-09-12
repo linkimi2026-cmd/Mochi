@@ -1948,3 +1948,95 @@ PyYAML 在 **295 行**报 `could not find expected ':'`，整个文件解析失�
 - run #30 结果（`34699801504`）—— 跑完回写。
 - 私有副本那 8 处修复**仍未全部回流模板**（本轮只回流了 credits 与 here-string 两处）。
 - `asarUnpack` 82.5%、`release/` 7.1 GB 未动。
+
+---
+
+## 2026-09-12 22:4x–23:1x　出包触发轮（三）：credits 定案、references 缺口
+
+### run #30：拿到了 credits 的真相
+
+run #30 第 8 步全绿（依赖闭包 164s），仍倒在第 9 步，但这次的日志是**定案证据**：
+
+```
+credits attempts: 6; last exit code: 0
+credits stdout bytes: 41
+```
+
+**41 字节** = `<html><head></head><body></body></html>` 空骨架。chrome 与 headless_shell
+各 3 轮、带 `--virtual-time-budget=8000`，**6 次全如此** ⇒ 不是竞态，是这条路本身不通
+（虚拟时间预算让页面更快到 load、内容更空，是**反效果**）。
+
+> **由此推出一件更重要的事**：run #28 之所以"绿"，是因为旧断言只有 `-notmatch "<html"`，
+> 而**空骨架同样含 `<html`**。也就是说此前打进安装包的 credits **一直是空文件**。
+> 这不是本轮引入的，是断言加严才**暴露**的老问题。
+
+### 定案：换来源
+
+**主来源 = `node_modules/playwright-core/ThirdPartyNotices.txt`**（70,260 B / 49 个 `Copyright`）：
+Playwright 官方分发、与 chromium 版本严格对应、在磁盘上、不用起浏览器，
+而且**本机资源根用的就是它** —— CI 与本机从此一致。
+`chrome://credits` 降为**备选**。统一判据：**体量 ≥50000 且 `Copyright` ≥10**。
+`metadata.json` 加 `creditsProvenance` 如实记录走哪条路。
+
+### run #31：credits 过了，露出下一层
+
+重推（`d72ffbca`，同样走 API）→ run #31 **第 9 步全绿**：
+
+```
+credits source: playwright-core/ThirdPartyNotices.txt (70249 chars, 49 Copyright hits)
+```
+
+然后在**新的第 10 步**（`Validate staged desktop resources`）倒下：
+
+```
+Error: Mochi 打包目录不存在：
+  ...\mochi-source\plugins\mochi-presentations\references
+    at copyDirectory (prepare-mochi-resources.cjs:349)
+    at stageMochiResources (...:749)
+```
+
+### 根因：`reconcile` 不认识 `directories`
+
+`PLUGINS` 里有 4 处整目录拷贝：
+
+| 插件 | 目录 |
+|---|---|
+| `client-plugins/jxl-theme` | `assets` |
+| `plugins/mochi-presentations` | **`references`** |
+| `plugins/mochi-modeling` | `assets` |
+| `plugins/dsh-better-sidebar` | `lib` |
+
+而 `scripts/reconcile-snapshot-manifest.mjs` 的 `readPluginWhitelist()` **只解析 `files:`**，
+`directories:` 一个字都没读 —— 这些目录里的文件既进不了清单、也进不了快照。
+
+`assets` / `lib` 那三处没出事，是因为它们的文件**早先被手工登记过**；
+`references/`（PPT 设计规范，18:3x 新增）没有，于是第一次出包就炸。
+
+**教训**：**本机测试全绿 ≠ CI 能过**。本机有那 4 个文件、快照里没有，
+`test:package-resources` 在本机跑得通、在 CI 上抛「打包目录不存在」。
+
+### 改法
+
+**Mochi 仓**（`scripts/reconcile-snapshot-manifest.mjs`）：
+- 解析 `directories:`，用新增的 `walkFiles()` 递归展开其中的文件
+  （跳过符号链接与 `.DS_Store` / `Thumbs.db`）
+- 分类仍用 `staged-plugin:<id>` → 这 4 个文件**自动登记**，
+  同时原先那 22 条"白名单外但已登记"的噪音**自动消失**（它们现在都在 expected 里）
+
+**私有出包分支**：
+- 清单 492 → **496 条**，91,919,236 → **91,962,273 B**（`--fail` 复核 ±0）
+- 快照重新物化：**497 文件 / 逐字节一致 / 0 多余 0 缺失 0 符号链接**
+- 提交 `52c6259` → API 推送 → **run #32**（`7fd66612`）
+
+### 文档
+
+- `docs/build-standard.md`：§5.4 重写为「为什么最后不再用 `chrome://credits`」
+  （坑一判定不足 / 坑二 `$null` 不对称 / 坑三环境不通 + 换来源对照表）
+- `docs/DELIVERY-LEDGER.md`：§九 补 9.4–9.6；§8.3 加"已被 §九 取代"的注；
+  §四 新增缺口 **#17（已交付包的 credits 是空文件）** 与 **#18（本机资源根注释过时）**
+
+### 未闭环
+
+- run #32 结果（`34700819338`）。
+- 本机资源根 `credits.html` 的过时注释（缺口 #18）。
+- `asarUnpack` 82.5%、`release/` 7.1 GB 未动。

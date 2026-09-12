@@ -223,57 +223,83 @@ jobs:
           Copy-Item -LiteralPath $licenseSource -Destination (Join-Path $resourceRoot "LICENSE") -Force
           $profile = Join-Path $env:RUNNER_TEMP "mochi-chromium-credits-profile"
           $stderr = Join-Path $env:RUNNER_TEMP "mochi-chromium-credits.stderr"
-          # NOTE: copy-only hardening. 模板原先用管道捕获 dump，在 windows-2022 上回来是空的
-          # （exit 0、无 HTML）；这里改为写进文件，并退到 headless shell 二进制。
-          #
-          # 2026-09-12 再加固（run #29 实测）：chrome://credits 是**异步渲染**的 WebUI，
-          # `--dump-dom` 在 load 之后立刻序列化，会抢在数据源填充之前 dump 出**空文档** ——
-          # 同一份脚本、同一个 runner 镜像，run #28 拿到正常页面、run #29 拿到空文件。
-          # 这是竞态，不是配置错。对策：①`--virtual-time-budget` 让 headless 在 dump 前
-          # 推进虚拟时钟并强制收尾；②拿到不合格的文档就换二进制 / 重试，每个最多 3 轮。
-          # ⚠️ 取值必须 `[string]` 强转：空文件时 `Get-Content -Raw` 返回 **$null**，
+          # ── credits（Chromium 第三方许可清单）的来源 ────────────────────────────
+          # 沿革：模板最初用管道捕获 `--dump-dom` 的输出，在 windows-2022 上是空的
+          # （exit 0、无内容）→ 改成写进文件 + 失败退到 headless_shell；
+          # 2026-09-12 run #29 又发现 `Get-Content -Raw` 读空文件返回 $null，
           # 而 `[regex]::Matches($null, ...)` 会直接抛 "Value cannot be null"
-          # （`-match` 反而会静默把 $null 当空串，两者行为不一致，最容易在这里翻车）。
-          $creditsOut = Join-Path $env:RUNNER_TEMP "mochi-chromium-credits.dom"
-          $shell = Get-ChildItem -LiteralPath $browserRoot -Recurse -Filter "headless_shell.exe" -File | Select-Object -First 1
-          $bins = @($chrome)
-          if ($null -ne $shell) { $bins += @($shell.FullName) }
+          # （`-match` 反而会静默把 $null 当空串 —— 两者行为不一致，最容易在这翻车）。
+          #
+          # 2026-09-12 run #30 实测定案：`--dump-dom chrome://credits` 在这个环境里
+          # **系统性**地只回来 41 字节的空骨架（`<html><head></head><body></body></html>`）——
+          # chrome 与 headless_shell 各 3 轮、带虚拟时间预算，6 次全部如此，**不是竞态**。
+          # 而 run #28 之所以"绿"，是因为旧断言只有 `-notmatch "<html"`，**空骨架同样含 `<html`**
+          # ⇒ 安装包里放的其实是空文件。断言加严后立刻暴露（DELIVERY-LEDGER §九）。
+          #
+          # 正解：Playwright 自己就分发 Chromium 的第三方许可清单 —— 它就在磁盘上、
+          # 与 chromium 构建版本严格对应、不需要启动浏览器：
+          #   node_modules/playwright-core/ThirdPartyNotices.txt
+          # 优先用它；`chrome://credits` 保留为备选，将来环境能给出真页面时自动升级。
           $creditsHtml = ""
-          $creditsExit = 0
-          $creditsAttempts = 0
-          foreach ($bin in $bins) {
-            for ($round = 1; $round -le 3; $round++) {
-              $creditsAttempts++
-              if ($bin -eq $chrome) {
-                & $bin --headless=new --disable-gpu --no-first-run --virtual-time-budget=8000 "--user-data-dir=$profile" --dump-dom chrome://credits > $creditsOut 2> $stderr
-              } else {
-                & $bin --disable-gpu --no-first-run --virtual-time-budget=8000 "--user-data-dir=$profile" --dump-dom chrome://credits > $creditsOut 2> $stderr
-              }
-              $creditsExit = $LASTEXITCODE
-              $creditsHtml = ""
-              if (Test-Path -LiteralPath $creditsOut) { $creditsHtml = [string](Get-Content -LiteralPath $creditsOut -Raw) }
-              if ($creditsHtml -match "<html" -and $creditsHtml.Length -ge 100000) { break }
-              Start-Sleep -Seconds 2
+          $creditsText = ""
+          $creditsSource = ""
+          $noticesSource = Join-Path (Get-Location) "node_modules/playwright-core/ThirdPartyNotices.txt"
+          if (Test-Path -LiteralPath $noticesSource -PathType Leaf) {
+            $noticesText = [string](Get-Content -LiteralPath $noticesSource -Raw)
+            if ($noticesText.Length -ge 50000) {
+              $creditsText = $noticesText
+              $creditsSource = "playwright-core/ThirdPartyNotices.txt"
+              $creditsHtml = "<!doctype html>`n<html><head><meta charset=""utf-8""><title>Playwright third-party notices</title></head><body><pre>" + [System.Net.WebUtility]::HtmlEncode($creditsText) + "</pre></body></html>`n"
             }
-            if ($creditsHtml -match "<html" -and $creditsHtml.Length -ge 100000) { break }
           }
-          # 只断言 `<html` 是**不够**的：Chromium 会静默地 dump 新标签页（约 26 KB、
-          # 标题「新标签页」、Copyright 零命中），而新标签页同样含 `<html` ——
-          # 旧写法抓不住「导错了页」，会把一份假许可清单打进安装包。
-          # 体量下限取 100000：新标签页约 26 KB 必然被挡，而真页面远超此值。
-          $copyrightHits = ([regex]::Matches($creditsHtml, "Copyright")).Count
-          if ($creditsHtml -notmatch "<html" -or $creditsHtml.Length -lt 100000 -or $copyrightHits -eq 0) {
-            Write-Host "credits attempts: $creditsAttempts; last exit code: $creditsExit"
-            Write-Host "credits stdout bytes: $((Get-Item -LiteralPath $creditsOut -ErrorAction SilentlyContinue).Length)"
-            if (Test-Path -LiteralPath $stderr) { Write-Host "credits stderr:"; Get-Content -LiteralPath $stderr -TotalCount 40 | Write-Host }
-            throw "Chromium credits export did not return the credits page (got $($creditsHtml.Length) chars with $copyrightHits Copyright hits; ~26 KB with zero hits means Chromium dumped the new tab page instead of chrome://credits)."
+          if ($creditsText.Length -lt 50000) {
+            # 备选：现取 chrome://credits（环境允许时能得到完整的 HTML 页面）
+            $profile = Join-Path $env:RUNNER_TEMP "mochi-chromium-credits-profile"
+            $stderr = Join-Path $env:RUNNER_TEMP "mochi-chromium-credits.stderr"
+            $creditsOut = Join-Path $env:RUNNER_TEMP "mochi-chromium-credits.dom"
+            $shell = Get-ChildItem -LiteralPath $browserRoot -Recurse -Filter "headless_shell.exe" -File | Select-Object -First 1
+            $bins = @($chrome)
+            if ($null -ne $shell) { $bins += @($shell.FullName) }
+            $creditsDump = ""
+            $creditsExit = 0
+            $creditsAttempts = 0
+            foreach ($bin in $bins) {
+              for ($round = 1; $round -le 3; $round++) {
+                $creditsAttempts++
+                if ($bin -eq $chrome) {
+                  & $bin --headless=new --disable-gpu --no-first-run "--user-data-dir=$profile" --dump-dom chrome://credits > $creditsOut 2> $stderr
+                } else {
+                  & $bin --disable-gpu --no-first-run "--user-data-dir=$profile" --dump-dom chrome://credits > $creditsOut 2> $stderr
+                }
+                $creditsExit = $LASTEXITCODE
+                $creditsDump = ""
+                if (Test-Path -LiteralPath $creditsOut) { $creditsDump = [string](Get-Content -LiteralPath $creditsOut -Raw) }
+                if ($creditsDump.Length -ge 100000) { break }
+                Start-Sleep -Seconds 3
+              }
+              if ($creditsDump.Length -ge 100000) { break }
+            }
+            if ($creditsDump.Length -ge 100000) {
+              $creditsHtml = $creditsDump
+              $creditsText = $creditsDump -replace "(?is)<(script|style)[^>]*>.*?</(script|style)>", ""
+              $creditsText = $creditsText -replace "(?s)<[^>]+>", " "
+              $creditsText = [System.Net.WebUtility]::HtmlDecode($creditsText)
+              $creditsSource = "chrome://credits (--dump-dom)"
+            } else {
+              Write-Host "credits fallback gave no page: attempts $creditsAttempts, last exit $creditsExit, $($creditsDump.Length) chars"
+            }
           }
+          # 双判据（两个来源通用）：
+          #   体量 ≥50000 —— 空骨架(41 B)与新标签页(约 26 KB)都不达标；
+          #   Copyright 命中 ≥10 —— 挡住任何不是许可清单的东西。
+          $copyrightHits = ([regex]::Matches($creditsText, "Copyright")).Count
+          if ($creditsText.Length -lt 50000 -or $copyrightHits -lt 10) {
+            throw "Chromium third-party credits are missing or unusable (source='$creditsSource', $($creditsText.Length) chars, $copyrightHits Copyright hits)."
+          }
+          Write-Host "credits source: $creditsSource ($($creditsText.Length) chars, $copyrightHits Copyright hits)"
           $creditsHtmlPath = Join-Path $resourceRoot "credits.html"
           $creditsTextPath = Join-Path $resourceRoot "credits.txt"
           Set-Content -LiteralPath $creditsHtmlPath -Value $creditsHtml -Encoding utf8 -NoNewline
-          $creditsText = $creditsHtml -replace "(?is)<(script|style)[^>]*>.*?</(script|style)>", ""
-          $creditsText = $creditsText -replace "(?s)<[^>]+>", " "
-          $creditsText = [System.Net.WebUtility]::HtmlDecode($creditsText)
           Set-Content -LiteralPath $creditsTextPath -Value $creditsText -Encoding utf8 -NoNewline
           function Get-Sha256([string]$Path) {
             return (Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash.ToLowerInvariant()
@@ -288,6 +314,7 @@ jobs:
             licenseSha256 = Get-Sha256 (Join-Path $resourceRoot "LICENSE")
             creditsHtmlSha256 = Get-Sha256 $creditsHtmlPath
             creditsTextSha256 = Get-Sha256 $creditsTextPath
+            creditsProvenance = $creditsSource
           }
           $metadata | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $resourceRoot "metadata.json") -Encoding utf8 -NoNewline
           $probe = Join-Path $env:RUNNER_TEMP "mochi-playwright-probe.cjs"

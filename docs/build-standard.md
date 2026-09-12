@@ -167,15 +167,26 @@ node scripts/reconcile-snapshot-manifest.mjs --write   # 确认后落盘
 
 它会做四件事：
 
-1. 从 `prepare-mochi-resources.cjs` 反解 `PLUGINS` 白名单，把**新插件源文件自动登记**进清单
-   （分类写成 `staged-plugin:<插件id>`）——不用再手工加条目，也就不会忘；
+1. 从 `prepare-mochi-resources.cjs` 反解 `PLUGINS` 白名单（**`files:` 与 `directories:` 都算**），
+   把**新插件源文件自动登记**进清单（分类写成 `staged-plugin:<插件id>`）——
+   不用再手工加条目，也就不会忘；
 2. 重算**每一个**清单内文件的 `sha256` 与 `bytes`；
 3. 重写 `verification.expectedFileCount` 与 `expectedFileBytes`；
-4. 报告「白名单外但已登记的条目」（`directories` 整目录拷贝的那批，属正常）与
-   「清单登记但磁盘缺失」的文件。
+4. 报告「清单登记但磁盘缺失」的文件。
 
 跑完用 `node scripts/check-snapshot-manifest.mjs --fail` 复查，应当
 `不一致：0 个，缺失：0 个`、`字节差：±0`。
+
+> 🔴 **`directories:` 整目录拷贝同样必须在清单里**（2026-09-12 踩过，白跑一轮 CI）。
+> `PLUGINS` 里有 4 处整目录拷贝：`mochi-presentations` 的 `references`、`jxl-theme` 的
+> `assets`、`mochi-modeling` 的 `assets`、`dsh-better-sidebar` 的 `lib`。
+> CI 会在快照上跑 `prepare-mochi-resources.cjs`，**缺目录就直接抛「Mochi 打包目录不存在」**。
+> 本脚本自 2026-09-12 起解析并**递归展开** `directories:`（跳过符号链接与
+> `.DS_Store` / `Thumbs.db`），所以**往整目录里加文件也会被自动登记**。
+> 在这之前 `assets` / `lib` 是靠**手工**登记的、`references` 漏了 ——
+> 于是**本机测试全绿、CI 第一轮就炸**（本机有那 4 个文件，快照里没有）。
+> ⇒ **本机 `test:package-resources` 通过 ≠ 快照完整**：它读的是本机源码，
+> 查不出「快照缺文件」，这两件事要分别验。
 
 <details>
 <summary>手工重算单个文件的做法（仅在需要精确控制时使用）</summary>
@@ -206,9 +217,16 @@ print('ok', total)
 
 ### 2.2 当前漂移状态
 
-**2026-09-12 22:2x：0 漂移。** 实时值 `不一致：0 个，缺失：0 个`、`字节差：±0`，
-**492 条 / 91,919,236 B** —— 2026-09-12 这轮出包就是拿这份清单物化的快照，
-并且已经过了私有 CI 的逐文件哈希校验（`Verify approved Mochi source snapshot` 通过）。
+**2026-09-12 23:0x：0 漂移。** 实时值 `不一致：0 个，缺失：0 个`、`字节差：±0`，
+**496 条 / 91,962,273 B** —— 2026-09-12 这轮出包就是拿这份清单物化的快照
+（**497 文件**，= 496 + 清单自身），并且已经过了私有 CI 的逐文件哈希校验
+（`Verify approved Mochi source snapshot` 通过）。
+
+> 条目数变化：492 → **496**，是补入 `mochi-presentations/references/` 那 4 个
+> PPT 设计规范文件（起因见 §2.1 那条 🔴）。
+> ⚠️ 注意一个容易误解的点：**492 条那份快照同样"过了 CI 哈希校验"** ——
+> 也就是说哈希校验只能证明「快照与清单一致」，**证明不了「清单自身是完整的」**。
+> 完整性只能靠 §2.1 的 reconcile 从 `PLUGINS` 反解来保证；两件事必须分别验。
 
 > ⚠️ 这一节写的是**时点结论，不是长期状态**：当天 19:4x 曾漂移 11 个文件 / +34,614 B，
 > 20:2x 收敛到 3 处（`apps/desktop/package.json`、
@@ -415,7 +433,9 @@ CI 的 `Verify approved Mochi source snapshot` 会拿 `.github/windows-native-pa
 → 出现 reparse point（符号链接）直接失败。
 
 所以快照里合法的文件总数恒等于 **清单条目数 + 1**（`+1` 是清单自身，它是唯一豁免哈希的文件）。
-2026-09-12 这轮是 **492 + 1 = 493 个文件 / 91,919,236 字节**。
+最近一次（2026-09-12 23:0x）是 **496 + 1 = 497 个文件 / 91,962,273 字节**；
+更早那轮是 492 + 1 = 493 / 91,919,236 —— **数字会变，看脚本输出**
+（清单曾漏登记整目录拷贝的文件，见 §2.1 那条 🔴）。
 
 ⚠️ 因此**清单里没登记的新文件不会进包，也不会报错** —— 用户装到的还是旧行为，
 而开发机一切正常。这正是 §1.1 那个坑在快照层的同一张脸。
@@ -472,38 +492,53 @@ node tools/derive-plugin-links.mjs --powershell # 直接输出可粘贴进 workf
 > ⚠️ 反过来也成立：**私有副本里的修复没有回流到模板**。改动任一方时另一方要手动跟上。
 > 2026-09-12 这轮的 credits 断言加固（§5.4）是**两边都改了**的一次。
 
-### 5.4 credits 导出：这是两个真缺陷，不是一个
+### 5.4 credits 导出：为什么最后不再用 `chrome://credits`（2026-09-12 定案）
 
-**缺陷一：只判 `<html` 会放进一份假清单。**
-Chromium 会**静默地 dump 新标签页**（约 26 KB、标题「新标签页」、`Copyright` 零命中），
-而新标签页同样含 `<html` —— 只断言 `<html` 抓不住「导错了页」。
+这一步要把 Chromium 的第三方许可清单放进资源根（`credits.html` + `credits.txt`）。
+它连着踩了三个坑，最后**换掉来源**才收口：
 
-**缺陷二（2026-09-12 实测）：`chrome://credits` 是异步渲染页，`--dump-dom` 会跑赢数据源。**
-证据是**同一条命令、同一个 runner 镜像**：run #28 拿到真页面（exit 0、正常 HTML、
-build 全绿），run #29 拿到**空文件**（exit 0、0 字节、随后脚本自己抛异常）。
-同一份脚本两种结果 ⇒ 这不是配置错，是竞态。
+**坑一：判定不足 → 会静默打进一份假清单。**
+`--dump-dom` 失败时会静默 dump 新标签页（约 26 KB、含 `<html`、`Copyright` 零命中），
+只断言 `-notmatch "<html"` 抓不住它。
 
-> 顺带记一个 PowerShell 的不对称（run #29 的报错就出在这）：
-> `Get-Content -Raw` 读**空文件**返回 `$null`；`-match` / `-notmatch` 会把它**静默当 `""`**，
-> 但 `[regex]::Matches($null, …)` **直接抛** `Value cannot be null (Parameter 'input')`。
-> 凡是"先判空、再按字符串处理"的地方，都要显式 `[string]` 转型。
+**坑二：`Get-Content -Raw` 读空文件返回 `$null`。**
+`-match` / `-notmatch` 会**静默**把 `$null` 当 `""`，但 **`[regex]::Matches($null, …)` 直接抛**
+`Value cannot be null (Parameter 'input')`。凡"先判空、再当字符串处理"的地方都要 `[string]` 转型。
 
-最终写法（两个缺陷一起覆盖）：
+**坑三（决定性）：`--dump-dom chrome://credits` 在这个 runner 环境里根本不通。**
+run #30 的实测输出是死证据：
 
-| 手段 | 解决什么 |
-|---|---|
-| `--virtual-time-budget=8000` | 给异步数据源留出渲染时间 |
-| 同一二进制**最多重试 3 轮**，失败后换 `headless_shell.exe` 再来 | 竞态是概率性的，重试是最便宜的对策 |
-| 提前成功判据 `-match "<html" -and .Length -ge 100000` | 一旦拿到合格文档就不再等 |
-| `$creditsHtml = [string](Get-Content … -Raw)` | 挡住 `$null` 抛异常 |
-| 三判据：`<html` + 体量 ≥100000 + `Copyright` 命中数 >0 | 卡住"导成新标签页"（约 26 KB 必然不达标） |
+```
+credits attempts: 6; last exit code: 0
+credits stdout bytes: 41
+```
 
-**阈值为什么定 100000 而不是 200000**：新标签页约 26 KB，100000 已稳稳卡住它；
-而 200000 对一次「渲染到一半」的 dump 有**误杀**风险 —— 宁可多跑一轮重试，不要假阴性。
+**41 字节** = `<html><head></head><body></body></html>` 空骨架。chrome 与 headless_shell
+各 3 轮、带 `--virtual-time-budget=8000`，**6 次全部如此** —— 不是竞态，是这条路本身不通
+（虚拟时间预算反而让页面更快到 load、内容更空，属**反效果**，已去掉）。
 
-（本机 macOS 侧另有一层：实测 Chromium 能启动、CDP 能连，`chrome://credits` 却渲染为
-**空文档**，所以本机开发资源根里那份 credits 是"如实标注来源"的替代品，不是伪造 ——
-见 §8.2 与 `docs/installer-install-speed.md`。Windows 交付物由 CI 每次现取。）
+> 这同时解释了一件更重要的事：**run #28 之所以"绿"，是因为旧断言形同虚设** ——
+> 空骨架同样含 `<html`。也就是说此前一路打进安装包的 credits **一直都是空文件**。
+> 这不是本轮引入的 bug，是断言加严才**暴露**的老问题。
+
+**定案：主来源改用 `node_modules/playwright-core/ThirdPartyNotices.txt`。**
+
+| 维度 | `chrome://credits` 现取 | `playwright-core/ThirdPartyNotices.txt` |
+|---|---|---|
+| 可靠性 | 本环境 6/6 失败 | 文件就在磁盘上，不依赖渲染 |
+| 版本对应 | 靠 chromium 版本推断 | **严格对应**（Playwright 分发的就是它） |
+| 速度 | 起浏览器 + 多轮重试 | 直接读文件 |
+| 与本机一致 | 本机做不到（实测渲染为空文档） | **本机用的就是它** |
+
+`chrome://credits` 保留为**备选**（将来环境能给出真页面时自动升级）；两个来源共用一组判据：
+
+```powershell
+# 体量 ≥50000（空骨架 41 B 与新标签页约 26 KB 都不达标）
+# 且 Copyright 命中 ≥10（挡住任何不是许可清单的东西）
+```
+
+`metadata.json` 新增 **`creditsProvenance`**，如实记录这次走的是哪条路 ——
+**不伪造来源**是本项目对许可文件的一贯要求（本机那份资源根也照此标注）。
 
 ### 5.5 本机怎么准备与监视
 

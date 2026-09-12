@@ -99,7 +99,7 @@
 |---|---|---|
 | 内核（Mochi Harness / dsh） | `apps/desktop/scripts/prepare-mochi-resources.cjs` 的 `PLUGIN_RUNTIME_VERSIONS` | **`0.1.3-alpha.1`**（全部条目） |
 | 打包插件数 | 同上文件的 `PLUGINS` 数组长度 | **26** |
-| 快照清单 | `.github/windows-native-package-inputs.json`；收敛用 `scripts/reconcile-snapshot-manifest.mjs --write` | **492 条 / 91,919,236 B**。2026-09-12 21:0x 复验：`node scripts/check-snapshot-manifest.mjs --fail` → `OK`，字节差 ±0，不一致 0 |
+| 快照清单 | `.github/windows-native-package-inputs.json`；收敛用 `scripts/reconcile-snapshot-manifest.mjs --write` | **496 条 / 91,962,273 B**。2026-09-12 23:0x 复验：`node scripts/check-snapshot-manifest.mjs --fail` → `OK`，字节差 ±0，不一致 0 |
 
 - `0.1.2-rc.1` 是 npm registry 上**更旧**的版本，历史文档中出现属**过时口径**。
 - 历史文档中的插件计数（9 / 12 / 16 / 19 / 20 / 21）一律视为**该时点数字**，不作为现行依据。
