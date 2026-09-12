@@ -2081,7 +2081,7 @@ building        target=nsis file=release\Mochi-Setup-0.1.0-win-x64.exe oneClick=
 | 包内 | `Mochi-Setup-0.1.0-win-x64.exe` + `Mochi-Setup-win-x64.sha256` |
 | zip sha256 | `cb2c288b…adb8919f` |
 | 保留期 | **14 天** |
-| 本机副本 | `release/2026-09-12-windows/` |
+| 本机副本 | `release/2026-09-12-windows/`（**抓取中**，~1 小时；未下完不算已持有） |
 
 ⚠️ **未签名**（`no signing info identified, signing is skipped` ×3）→ SmartScreen 会拦。
 

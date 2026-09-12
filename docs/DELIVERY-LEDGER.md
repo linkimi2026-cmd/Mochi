@@ -415,7 +415,7 @@ plugins/mochi-presentations/references/story-principle.md                    ( 5
 | zip sha256 | `cb2c288b90ad7c7c3842a723e43aa8a9553df556babe52c065492991adb8919f` |
 | releaseInputManifestSha256 | `5e0e12151260d6d6ea0c2fd5f6003d8dc4154ab3787d067002275dbae924ae9a` |
 | 保留期 | **14 天**（过期即删，要留就下载） |
-| 本机副本 | `release/2026-09-12-windows/`（已下载） |
+| 本机副本 | `release/2026-09-12-windows/mochi-windows-x64-34700819338.zip` —— **抓取中**（约 7.7 MB/分，440.9 MB 需 ~1 小时）。**未下完不要当成本地已有交付物。** |
 
 **NSIS 编译本身 4 分 26 秒**（15:07:01 `building target=nsis` → 15:11:27 拿到 `.exe`）。
 这个数字是"包做好了"的耗时，**不是"老师装多久"** —— 安装时长必须真机测（§四#1）。
