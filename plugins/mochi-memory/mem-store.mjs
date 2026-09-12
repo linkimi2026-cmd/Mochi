@@ -75,6 +75,13 @@ const SENSITIVE_RULES = [
   ['病历/医疗/诊断信息', /病历|医疗|诊断/],
 ];
 
+// 主动召回还会读取早期数据库里已有的行，因此把同一护栏公开给只读路径。
+// 这不是第二套判断规则：任何命中写入护栏的旧行也不能进入新的会话上下文。
+export function isSensitiveMemoryText(text) {
+  const value = String(text ?? '');
+  return SENSITIVE_RULES.some(([, pattern]) => pattern.test(value));
+}
+
 // 命中即抛错，消息以『【未写入】敏感内容不进入长期记忆』开头并说明命中类别。
 function assertNotSensitive(text) {
   const value = String(text ?? '');
@@ -278,6 +285,35 @@ export function createStore(db = openStore(), params = {}) {
       insertInjectionStmt.run(q, JSON.stringify(ids), ids.length, effectiveTopK, at);
       insertEvent(null, 'inject', JSON.stringify({ query: q, injected: ids.length, topK: effectiveTopK, tightened }), at);
       return { memories, topK: effectiveTopK, tightened };
+    },
+
+    // 主动上下文只记录已选出的记忆 ID，不把当前会话原文写回数据库。
+    // 同一个 session 内由调用方按快照指纹去重，避免每个模型 step 都强化一次。
+    recordAutomaticContextInjection(memoryIds, { topK = 1, elapsedMs = 0 } = {}) {
+      const at = iso(p.nowProvider());
+      const requested = [...new Set((Array.isArray(memoryIds) ? memoryIds : [])
+        .map((id) => Number(id))
+        .filter((id) => Number.isSafeInteger(id) && id > 0))];
+      const selected = [];
+      for (const id of requested) {
+        const row = getStmt.get(id);
+        if (!row || row.invalid_at || row.expired_at || isSensitiveMemoryText(row.content) || isSensitiveMemoryText(row.summary)) continue;
+        const strength = Math.min(Number(row.strength) + 1, p.strengthCap);
+        hitStmt.run(strength, at, id);
+        insertEvent(id, 'recall', '主动会话上下文命中', at);
+        selected.push(id);
+      }
+      const boundedTopK = Math.max(1, Math.min(100, Number(topK) || 1));
+      const boundedElapsedMs = Math.max(0, Math.min(60_000, Math.round(Number(elapsedMs) || 0)));
+      // query 只放固定标签：当前用户消息可能含凭据或学生信息，绝不作为审计内容持久化。
+      insertInjectionStmt.run('[automatic-session-context]', JSON.stringify(selected), selected.length, boundedTopK, at);
+      insertEvent(null, 'inject', JSON.stringify({
+        source: 'automatic-session-context',
+        injected: selected.length,
+        topK: boundedTopK,
+        localMs: boundedElapsedMs,
+      }), at);
+      return { memoryIds: selected, elapsedMs: boundedElapsedMs };
     },
 
     // 双时态冲突消解：旧行 superseded_by+invalid_at 置位（不删除），新行走 note 全流程。

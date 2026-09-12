@@ -1,5 +1,9 @@
 # MOCHI-P5-MEM-03c · 记忆插件补全：memory_clear 一键清空
 
+> ⚠️ **工具名与状态口径更正（2026-09-12 补加，正文一字未删）**
+> - 本文写作时的工具名为**点号形态**（如 `mochi.xxx`）<!-- allow-dotted-tool-name -->，该形态已于 2026-09-12 因模型网关 400 事故**全面禁用**；现行注册名一律下划线（如 `mochi_memory_note` / `mochi_ppt_create` / `mochi_grade_analyze`）。以源码为准，见 `docs/mochi-naming-convention.md` §5。
+> - 本文中的插件计数与 PASS 结论均为**写作时点**成立，可能已被后续改动推翻。现状以 `docs/DELIVERY-LEDGER.md` 与源码为准。
+
 > 派发对象：GLM 5.3 flash 实现代理 · 监制：WorkBuddy（只审计不编码）
 > 前置：MEM-03/03b 已验收 PASS（8 组测试监制亲自复跑全绿）。
 > 依据：第二阶段/README.md 完成判据「老师能……一键清空这些记忆」；总体方案第 13 章「批量处理必须先经老师确认」。

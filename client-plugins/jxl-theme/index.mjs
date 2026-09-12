@@ -61,7 +61,9 @@ export function apply(ctx) {
         return;
       }
       const url = new URL(req.url ?? "/", "http://x");
-      const rel = normalize(decodeURIComponent(url.pathname)).replace(/^\/jxl-assets\/?/, "");
+      // 先在 URL pathname（恒为正斜杠）上剥前缀，再 normalize 为平台路径；
+      // Windows 上先 normalize 会变成反斜杠导致前缀正则失配（CI 实锤 404）。
+      const rel = decodeURIComponent(url.pathname).replace(/^\/jxl-assets\/?/, "");
       const abs = normalize(join(ASSETS_ROOT, rel));
       if (!abs.startsWith(ASSETS_ROOT) || !existsSync(abs) || !statSync(abs).isFile()) {
         res.writeHead(404).end();

@@ -36,6 +36,7 @@ const pidPath = join(root, "sidecar.pid");
 const fakeDshPath = join(root, "fake-dsh.cjs");
 const userData = join(root, "user-data");
 const timeoutMs = 20_000;
+const fixtureRole = process.env.MOCHI_TEST_RUNTIME_ROLE === "classroom" ? "classroom" : "teacher";
 let primary = null;
 let secondary = null;
 
@@ -99,9 +100,10 @@ function fixtureEnv() {
   };
 }
 
-function launchElectron({ debugPort, secondary = false }) {
+function launchElectron({ debugPort, mainDebugPort, secondary = false }) {
   const args = [".", "--headless", "--disable-gpu", "--no-sandbox", `--user-data-dir=${userData}`];
   if (debugPort !== undefined) args.push(`--remote-debugging-port=${debugPort}`);
+  if (mainDebugPort !== undefined) args.push(`--inspect=127.0.0.1:${mainDebugPort}`);
   const child = spawn(electronBin, args, {
     cwd: desktopRoot,
     env: fixtureEnv(),
@@ -144,10 +146,9 @@ async function currentPage(debugPort) {
   return pages.at(-1);
 }
 
-async function debugCommand(debugPort, method, params = {}) {
-  const page = await currentPage(debugPort);
+async function debugCommandAt(webSocketDebuggerUrl, method, params = {}) {
   return await new Promise((resolve, reject) => {
-    const socket = new WebSocket(page.webSocketDebuggerUrl);
+    const socket = new WebSocket(webSocketDebuggerUrl);
     const timer = setTimeout(() => {
       socket.close();
       reject(new Error("Chrome DevTools evaluation timed out"));
@@ -173,20 +174,45 @@ async function debugCommand(debugPort, method, params = {}) {
         return;
       }
       if (message.result?.exceptionDetails) {
-        reject(new Error(`page evaluation failed: ${message.result.exceptionDetails.text}`));
+        const details = message.result.exceptionDetails;
+        reject(new Error(`page evaluation failed: ${details.exception?.description ?? details.text}`));
         return;
       }
-      resolve(message.result?.result?.value);
+      resolve(message.result);
     });
   });
 }
 
-async function evaluate(debugPort, expression) {
-  return await debugCommand(debugPort, "Runtime.evaluate", {
+async function debugCommand(debugPort, method, params = {}) {
+  const page = await currentPage(debugPort);
+  return await debugCommandAt(page.webSocketDebuggerUrl, method, params);
+}
+
+async function mainDebugUrl(debugPort) {
+  const response = await fetch(`http://127.0.0.1:${debugPort}/json/list`);
+  assert.equal(response.ok, true, "Electron main-process inspector endpoint must be available");
+  const targets = await response.json();
+  const target = targets.find((candidate) => candidate.type === "node" && candidate.webSocketDebuggerUrl);
+  assert.ok(target, "Electron must expose a main-process inspector target");
+  return target.webSocketDebuggerUrl;
+}
+
+async function mainEvaluate(debugPort, expression) {
+  const result = await debugCommandAt(await mainDebugUrl(debugPort), "Runtime.evaluate", {
     expression,
     awaitPromise: true,
     returnByValue: true,
   });
+  return result?.result?.value;
+}
+
+async function evaluate(debugPort, expression) {
+  const result = await debugCommand(debugPort, "Runtime.evaluate", {
+    expression,
+    awaitPromise: true,
+    returnByValue: true,
+  });
+  return result?.result?.value;
 }
 
 function sidecarFixture() {
@@ -224,16 +250,23 @@ try {
   for (const directory of [join(root, "home"), join(root, "tmp"), join(root, "dsh-home"), userData]) {
     mkdirSync(directory, { recursive: true });
   }
+  writeFileSync(join(userData, "mochi-launch.json"), `${JSON.stringify({ schemaVersion: 1, role: fixtureRole })}\n`);
   writeFileSync(fakeDshPath, sidecarFixture());
 
   const debugPort = await freePort();
-  primary = launchElectron({ debugPort });
+  const mainDebugPort = await freePort();
+  primary = launchElectron({ debugPort, mainDebugPort });
 
   await waitFor(async () => {
     const text = await evaluate(debugPort, "document.body.innerText");
     return typeof text === "string" && text.includes("WEB_HOST_EXITED") ? text : null;
   }, "startup failure diagnostic");
   assert.equal(readCounter(), 1, "the first startup must create exactly one failed sidecar");
+  assert.deepEqual(
+    JSON.parse(readFileSync(join(root, "dsh-home", ".mochi-runtime-role.json"), "utf8")),
+    { schemaVersion: 1, role: fixtureRole },
+    "a persisted role must reach profile provisioning before the sidecar starts",
+  );
 
   const clicked = await evaluate(debugPort, "(() => { const button = document.getElementById('retry'); if (!button) return false; button.click(); return true; })()");
   assert.equal(clicked, true, "the trusted local diagnostic page must expose retry");
@@ -244,6 +277,18 @@ try {
   }, "retry sidecar readiness");
   assert.equal(readCounter(), 2, "retry must start one replacement sidecar after the failed one");
   assert.ok(readyPage.url.startsWith("http://127.0.0.1:"));
+
+  assert.equal(await evaluate(debugPort, "typeof window.mochiLanDesktop?.attention"), "function", "the DSH main frame must receive only the LAN attention bridge");
+  assert.equal(
+    await mainEvaluate(mainDebugPort, "(() => { const { createRequire } = process.getBuiltinModule('node:module'); const window = createRequire(`${process.cwd()}/.mochi-inspector.cjs`)('electron').BrowserWindow.getAllWindows()[0]; if (!window) return false; window.hide(); return !window.isVisible(); })()"),
+    true,
+    "the Electron main process must actually hide its BrowserWindow before the trusted attention call",
+  );
+  assert.equal(await evaluate(debugPort, "window.mochiLanDesktop.attention('incoming-message')"), true, "a fixed LAN attention kind must reach the trusted main process");
+  await waitFor(async () => {
+    return await mainEvaluate(mainDebugPort, "(() => { const { createRequire } = process.getBuiltinModule('node:module'); const window = createRequire(`${process.cwd()}/.mochi-inspector.cjs`)('electron').BrowserWindow.getAllWindows()[0]; return Boolean(window && window.isVisible()); })()");
+  }, "trusted LAN attention restoring a hidden window");
+  assert.equal(await evaluate(debugPort, "window.mochiLanDesktop.attention('not-an-attention-kind')"), false, "the preload must reject an arbitrary renderer payload before IPC");
 
   await debugCommand(debugPort, "Page.close");
   await waitFor(async () => (await pageTargets(debugPort)).length === 0, "primary BrowserWindow close");
@@ -259,7 +304,7 @@ try {
   }, "ready URL restoration after second-instance");
   assert.equal(readCounter(), 2, "second-instance must not create a second DSH sidecar");
 
-  console.log("[test-startup-runtime] PASS: Electron retry, ready-URL restoration, and single-instance reuse are stable.");
+  console.log("[test-startup-runtime] PASS: Electron retry, hidden-window LAN attention restoration, ready-URL restoration, and single-instance reuse are stable.");
   await terminate(primary.child);
 } finally {
   if (secondary !== null) await terminate(secondary.child);

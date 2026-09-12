@@ -30,6 +30,7 @@ const dshBin = process.env.MOCHI_DSH_BIN ?? requireFromDesktop.resolve("@deepsee
 const nodeBin = process.env.MOCHI_DSH_NODE ?? process.execPath;
 const expectedSkills = [
   "class-meeting-prep",
+  "classroom-deck",
   "mochi",
   "student-follow-up",
   "student-movement-request",
@@ -116,7 +117,7 @@ export function apply(ctx) {
           loadedTeacherDailyBrief: loaded?.name === "teacher-daily-brief",
           loadedStudentMovementRequest:
             loadedStudentMovementRequest?.name === "student-movement-request"
-            && loadedStudentMovementRequest.content.includes("jxl.movement_request_create")
+            && loadedStudentMovementRequest.content.includes("jxl_movement_request_create")
             && loadedStudentMovementRequest.content.includes("approval.request"),
         };
         console.log("MOCHI_SKILL_CATALOG=" + JSON.stringify(result));

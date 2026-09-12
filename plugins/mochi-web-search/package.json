@@ -4,5 +4,8 @@
   "private": true,
   "type": "module",
   "main": "index.mjs",
-  "scripts": { "test": "node --test test/*.test.mjs" }
+  "scripts": { "test": "node --test test/*.test.mjs" },
+  "dependencies": {
+    "agent-webtool": "0.6.0"
+  }
 }

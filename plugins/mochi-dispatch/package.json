@@ -6,7 +6,7 @@
   "main": "index.mjs",
   "description": "Mochi 任务域：MochiTask 状态机 + ASK/REQUEST/FIND/APPROVE 原语（Relay 为底层特例）",
   "scripts": {
-    "test": "node test.mjs"
+    "test": "node test.mjs && node test-lan-transport.mjs && node test-lan-receipt-recovery.mjs"
   },
   "dependencies": {
     "@deepseek-ai/dsh-tools": "0.1.3-alpha.1"

@@ -107,6 +107,7 @@ async function run() {
     icon: nativeImage.createEmpty(),
     open: () => {},
     restart: () => {},
+    switchRole: () => {},
     quit: () => {},
   }), /non-empty application icon/);
   assert.equal(window.isDestroyed(), false, "a tray initialization failure must not destroy the visible app window");
@@ -118,6 +119,7 @@ async function run() {
   let restartCalls = 0;
   let quitCalls = 0;
   let releaseRestart = null;
+  const switchRoleCalls = [];
   const callbacks = {
     open: () => {
       openCalls += 1;
@@ -130,16 +132,41 @@ async function run() {
       restartCalls += 1;
       releaseRestart = resolve;
     }),
+    // [Mochi 2026-09-11] WO-7 托盘新增「切换本机角色」；这里只记录调用，
+    // 真实切换流程（确认框 + 重启）由主进程集成测试覆盖。
+    switchRole: (role) => {
+      switchRoleCalls.push(role);
+    },
     quit: () => {
       quitCalls += 1;
       if (window !== null && !window.isDestroyed()) window.destroy();
     },
   };
-  const first = initializeMochiTray({ icon, ...callbacks });
-  const second = initializeMochiTray({ icon, ...callbacks });
+  const first = initializeMochiTray({ icon, currentRoleLabel: "教师办公电脑", ...callbacks });
+  const second = initializeMochiTray({ icon, currentRoleLabel: "教师办公电脑", ...callbacks });
   assert.strictEqual(second, first, "repeated initialization must retain one Tray handle");
   assert.equal(first.tray.isDestroyed(), false, "a real Electron Tray must be created");
-  assert.deepEqual(first.menu.items.map((item) => item.label).filter(Boolean), ["打开", "重启内核", "退出"]);
+  assert.deepEqual(first.menu.items.map((item) => item.label).filter(Boolean), [
+    "打开",
+    "当前角色：教师办公电脑",
+    "切换本机角色：教师办公电脑",
+    "切换本机角色：教室一体机",
+    "重启内核",
+    "退出",
+  ]);
+
+  // 当前角色对应的菜单项必须置灰，另一个角色必须可点——否则「切换」会切到
+  // 自己身上并触发一次无意义的重启。
+  const roleStatus = first.menu.getMenuItemById("mochi-tray-role-status");
+  const switchTeacher = first.menu.getMenuItemById("mochi-tray-switch-teacher");
+  const switchClassroom = first.menu.getMenuItemById("mochi-tray-switch-classroom");
+  assert.equal(roleStatus.enabled, false, "the current role must be a disabled status row");
+  assert.equal(switchTeacher.enabled, false, "the current role must not be switchable to itself");
+  assert.equal(switchClassroom.enabled, true, "the other role must stay switchable");
+  assert.equal(typeof switchClassroom.click, "function", "Tray must expose a role switch callback");
+  switchClassroom.click();
+  await waitFor(() => switchRoleCalls.length === 1, "tray switch-role callback");
+  assert.deepEqual(switchRoleCalls, ["classroom"], "the switch callback must receive the target role");
 
   const openItem = first.menu.getMenuItemById("mochi-tray-open");
   assert.equal(typeof openItem?.click, "function", "Tray must expose an open menu callback");
@@ -172,6 +199,7 @@ async function run() {
     iconSize,
     openCalls,
     restartCalls,
+    switchRoleCalls,
     quitCalls,
     repeatedInitialization: first === second,
     trayDestroyed: first.tray.isDestroyed(),
@@ -220,6 +248,7 @@ try {
   assert.equal(result.iconEmpty, false);
   assert.equal(result.openCalls, 1);
   assert.equal(result.restartCalls, 2);
+  assert.deepEqual(result.switchRoleCalls, ["classroom"], "the role switch callback must be wired exactly once");
   assert.equal(result.quitCalls, 1);
   assert.equal(result.repeatedInitialization, true);
   assert.equal(result.trayDestroyed, true);

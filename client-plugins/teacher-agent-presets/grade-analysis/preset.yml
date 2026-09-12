@@ -1,0 +1,3 @@
+name: 成绩分析
+description: 用教师明确的成绩口径分析 XLSX 或 CSV，并在成绩工具可用时生成可复核的内部审计工作簿。
+order: 3

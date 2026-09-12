@@ -1,7 +1,7 @@
 // mochi-memory 存储层单测（MOCHI-P5-MEM-02），风格同 mochi-dispatch/test.mjs。
 // 衰减用可注入时钟（params.nowProvider）测试，不真的等 30 天。
 import assert from 'node:assert/strict';
-import { openStore, createStore, defaultDbPath,
+import { openStore, createStore, defaultDbPath, isSensitiveMemoryText,
   DECAY_AFTER_DAYS, DECAY_FACTOR, MIN_IMPORTANCE, STRENGTH_CAP, DEFAULT_TOP_K, TIGHTENED_TOP_K } from './mem-store.mjs';
 
 const DAY = 86400000;
@@ -62,6 +62,12 @@ console.log('② 敏感写入护栏：六类关键词全抛错（note 与 supers
   // supersede 的新内容同样过闸
   const ok = store.note({ kind: 'task_fact', content: '高二(3)班教室在二楼东侧' });
   assert.throws(() => store.supersede(ok.id, { content: '新教室带 api_key 门禁' }), /【未写入】/);
+}
+
+console.log('②a 主动上下文复用同一敏感护栏，不会读取早期不安全行');
+{
+  assert.equal(isSensitiveMemoryText('课件密码写在这里'), true);
+  assert.equal(isSensitiveMemoryText('绿色模板的课件'), false);
 }
 
 console.log('③ supersede 双时态：旧行置位不删除，recall 不返回，includeInvalid 可见');

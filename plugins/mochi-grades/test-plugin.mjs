@@ -11,7 +11,7 @@ import ExcelJS from 'exceljs';
 import { apply } from './plugin.mjs';
 import { calculateGradeStatistics, validateStructuredGrades, COMPLETION_FILENAME } from './index.mjs';
 
-const NODE = 'mochi.grade_analyze';
+const NODE = 'mochi_grade_analyze';
 
 const ASSESSMENT = { name: '期中数学测验', subject: '数学', maxScore: 100, passScore: 60, excellentScore: 85 };
 // 全链 fixture：缺考/免修/空白/零分/重复学号/同名不同学号各占一行；有效分数 95、88。
@@ -58,7 +58,7 @@ function loadTool(t) {
   const registered = [];
   apply({ tools: { register: (tool) => registered.push(tool) } });
   const tool = registered.find((item) => item.name === NODE);
-  assert.ok(tool, 'mochi.grade_analyze must be registered by apply(ctx)');
+  assert.ok(tool, 'mochi_grade_analyze must be registered by apply(ctx)');
   t.diagnostic(`registered tools: ${registered.map((item) => item.name).join(', ')}`);
   return tool;
 }

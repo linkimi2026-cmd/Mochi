@@ -6,7 +6,8 @@
   "main": "index.mjs",
   "description": "Mochi 记忆域：长期记忆（SimpleMem 衰减 + 双时态冲突消解 + 敏感护栏）+ 工作状态快照",
   "scripts": {
-    "test": "node test.mjs"
+    "test": "node test.mjs && node test-memstore.mjs && node test-worldstate.mjs && node test-active-context.mjs",
+    "test:prompt-assembly": "node test-active-prompt-assembly.mjs"
   },
   "dependencies": {
     "@deepseek-ai/dsh-tools": "0.1.3-alpha.1"

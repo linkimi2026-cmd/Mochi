@@ -1,0 +1,11 @@
+{
+  "name": "mochi-lan",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "index.mjs",
+  "description": "Mochi 教师—教室端签名局域网消息、人工配对与已看到回执",
+  "scripts": {
+    "test": "node test-host-bridge.mjs && node test-durable.mjs && node test.mjs && node test-files.mjs && node test-autodiscovery.mjs"
+  }
+}

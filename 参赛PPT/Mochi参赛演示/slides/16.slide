@@ -1,0 +1,44 @@
+<Slide style={{ width: 1280, height: 720, background: '#16211d', position: 'relative', overflow: 'hidden' }}>
+
+    {/* 背景同心弧 */}
+    <Box style={{ position: 'absolute', left: 340, top: 60, width: 600, height: 600 }}>
+        <svg width={600} height={600} viewBox='0 0 600 600'>
+            <circle cx='300' cy='300' r='180' fill='none' stroke='rgba(232,179,75,0.10)' strokeWidth='1' />
+            <circle cx='300' cy='300' r='250' fill='none' stroke='rgba(232,179,75,0.06)' strokeWidth='1' />
+            <circle cx='300' cy='300' r='290' fill='none' stroke='rgba(232,179,75,0.03)' strokeWidth='1' />
+        </svg>
+    </Box>
+
+    <Box style={{
+        position: 'relative', zIndex: 1,
+        width: 1280, height: 720,
+        paddingLeft: 96, paddingRight: 96,
+        alignItems: 'center', justifyContent: 'center', gap: 26,
+    }}>
+
+        <Text style={{ fontSize: 15, color: '#e8b34b', letterSpacing: 6 }}>现场演示</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#f5f2e9', lineHeight: 1.25, textAlign: 'center' }}>
+            接下来，把讲台交给它
+        </Text>
+
+        <Box style={{ width: 72, height: 3, background: '#e8b34b', borderRadius: 2, marginTop: 4, marginBottom: 10 }} />
+
+        <Box style={{ flexDirection: 'row', gap: 40, alignItems: 'center' }}>
+            <Text style={{ fontSize: 19, color: 'rgba(245,242,233,0.62)' }}>校园传话</Text>
+            <Box style={{ width: 4, height: 4, borderRadius: 2, background: 'rgba(232,179,75,0.6)' }} />
+            <Text style={{ fontSize: 19, color: 'rgba(245,242,233,0.62)' }}>课件二次编辑</Text>
+            <Box style={{ width: 4, height: 4, borderRadius: 2, background: 'rgba(232,179,75,0.6)' }} />
+            <Text style={{ fontSize: 19, color: 'rgba(245,242,233,0.62)' }}>成绩分析</Text>
+            <Box style={{ width: 4, height: 4, borderRadius: 2, background: 'rgba(232,179,75,0.6)' }} />
+            <Text style={{ fontSize: 19, color: 'rgba(245,242,233,0.62)' }}>教学建模</Text>
+            <Box style={{ width: 4, height: 4, borderRadius: 2, background: 'rgba(232,179,75,0.6)' }} />
+            <Text style={{ fontSize: 19, color: 'rgba(245,242,233,0.62)' }}>对话内审批</Text>
+        </Box>
+
+        <Text style={{ fontSize: 15, color: 'rgba(245,242,233,0.36)', marginTop: 14 }}>
+            本环节由小组同学现场讲解与操作
+        </Text>
+
+    </Box>
+</Slide>

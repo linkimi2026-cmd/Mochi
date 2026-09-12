@@ -24,7 +24,7 @@
 
 import { DeepSeekAdapter, resolveAdapterOptions } from '@deepseek-ai/dsh-llm-deepseek'
 import { getOrCreateAnonymousUserId } from '@deepseek-ai/dsh-anonymous-user-id'
-import { LlmError, assertUsableApiKey } from '@deepseek-ai/dsh-llm'
+import { LlmError, assertUsableApiKey, resolveImageAttachmentAccess } from '@deepseek-ai/dsh-llm'
 
 export const name = 'mochi-llm-mimo'
 export const inject = ['llm']
@@ -71,8 +71,26 @@ export function apply(ctx, config) {
     // prepareExtensions，缺省会在请求前抛 REQUEST_EXTENSION。
     prepareExtensions: (request) => ctx.get('deepseekLlmApiExtensions')?.prepare(request)
       ?? Promise.resolve({ fields: {}, accept: () => Promise.resolve() }),
-    // 图片输入链路（attachments/files API）是 DeepSeek Files API 专属，
-    // mimo 端点不适用；不注入即保持不可用，模型目录也不声明 image 模态。
+    // ── 视觉输入（2026-09-12 接线）────────────────────────────────────────
+    // 早先这里断言「图片链路是 DeepSeek Files API 专属，mimo 不适用」，是错的：
+    // serialize.ts 的 imageParts() 有两条分支——kind:'file' 走 DS Files API，
+    // 否则内联成 OpenAI 标准的 `image_url:{url:'data:<mime>;base64,…'}`，
+    // 与 Files API 无关。mimo.ezlook.top 是 OpenAI 兼容端点，实测直接吃
+    // base64 data URL（返回 usage.prompt_tokens_details.image_tokens > 0）。
+    //
+    // 两个 seam 缺一不可，否则图片在链路上整个消失：
+    //   · resolveAttachments → adapter 才有 AttachmentStore；缺了它
+    //     attachment-store 不挂载，tool-fs 的 read_image 根本不会注册
+    //     （index.ts 的 ctx.inject(['attachments'], …)），截图能力也就无从谈起。
+    //   · resolveImageAccess → 把持久化附件解析成可读字节（含宿主路径映射）。
+    // 另需 runtime-profile.json 给模型声明 inputModalities 含 'image'，
+    // 否则 assertImageCapableRoute 仍会以「模型未声明图片输入」拒绝。
+    resolveAttachments: () => ctx.get('attachments'),
+    resolveImageAccess: (attachments, ref) => resolveImageAttachmentAccess(
+      attachments,
+      hostPath => ctx.get('fs')?.processPathFromHostPath(hostPath),
+      ref,
+    ),
   })
 
   ctx.llm.registerConfigurableProviders([

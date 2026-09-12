@@ -1,5 +1,9 @@
 # MOCHI-P45-MM-01 · 教学建模首样：椭圆切线交互模型（JSXGraph，离线零依赖）
 
+> ⚠️ **工具名与状态口径更正（2026-09-12 补加，正文一字未删）**
+> - 本文写作时的工具名为**点号形态**（如 `mochi.xxx`）<!-- allow-dotted-tool-name -->，该形态已于 2026-09-12 因模型网关 400 事故**全面禁用**；现行注册名一律下划线（如 `mochi_memory_note` / `mochi_ppt_create` / `mochi_grade_analyze`）。以源码为准，见 `docs/mochi-naming-convention.md` §5。
+> - 本文中的插件计数与 PASS 结论均为**写作时点**成立，可能已被后续改动推翻。现状以 `docs/DELIVERY-LEDGER.md` 与源码为准。
+
 > 派发对象：GLM 5.3 flash 实现代理 · 监制：WorkBuddy（只审计不编码）
 > 依据：总体方案第 15–20 章（教学建模工作空间；首批小样之「圆锥曲线与切线」；八步交付流程的验证要求）。
 > 边界：只允许新建 `plugins/mochi-modeling/` 整个新目录。**禁止**改其他任何文件 / npm install / 重启服务 / git。可以自己上网查 JSXGraph（GitHub/CDN），但 vendor 下来的文件必须记录来源、版本、许可证。

@@ -1,5 +1,9 @@
 # MOCHI-P5-MEM-03b · 记忆插件补漏：source 参数 + memory_list 工具
 
+> ⚠️ **工具名与状态口径更正（2026-09-12 补加，正文一字未删）**
+> - 本文写作时的工具名为**点号形态**（如 `mochi.xxx`）<!-- allow-dotted-tool-name -->，该形态已于 2026-09-12 因模型网关 400 事故**全面禁用**；现行注册名一律下划线（如 `mochi_memory_note` / `mochi_ppt_create` / `mochi_grade_analyze`）。以源码为准，见 `docs/mochi-naming-convention.md` §5。
+> - 本文中的插件计数与 PASS 结论均为**写作时点**成立，可能已被后续改动推翻。现状以 `docs/DELIVERY-LEDGER.md` 与源码为准。
+
 > 派发对象：GLM 5.3 flash 实现代理 · 监制：WorkBuddy（只审计不编码）
 > 前置：MEM-03 已验收 PASS（监制 2026-09-07 亲自复跑 test.mjs 全绿、逐行核对 index.mjs 与工单契约）。
 > 来源：MEM-03 验收两个发现项——① memory_note 未暴露 source 参数，recall 的「为什么Mochi知道这个」永远显示"未注明来源"（方案第 38 章"可检查可纠正"落空一半）；② 无列表工具，老师无法查看"AI 记了我什么"（第二阶段完成判据"可查看"落空）。

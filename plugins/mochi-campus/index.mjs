@@ -140,17 +140,17 @@ function dashboardCount(dashboard, key) {
 }
 
 export function apply(ctx, connection = campusConnection) {
-  // 写操作（message.send / jxl.relay_send）的尝试备忘：同一会话同一参数
+  // 写操作（message_send / jxl_relay_send）的尝试备忘：同一会话同一参数
   // 只投递一次——结果不明确也绝不静默重发。
   const sends = new WeakMap();
   const register = (name, description, parameters, execute) => ctx.tools.register(defineTool({ name, description, parameters, output, execute }));
   const askCampus = (message, exec) => connection.request('/api/assistant', exec, { method: 'POST', body: { message } });
-  register('jxl.assistant', '【备用】仅当主人明确要求"用校园网页版助手"时才用；日常查询与操作一律优先用上面列出的具体工具（查状态用 jxl.campus_status 等，传话用 jxl.relay_send）。它的结果可能只有操作提示而非数据，不代表任何操作已完成。', {
+  register('jxl_assistant', '【备用】仅当主人明确要求"用校园网页版助手"时才用；日常查询与操作一律优先用上面列出的具体工具（查状态用 jxl_campus_status 等，传话用 jxl_relay_send）。它的结果可能只有操作提示而非数据，不代表任何操作已完成。', {
     message: { type: 'string', required: true, description: '800 字以内的校园请求。' },
     selectedStudentId: { type: 'integer' }, selectedClassId: { type: 'integer' },
   }, (args, exec) => connection.request('/api/assistant', exec, { method: 'POST', body: args }));
 
-  register('jxl.query', '读取与校园网页完全相同的业务 API，按当前登录账号权限返回。只报告返回的数据；dataMode=cloud-demo 表示云端演示库。', {
+  register('jxl_query', '读取与校园网页完全相同的业务 API，按当前登录账号权限返回。只报告返回的数据；dataMode=cloud-demo 表示云端演示库。', {
     page: { type: 'string', required: true, enum: ['dashboard', 'students', 'movements', 'events', 'messages', 'unread-count'] },
     keyword: { type: 'string' },
   }, ({ page, keyword }, exec) => {
@@ -159,7 +159,7 @@ export function apply(ctx, connection = campusConnection) {
     if (keyword) query.set('q', keyword);
     return connection.request(`/api/${path}?${query}`, exec);
   });
-  register('jxl.smart_digest', '复用网页版智能消息摘要。返回云端实际结果；如果规则降级，明确说明。', {}, (_, exec) => connection.request('/api/messages/smart-digest', exec, { method: 'POST', body: {} }));
+  register('jxl_smart_digest', '复用网页版智能消息摘要。返回云端实际结果；如果规则降级，明确说明。', {}, (_, exec) => connection.request('/api/messages/smart-digest', exec, { method: 'POST', body: {} }));
 
   // ── 直读业务 API 的状态工具（2026-09-05）───────────────────────────────
   // 教训：assistant 端点依赖校园云端 AI，provider 不可用时会降级成没有数据的
@@ -210,8 +210,8 @@ export function apply(ctx, connection = campusConnection) {
     return [m.studentName, m.className, m.destination, m.status].some((v) => String(v || '').includes(k));
   };
 
-  for (const toolName of ['campus_query_student', 'jxl.student_query']) {
-    register(toolName, '查询已有学生流动单；空结果只代表没有匹配的流动记录，不能据此判断学生不存在。按姓名登记新放行申请时，应先调用 jxl.student_directory_search。', studentParameters, async ({ keyword = '', status, onlyOverdue }, exec) => {
+  for (const toolName of ['campus_query_student', 'jxl_student_query']) {
+    register(toolName, '查询已有学生流动单；空结果只代表没有匹配的流动记录，不能据此判断学生不存在。按姓名登记新放行申请时，应先调用 jxl_student_directory_search。', studentParameters, async ({ keyword = '', status, onlyOverdue }, exec) => {
       const requested = String(status || '').trim();
       // 已返班只在 active=false 的历史流动中查 CLOSED；不能先读 active 列表再
       // 报 "returned=0"。其他状态保持当前活跃流动范围。
@@ -231,7 +231,7 @@ export function apply(ctx, connection = campusConnection) {
       };
     });
   }
-  register('jxl.student_directory_search', '按姓名、学号或班级查询当前教师授权范围内的真实学生目录。即使学生没有任何流动单也能返回。若用户已要求创建放行申请且结果唯一，下一步必须调用 jxl.movement_request_create；不得先回复Markdown伪卡或让用户点击不存在的按钮。', {
+  register('jxl_student_directory_search', '按姓名、学号或班级查询当前教师授权范围内的真实学生目录。即使学生没有任何流动单也能返回。若用户已要求创建放行申请且结果唯一，下一步必须调用 jxl_movement_request_create；不得先回复Markdown伪卡或让用户点击不存在的按钮。', {
     keyword: { type: 'string', required: true, description: '学生姓名、学号或班级关键词。' },
     limit: { type: 'integer', description: '最多返回数量，默认10，范围1到20。' },
   }, async ({ keyword, limit = 10 }, exec) => {
@@ -244,12 +244,12 @@ export function apply(ctx, connection = campusConnection) {
       ...response,
       workflow: {
         fact: '这是学生目录结果，不是放行申请。',
-        requiredNextToolWhenCreating: 'jxl.movement_request_create',
+        requiredNextToolWhenCreating: 'jxl_movement_request_create',
         approvalRule: '必须实际调用创建工具才会出现原生确认卡；不得用Markdown或文字按钮替代。',
       },
     };
   });
-  register('jxl.clinic_status', '查询授权范围内医务室相关学生：合并流动单（目的地=医务室）与医务事件（就诊/留观中），与医务小组件同源。', { onlyOverdue: { type: 'boolean' } }, async ({ onlyOverdue }, exec) => {
+  register('jxl_clinic_status', '查询授权范围内医务室相关学生：合并流动单（目的地=医务室）与医务事件（就诊/留观中），与医务小组件同源。', { onlyOverdue: { type: 'boolean' } }, async ({ onlyOverdue }, exec) => {
     const [movements, events] = await Promise.all([
       capture('movements', () => readMovements(exec, true)),
       capture('events', () => readEvents(exec, 30)),
@@ -281,7 +281,7 @@ export function apply(ctx, connection = campusConnection) {
         : { count: null, items: null, error: events.error },
     };
   });
-  register('jxl.dorm_status', '查询授权范围内宿舍相关学生流动（直读流动单业务 API，与"学生放行与返班"小组件同源）。', { building: { type: 'string' }, floor: { type: 'integer' } }, async ({ building = '', floor }, exec) => {
+  register('jxl_dorm_status', '查询授权范围内宿舍相关学生流动（直读流动单业务 API，与"学生放行与返班"小组件同源）。', { building: { type: 'string' }, floor: { type: 'integer' } }, async ({ building = '', floor }, exec) => {
     const movements = await capture('movements', () => readMovements(exec, true));
     const metadata = queryMetadata(connection, [movements]);
     if (!movements.ok) return { ...metadata, count: null, items: null, 范围: null };
@@ -304,7 +304,7 @@ export function apply(ctx, connection = campusConnection) {
       } : {}),
     };
   });
-  register('jxl.campus_status', '校园状态总览：待办计数、超时、在途学生与最近关键事件（直读 dashboard/movements 业务 API，与"班主任待办"小组件同源）。', { topic: { type: 'string', description: '可选关注点，仅作提示，不影响返回结构。' } }, async (_args, exec) => {
+  register('jxl_campus_status', '校园状态总览：待办计数、超时、在途学生与最近关键事件（直读 dashboard/movements 业务 API，与"班主任待办"小组件同源）。', { topic: { type: 'string', description: '可选关注点，仅作提示，不影响返回结构。' } }, async (_args, exec) => {
     const [dash, movements, events] = await Promise.all([
       capture('dashboard', () => readDashboard(exec)),
       capture('movements', () => readMovements(exec, true)),
@@ -330,34 +330,34 @@ export function apply(ctx, connection = campusConnection) {
       最近医务记录: eventItems?.slice(0, 8).map(summarizeEvent) ?? null,
     };
   });
-  register('jxl.health_events', '读取当前账号授权的医务事件（直读业务 API，与医务相关小组件同源）。', { keyword: { type: 'string' }, urgency: { type: 'string' }, limit: { type: 'number' } }, ({ keyword, urgency, limit = 20 }, exec) => {
+  register('jxl_health_events', '读取当前账号授权的医务事件（直读业务 API，与医务相关小组件同源）。', { keyword: { type: 'string' }, urgency: { type: 'string' }, limit: { type: 'number' } }, ({ keyword, urgency, limit = 20 }, exec) => {
     const query = new URLSearchParams({ limit: String(Math.max(1, Math.min(30, Math.floor(limit)))) });
     if (keyword) query.set('q', keyword);
     if (urgency) query.set('urgency', urgency);
     return connection.request(`/api/events?${query}`, exec);
   });
-  register('jxl.message', '读取本人校内收件箱或未读数量；不发送、不将消息标为已读。', { box: { type: 'string', enum: ['inbox', 'sent', 'unread'] } }, ({ box = 'inbox' }, exec) => {
+  register('jxl_message', '读取本人校内收件箱或未读数量；不发送、不将消息标为已读。', { box: { type: 'string', enum: ['inbox', 'sent', 'unread'] } }, ({ box = 'inbox' }, exec) => {
     if (box === 'sent') throw new Error('现有云端 API 不提供独立已发送列表，请到事件详情查看已发送消息。');
     return connection.request(box === 'unread' ? '/api/messages/unread-count' : '/api/messages?limit=20', exec);
   });
 
   // 只读详情四件套（2026-09-05）：让 Mochi 能调动小组件里的全部知识——
   // 放行与返班（详情）、学生档案（卡）、事件与协作消息往来、事实统计。
-  register('jxl.movement_detail', '读取单条放行/返班流动单详情（状态时间线、学生、审批记录），与学生放行与返班小组件同源。ID 来自流动单列表，不得猜测。', { movementId: { type: 'string', required: true, description: '流动单编号或 ID（来自放行列表查询）。' } }, ({ movementId }, exec) => connection.request(`/api/movements/${encodeURIComponent(String(movementId).trim())}`, exec));
-  register('jxl.student_card', '读取单个学生的档案卡（基本信息、班级、当前状态），与班级学生档案小组件同源。关键字来自学生列表，不得猜测。', { keyword: { type: 'string', required: true, description: '学生姓名或学号。' } }, ({ keyword }, exec) => connection.request(`/api/students/card/${encodeURIComponent(String(keyword).trim())}`, exec));
-  register('jxl.event_detail', '读取单条校园/医务事件详情及其协作消息往来，与班级协作消息小组件同源。ID 来自事件或消息列表，不得猜测。', { eventId: { type: 'integer', required: true, description: '事件 ID。' } }, async ({ eventId }, exec) => {
+  register('jxl_movement_detail', '读取单条放行/返班流动单详情（状态时间线、学生、审批记录），与学生放行与返班小组件同源。ID 来自流动单列表，不得猜测。', { movementId: { type: 'string', required: true, description: '流动单编号或 ID（来自放行列表查询）。' } }, ({ movementId }, exec) => connection.request(`/api/movements/${encodeURIComponent(String(movementId).trim())}`, exec));
+  register('jxl_student_card', '读取单个学生的档案卡（基本信息、班级、当前状态），与班级学生档案小组件同源。关键字来自学生列表，不得猜测。', { keyword: { type: 'string', required: true, description: '学生姓名或学号。' } }, ({ keyword }, exec) => connection.request(`/api/students/card/${encodeURIComponent(String(keyword).trim())}`, exec));
+  register('jxl_event_detail', '读取单条校园/医务事件详情及其协作消息往来，与班级协作消息小组件同源。ID 来自事件或消息列表，不得猜测。', { eventId: { type: 'integer', required: true, description: '事件 ID。' } }, async ({ eventId }, exec) => {
     const id = Math.floor(eventId);
     const detail = await connection.request(`/api/events/${id}`, exec);
     const thread = await connection.request(`/api/events/${id}/messages`, exec).catch(() => null);
     return { ...detail, thread: thread?.result ?? null };
   });
-  register('jxl.analytics', '读取学生流动事实统计（按班级/年级聚合），与本班事实统计小组件同源。只报告返回的数字，不得推算额外结论。', { level: { type: 'string', enum: ['CLASS', 'GRADE', 'SCHOOL'], description: '聚合粒度，默认 CLASS。' } }, ({ level = 'CLASS' }, exec) => connection.request(`/api/analytics/movements?level=${encodeURIComponent(level)}`, exec));
+  register('jxl_analytics', '读取学生流动事实统计（按班级/年级聚合），与本班事实统计小组件同源。只报告返回的数字，不得推算额外结论。', { level: { type: 'string', enum: ['CLASS', 'GRADE', 'SCHOOL'], description: '聚合粒度，默认 CLASS。' } }, ({ level = 'CLASS' }, exec) => connection.request(`/api/analytics/movements?level=${encodeURIComponent(level)}`, exec));
 
   // ── Mochi 传话网络（foundation PHASE_4，2026-09-05）──────────────────
   // 六端各有一个自己的 Mochi；服务器只投递一句有界文本并保存回执。
   // 红线：应答永远由人决定——写操作（带话/登记/替主人回话）一律过审批闸，
   // Mochi 只能"投递"，不能替收件人答应任何事。
-  register('jxl.relay_list', '查看主人的 Mochi 传话箱：收到的/发出的传话与寻物委托及其回音。返回值已按「需要我回应 / 收到的传话 / 发出的传话」分组摘要，直接照着读，不要编造。', {}, async (_args, exec) => {
+  register('jxl_relay_list', '查看主人的 Mochi 传话箱：收到的/发出的传话与寻物委托及其回音。返回值已按「需要我回应 / 收到的传话 / 发出的传话」分组摘要，直接照着读，不要编造。', {}, async (_args, exec) => {
     const response = await connection.request('/api/assistant/relay', exec, { method: 'POST', body: {} });
     const { result } = response;
     const r = result ?? {};
@@ -397,10 +397,10 @@ export function apply(ctx, connection = campusConnection) {
       发出的传话: outgoing.map(brief),
     };
   });
-  register('jxl.relay_find', '【底层】在全校共享登记里查一个东西名（只查登记不投递）。日常"帮我找某物"请用 mochi.find（它先查登记、未命中再走任务派发）；本工具只在主人明确要求"只查登记"时使用。', {
+  register('jxl_relay_find', '【底层】在全校共享登记里查一个东西名（只查登记不投递）。日常"帮我找某物"请用 mochi_find（它先查登记、未命中再走任务派发）；本工具只在主人明确要求"只查登记"时使用。', {
     item: { type: 'string', required: true, description: '要找的东西名（≤64 字），来自主人原话。' },
   }, ({ item }, exec) => connection.request('/api/assistant/relay/find', exec, { method: 'POST', body: { item: String(item || '').trim().slice(0, 64) } }));
-  register('jxl.relay_send', '替主人给本校同事的 Mochi 带一句口信（kind=message）或委托寻物（kind=request，只投递东西名）。日常"带句话/告诉某人"用本工具；"问一句能不能…"（换课/借物/约时间）用 mochi.ask；"找某物"用 mochi.find。发送前必须向主人展示接收人与投递内容并获人工确认；仅在服务器返回 ok=true 后才能报告已送达。', {
+  register('jxl_relay_send', '替主人给本校同事的 Mochi 带一句口信（kind=message）或委托寻物（kind=request，只投递东西名）。日常"带句话/告诉某人"用本工具；"问一句能不能…"（换课/借物/约时间）用 mochi_ask；"找某物"用 mochi_find。发送前必须向主人展示接收人与投递内容并获人工确认；仅在服务器返回 ok=true 后才能报告已送达。', {
     peerName: { type: 'string', required: true, description: '同事姓名或称呼（李老师/李医生均可，服务器负责对名册）。' },
     note: { type: 'string', description: '要带的话（≤120 字）；kind=message 时必填。' },
     kind: { type: 'string', enum: ['message', 'request'], description: '默认 message。' },
@@ -424,7 +424,7 @@ export function apply(ctx, connection = campusConnection) {
     const key = JSON.stringify(['relay', payload]);
     if (attempts.has(key)) return attempts.get(key);
     const attempt = (async () => {
-      const decision = await approval.request({ agent: exec.agent, toolName: 'jxl.relay_send', callId: exec.callId, signal: exec.signal,
+      const decision = await approval.request({ agent: exec.agent, toolName: 'jxl_relay_send', callId: exec.callId, signal: exec.signal,
         reason: `以 ${binding.user.name} 的 Mochi 名义，给「${peerName}」的 Mochi ${subject}\n\n（服务器只投递这一句话；是否答应由对方决定。）` });
       if (decision !== 'allowed-once') { attempts.delete(key); throw new Error('【未发送】传话没有发出去：主人未确认。请如实告诉主人这条传话没有发出，不要说成已发送。'); }
       return connection.request('/api/assistant/relay/send', exec, { method: 'POST', body: payload, expectedUserId: binding.user.id });
@@ -432,7 +432,7 @@ export function apply(ctx, connection = campusConnection) {
     attempts.set(key, attempt);
     return attempt;
   });
-  register('jxl.relay_register', '把主人的东西登记进全校共享登记（登记后全校 Mochi 能检索到名字；是否外借仍由主人决定）。登记前必须向主人确认物名。', {
+  register('jxl_relay_register', '把主人的东西登记进全校共享登记（登记后全校 Mochi 能检索到名字；是否外借仍由主人决定）。登记前必须向主人确认物名。', {
     item: { type: 'string', required: true, description: '东西名（≤64 字）。' },
   }, async (args, exec) => {
     const item = String(args.item || '').trim().slice(0, 64);
@@ -440,15 +440,15 @@ export function apply(ctx, connection = campusConnection) {
     const binding = await connection.binding(exec);
     const approval = ctx.get?.('approval');
     if (!approval) throw new Error('【未登记】当前会话没有人工确认通道，没有登记。请如实告知主人。');
-    const decision = approval.request({ agent: exec.agent, toolName: 'jxl.relay_register', callId: exec.callId, signal: exec.signal,
+    const decision = approval.request({ agent: exec.agent, toolName: 'jxl_relay_register', callId: exec.callId, signal: exec.signal,
       reason: `以 ${binding.user.name} 的名义把「${item}」登记进全校共享登记（全校 Mochi 可检索到这个名字；是否外借仍由主人决定）。` });
     return Promise.resolve(decision).then((outcome) => {
       if (outcome !== 'allowed-once') throw new Error('【未登记】东西没有登记：主人未确认。请如实告知，不要谎称已登记。');
       return connection.request('/api/assistant/relay/register', exec, { method: 'POST', body: { item }, expectedUserId: binding.user.id });
     });
   });
-  register('jxl.relay_respond', '替主人回应一条收到的传话：accept=答应 / decline=婉拒，可附 120 字内回话。是否答应由主人决定——必须先念出传话内容与拟定回话，获人工确认后才提交；服务器对寻物请求会在主人的登记里实查一次。', {
-    id: { type: 'integer', required: true, description: '传话 ID（来自 jxl.relay_list 的 incoming 列表）。' },
+  register('jxl_relay_respond', '替主人回应一条收到的传话：accept=答应 / decline=婉拒，可附 120 字内回话。是否答应由主人决定——必须先念出传话内容与拟定回话，获人工确认后才提交；服务器对寻物请求会在主人的登记里实查一次。', {
+    id: { type: 'integer', required: true, description: '传话 ID（来自 jxl_relay_list 的 incoming 列表）。' },
     action: { type: 'string', enum: ['accept', 'decline'], required: true },
     note: { type: 'string', description: '附带回话（≤120 字），省略时寻物请求由服务器自动在登记里找。' },
   }, async (args, exec) => {
@@ -459,7 +459,7 @@ export function apply(ctx, connection = campusConnection) {
     const binding = await connection.binding(exec);
     const approval = ctx.get?.('approval');
     if (!approval) throw new Error('【未回应】当前会话没有人工确认通道，没有回应。请如实告知主人。');
-    const decision = approval.request({ agent: exec.agent, toolName: 'jxl.relay_respond', callId: exec.callId, signal: exec.signal,
+    const decision = approval.request({ agent: exec.agent, toolName: 'jxl_relay_respond', callId: exec.callId, signal: exec.signal,
       reason: `以 ${binding.user.name} 的名义${action === 'accept' ? '答应' : '婉拒'}传话 #${id}${note ? `，并回话：\n\n${note}` : ''}\n\n（应答以这条确认卡为准——主人确认即是决定。）` });
     return Promise.resolve(decision).then((outcome) => {
       if (outcome !== 'allowed-once') throw new Error('【未回应】传话没有被回应：主人未确认。请如实告知，不要谎称已回应。');
@@ -467,7 +467,7 @@ export function apply(ctx, connection = campusConnection) {
     });
   });
 
-  register('message.send', '向指定校园事件中的允许收件人发送 1 至 240 字消息。必须先展示正文及事件，并由 Harness 人工确认。仅在服务器返回 message 后报告发送成功；网络结果不明不得重试。', {
+  register('message_send', '向指定校园事件中的允许收件人发送 1 至 240 字消息。必须先展示正文及事件，并由 Harness 人工确认。仅在服务器返回 message 后报告发送成功；网络结果不明不得重试。', {
     eventId: { type: 'integer', required: true, description: '从校园事件查询结果获得的事件 ID，不得猜测。' },
     body: { type: 'string', required: true },
     recipientIds: { type: 'array', items: { type: 'integer' }, description: '已核实的收件人 ID；省略时发送给该事件全部允许收件人。' },
@@ -482,7 +482,7 @@ export function apply(ctx, connection = campusConnection) {
     const key = JSON.stringify(args);
     if (attempts.has(key)) return attempts.get(key);
     const attempt = (async () => {
-      const decision = await approval.request({ agent: exec.agent, toolName: 'message.send', callId: exec.callId, signal: exec.signal,
+      const decision = await approval.request({ agent: exec.agent, toolName: 'message_send', callId: exec.callId, signal: exec.signal,
         reason: `以 ${binding.user.name} 的校园账号，向事件 #${args.eventId} 的${args.recipientIds?.length ? '指定收件人 ' + args.recipientIds.join('、') : '全部允许收件人'}发送：\n\n${args.body}` });
       if (decision !== 'allowed-once') { attempts.delete(key); throw new Error('消息未发送：本次操作未获确认。'); }
       return connection.request(`/api/events/${args.eventId}/messages`, exec, { method: 'POST', body: { body: args.body, ...(args.recipientIds?.length ? { recipientIds: args.recipientIds } : {}) }, expectedUserId: binding.user.id });
@@ -490,8 +490,8 @@ export function apply(ctx, connection = campusConnection) {
     attempts.set(key, attempt);
     return attempt;
   });
-  register('jxl.movement_request_list','读取当前教师有权审批的待处理放行申请；返回代录人、来源、学生、目的地和版本。',{},(_args,exec)=>connection.request('/api/movement-requests',exec));
-  register('jxl.movement_request_create','实际登记PENDING放行申请并呈现唯一真实的原生确认卡。目录查到唯一学生且用户要求创建时必须调用本工具；禁止先回复Markdown伪卡或声称有普通按钮。只创建待审批申请，不代表放行。',{studentId:{type:'integer',required:true},destination:{type:'string',enum:['INFIRMARY','DORMITORY'],required:true},reasonCategory:{type:'string',required:true},expectedArrivalMinutes:{type:'integer',required:true},idempotencyKey:{type:'string',required:true}},async(args,exec)=>{const binding=await connection.binding(exec),approval=ctx.get?.('approval');if(!approval)throw new Error('没有人工确认通道，申请未登记。');const detail=await connection.request(`/api/students/${encodeURIComponent(args.studentId)}`,exec),student=detail?.result?.student??detail?.result;if(!student?.name||!student?.className)throw new Error('无法读取该学生的授权信息，申请未登记。');const destination=args.destination==='INFIRMARY'?'医务室':'宿舍';const decision=await approval.request({agent:exec.agent,toolName:'jxl.movement_request_create',callId:exec.callId,signal:exec.signal,reason:`${binding.user.name} 将代学生登记放行申请：
+  register('jxl_movement_request_list','读取当前教师有权审批的待处理放行申请；返回代录人、来源、学生、目的地和版本。',{},(_args,exec)=>connection.request('/api/movement-requests',exec));
+  register('jxl_movement_request_create','实际登记PENDING放行申请并呈现唯一真实的原生确认卡。目录查到唯一学生且用户要求创建时必须调用本工具；禁止先回复Markdown伪卡或声称有普通按钮。只创建待审批申请，不代表放行。',{studentId:{type:'integer',required:true},destination:{type:'string',enum:['INFIRMARY','DORMITORY'],required:true},reasonCategory:{type:'string',required:true},expectedArrivalMinutes:{type:'integer',required:true},idempotencyKey:{type:'string',required:true}},async(args,exec)=>{const binding=await connection.binding(exec),approval=ctx.get?.('approval');if(!approval)throw new Error('没有人工确认通道，申请未登记。');const detail=await connection.request(`/api/students/${encodeURIComponent(args.studentId)}`,exec),student=detail?.result?.student??detail?.result;if(!student?.name||!student?.className)throw new Error('无法读取该学生的授权信息，申请未登记。');const destination=args.destination==='INFIRMARY'?'医务室':'宿舍';const decision=await approval.request({agent:exec.agent,toolName:'jxl_movement_request_create',callId:exec.callId,signal:exec.signal,reason:`${binding.user.name} 将代学生登记放行申请：
 
 学生：${student.name}（${student.className}）
 申请来源：${binding.user.name} 代录
@@ -501,8 +501,8 @@ export function apply(ctx, connection = campusConnection) {
 当前状态：尚未创建
 
 确认后仅进入待审批，不代表已经放行。`});if(decision!=='allowed-once')throw userDeclined('放行申请未登记。');return connection.request('/api/movement-requests',exec,{method:'POST',body:args,expectedUserId:binding.user.id});});
-  register('jxl.movement_request_decide','审批一条待处理放行申请。approve 会创建正式放行单，reject 会拒绝；必须先展示申请并由教师在确认卡决定。',{reference:{type:'string',required:true},action:{type:'string',enum:['approve','reject'],required:true},expectedVersion:{type:'integer',required:true},idempotencyKey:{type:'string',required:true},reason:{type:'string'}},async(args,exec)=>{const binding=await connection.binding(exec),approval=ctx.get?.('approval');if(!approval)throw new Error('没有人工确认通道，申请未处理。');const detail=await connection.request(`/api/movement-requests/${encodeURIComponent(args.reference)}`,exec),request=detail?.result?.request??detail?.result;if(!request||request.status!=='PENDING'||request.version!==args.expectedVersion)throw new Error('申请状态或版本已经变化，请重新读取后再审批。');const source=request.requestOrigin==='TEACHER_RECORDED'?`${request.requestedByName} 代学生登记`:request.requestedByName;const decision=await approval.request({agent:exec.agent,toolName:'jxl.movement_request_decide',callId:exec.callId,signal:exec.signal,reason:`${binding.user.name} 将${args.action==='approve'?'批准并正式放行':'拒绝'}这条待审批申请：\n\n学生：${request.studentName}（${request.className}）\n申请来源：${source}\n目的地：${request.destination==='INFIRMARY'?'医务室':'宿舍'}\n事由：${request.reasonCategory}\n预计到达：${request.expectedArrivalMinutes} 分钟\n申请编号：${request.publicReference}\n当前状态：待审批${args.action==='reject'?`\n拒绝原因：${String(args.reason||'').trim()||'未填写'}`:''}`});if(decision!=='allowed-once')throw new Error('申请未处理：教师未确认。');return connection.request(`/api/movement-requests/${encodeURIComponent(args.reference)}/${args.action}`,exec,{method:'POST',body:{expectedVersion:args.expectedVersion,idempotencyKey:args.idempotencyKey,...(args.reason?{reason:args.reason}:{})},expectedUserId:binding.user.id});});
-  register('jxl.movement_transition', '推进一条正式放行单的真实状态：arrive=到达、leave=离开目的地返班、confirm-return=教师确认返班。按当前账号角色由校园服务复核权限；每次写入必须显示原生人工确认卡。', {
+  register('jxl_movement_request_decide','审批一条待处理放行申请。approve 会创建正式放行单，reject 会拒绝；必须先展示申请并由教师在确认卡决定。',{reference:{type:'string',required:true},action:{type:'string',enum:['approve','reject'],required:true},expectedVersion:{type:'integer',required:true},idempotencyKey:{type:'string',required:true},reason:{type:'string'}},async(args,exec)=>{const binding=await connection.binding(exec),approval=ctx.get?.('approval');if(!approval)throw new Error('没有人工确认通道，申请未处理。');const detail=await connection.request(`/api/movement-requests/${encodeURIComponent(args.reference)}`,exec),request=detail?.result?.request??detail?.result;if(!request||request.status!=='PENDING'||request.version!==args.expectedVersion)throw new Error('申请状态或版本已经变化，请重新读取后再审批。');const source=request.requestOrigin==='TEACHER_RECORDED'?`${request.requestedByName} 代学生登记`:request.requestedByName;const decision=await approval.request({agent:exec.agent,toolName:'jxl_movement_request_decide',callId:exec.callId,signal:exec.signal,reason:`${binding.user.name} 将${args.action==='approve'?'批准并正式放行':'拒绝'}这条待审批申请：\n\n学生：${request.studentName}（${request.className}）\n申请来源：${source}\n目的地：${request.destination==='INFIRMARY'?'医务室':'宿舍'}\n事由：${request.reasonCategory}\n预计到达：${request.expectedArrivalMinutes} 分钟\n申请编号：${request.publicReference}\n当前状态：待审批${args.action==='reject'?`\n拒绝原因：${String(args.reason||'').trim()||'未填写'}`:''}`});if(decision!=='allowed-once')throw new Error('申请未处理：教师未确认。');return connection.request(`/api/movement-requests/${encodeURIComponent(args.reference)}/${args.action}`,exec,{method:'POST',body:{expectedVersion:args.expectedVersion,idempotencyKey:args.idempotencyKey,...(args.reason?{reason:args.reason}:{})},expectedUserId:binding.user.id});});
+  register('jxl_movement_transition', '推进一条正式放行单的真实状态：arrive=到达、leave=离开目的地返班、confirm-return=教师确认返班。按当前账号角色由校园服务复核权限；每次写入必须显示原生人工确认卡。', {
     reference: { type: 'string', required: true },
     action: { type: 'string', enum: ['arrive', 'leave', 'confirm-return'], required: true },
     expectedVersion: { type: 'integer', required: true },
@@ -518,12 +518,12 @@ export function apply(ctx, connection = campusConnection) {
     const movement = detail?.result?.movement ?? detail?.result;
     if (!movement || movement.version !== args.expectedVersion) throw new Error('流动单状态或版本已经变化，请重新读取。');
     const labels = { arrive: '确认学生已到达', leave: '确认学生已离开目的地并开始返班', 'confirm-return': '确认学生已经返班' };
-    const decision = await approval.request({ agent: exec.agent, toolName: 'jxl.movement_transition', callId: exec.callId, signal: exec.signal,
+    const decision = await approval.request({ agent: exec.agent, toolName: 'jxl_movement_transition', callId: exec.callId, signal: exec.signal,
       reason: `${binding.user.name} 将${labels[args.action]}：\n\n学生：${movement.studentName}（${movement.className}）\n流动单：${movement.publicReference}\n当前状态：${movement.status}\n当前版本：${movement.version}` });
     if (decision !== 'allowed-once') throw userDeclined('流动状态未更新。');
     return connection.request(`/api/movements/${encodeURIComponent(args.reference)}/${args.action}`, exec, { method: 'POST', body: { expectedVersion: args.expectedVersion, idempotencyKey: args.idempotencyKey }, expectedUserId: binding.user.id });
   });
-  register('jxl.medical_event_create', '校医为已核对身份的学生创建真实医务处置记录。必须先读取学生信息并显示原生人工确认卡；校园服务再次校验校医角色和字段枚举。', {
+  register('jxl_medical_event_create', '校医为已核对身份的学生创建真实医务处置记录。必须先读取学生信息并显示原生人工确认卡；校园服务再次校验校医角色和字段枚举。', {
     studentId: { type: 'integer', required: true }, category: { type: 'string', enum: ['身体不适', '轻微外伤', '运动不适', '情绪关怀', '常规测量', '其他情况'], required: true },
     urgency: { type: 'string', enum: ['普通', '需关注', '紧急'], required: true }, measure: { type: 'string', enum: ['初步检查', '休息观察', '基础处理', '联系教师', '联系家长', '建议就医'], required: true },
     status: { type: 'string', enum: ['检查中', '留观中', '已通知教师', '已通知家长', '准备返班', '已返班', '家长接走', '转诊', '记录结束'], required: true }, note: { type: 'string', required: true }, idempotencyKey: { type: 'string', required: true },
@@ -533,12 +533,12 @@ export function apply(ctx, connection = campusConnection) {
     if (!approval) throw new Error('没有人工确认通道，医务记录未创建。');
     const detail = await connection.request(`/api/students/${encodeURIComponent(args.studentId)}`, exec), student = detail?.result?.student ?? detail?.result;
     if (!student?.name) throw new Error('无法核对学生身份，医务记录未创建。');
-    const decision = await approval.request({ agent: exec.agent, toolName: 'jxl.medical_event_create', callId: exec.callId, signal: exec.signal,
+    const decision = await approval.request({ agent: exec.agent, toolName: 'jxl_medical_event_create', callId: exec.callId, signal: exec.signal,
       reason: `${binding.user.name} 将创建医务处置记录：\n\n学生：${student.name}（${student.className}）\n本人核验：请校医确认面前学生与上述档案确为同一人\n情况：${args.category}\n紧急度：${args.urgency}\n处置：${args.measure}\n状态：${args.status}\n备注：${args.note}` });
     if (decision !== 'allowed-once') throw userDeclined('医务记录未创建。');
     return connection.request('/api/events', exec, { method: 'POST', body: { ...args, identityVerified: true }, expectedUserId: binding.user.id });
   });
-  register('jxl.movement_link_medical_event', '校医把真实医务事件关联到已到达的放行单；必须使用查询所得编号和版本，并经原生人工确认卡。', {
+  register('jxl_movement_link_medical_event', '校医把真实医务事件关联到已到达的放行单；必须使用查询所得编号和版本，并经原生人工确认卡。', {
     reference: { type: 'string', required: true }, medicalEventId: { type: 'integer', required: true },
     expectedVersion: { type: 'integer', required: true }, idempotencyKey: { type: 'string', required: true },
   }, async (args, exec) => {
@@ -553,12 +553,12 @@ export function apply(ctx, connection = campusConnection) {
     const event = eventResult?.result?.event ?? eventResult?.result;
     if (!movement || !event || movement.version !== args.expectedVersion) throw new Error('流动单或医务事件状态已经变化，请重新读取。');
     if (movement.studentId !== event.studentId) throw new Error('流动单与医务事件属于不同学生，不能关联。');
-    const decision = await approval.request({ agent: exec.agent, toolName: 'jxl.movement_link_medical_event', callId: exec.callId, signal: exec.signal,
+    const decision = await approval.request({ agent: exec.agent, toolName: 'jxl_movement_link_medical_event', callId: exec.callId, signal: exec.signal,
       reason: `${binding.user.name} 将关联医务处置：\n\n学生：${movement.studentName}（${movement.className}）\n流动单：${movement.publicReference}，状态 ${movement.status}，版本 ${movement.version}\n医务事件：#${args.medicalEventId}，${event.category} / ${event.measure} / ${event.status}` });
     if (decision !== 'allowed-once') throw userDeclined('医务事件未关联。');
     return connection.request(`/api/movements/${encodeURIComponent(args.reference)}/link-medical-event`, exec, { method: 'POST', body: { medicalEventId: args.medicalEventId, expectedVersion: args.expectedVersion, idempotencyKey: args.idempotencyKey }, expectedUserId: binding.user.id });
   });
-  register('jxl.medical_event_status', '校医更新真实医务事件状态。必须先读取事件并显示当前状态与目标状态的原生人工确认卡。', {
+  register('jxl_medical_event_status', '校医更新真实医务事件状态。必须先读取事件并显示当前状态与目标状态的原生人工确认卡。', {
     eventId: { type: 'integer', required: true }, status: { type: 'string', enum: ['检查中', '留观中', '已通知教师', '已通知家长', '准备返班', '已返班', '家长接走', '转诊', '记录结束'], required: true }, expectedVersion: { type: 'integer', required: true }, idempotencyKey: { type: 'string', required: true },
   }, async (args, exec) => {
     const binding = await connection.binding(exec), approval = ctx.get?.('approval');
@@ -566,7 +566,7 @@ export function apply(ctx, connection = campusConnection) {
     if (!approval) throw new Error('没有人工确认通道，医务状态未更新。');
     const detail = await connection.request(`/api/events/${args.eventId}`, exec), event = detail?.result?.event ?? detail?.result;
     if (!event) throw new Error('医务事件不存在或无权查看。');
-    const decision = await approval.request({ agent: exec.agent, toolName: 'jxl.medical_event_status', callId: exec.callId, signal: exec.signal,
+    const decision = await approval.request({ agent: exec.agent, toolName: 'jxl_medical_event_status', callId: exec.callId, signal: exec.signal,
       reason: `${binding.user.name} 将更新医务事件 #${args.eventId}：\n\n学生：${event.studentName}\n当前状态：${event.status}\n目标状态：${args.status}` });
     if (decision !== 'allowed-once') throw userDeclined('医务状态未更新。');
     return connection.request(`/api/events/${args.eventId}/status`, exec, { method: 'PATCH', body: { status: args.status, expectedVersion: args.expectedVersion, idempotencyKey: args.idempotencyKey }, expectedUserId: binding.user.id });

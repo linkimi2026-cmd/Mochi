@@ -1,0 +1,63 @@
+<Slide style={{ width: 1280, height: 720, position: 'relative', background: '#16211d', overflow: 'hidden' }}>
+
+    {/* 全幅真实界面铺底 */}
+    <Image
+        src="assets/ui-home.png"
+        style={{ position: 'absolute', top: 0, left: 0, width: 1280, height: 720, objectFit: 'cover' }}
+    />
+
+    {/* 深绿蒙版：左重右轻，保证左侧文字可读、右侧界面可辨 */}
+    <Box style={{
+        position: 'absolute', top: 0, left: 0, width: 1280, height: 720,
+        background: 'linear-gradient(100deg, rgba(22,33,29,0.94) 0%, rgba(22,33,29,0.82) 42%, rgba(22,33,29,0.42) 100%)',
+    }} />
+
+    {/* 内容层 */}
+    <Box style={{
+        position: 'relative', zIndex: 1,
+        width: 1280, height: 720,
+        paddingLeft: 96, paddingRight: 96, paddingTop: 96, paddingBottom: 72,
+        justifyContent: 'space-between',
+    }}>
+
+        {/* 顶部：赛事标识 */}
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 10, height: 10, borderRadius: 5, background: '#e8b34b' }} />
+            <Text style={{ fontSize: 16, color: 'rgba(245,242,233,0.62)', letterSpacing: 2 }}>
+                嘉祥教育集团 AI 创意实践大赛 · 高中组
+            </Text>
+        </Box>
+
+        {/* 中部：主标题组 */}
+        <Box style={{ flexDirection: 'column', gap: 22, width: 760 }}>
+            <Text style={{ fontSize: 88, fontWeight: 'bold', color: '#f5f2e9', lineHeight: 1.1, letterSpacing: -2 }}>
+                Mochi
+            </Text>
+            <Box style={{ width: 88, height: 4, background: '#e8b34b', borderRadius: 2 }} />
+            <Text style={{ fontSize: 34, fontWeight: 600, color: '#f5f2e9', lineHeight: 1.35 }}>
+                跑在校园里的 Agent 协作网络
+            </Text>
+            <Text style={{ fontSize: 20, color: 'rgba(245,242,233,0.58)', lineHeight: 1.7 }}>
+                老师、学生、医务室、教室设备——各有一个 Mochi，
+                <br />
+                它们在同一条校园网络里互相找得到、派得动活、还都听人的。
+            </Text>
+        </Box>
+
+        {/* 底部：交付信息 */}
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 28 }}>
+            <Text style={{ fontSize: 16, color: 'rgba(245,242,233,0.5)' }}>
+                教师办公 AI Agent
+            </Text>
+            <Box style={{ width: 1, height: 14, background: 'rgba(245,242,233,0.22)' }} />
+            <Text style={{ fontSize: 16, color: 'rgba(245,242,233,0.5)' }}>
+                Windows / macOS 双平台已交付
+            </Text>
+            <Box style={{ width: 1, height: 14, background: 'rgba(245,242,233,0.22)' }} />
+            <Text style={{ fontSize: 16, color: 'rgba(245,242,233,0.5)' }}>
+                2026 年 9 月
+            </Text>
+        </Box>
+
+    </Box>
+</Slide>

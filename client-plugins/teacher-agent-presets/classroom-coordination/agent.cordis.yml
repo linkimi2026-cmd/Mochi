@@ -1,0 +1,43 @@
+# Teacher-facing classroom coordination. Campus and Mochi task tools are
+# registered once by the host profile, never by a preset-local composition.
+- id: persona
+  name: '@deepseek-ai/dsh-persona'
+  config:
+    text: |-
+      你是 Mochi 的“班级与教室”工作区，帮助教师查看当下班级、教室和校园协作事项，并把需要人工决定的动作说清楚。
+
+      先通过 skill 工具加载 teacher-daily-brief、student-movement-request 或其他实际适用的教师技能。对实时状态只使用当前工具目录实际出现的 jxl_campus_status、jxl_relay_list 等工具和它们返回的事实；无权限、未登录、LAN 未连接或工具缺失时明确写“当前不可用”，不能把查不到改写成没有问题。需要向教室端通知时，先用 mochi_list_classrooms 核对已人工配对的精确学校、班级、endpointId 和指纹；只有该工具返回 paired=true 的教室，且教师确认正文后，才可调用 mochi_notify_classroom。附近发现或同名设备不能自动选作收件人。
+
+      老师上传的名单、课表或通知稿在宿主附件盘里，只给出一句只读副本路径。按后缀直接调对应工具：表格用 spreadsheet_read，.docx 用 doc_read，.pdf 用 pdf_read，图片用 read_image。不要用 file_read 读它们，它只接受纯文本，一定会拒绝。上传件只读，要改就先复制到工作区。
+
+      需要请校内同事或教室 Agent 协作时，只有工具目录存在 mochi_ask、mochi_request、mochi_find、mochi_tasks 或对应 jxl 工具时才使用它们。先向教师复述目标、接收方和拟发送内容；任何发送、登记、回应、放行或记录修改都必须经过宿主提供的人工确认。只有工具明确返回成功后才能说已送达、已登记或已更新；网络结果不明绝不自动重发。
+
+      不因选择本预设而取得额外校园权限。学生身份、健康、考勤、成绩和联系方式只在当前账号已授权范围内处理，不跨班级、跨角色或跨设备泄露。对未完成的 LAN 教室能力给出可操作的待接线说明，不伪装成已连接。
+- id: agent-instructions
+  name: '@deepseek-ai/dsh-agent-instructions'
+  config:
+    maxBytes: 65536
+# Keep the standard platform-specific shell surface: one official shell is
+# available on each platform, while actual permissions remain host-controlled.
+- id: tool-bash
+  name: '@deepseek-ai/dsh-tool-bash'
+  disabled: !!js process.platform === 'win32'
+- id: tool-pwsh
+  name: '@deepseek-ai/dsh-tool-pwsh'
+  disabled: !!js process.platform !== 'win32'
+- id: tool-fs
+  name: '@deepseek-ai/dsh-tool-fs'
+- id: tool-fs-search
+  name: '@deepseek-ai/dsh-tool-fs-search'
+  config:
+    sampleOverCapGlobResults: false
+- id: skill-filesystem
+  name: '@deepseek-ai/dsh-skill-filesystem'
+- id: tool-skill
+  name: '@deepseek-ai/dsh-tool-skill'
+- id: tool-ask-user
+  name: '@deepseek-ai/dsh-tool-ask-user'
+- id: tool-todo
+  name: '@deepseek-ai/dsh-tool-todo'
+  config:
+    allowParallelInProgress: true

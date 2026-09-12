@@ -4,15 +4,15 @@
   "private": true,
   "type": "module",
   "main": "index.mjs",
-  "description": "Mochi 的第一个 dsh 插件：验证自定义插件挂载链路",
-  "scripts": {
-    "test": "node test.mjs"
-  },
   "files": [
     "index.mjs",
     "doctor.mjs"
   ],
+  "description": "Mochi 的第一个 dsh 插件：验证自定义插件挂载链路",
+  "scripts": {
+    "test": "node test.mjs && node --test test-shell-env.mjs"
+  },
   "dependencies": {
-    "@deepseek-ai/dsh-llm": "0.1.2-rc.1"
+    "@deepseek-ai/dsh-llm": "0.1.3-alpha.1"
   }
 }

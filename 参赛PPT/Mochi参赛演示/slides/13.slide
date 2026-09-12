@@ -1,0 +1,39 @@
+<Slide style={{ width: 1280, height: 720, background: '#16211d', position: 'relative', overflow: 'hidden' }}>
+
+    {/* 右侧双平台符号（暖米白细线） */}
+    <Box style={{ position: 'absolute', right: 120, top: 250, width: 300, height: 220 }}>
+        <svg width={300} height={220} viewBox='0 0 300 220'>
+            {/* Windows 四格 */}
+            <rect x='0' y='20' width='56' height='56' rx='4' fill='none' stroke='rgba(245,242,233,0.30)' strokeWidth='1.5' />
+            <rect x='64' y='20' width='56' height='56' rx='4' fill='none' stroke='rgba(245,242,233,0.30)' strokeWidth='1.5' />
+            <rect x='0' y='84' width='56' height='56' rx='4' fill='none' stroke='rgba(245,242,233,0.30)' strokeWidth='1.5' />
+            <rect x='64' y='84' width='56' height='56' rx='4' fill='none' stroke='rgba(245,242,233,0.30)' strokeWidth='1.5' />
+            {/* mac 圆角矩形 */}
+            <rect x='176' y='20' width='120' height='120' rx='26' fill='none' stroke='rgba(245,242,233,0.30)' strokeWidth='1.5' />
+            {/* 连接细线 */}
+            <line x1='140' y1='80' x2='166' y2='80' stroke='rgba(232,179,75,0.45)' strokeWidth='1.5' />
+        </svg>
+    </Box>
+
+    {/* 左侧竖向焦糖细线 */}
+    <Box style={{ position: 'absolute', left: 96, top: 180, width: 2, height: 360, background: 'linear-gradient(180deg, rgba(232,179,75,0.65) 0%, rgba(232,179,75,0.05) 100%)' }} />
+
+    <Box style={{
+        position: 'relative', zIndex: 1,
+        width: 1280, height: 720,
+        paddingLeft: 152, paddingRight: 96,
+        justifyContent: 'center', gap: 28,
+    }}>
+        <Text style={{ fontSize: 15, color: '#e8b34b', letterSpacing: 6 }}>04 / 成果</Text>
+        <Text style={{ fontSize: 72, fontWeight: 'bold', color: '#f5f2e9', lineHeight: 1.15, letterSpacing: -1 }}>
+            真的能装，
+            <br />
+            真的能用
+        </Text>
+        <Text style={{ fontSize: 20, color: 'rgba(245,242,233,0.55)', lineHeight: 1.8, width: 620 }}>
+            不是实验室里的 demo——
+            <br />
+            是 Windows 和 macOS 上都能双击打开的成品。
+        </Text>
+    </Box>
+</Slide>

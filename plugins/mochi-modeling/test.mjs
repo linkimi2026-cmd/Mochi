@@ -20,10 +20,10 @@ function makeHarness() {
   return { tools, exec, logs };
 }
 
-console.log('① 工具注册正确：mochi.model_create 已注册且参数/schema 齐全');
+console.log('① 工具注册正确：mochi_model_create 已注册且参数/schema 齐全');
 const { tools, exec } = makeHarness();
-assert.equal(tools.has('mochi.model_create'), true);
-const tool = tools.get('mochi.model_create');
+assert.equal(tools.has('mochi_model_create'), true);
+const tool = tools.get('mochi_model_create');
 assert.equal(typeof tool.execute, 'function');
 assert.equal(typeof output.render, 'function');
 

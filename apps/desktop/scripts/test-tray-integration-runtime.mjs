@@ -478,5 +478,10 @@ try {
     await terminate(handle);
     await stopAllSidecars(handle.testCase);
   }
-  rmSync(root, { recursive: true, force: true });
+  // 受限环境里的批量删除守卫可能拒绝清理临时目录；这不影响断言结果。
+  try {
+    rmSync(root, { recursive: true, force: true, maxRetries: 2 });
+  } catch {
+    // 系统回收 /var/folders 下的临时目录。
+  }
 }

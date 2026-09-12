@@ -1,4 +1,6 @@
-# jxl-theme（draft）—— 嘉行联主题桥 client 插件
+# jxl-theme —— 嘉行联主题桥 client 插件
+
+> **status**: active（2026-09-12 更正：原文标注「（draft）」已过时——该插件已在打包白名单内并随包交付）
 
 单一事实源：`foundation/ui/jxl-theme-bridge.css`（令牌映射 + 出处注释）。
 改 CSS 后运行：`node scripts/build-client.mjs` 重新生成 `client.js`。
@@ -9,7 +11,9 @@
 源码实证：`packages/client/ui-layout/src/client/theme-presenter.ts:14`）
 映射到官方 Web UI 的 `--dsw-alias-*` 语义层。不改组件结构、不改 DOM、不引组件库。
 
-## 激活契约验证（CODEX 小任务，约半天）
+## 激活契约验证（✅ 2026-09-12 已核实并接入）
+
+> 本节原本是待验证清单。**结论：契约成立**——`jxl-theme` 已进 26 项打包白名单，并在 `apps/desktop/resources/mochi-web/runtime-profile.json` 中注册（多 profile 挂载），随包交付。以下步骤保留为历史记录。
 
 `package.json` 里 `"dsh": {"client": {"entry": "client.js"}}` 是**假设的字段**，未核实。
 按以下步骤验证（源码事实：web-app bundle patch 注释——"dsh.client rows are the

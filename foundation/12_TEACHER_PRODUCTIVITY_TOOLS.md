@@ -1,8 +1,36 @@
 # 12 · 教师办公工具链（TEACHER_PRODUCTIVITY_TOOLS）
 
-> 权威数量清单 = `Mochi/plan/01_TOOLCHAIN.md` §1.2（38 个 P0，修订官裁定）。本文定义族与质量循环。
+> ⛔ **§1 的工具名整表已作废（点号形态）· 2026-09-12 标注**
+>
+> **status**: archived　**last_verified**: 2026-09-12　**verified_by**: 工具线
+>
+> §1 原表的 `ppt.create` / `doc.create` / `spreadsheet.create` / `file.search` / `jxl.*` 等
+> **点号工具名全部作废**——点号会让模型网关整轮 400 拒收。§2 之后的实现要点仍有参考价值。
+> 现行真值表（源码实测）：
 
-## 1. 工具族与 P0 成员
+| 族 | 现行工具名（`^[a-zA-Z0-9_-]+$`） | 插件 |
+|---|---|---|
+| PRESENTATION | `mochi_ppt_create` `mochi_ppt_revise` `ppt_inspect` | `mochi-presentations` |
+| DOCUMENT | `doc_create` `doc_read` `doc_edit` `doc_export`（+ 别名 `mochi_document_create`） | `mochi-documents` |
+| PDF | `pdf_read` | `mochi-documents` |
+| SPREADSHEET | `spreadsheet_create` `spreadsheet_read` `spreadsheet_formula` `spreadsheet_export` | `mochi-sheets` |
+| FILES | `file_search` `file_read` `file_copy` `file_move` `file_rename` `file_create_folder`（**无删除工具**） | `mochi-files` |
+| GRADES | `mochi_grade_analyze` | `mochi-grades` |
+| CALENDAR/TASK | `mochi_schedule_create` `mochi_schedule_list` `mochi_schedule_cancel` | `mochi-task-scheduler` |
+| COMMUNICATION | `mochi_notify_classroom` `mochi_send_classroom_file`（CONFIRM 档） | `mochi-dispatch` |
+| JIAXINGLIAN | `jxl_query` `jxl_campus_status` `jxl_clinic_status` `jxl_dorm_status` `jxl_movement_*` `jxl_medical_event_*` `jxl_student_card` `jxl_analytics` … 共 26 个 | `mochi-campus` |
+| VISUALS | `image_find` `image_edit` `diagram_draw` `teaching_image_match` | `mochi-visuals` |
+| KNOWLEDGE | `mochi_knowledge_search` `mochi_knowledge_page` `mochi_knowledge_page_image` | `mochi-knowledge` |
+| MEMORY | `mochi_memory_note` `mochi_memory_recall` `mochi_memory_list` `mochi_memory_forget` `mochi_memory_clear` `mochi_memory_world` | `mochi-memory` |
+| MODELING | `mochi_model_create` | `mochi-modeling` |
+
+> 全表（含参数与边界）见 `docs/agent-integration-handbook.md` §6。
+> ⛔ 原文「权威数量清单 = `plan/01_TOOLCHAIN.md` §1.2（38 个 P0）」亦已作废；
+> 现行真值 = `prepare-mochi-resources.cjs` 的 `PLUGINS`（当前 26 个插件）。
+
+---
+
+## 1. 工具族与 P0 成员（⛔ 历史原文，点号形态已作废，保留供追溯）
 
 | 族 | 工具（P0） |
 |---|---|

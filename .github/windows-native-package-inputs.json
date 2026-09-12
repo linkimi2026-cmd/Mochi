@@ -1,0 +1,3991 @@
+{
+  "schemaVersion": 1,
+  "kind": "mochi-windows-native-source-snapshot",
+  "snapshotLayout": "Copy only the listed files into the private campus build branch at mochi-source/; do not copy node_modules or any unlisted path.",
+  "verification": {
+    "manifestPath": ".github/windows-native-package-inputs.json",
+    "manifestIsTheOnlyUnhashedSnapshotFile": true,
+    "expectedFileCount": 492,
+    "expectedFileBytes": 91919236
+  },
+  "externalBuildInputs": [
+    {
+      "name": "campus-static-client",
+      "source": "private campus branch root built by pnpm 11.22.0",
+      "requiredRelativePath": "mochi-dist/client/assets/embed.js",
+      "includedInSnapshot": false
+    },
+    {
+      "name": "playwright-chromium-win32-x64",
+      "source": "official Playwright 1.55.0 browser install during the private CI run",
+      "requiredRevision": "1187",
+      "requiredVersion": "140.0.7339.16",
+      "includedInSnapshot": false,
+      "reason": "No verified Windows browser resource exists locally; macOS Chromium resource is platform-specific and intentionally excluded."
+    },
+    {
+      "name": "npm-registry-packages",
+      "source": "apps/desktop/package-lock.json with npm ci",
+      "includedInSnapshot": false,
+      "reason": "Only local file: dependencies are copied; registry dependencies remain lock-integrity controlled."
+    }
+  ],
+  "excludedByPolicy": [
+    "**/node_modules/**",
+    ".git/**",
+    "WORKLOG*",
+    "**/.env*",
+    "**/.dev.vars*",
+    "**/credentials.{json,env,txt}",
+    "**/secrets.{json,env,txt}",
+    "**/userData/**",
+    "campus.nosync/**",
+    "artifacts/**",
+    "apps/desktop/release/**",
+    "apps/desktop/dist-electron/**",
+    "**/.mochi-*.nosync/**",
+    "Mochi-private-knowledge/**",
+    "textbook.sqlite",
+    "library/tb-*.pdf"
+  ],
+  "files": [
+    {
+      "path": ".github/windows-native-package-assets/chromium-140.0.7339.16-LICENSE",
+      "sha256": "368cca1106be99d39ecd32a38d8305585d802a475effb66380b91ffc9bcf709b",
+      "bytes": 1536,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/build/ICON-SOURCE.md",
+      "sha256": "72dcf04b854c4a00c9a6829ac42051c92143e33dc21ed54485ab799b9fa68f65",
+      "bytes": 439,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/build/icon.icns",
+      "sha256": "58c4fb90316fc7eda4d2c54a643e34bc270cf6b1b509923e7c0227298231f5af",
+      "bytes": 1436570,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/build/icon.ico",
+      "sha256": "4e16a84b3f2cade227c72312bf45870568d51e179cfa69a9e1974efba415a8c1",
+      "bytes": 115739,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/build/icon.png",
+      "sha256": "7a99a8712390833c95bce4282584cbfa38cadfdf0d486c7091c91395d5e6ecc8",
+      "bytes": 728893,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/db/index.ts",
+      "sha256": "ea4bc97fefb882a9ad105005344dc155f42037dce6b0307cfb325018158361ae",
+      "bytes": 1021,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/db/migrations/.nosync",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/db/migrations/0001_schema.sql",
+      "sha256": "0c724d8ef2174b9323f368a3b2b8b1409d8204a0fef82277cf7b9d72f4d332dd",
+      "bytes": 6608,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/db/migrations/0002_demo_seed.sql",
+      "sha256": "ef94c9580c9bfbdd6563e5adb7ff825ad83e415a8cc2d1d4ffa440bd80070db6",
+      "bytes": 5093,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/db/migrations/0003_messaging_push_jobs.sql",
+      "sha256": "715d8a969cd51e1814523496903a14bb29a872b070535a340bb8d3fb49d0624d",
+      "bytes": 3917,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/db/migrations/0004_account_activation.sql",
+      "sha256": "751a911a80c1b7f12a6e9fb3bd357c860f7509dc0d06f9be858ed42619ed8efb",
+      "bytes": 1600,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/db/migrations/0005_tester_account.sql",
+      "sha256": "58cdbea70f742d35d710bbd439e35111f67c71917289b732aea6fa3227fe7bea",
+      "bytes": 733,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/db/migrations/0006_fix_tester_password.sql",
+      "sha256": "f48e48c00ab9c241b44bab027da2b4ef22c4b1a836de078c7ee5921827716aeb",
+      "bytes": 379,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/db/migrations/0007_cloudflare_password_hashes.sql",
+      "sha256": "69dcfb5008ab90725c61a4aa85934526ab8973d08e06b4c6b2648213785fc52b",
+      "bytes": 991,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/db/migrations/0008_repair_role_password_hashes.sql",
+      "sha256": "b69af6b3cc78f7c7f316fbd1b7cac9c58ca3f7c4955146ff3767cff309ea8478",
+      "bytes": 858,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/db/migrations/0009_notification_onboarding.sql",
+      "sha256": "8d6927bbed84b5780f70d949729500c683ff5c1bd555edf69086d38d98f53c64",
+      "bytes": 485,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/db/migrations/0010_message_cleanup.sql",
+      "sha256": "8df725f7fd795a515ba7a0862b6bf791777858d2deb6d4534dcf5ceb52a64e2b",
+      "bytes": 1070,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/db/migrations/0011_demo_seed_messages.sql",
+      "sha256": "d08486db98bedddf41244f87220c8795bef015c5edd35ebca1369be55c8620ea",
+      "bytes": 1320,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/db/migrations/0012_student_movements.sql",
+      "sha256": "8b9efb7a3a11e31f28f4031c184a6685af2b86b1d3cfb50e3d093894c8aee505",
+      "bytes": 3199,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/db/migrations/0013_demo_movement_seed.sql",
+      "sha256": "8d7ffe0833a0e8920de3397d7aa01b88854af3043208512fa4d7aac7eba80ebd",
+      "bytes": 266,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/db/migrations/0014_cross_domain_notifications.sql",
+      "sha256": "3eb8e5de5773b238a088689f60210f2de3897e0f2b09dc4ebd2ae811983661f8",
+      "bytes": 1402,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/db/migrations/0015_dorm_incident_concurrency.sql",
+      "sha256": "99629ccac51a379532777d9d22144ee82687a5d9103a1bbf61d4a00840fa3d53",
+      "bytes": 134,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/db/migrations/0016_demo_dorm_structure.sql",
+      "sha256": "9797b7e91cfeba9210e2733de356b9b7e2f7ef5f865aca2af0fdb45d67c6f966",
+      "bytes": 1089,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/db/migrations/0017_distinct_dorm_staff_role.sql",
+      "sha256": "a1a3b3a670cedb9646db99325e51727bff5b03ed756afada332772dd7dc5bdce",
+      "bytes": 1700,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/db/migrations/0018_dorm_message_context_unique.sql",
+      "sha256": "815c97074c7deaac7d0e893f51ab99a5057069adf17d9c8508cf726d700902e8",
+      "bytes": 1643,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/db/migrations/0019_ai_usage_daily.sql",
+      "sha256": "ced32d2e0a640e4a76c35240e133650b39408396a757b498fd745cae24051a8a",
+      "bytes": 596,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/db/migrations/0020_remove_grade_admin_medical_notifications.sql",
+      "sha256": "d414708abf77e85ef0d0516f830c4611150a0fb934bc93fe17f81560d938cd49",
+      "bytes": 682,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/db/migrations/0021_assistant_previews.sql",
+      "sha256": "0b75dd5cd394dbb4a5a3a117b8d341f741130bbfa9e8cfec987ef137d340e31c",
+      "bytes": 655,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/db/migrations/0022_movement_message_context_unique.sql",
+      "sha256": "4297246397957c07b24ed85d6c7bb9f3d7f5bd07fbfcb3024bb5a3cfee28507f",
+      "bytes": 679,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/db/migrations/0023_assistant_sessions.sql",
+      "sha256": "6b59f9823d6aedd01446a98df37f0ff115a36a3f4a282761f1971dd5b3fbcace",
+      "bytes": 522,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/db/migrations/0024_mochi_relay.sql",
+      "sha256": "46af6cee4d4c731f911596ac4308089adbb4fbfbcc5cd6b251bcaa36fa7f08b2",
+      "bytes": 1294,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/db/migrations/0025_mochi_network_tasks.sql",
+      "sha256": "119e4fcdf0b756969dad319faacbf1179b50b9e7b3164ccea04575ca84f0d559",
+      "bytes": 1384,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/db/migrator.ts",
+      "sha256": "d50b981075c9675f138240b3e95fd6fe6be32a8bc3295aa4e63f079ea6ae900d",
+      "bytes": 3362,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/dsh/doctor-host-client.ts",
+      "sha256": "70dea5b3124fb1151b96cec7405d2c249ff6955be378b4fbeb191789af6c0150",
+      "bytes": 8089,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/dsh/doctor-window.ts",
+      "sha256": "582b764ff61a6b8bfa8068c8f6a10ef25ae5b59fa0dfa7dd7728d8c1e49d9c36",
+      "bytes": 14307,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/dsh/doctor.ts",
+      "sha256": "d5191977e908e7a0d7ff0db0110ce332d0f2cc78ee4cea18485c250a01e7ce6f",
+      "bytes": 29389,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/dsh/harness.ts",
+      "sha256": "3386174264ad7c4100f283eebe4d40c977ee99f88ed01fc22b46fb1e7e3d626f",
+      "bytes": 12015,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/dsh/index.ts",
+      "sha256": "95c702fcef3fd23d7dd84925886dbab57d3ea4b3e666aee039e5f1533b7334de",
+      "bytes": 2249,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/dsh/mochi-approval/index.mjs",
+      "sha256": "097a444ac295e205a4e3e392de7be28212e817e8525ca3dfc10fa77d25da810d",
+      "bytes": 1515,
+      "categories": [
+        "desktop-source",
+        "staged-plugin:mochi-approval"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/dsh/mochi-approval/package.json",
+      "sha256": "a2de8c5d4ab7806df67b2e241472527bec073803695c2dbf0e505332e77e3821",
+      "bytes": 214,
+      "categories": [
+        "desktop-source",
+        "staged-plugin:mochi-approval"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/dsh/mochi-approval/test.mjs",
+      "sha256": "b0e9eccc48933aafa5466a44ca1d51fb83d6a765022cab087c2c5c950ad1b332",
+      "bytes": 2401,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/dsh/profile.ts",
+      "sha256": "a77838335ce9c8241cde5182f3abc40ffa857853d14a1d0ca268f8e68129cc79",
+      "bytes": 5035,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/dsh/protocol.ts",
+      "sha256": "2c735c2b6ee7e82b8cfb14a14f19fc6b683d4f74398b5b1923388d8730b03a77",
+      "bytes": 6093,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/dsh/sdk-sidecar.patch.yml",
+      "sha256": "9776b5805eea59eda2fb323ec9d695c54b2f4a742079d40aae202d5aae8730bf",
+      "bytes": 4194,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/dsh/seed.ts",
+      "sha256": "1c34d546993061d8afc82638c6ceb4771c885928a3efae7d6f566a1e452d2474",
+      "bytes": 12014,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/dsh/tray.ts",
+      "sha256": "09624bc2d9d6577a6c91ca2c82e08fc32272c4f68ea9f6fcd24e2a1dec975904",
+      "bytes": 4302,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/dsh/web-host.ts",
+      "sha256": "308e66977e922a746e3698ae64d0b152ed0fd2c9264b71628661688b98abcd59",
+      "bytes": 8506,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/lan-attention-preload.ts",
+      "sha256": "e43d9b4e03b38f9bf982f9d644afd2717854563662f869197dc9386f62630a63",
+      "bytes": 832,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/lib/crypto.ts",
+      "sha256": "1e3a8f054589decfa5ce61a2cce312fb279a3d5c381719698a686c4e9ab356e8",
+      "bytes": 1968,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/main.ts",
+      "sha256": "bbf31295b91c84d5874b83c0aaf1174b875db48d2ec6d4bb5dcef9672540e0b9",
+      "bytes": 31181,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/preload.ts",
+      "sha256": "3e3de00c41f2a4883fee2bcc0d7469fd7e01374f8f04a6cda082f44986c36967",
+      "bytes": 1625,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/shared/constants.ts",
+      "sha256": "2f6070bb86f75a2e9ff6c19c0107f1bd315ecaac34f742561b2bcb010b68a8bb",
+      "bytes": 1401,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/shared/time.ts",
+      "sha256": "c9e5a48072bb679d58e10aa99a31eeddf61dd98cd8123ff6fde63ae8fe177b68",
+      "bytes": 2438,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/shared/types.ts",
+      "sha256": "5f7eaaad0e43ba7d9de741c5b7697a1f29055b94589701c2e9730923baa76b5b",
+      "bytes": 1193,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/package-lock.json",
+      "sha256": "01ddcce1c3aba8991eecc610c296511d950526643f890df44ceaae8733e100e9",
+      "bytes": 793771,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/package.json",
+      "sha256": "27b35dc37aacd8f0c422fdc3e72f9ea380475a6bebab0aa77fae7f592e9b8758",
+      "bytes": 34483,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/resources/mochi-web/classroom-agent-presets/classroom/agent.cordis.yml",
+      "sha256": "95c1839c9745f4fdfe3e107d37e7081843e26303af9a56a6d2680b00180f9bd6",
+      "bytes": 1005,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/resources/mochi-web/classroom-agent-presets/classroom/preset.yml",
+      "sha256": "48681c7d15a75f56f3e72981937b9ba0f78822e843a07ab670ceb310c2aef638",
+      "bytes": 177,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/resources/mochi-web/patches/core.patch.yml",
+      "sha256": "82e57649620c4b3846cc9059a1c547258f46cab1934a7479f744d6dffa743ca5",
+      "bytes": 11404,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/resources/mochi-web/patches/headless.patch.yml",
+      "sha256": "7fbe4124f926dbbb55e852318bf71b9d9cd7c35e83b5e46497516675b182d801",
+      "bytes": 417,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/resources/mochi-web/patches/web.patch.yml",
+      "sha256": "bfc84cdea46cbc290dbbe7d555027baa3ec7dceca042f3dc312480524944e0f7",
+      "bytes": 968,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/resources/mochi-web/runtime-profile.cjs",
+      "sha256": "572b976829ba2c55e7eb62244c98f1f37835bcc83f73511cf724257964eeed8b",
+      "bytes": 31007,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/resources/mochi-web/runtime-profile.json",
+      "sha256": "b726538ceef7fc9f62fc3a883adda91aacf9ceb384bb74a55ff07cb96e70f440",
+      "bytes": 7446,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/check-dsh-host-peers.cjs",
+      "sha256": "f63e4e42b906ab071294648c2af1e2a69340c7e0fcafd17ff36584e094723ca6",
+      "bytes": 15620,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/dev.mjs",
+      "sha256": "a5d56953ebcc921a2741a78552fbf74b2df413eb36695ee980efa755ccf85c12",
+      "bytes": 3358,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/package-desktop.cjs",
+      "sha256": "65d0b7446056ddd50dee240bbf4f3ce9d96a5daf02f77b6d655aee60fa79a636",
+      "bytes": 7695,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/prepare-mochi-resources.cjs",
+      "sha256": "26170a3ea4c8661b2665daf42c9d7266f87d8cdf85a664343e8cf43d11ef90c6",
+      "bytes": 36697,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/prepare-release-input.cjs",
+      "sha256": "40d048da4072fc8bf6218b6831ecce2d575842387a895909789faa33ffadd3f9",
+      "bytes": 15407,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/seed-packaging-keys.cjs",
+      "sha256": "9d2efa8bdf68117748069c92520a384e0a787f2249c90ab221b4080b16a4975d",
+      "bytes": 8854,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-classroom-role-runtime.mjs",
+      "sha256": "8c549e798d69e459e21c41aff84697dbdf1daa33e0ae26169cbd4cc68d19e2f7",
+      "bytes": 11466,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-doctor-window.mjs",
+      "sha256": "cc60b0e2fcc4720cad7b3ffcb33fe6ab66d8e7e641fb2585ea6c44462eb21887",
+      "bytes": 14130,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-doctor.mjs",
+      "sha256": "83a748fcdd34219810b978138b37f2c2302520cb5c41847e3896d9ed4c9c58fc",
+      "bytes": 9826,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-dsh-host-peers.mjs",
+      "sha256": "003ac4a91ddbb9c31e75e5767b85ca8a87bb9648329c91ca8acaccc2582d1dc1",
+      "bytes": 13256,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-host-lifecycle-runtime.mjs",
+      "sha256": "bcbc76a634fe69501d74e94e66bef808850e6db579ab5962e75972a99d8545b3",
+      "bytes": 15939,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-installer-config.mjs",
+      "sha256": "23b83de7f9f77ea39234aeb7b20ba2f1f14c7e539592a4d3c185a39c9873e02b",
+      "bytes": 14578,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-migrate.mjs",
+      "sha256": "9ed9dbc342255e513ed66b76c7b4df3070d74fdae3ee8df4e30116145bd1d80a",
+      "bytes": 3133,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-package-resources.mjs",
+      "sha256": "458902d7542e98554795bd6ae791a6f0615444e275e1138279fdf69d778555fd",
+      "bytes": 33443,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-profile-skills.mjs",
+      "sha256": "f2bbc21ed3d250f1ec7cb9c37b0a148858451535da34183d08b96f724c3a0ba0",
+      "bytes": 7971,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-release-input.mjs",
+      "sha256": "8f6793d4b5bb20dd017dabe570f6b247a1e42abbfb9241ac494522e4efcc3152",
+      "bytes": 4186,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-runtime-profile.mjs",
+      "sha256": "a1f063be1eb7c7391e22005d7bd6325902b3c4e6ad72e2c922be94d34dcb5fbf",
+      "bytes": 30769,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-service-wiring-runtime.mjs",
+      "sha256": "692a5ec15e6bd60c500e325790448f62559942807a7298b7447d21786043e327",
+      "bytes": 17558,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-startup-runtime.mjs",
+      "sha256": "f7a7614025efe97a7f3bf05f5604deb6c95aef806a73dd1081d05d9bc888d56f",
+      "bytes": 13226,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-tray-integration-runtime.mjs",
+      "sha256": "a5733064755ad99a62901e1c59597cc437dce7b95dc49358ead430302be32108",
+      "bytes": 18669,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-tray-runtime.mjs",
+      "sha256": "ea52d66bb058d2095a0c5df34b80e7a97c656d835b45981abd1b4c6475ef7c01",
+      "bytes": 10889,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-web-host-runtime.mjs",
+      "sha256": "99719566096d95f56c8e0ddc8d0bfb48f70e07adf0beb0d12ade3f9256f6f534",
+      "bytes": 3837,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/tsconfig.json",
+      "sha256": "59ce7588733dc6f0fca960a92e5201bdf7b085082d3cccb28b44b8c9a0858c13",
+      "bytes": 497,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/tsconfig.node.json",
+      "sha256": "d244d6a759bc68fb20f7a7052206790bf95f52507a50eef8e1d67e3e815b0fd9",
+      "bytes": 439,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-brand/client.js",
+      "sha256": "2147f79865573108ab0bf393148655e18ac8938773f2290f1eff68e41e1ed86d",
+      "bytes": 47444,
+      "categories": [
+        "staged-plugin:jxl-brand"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-brand/index.mjs",
+      "sha256": "1b3c2d39f8c30cfed20306ba8f88fb2e16aec9c276cdf8abf914d531e4a286d6",
+      "bytes": 446,
+      "categories": [
+        "staged-plugin:jxl-brand"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-brand/package.json",
+      "sha256": "7fa66b72a76dcfd5f570fe7a806d425a22d82332d0c27833672892c5c12e44b0",
+      "bytes": 615,
+      "categories": [
+        "staged-plugin:jxl-brand"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-campus/client.js",
+      "sha256": "e598c2d3251f0018993434d4808636656c1a10c16f7e922d079b6f0bc13cb642",
+      "bytes": 28441,
+      "categories": [
+        "staged-plugin:jxl-campus"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-campus/index.mjs",
+      "sha256": "308054fbd98315b2eafc1cb2ac68fb70a17f63e7c3a15aeee1a1b555c3281f85",
+      "bytes": 8862,
+      "categories": [
+        "staged-plugin:jxl-campus"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-campus/package.json",
+      "sha256": "060e586a50a342ca4d73be4c36c14b72bf17dc81726a29bdc6124b0dd3a11ceb",
+      "bytes": 581,
+      "categories": [
+        "staged-plugin:jxl-campus"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-campus/static-root.mjs",
+      "sha256": "2851fa86102de96085ef12fcbbce25e62f58f264a5db42516c729741a7abce3c",
+      "bytes": 3508,
+      "categories": [
+        "staged-plugin:jxl-campus"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-theme/assets/brand/jiaxing-jellyfish-v1.png",
+      "sha256": "887e90e966c7155582bf5efe785be2909bad04e1e3f31ab7403b168c9759fe01",
+      "bytes": 570737,
+      "categories": [
+        "staged-plugin:jxl-theme"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-theme/assets/campus/jxl-campus-watercolor-v1.webp",
+      "sha256": "fc831da9b070d92bd6275c0f2fe887cad33396226e9f469b6ed71f6ef2040bc7",
+      "bytes": 23788,
+      "categories": [
+        "staged-plugin:jxl-theme"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-theme/assets/icons/icon.svg",
+      "sha256": "888cca3ad903bfd5480d9726875f0e70e8cadc266b2d5d3d17c794522775f50b",
+      "bytes": 544,
+      "categories": [
+        "staged-plugin:jxl-theme"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-theme/assets/mochi-loading.json",
+      "sha256": "b0f786f7c6da5f7773b59e9fdab718cc9f5abcbd1c2313d5ddfe42dfefe928c1",
+      "bytes": 12465,
+      "categories": [
+        "staged-plugin:jxl-theme"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-theme/client.js",
+      "sha256": "ffe98c4d0b989619d55fa54aad5b3e895644ad5bf530095a30841876ed7c543a",
+      "bytes": 27368,
+      "categories": [
+        "staged-plugin:jxl-theme"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-theme/index.mjs",
+      "sha256": "d9e499a9d45d3455e56d4a82ffb066829d35795934fa2489d6f79bd049f8043e",
+      "bytes": 3767,
+      "categories": [
+        "staged-plugin:jxl-theme"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-theme/package.json",
+      "sha256": "1e2de330a6c13c7fea899a14ac1109c6cb32d9610fe7695a8ea9b63cafa6f48d",
+      "bytes": 361,
+      "categories": [
+        "staged-plugin:jxl-theme"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-lan/client.js",
+      "sha256": "1b8ccdc627bc3c8fdf1ed60fb9a32e68d0b4cd9b34a2e50a2c712163628d7610",
+      "bytes": 62658,
+      "categories": [
+        "staged-plugin:mochi-lan-client"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-lan/index.mjs",
+      "sha256": "d68fdf607eb8481358e20a46baf38c052b01e28226c9d948709e807fd6368953",
+      "bytes": 379,
+      "categories": [
+        "staged-plugin:mochi-lan-client"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-lan/package.json",
+      "sha256": "e7afafd6120e3396fe2492bbbe06cf248e81455d8fd6e23cbe46a84565126fa4",
+      "bytes": 605,
+      "categories": [
+        "staged-plugin:mochi-lan-client"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-model-presets/client.js",
+      "sha256": "c9f4797df9975caa5625d9ce589207c664ba709571f9fecec59bd81fd5361dce",
+      "bytes": 21893,
+      "categories": [
+        "staged-plugin:mochi-model-presets"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-model-presets/index.mjs",
+      "sha256": "149dcf0546d29ea1ceec76721ecf7e86c450532b3396f66c49b747bb2f490d7c",
+      "bytes": 431,
+      "categories": [
+        "staged-plugin:mochi-model-presets"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-model-presets/package.json",
+      "sha256": "5b85db2ae5b4e48bceb23e34bbdc9303b2337995e14c6c03537076aeb60f8a4a",
+      "bytes": 630,
+      "categories": [
+        "staged-plugin:mochi-model-presets"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-workbench/client.js",
+      "sha256": "90e89fa359eb2ecb96c3aaaa22e199fed1eaae48921b1514e3b136f02be4fb0b",
+      "bytes": 80472,
+      "categories": [
+        "staged-plugin:mochi-workbench"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-workbench/index.mjs",
+      "sha256": "55d4cfbd458db2c93b38668fdef7e3ef4425f706ca2b10132dd75d1f93909d12",
+      "bytes": 372,
+      "categories": [
+        "staged-plugin:mochi-workbench"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-workbench/package.json",
+      "sha256": "9f5eb80b6b05d2a338c71462ecffedc57b5d2a77c7ca472b75ec87ee458b5da1",
+      "bytes": 635,
+      "categories": [
+        "staged-plugin:mochi-workbench"
+      ]
+    },
+    {
+      "path": "client-plugins/teacher-agent-presets/classroom-coordination/agent.cordis.yml",
+      "sha256": "8504c68225ad6da984f9e4f1cc3412acee73c50493f0b64ca41e9e29925d4952",
+      "bytes": 3061,
+      "categories": [
+        "teacher-preset"
+      ]
+    },
+    {
+      "path": "client-plugins/teacher-agent-presets/classroom-coordination/preset.yml",
+      "sha256": "78d44c5c7314a02807ffe7ef30121d748a60f872bbac133534abcae29453a596",
+      "bytes": 174,
+      "categories": [
+        "teacher-preset"
+      ]
+    },
+    {
+      "path": "client-plugins/teacher-agent-presets/grade-analysis/agent.cordis.yml",
+      "sha256": "a35f20baa6abaf4830a2768e85b3964cc4a0cf5db4ffaf3ea6544e6b4e1e8746",
+      "bytes": 2772,
+      "categories": [
+        "teacher-preset"
+      ]
+    },
+    {
+      "path": "client-plugins/teacher-agent-presets/grade-analysis/preset.yml",
+      "sha256": "72007e55dab0f382fda7b9c39c32f5678df6280691f1d899c6ffdbdc83cbdc7f",
+      "bytes": 163,
+      "categories": [
+        "teacher-preset"
+      ]
+    },
+    {
+      "path": "client-plugins/teacher-agent-presets/lesson-planning/agent.cordis.yml",
+      "sha256": "868951639119587b79f50a27954dbc145586e7412a7c19570dcd8ce3b10d2d65",
+      "bytes": 3383,
+      "categories": [
+        "teacher-preset"
+      ]
+    },
+    {
+      "path": "client-plugins/teacher-agent-presets/lesson-planning/preset.yml",
+      "sha256": "d63045cd00d639a74909df760b1314740bdc8749add8122aa82d46c1c49a525b",
+      "bytes": 173,
+      "categories": [
+        "teacher-preset"
+      ]
+    },
+    {
+      "path": "client-plugins/teacher-agent-presets/materials-assessment/agent.cordis.yml",
+      "sha256": "4b0a402141d4103afda1cfb0c2a498a5bd7d7da6ce47abfbe47df5be87b3841a",
+      "bytes": 3287,
+      "categories": [
+        "teacher-preset"
+      ]
+    },
+    {
+      "path": "client-plugins/teacher-agent-presets/materials-assessment/preset.yml",
+      "sha256": "5e1433976472c9fca5e469210e81ed0c8b2d724cbf219da7c400048465357e10",
+      "bytes": 171,
+      "categories": [
+        "teacher-preset"
+      ]
+    },
+    {
+      "path": "client-plugins/teacher-agent-presets/README.md",
+      "sha256": "1f0974ef8ffd2fdc48e87c069266a8b011b6d3842b8c7e91e141f5022657d93f",
+      "bytes": 4031,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "packages/mochi-pdf-layout/assets/fonts/NotoSansSC-Regular.ttf",
+      "sha256": "ee0196181d143544016fdae98b4fa83db18536c249068fec361c5a60ef3d9fb7",
+      "bytes": 10596252,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "packages/mochi-pdf-layout/index.mjs",
+      "sha256": "d61074dcfcb56236763f6fb4d6c73a6950bccabe64274331f817cc09d0b0cbe0",
+      "bytes": 21335,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "packages/mochi-pdf-layout/licenses/NotoSansSC-OFL-1.1.txt",
+      "sha256": "6a73f9541c2de74158c0e7cf6b0a58ef774f5a780bf191f2d7ec9cc53efe2bf2",
+      "bytes": 4301,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "packages/mochi-pdf-layout/NOTICE.md",
+      "sha256": "3d48dfa02596d7755dd90268541c6b1eb0e951163067d469dfb0d176737190ed",
+      "bytes": 1432,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "packages/mochi-pdf-layout/package-lock.json",
+      "sha256": "789c12ccb81f5bf5f5ee774d28d44546799d7f3dec3efa9983c447822a67d67a",
+      "bytes": 2386,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "packages/mochi-pdf-layout/package.json",
+      "sha256": "80df1ec903dad41225bcfc21e85797baca6c619308f50e8b9d3af21d61011765",
+      "bytes": 400,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "packages/mochi-pdf-layout/test/layout.test.mjs",
+      "sha256": "e55687fd49587a5ea966752b48f08d5bae023ef24fba703d005ddb2a567c9208",
+      "bytes": 3492,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "plugins/dsh-better-sidebar/cordis.patch.yml",
+      "sha256": "d363acad7f1521559194a3e04de06fe68974b4a7b1ad3cc74db54bca63c4248b",
+      "bytes": 2557,
+      "categories": [
+        "staged-plugin:dsh-better-sidebar"
+      ]
+    },
+    {
+      "path": "plugins/dsh-better-sidebar/dsh.plugin.json",
+      "sha256": "c6182f5887fea434ce3e0cb878fc5b6971e1711117e788ffe07895ad8e2ba6ae",
+      "bytes": 458,
+      "categories": [
+        "staged-plugin:dsh-better-sidebar"
+      ]
+    },
+    {
+      "path": "plugins/dsh-better-sidebar/lib/client-editor.js",
+      "sha256": "3523961237d2c11176a7d470bb3fc37f5712d60fa13f3898893e7b2b2703e273",
+      "bytes": 2099708,
+      "categories": [
+        "staged-plugin:dsh-better-sidebar"
+      ]
+    },
+    {
+      "path": "plugins/dsh-better-sidebar/lib/client-editor.js.map",
+      "sha256": "1149ca0635760c04935388c53b76b7b94ffbd0d8524cc1e68eb66ae90150cf84",
+      "bytes": 3659584,
+      "categories": [
+        "staged-plugin:dsh-better-sidebar"
+      ]
+    },
+    {
+      "path": "plugins/dsh-better-sidebar/lib/client-locale.js",
+      "sha256": "44b1e724eb7f7b5a9a31c6b037c80805ae1fa180fe67624c6f5f28a097d0956b",
+      "bytes": 693325,
+      "categories": [
+        "staged-plugin:dsh-better-sidebar"
+      ]
+    },
+    {
+      "path": "plugins/dsh-better-sidebar/lib/client-locale.js.map",
+      "sha256": "400fdff1d8eb896fc1ecea1b5153c4e8e75c0766053a08f61d5d2579aee3a0e9",
+      "bytes": 802187,
+      "categories": [
+        "staged-plugin:dsh-better-sidebar"
+      ]
+    },
+    {
+      "path": "plugins/dsh-better-sidebar/lib/client-mermaid.js",
+      "sha256": "d1e0daba6febaf16c57208d82c024035055bdadd2bb16018dbcc32c877dde89d",
+      "bytes": 7018565,
+      "categories": [
+        "staged-plugin:dsh-better-sidebar"
+      ]
+    },
+    {
+      "path": "plugins/dsh-better-sidebar/lib/client-mermaid.js.map",
+      "sha256": "e25cbed3f4c8fb56010ecbb1cbd746435f8379af02f6b6fd604dbe3c48e1e656",
+      "bytes": 12168523,
+      "categories": [
+        "staged-plugin:dsh-better-sidebar"
+      ]
+    },
+    {
+      "path": "plugins/dsh-better-sidebar/lib/client-registry.js",
+      "sha256": "6b83799f9cc233961167ecf9f468b6b643da4b37882a1a85ee0d35d50fec7df0",
+      "bytes": 884006,
+      "categories": [
+        "staged-plugin:dsh-better-sidebar"
+      ]
+    },
+    {
+      "path": "plugins/dsh-better-sidebar/lib/client-registry.js.map",
+      "sha256": "c7999d207cfac80eb306c2f3af2adb4818c4ea4fb8208577e4eaf7aaaeae4cf7",
+      "bytes": 7454051,
+      "categories": [
+        "staged-plugin:dsh-better-sidebar"
+      ]
+    },
+    {
+      "path": "plugins/dsh-better-sidebar/lib/client-terminal.js",
+      "sha256": "389631b2ca3a1a007ad3bb2a0a166ce6bce2759f58cc5bc53dbf0d2288befb91",
+      "bytes": 547349,
+      "categories": [
+        "staged-plugin:dsh-better-sidebar"
+      ]
+    },
+    {
+      "path": "plugins/dsh-better-sidebar/lib/client-terminal.js.map",
+      "sha256": "e49d2eeed10e5fb0373f9e096a16547397d3b689d5451ef9077fe0a2ffb4207e",
+      "bytes": 836317,
+      "categories": [
+        "staged-plugin:dsh-better-sidebar"
+      ]
+    },
+    {
+      "path": "plugins/dsh-better-sidebar/lib/client.js",
+      "sha256": "5a39030f0df922b405a69cb9018fc3d8eafa594fde43652c294a43d7f8316c5e",
+      "bytes": 883802,
+      "categories": [
+        "staged-plugin:dsh-better-sidebar"
+      ]
+    },
+    {
+      "path": "plugins/dsh-better-sidebar/lib/client.js.map",
+      "sha256": "f4f7c3439d8046190ec64873f030039be571fec2e37a83342eb16dde4c50c4ee",
+      "bytes": 7454042,
+      "categories": [
+        "staged-plugin:dsh-better-sidebar"
+      ]
+    },
+    {
+      "path": "plugins/dsh-better-sidebar/lib/index.js",
+      "sha256": "098c497605fbadc6584d1969583235ff7b1cf317a2cfa7b828b62c0b139217be",
+      "bytes": 190662,
+      "categories": [
+        "staged-plugin:dsh-better-sidebar"
+      ]
+    },
+    {
+      "path": "plugins/dsh-better-sidebar/lib/invariant.js",
+      "sha256": "fd612303ef9674c726fd0249a0ceadc656a2a22a7d915ee9a92564355d4bcf72",
+      "bytes": 988,
+      "categories": [
+        "staged-plugin:dsh-better-sidebar"
+      ]
+    },
+    {
+      "path": "plugins/dsh-better-sidebar/LICENSE",
+      "sha256": "f4d265194e0824721af0592462a71fe750c04db3565c23c5d6c65fdee25fb4b0",
+      "bytes": 1069,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "plugins/dsh-better-sidebar/package.json",
+      "sha256": "7aa18903c00e852cfb9356b5f18014b8b25e30a49116aed117453350aad2820f",
+      "bytes": 6362,
+      "categories": [
+        "staged-plugin:dsh-better-sidebar"
+      ]
+    },
+    {
+      "path": "plugins/mochi-campus/connection.mjs",
+      "sha256": "a5385df41b987630e0e402790700ca3cfacf42eddc17289004ddb276dc0056bd",
+      "bytes": 10773,
+      "categories": [
+        "staged-plugin:mochi-campus"
+      ]
+    },
+    {
+      "path": "plugins/mochi-campus/index.mjs",
+      "sha256": "0da24e7fda03e3858c05603461c32df85a157dd423dc597aebe028bcde46ff4f",
+      "bytes": 46284,
+      "categories": [
+        "staged-plugin:mochi-campus"
+      ]
+    },
+    {
+      "path": "plugins/mochi-campus/package.json",
+      "sha256": "5d3aea9710d1e9087393b9749977a7ba990ffdc08bf17ffff238d17ab589a7af",
+      "bytes": 382,
+      "categories": [
+        "staged-plugin:mochi-campus"
+      ]
+    },
+    {
+      "path": "plugins/mochi-dispatch/index.mjs",
+      "sha256": "0ce274339f2714cb62cf4e8424b0b07b9f0d25faf14121e097f546fa14d47763",
+      "bytes": 32812,
+      "categories": [
+        "staged-plugin:mochi-dispatch"
+      ]
+    },
+    {
+      "path": "plugins/mochi-dispatch/lan-transport.mjs",
+      "sha256": "be125bc90ff19cdd4f6b887a852b485950b6f804f30fd084059146ba9c62b7fd",
+      "bytes": 13786,
+      "categories": [
+        "staged-plugin:mochi-dispatch"
+      ]
+    },
+    {
+      "path": "plugins/mochi-dispatch/package.json",
+      "sha256": "ae41c78a1291ddbf461b0d0aba8c68b01d5efa3473110f5b0000989e83046ac6",
+      "bytes": 422,
+      "categories": [
+        "staged-plugin:mochi-dispatch"
+      ]
+    },
+    {
+      "path": "plugins/mochi-dispatch/state-machine.mjs",
+      "sha256": "838c6a62ae53228f5a7059e73d4afba97a575316c0268fdd1302c9dcd9ed5915",
+      "bytes": 6083,
+      "categories": [
+        "staged-plugin:mochi-dispatch"
+      ]
+    },
+    {
+      "path": "plugins/mochi-dispatch/store.mjs",
+      "sha256": "e7d67f0c06dd74b7aec05cfc655c2166b8493723a0278c084a03c78091e2f6b8",
+      "bytes": 27949,
+      "categories": [
+        "staged-plugin:mochi-dispatch"
+      ]
+    },
+    {
+      "path": "plugins/mochi-documents/index.mjs",
+      "sha256": "88448857dde4910585e36e1dcf4735514a1a45cc723beea9451eedcec313a4e2",
+      "bytes": 51703,
+      "categories": [
+        "staged-plugin:mochi-documents"
+      ]
+    },
+    {
+      "path": "plugins/mochi-documents/package.json",
+      "sha256": "cca5f7b29c91dfbdefb8c10b1b0628465b8fd3f81dc5567b5838961829bc5caa",
+      "bytes": 621,
+      "categories": [
+        "staged-plugin:mochi-documents"
+      ]
+    },
+    {
+      "path": "plugins/mochi-documents/plugin.mjs",
+      "sha256": "ef71932bafffa186227a97436303d19a0563e42620e67b1f19555e59709fb31a",
+      "bytes": 30926,
+      "categories": [
+        "staged-plugin:mochi-documents"
+      ]
+    },
+    {
+      "path": "plugins/mochi-grades/index.mjs",
+      "sha256": "b82c5147c91bbb35b564b1bf388d23ed49dd18be2fd89f71a2b96f4d753fb977",
+      "bytes": 33800,
+      "categories": [
+        "staged-plugin:mochi-grades"
+      ]
+    },
+    {
+      "path": "plugins/mochi-grades/package.json",
+      "sha256": "906dbdb816c793dc3bdfeacb42ab6bb3ce3261e47719990ece0e3e55d1fa9331",
+      "bytes": 515,
+      "categories": [
+        "staged-plugin:mochi-grades"
+      ]
+    },
+    {
+      "path": "plugins/mochi-grades/plugin.mjs",
+      "sha256": "6294ce3463bead67dae0a3851f7fc259199ef097397c5f1dce29d369ec8fe912",
+      "bytes": 10122,
+      "categories": [
+        "staged-plugin:mochi-grades"
+      ]
+    },
+    {
+      "path": "plugins/mochi-grades/sheet-read.mjs",
+      "sha256": "3b1b9df54b321c44f061267f6e6b86be3f8b7571e8494cd8e82279f9293e2678",
+      "bytes": 13545,
+      "categories": [
+        "staged-plugin:mochi-grades"
+      ]
+    },
+    {
+      "path": "plugins/mochi-hello/doctor.mjs",
+      "sha256": "edabdd64dc37de1740204beb21261d0b19f65e15704853c570b224ff8a30375d",
+      "bytes": 7649,
+      "categories": [
+        "staged-plugin:mochi-hello"
+      ]
+    },
+    {
+      "path": "plugins/mochi-hello/index.mjs",
+      "sha256": "b9cc2b696a6cde398ad7bf2081b67e059297a920cb0ceee578aaa85aa393b096",
+      "bytes": 2363,
+      "categories": [
+        "staged-plugin:mochi-hello"
+      ]
+    },
+    {
+      "path": "plugins/mochi-hello/package.json",
+      "sha256": "ddf15927b0b77f50701b102111ffb0df440e3eff3a8d1a280069c4a3eece88b6",
+      "bytes": 401,
+      "categories": [
+        "staged-plugin:mochi-hello"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/index.mjs",
+      "sha256": "02e20ae89bc2e10faf5a3655c8b48ca426b1a9002554852b66abdf9a62a912e0",
+      "bytes": 6457,
+      "categories": [
+        "staged-plugin:mochi-knowledge"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/knowledge-host-bridge.mjs",
+      "sha256": "ab8ed652c85bb6e7654e082423dc062c616e5d13b95c1ce0cae22ed09aba5812",
+      "bytes": 2838,
+      "categories": [
+        "staged-plugin:mochi-knowledge"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/knowledge-page-image.mjs",
+      "sha256": "e92f955de670f38c33456daa8a1a8263a06682513b6919a0b77f326eca455fb1",
+      "bytes": 13510,
+      "categories": [
+        "staged-plugin:mochi-knowledge"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/knowledge-store.mjs",
+      "sha256": "ed4e2ce163a36c0fa8d917a656c72de5867dba4d72236332e0793f2098f8aac1",
+      "bytes": 24133,
+      "categories": [
+        "staged-plugin:mochi-knowledge"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/package.json",
+      "sha256": "6e97eee0ff2ca43df2374cd7100a18f8a4e1a2ea721204fb477986838b4c9126",
+      "bytes": 960,
+      "categories": [
+        "staged-plugin:mochi-knowledge"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/scripts/install-textbook-snapshot.mjs",
+      "sha256": "adf02aa53a1d01ebc0ff8f6956593b2f9b490e3fee8bb991198d93c6da1d9df6",
+      "bytes": 24282,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "plugins/mochi-lan/host-bridge.mjs",
+      "sha256": "886a286314b8cc5a15cde87f7dbd28575fd416a15e77f3f16e2396cb643f6a3a",
+      "bytes": 10551,
+      "categories": [
+        "staged-plugin:mochi-lan"
+      ]
+    },
+    {
+      "path": "plugins/mochi-lan/index.mjs",
+      "sha256": "ea134d30a8755b63ad5fc0eadf6fa7f35ab40de747b5124231ee794c6ea5a864",
+      "bytes": 1893,
+      "categories": [
+        "staged-plugin:mochi-lan"
+      ]
+    },
+    {
+      "path": "plugins/mochi-lan/lan-service.mjs",
+      "sha256": "593aa906a38e9922046ff10e4578622acf71ed9c14438e12e8fe1e6f00ae2833",
+      "bytes": 111510,
+      "categories": [
+        "staged-plugin:mochi-lan"
+      ]
+    },
+    {
+      "path": "plugins/mochi-lan/package.json",
+      "sha256": "a03b090bd9073bb46e6e21371ba9e35564d6d9565317cad5ae9ed1354c78cdc1",
+      "bytes": 365,
+      "categories": [
+        "staged-plugin:mochi-lan"
+      ]
+    },
+    {
+      "path": "plugins/mochi-llm-mimo/index.mjs",
+      "sha256": "c22ece14bf801a43d65711f0c4bce2dfff6b14d6dda5f509a88f45c42c1ae1ca",
+      "bytes": 4903,
+      "categories": [
+        "staged-plugin:mochi-llm-mimo"
+      ]
+    },
+    {
+      "path": "plugins/mochi-llm-mimo/package.json",
+      "sha256": "f37da0cedeff86ba4b02e5d6cd58b49310f7b7795c1a3876e218038aa93eadb8",
+      "bytes": 283,
+      "categories": [
+        "staged-plugin:mochi-llm-mimo"
+      ]
+    },
+    {
+      "path": "plugins/mochi-memory/active-context.mjs",
+      "sha256": "1e9b3984d21052fd623252611b8d7ebd205e653589a5b082ebc8f29b4c3a23a3",
+      "bytes": 9745,
+      "categories": [
+        "staged-plugin:mochi-memory"
+      ]
+    },
+    {
+      "path": "plugins/mochi-memory/index.mjs",
+      "sha256": "610b0c23a85c2cdcdfb25cc78d183def511ba46d4327b2aed15332cdf76a822e",
+      "bytes": 11809,
+      "categories": [
+        "staged-plugin:mochi-memory"
+      ]
+    },
+    {
+      "path": "plugins/mochi-memory/mem-store.mjs",
+      "sha256": "e77c2e07bae0fbada886f76e6d7b3887dffbdcb6a54c0544c4c481f62aaefb9f",
+      "bytes": 20361,
+      "categories": [
+        "staged-plugin:mochi-memory"
+      ]
+    },
+    {
+      "path": "plugins/mochi-memory/package.json",
+      "sha256": "d34e0757293fc9cde6c0375716546df4f0d9fea13f0ccd965d8033d4448f8b11",
+      "bytes": 518,
+      "categories": [
+        "staged-plugin:mochi-memory"
+      ]
+    },
+    {
+      "path": "plugins/mochi-memory/world-state.mjs",
+      "sha256": "121dd26d5b43db889d79d3c5fa4b52b760ba461f5416cbb33219ee8ab120d6bf",
+      "bytes": 9087,
+      "categories": [
+        "staged-plugin:mochi-memory"
+      ]
+    },
+    {
+      "path": "plugins/mochi-modeling/assets/jsxgraph.css",
+      "sha256": "86e8f917ba2b4bc1b979375808cc4d1aeda8b0fddb4b23a96cfee9ccc870b8b8",
+      "bytes": 4767,
+      "categories": [
+        "staged-plugin:mochi-modeling"
+      ]
+    },
+    {
+      "path": "plugins/mochi-modeling/assets/jsxgraphcore.js",
+      "sha256": "4e196b10dc77e22ec0eda897e0271636edf8dadd91d76cc2cf2e136c61c35537",
+      "bytes": 969075,
+      "categories": [
+        "staged-plugin:mochi-modeling"
+      ]
+    },
+    {
+      "path": "plugins/mochi-modeling/assets/LICENSE.LGPL",
+      "sha256": "e3a994d82e644b03a792a930f574002658412f62407f5fee083f2555c5f23118",
+      "bytes": 7652,
+      "categories": [
+        "staged-plugin:mochi-modeling"
+      ]
+    },
+    {
+      "path": "plugins/mochi-modeling/assets/LICENSE.MIT",
+      "sha256": "43e325001487de7f09745fbe086b054bb1b70d4ab58060e87153849365b23ff1",
+      "bytes": 1201,
+      "categories": [
+        "staged-plugin:mochi-modeling"
+      ]
+    },
+    {
+      "path": "plugins/mochi-modeling/conic.mjs",
+      "sha256": "c951ff649b3d3ca815eb25c00b42f6f13c11d825a66d0229a66e2c95ed4df9d5",
+      "bytes": 4076,
+      "categories": [
+        "staged-plugin:mochi-modeling"
+      ]
+    },
+    {
+      "path": "plugins/mochi-modeling/index.mjs",
+      "sha256": "a1723e211d7dcc362f9c7fb09621225dc914e4f4bf16737663cc6ff649f545d3",
+      "bytes": 19645,
+      "categories": [
+        "staged-plugin:mochi-modeling"
+      ]
+    },
+    {
+      "path": "plugins/mochi-modeling/package.json",
+      "sha256": "8bb2daa29745dfaaca5726cb5e570087b2970c852454bd76888affee0a5b4131",
+      "bytes": 413,
+      "categories": [
+        "staged-plugin:mochi-modeling"
+      ]
+    },
+    {
+      "path": "plugins/mochi-modeling/verify.mjs",
+      "sha256": "37042ed49fdb0472294c4fab025517a47eb50f6a2b0ba45ab7a64d69167c915b",
+      "bytes": 5570,
+      "categories": [
+        "staged-plugin:mochi-modeling"
+      ]
+    },
+    {
+      "path": "plugins/mochi-presentations/index.mjs",
+      "sha256": "1e1e9aaaef44fa79e1c25bfe5f566ef76e340b2be2838a7ab18e6d538dd1fc16",
+      "bytes": 92677,
+      "categories": [
+        "staged-plugin:mochi-presentations"
+      ]
+    },
+    {
+      "path": "plugins/mochi-presentations/package.json",
+      "sha256": "def0c4d35cbb1b957a5b63a56a261ae49242c7ffaeb2560ab4711712e0f2b20f",
+      "bytes": 550,
+      "categories": [
+        "staged-plugin:mochi-presentations"
+      ]
+    },
+    {
+      "path": "plugins/mochi-presentations/plugin.mjs",
+      "sha256": "5abe7dd682853dc1924204579471b50272503174e39b1d3fe3e31d0646ea1783",
+      "bytes": 25058,
+      "categories": [
+        "staged-plugin:mochi-presentations"
+      ]
+    },
+    {
+      "path": "plugins/mochi-web-search/index.mjs",
+      "sha256": "8bbaccd82e97e2a75d022030ae4158882d951db75586adaa9a83a836d4d2eae5",
+      "bytes": 30233,
+      "categories": [
+        "staged-plugin:mochi-web-search"
+      ]
+    },
+    {
+      "path": "plugins/mochi-web-search/package.json",
+      "sha256": "5e8e45e4c9d31cb20ac434af007ee129a945cf359052f3107abe69d29de20239",
+      "bytes": 227,
+      "categories": [
+        "staged-plugin:mochi-web-search"
+      ]
+    },
+    {
+      "path": "scripts/campus-paths.cjs",
+      "sha256": "9692e5322f97b776f8834da33a0a28aab4d5d4fc6ce2999d906b049953356803",
+      "bytes": 5861,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "skills/class-meeting-prep/SKILL.md",
+      "sha256": "2a678fe429c6bc4ba3f8f9ee142aef8ea54898ccd5d80d7a4872466002d2eb12",
+      "bytes": 2398,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "skills/mochi/SKILL.md",
+      "sha256": "cb3aa29dc54f2fc8f5ec4b56b31654b7e2a95074c93c2744517723a2bd00ed0d",
+      "bytes": 6740,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "skills/student-follow-up/SKILL.md",
+      "sha256": "08885e63af9cc2d42ba9e2ab8b47491e47fe014f5dfce4b13506c8b0f2d2b4cf",
+      "bytes": 1620,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "skills/student-movement-request/SKILL.md",
+      "sha256": "020528c013d0f4b06e1af5dfacc316d4a0127d1f6c3982bbb4cd5abde2f433a0",
+      "bytes": 3092,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "skills/teacher-daily-brief/SKILL.md",
+      "sha256": "fea5e661be7eda7a000f1948e0fdd764889dac552752d9c2970ed9b8069d44dc",
+      "bytes": 1638,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "skills/teaching-material-find/SKILL.md",
+      "sha256": "680f0710c7304b60dc2f901e37cf6e83b0db19b7e879250e4b37c77299f6c806",
+      "bytes": 6949,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "skills/teaching-material-find/teacher-resources.json",
+      "sha256": "122b18f3a9b680960893bd1353a9b6ccc06ab698bd6e1c2ba33970c3d3a2fd57",
+      "bytes": 3987,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "skills/teaching-material-find/test/teacher-resources.test.mjs",
+      "sha256": "24b0b8a120aef6f5d46875cbd995590f32b73a77aa65517b8c5852ba9e9267b6",
+      "bytes": 2748,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "skills/weekly-class-report/SKILL.md",
+      "sha256": "dcf4b44bd10974ad31e9782ca476048ca6d0a221eb973eccd3589d90c3aa3ea2",
+      "bytes": 1681,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-cordis-4.0.2.tgz",
+      "sha256": "c6024f94c92a83933b9f7cb99d2abf43401016194f40246934af1f82eb634eee",
+      "bytes": 55438,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-cordis-plugin-group-1.0.2.tgz",
+      "sha256": "7f8e4061f7a8af3487688e4037db73134cc25fd6be71a7220bbedef1e3f1c110",
+      "bytes": 1767,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-cordis-plugin-hmr-1.0.17.tgz",
+      "sha256": "4f15e46d1f0a4bda6b368ecc5cb733e7fa052a5f328f39d308b0544565a4bd5d",
+      "bytes": 12866,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-cordis-plugin-include-1.0.7.tgz",
+      "sha256": "97d4510bd23a68fae207e943e5bd2b582f2aaffb367b248ddead170da80a424f",
+      "bytes": 8983,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-cordis-plugin-loader-1.0.3.tgz",
+      "sha256": "def0501705149b8d5b85315e3ce435ae07d46cbaf966155fb400ed4530cf3a5e",
+      "bytes": 24264,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-cordis-plugin-timer-1.1.4.tgz",
+      "sha256": "b13ee9d69d3730894e73ac14b4f2362dfbded7fad156b13f45538c1731bbc72c",
+      "bytes": 4381,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-cosmokit-1.8.3.tgz",
+      "sha256": "6642644c5a70b48867d7c01d175bd5598a39181646315cc8d265ca4f6af58c77",
+      "bytes": 13976,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-0.1.3-alpha.1.tgz",
+      "sha256": "625ab8186ef48848ba11fcd7f2682a03a04c403bfe1824f4c8072e92545ace3a",
+      "bytes": 15342,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-acp-0.1.3-alpha.1.tgz",
+      "sha256": "d0d64bed6e9b27decd92a5081d0ad899acc890c818205463415634b9e551af21",
+      "bytes": 30949,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-acp-app-0.1.3-alpha.1.tgz",
+      "sha256": "b6bfeddf4ad5d3219134aecbaf2b69fccf97b522f5e9488c93a833de40c9fa63",
+      "bytes": 7138,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-agent-0.1.3-alpha.1.tgz",
+      "sha256": "7854ebb9da05199bf6c44c2876827692267ad58f034e34599653bdba5c6317ad",
+      "bytes": 44622,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-agent-default-model-0.1.3-alpha.1.tgz",
+      "sha256": "f8f44bbfe6c4221c8088fe36659ad1139ee5ba0b37fe665858d2d703167f2a0b",
+      "bytes": 7824,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-agent-instructions-0.1.3-alpha.1.tgz",
+      "sha256": "c3c1ff07fb3d73a7b52e08c7e744ecbe1731e554bfdf444b9ced45506a547938",
+      "bytes": 29762,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-agent-loop-0.1.3-alpha.1.tgz",
+      "sha256": "580851f2cea7cea399b17fc5d4a84820093c3b105c3bb4a94e9ea4303e2ed14f",
+      "bytes": 36690,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-agent-presets-0.1.3-alpha.1.tgz",
+      "sha256": "bda63a37672ec59b53c4dbdb792063bdeb3d813461d165413e743f806a6861bd",
+      "bytes": 138953,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-agent-tool-presentation-0.1.3-alpha.1.tgz",
+      "sha256": "4dd0289cd003f174a3b59f61d4fb83a721ec463aaa31105514d65fa9cadf2021",
+      "bytes": 7994,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-anonymous-user-id-0.1.3-alpha.1.tgz",
+      "sha256": "9c48b6fea16367908adbae0511343f4ecf7e7c6d6f8c5d79943fe388dc12ddcb",
+      "bytes": 10364,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-api-gateway-0.1.3-alpha.1.tgz",
+      "sha256": "5b38d877feb57beb1f8820c3faf492612dad396bc273b03c14175cbc5fae8b43",
+      "bytes": 80845,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-api-remotes-0.1.3-alpha.1.tgz",
+      "sha256": "d9adfd4e26363958b400a66510f588e9633f7e3c12fe7dd4260ed0b13a6023d6",
+      "bytes": 53628,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-api-session-controller-0.1.3-alpha.1.tgz",
+      "sha256": "5ee49777ac40aecb26565e4f2b2a571334499994cf2551087ada943c0cdbb773",
+      "bytes": 188427,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-api-settings-controller-0.1.3-alpha.1.tgz",
+      "sha256": "60352fa9731206b215a4281759c0c60c685071d7d450cd487fb89b163af7f161",
+      "bytes": 22338,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-api-workspace-controller-0.1.3-alpha.1.tgz",
+      "sha256": "ab058a1e974d4595ed9f42ca038a36c6b8d3f41924e2eec7f68717233068bb2a",
+      "bytes": 31935,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-app-boot-0.1.3-alpha.1.tgz",
+      "sha256": "5f391f211d85c1cf856734379272e5aa954ff9866b1ce3601e5685ee274b5cd7",
+      "bytes": 40668,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-atomic-write-0.1.3-alpha.1.tgz",
+      "sha256": "dd7b5133312c091f66568b84f6369b3cf45390a64dd4724b253716f9f4ac1a5f",
+      "bytes": 10805,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-attachment-0.1.3-alpha.1.tgz",
+      "sha256": "aeb4776296d1e03402a7751df3ace05b5c659c50103b35e434f3f7e880819779",
+      "bytes": 21785,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-attachment-local-0.1.3-alpha.1.tgz",
+      "sha256": "66edab1bd448e91cb0f8bdf4b62183595c4d8e2c70141d05fa44ea7a5caad6c5",
+      "bytes": 29569,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-authorization-0.1.3-alpha.1.tgz",
+      "sha256": "a4c6a08e057b7c2fdfba7377a0a5e5e9b92988ea11245992cc7b66a1ef66daa2",
+      "bytes": 21714,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-base-0.1.3-alpha.1.tgz",
+      "sha256": "f92421053707adccccb17fa1d6cc81ad783d57f32b85218310330afd8cd13799",
+      "bytes": 15660,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-bash-local-0.1.3-alpha.1.tgz",
+      "sha256": "8537d6aac041fb695b84ed5e454ec48a7e92f93f657668a2482f0ea2b869df8c",
+      "bytes": 15074,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-bash-sandbox-0.1.3-alpha.1.tgz",
+      "sha256": "d8211b23dbf3579cf0e4b7817f350200f23fe78dbc7edf922efe2ba420b6339a",
+      "bytes": 15154,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-brand-0.1.3-alpha.1.tgz",
+      "sha256": "46f2b6313b514544499c67a9a3472e5ce01ccb169be8ededa88b9873c819d87a",
+      "bytes": 6055,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-connection-0.1.3-alpha.1.tgz",
+      "sha256": "775c8bdcd766b146e6a319eef51768e46a7ef1a6496a4e92c0411d5d22aebb6d",
+      "bytes": 71257,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-file-upload-0.1.3-alpha.1.tgz",
+      "sha256": "7cb696c50b49860bb1506caf2ed81317b1e42377df823ca0948ba6a948e094e1",
+      "bytes": 29917,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-hmr-0.1.3-alpha.1.tgz",
+      "sha256": "8d87ccb2d09d9cb0936625cc5d04f50cfda08c6955b77183fd367081c43b345f",
+      "bytes": 14383,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-locale-0.1.3-alpha.1.tgz",
+      "sha256": "2c8c52caae81ed42d9a7327df63472bd399b2ac61d17e7f598481c3c81ec5911",
+      "bytes": 29439,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-modules-0.1.3-alpha.1.tgz",
+      "sha256": "e1e55407f7a03aaab770494f1f0ca8e184758037fd8df2f978631694192bae89",
+      "bytes": 33152,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-ui-agent-preset-0.1.3-alpha.1.tgz",
+      "sha256": "5b1d95d1a538a4f8257c52181a9f788b4e4e0c253e6173c32a55bf43b0b78dff",
+      "bytes": 32793,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-ui-approval-0.1.3-alpha.1.tgz",
+      "sha256": "861473aea3d6a3283a09d0648f2e3825c8f6f8ffc7b0f4a94d628f84580a7cf1",
+      "bytes": 8438,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-ui-attachment-0.1.3-alpha.1.tgz",
+      "sha256": "aef900e9499d5f0cdd85ffd3e9a433febbbd9dcffcfa370333fdc12bc54aa618",
+      "bytes": 22257,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-ui-brand-official-0.1.3-alpha.1.tgz",
+      "sha256": "644e4904b68242e005bbd06d8be21d1ce4cc7230fdd818b19982f7a71f3dc7f8",
+      "bytes": 6793,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-ui-chat-0.1.3-alpha.1.tgz",
+      "sha256": "8f68da2f858178ee022e8371bf3362d5dcf88ccd17f994769149f33047f39d84",
+      "bytes": 123357,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-ui-commands-0.1.3-alpha.1.tgz",
+      "sha256": "153cac3e8f23ff6092024e10882781b45f9313dcadf137154aa9d65095a57972",
+      "bytes": 27023,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-ui-conversation-0.1.3-alpha.1-c3a16aa2.tgz",
+      "sha256": "c3a16aa29630c1439cce5cfb54a8dd35febe974f09b74bf88b77b4960f4d5c90",
+      "bytes": 219364,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-ui-cordis-0.1.3-alpha.1.tgz",
+      "sha256": "0cd96093dbd6e958eb9e535ef1954c2c1b10b01a35189e03393be04a7dcfe511",
+      "bytes": 31071,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-ui-deliverables-0.1.3-alpha.1.tgz",
+      "sha256": "87a7bbedaf8ed578f0f6af831ff8be54e041795c6944ed2aadcb8c0b5404a55f",
+      "bytes": 15652,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-ui-directory-picker-browse-0.1.3-alpha.1.tgz",
+      "sha256": "d5ce4132f2aa2d35b6d957d4bb69cab2966d384212f5ead8268d81a487e8260b",
+      "bytes": 20582,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-ui-directory-picker-native-0.1.3-alpha.1.tgz",
+      "sha256": "6cdb8b828741113379b66ca10e9d2a60f5b513dfcca46a2ab234f03562d0a2a0",
+      "bytes": 7585,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-ui-goal-0.1.3-alpha.1.tgz",
+      "sha256": "e7d202c581cdb87a5c1ea0658a2f0d8f819af9c5052b48a7dbec37e49e3b43d6",
+      "bytes": 13836,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-ui-input-trigger-0.1.3-alpha.1.tgz",
+      "sha256": "37ab35d07f4b29a52a6df7ea4a015a0e8c7d3fe885a32bc5e05a2604149b14c0",
+      "bytes": 32042,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-ui-jobs-0.1.3-alpha.1.tgz",
+      "sha256": "c9570d357965683f57526778f1136d3b21f9fe7b749f65bd0edb98e5246c54c8",
+      "bytes": 11457,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-ui-layout-0.1.3-alpha.1.tgz",
+      "sha256": "494420dbd4c5b184efd14e0798bc826a7f31647df56fe936de2ea0d9f14ff6c9",
+      "bytes": 17890,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-ui-message-feedback-0.1.3-alpha.1.tgz",
+      "sha256": "a9def253c4b1421b1acc82c1ae6d49a9c703e877a0d25cf9952e3f36217b24ca",
+      "bytes": 17173,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-ui-model-selection-0.1.3-alpha.1.tgz",
+      "sha256": "f37e6f64370ca9346b2327eab5d8073e44bb468305965ddc0de2b6bd3eb8344c",
+      "bytes": 20764,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-ui-permission-presets-0.1.3-alpha.1.tgz",
+      "sha256": "436c6b980aae263e0a6149c5560f5ff5d9f65a3c0c15e7bb8629435ad0f5e312",
+      "bytes": 15223,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-ui-plan-0.1.3-alpha.1.tgz",
+      "sha256": "3701a6dccf33136d347370a7469688825a83900b4f23a475677a95f30757af48",
+      "bytes": 9412,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-ui-primitives-0.1.3-alpha.1.tgz",
+      "sha256": "5adf9be886d258076bd5262b2aa3a4f41c4c1e9ed29ef6f0d63f4d82cedcd344",
+      "bytes": 168533,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-ui-reference-0.1.3-alpha.1.tgz",
+      "sha256": "ff219402fbad5f850de682cbed7eafc9d1ee0c7be587e0028787c2acc68e76ce",
+      "bytes": 11662,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-ui-renderer-0.1.3-alpha.1.tgz",
+      "sha256": "a0a4b5cb39475c73522f5f57a76b9ac341d58225eceffc32f0f1f18f6c6af83b",
+      "bytes": 27259,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-ui-schedule-0.1.3-alpha.1.tgz",
+      "sha256": "45c3ee4287f9dfc2063075a9a6d2803b03f731cdf4b76c7a961073e8c1c5b4df",
+      "bytes": 12683,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-ui-session-0.1.3-alpha.1.tgz",
+      "sha256": "ff57e2a583f0f81ba214aade22d9d0af19ee8555939916aa38372bb5340e3894",
+      "bytes": 8378,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-ui-settings-0.1.3-alpha.1.tgz",
+      "sha256": "223dc15dbddde4d333e4f241b5627e96bff223baa99340f11c8a86465e716d14",
+      "bytes": 28866,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-ui-settings-general-0.1.3-alpha.1.tgz",
+      "sha256": "f353282b0fdfe77a5a1a3c3228d01648f705d5a523506e3569dc9b50209ea8d2",
+      "bytes": 19111,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-ui-settings-models-0.1.3-alpha.1.tgz",
+      "sha256": "e1e4db98ee5019125ccd8de594ffeb218d1b93417071152b03263b697102e20d",
+      "bytes": 58804,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-ui-settings-plugin-inventory-0.1.3-alpha.1.tgz",
+      "sha256": "9c93a171faef78b389fe030c06ed6ea726925cfc9a3511816715782ecb8d95ba",
+      "bytes": 17189,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-ui-settings-plugins-0.1.3-alpha.1.tgz",
+      "sha256": "dc8c87e0b719024f74bc5e1f1a645f851d4cf4cde7c8abfb0be8c3a5998f71b1",
+      "bytes": 36995,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-ui-sidebar-0.1.3-alpha.1.tgz",
+      "sha256": "a4e0de23e130dee472c1b68bb08dd6ea1d5df9a085887559dfe651d4e2077938",
+      "bytes": 14024,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-ui-skill-0.1.3-alpha.1.tgz",
+      "sha256": "4673b81e02ff42288c456ea17a966e2d59b20ea0ecf8bfd2ef78aee2a8fc3a3b",
+      "bytes": 14810,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-ui-slots-0.1.3-alpha.1.tgz",
+      "sha256": "3f60f122132905bb852ea214f3a58414f056e8250e38f689e12bb98bba9f572a",
+      "bytes": 26339,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-ui-subagent-0.1.3-alpha.1.tgz",
+      "sha256": "9b16bc0eb990cdd5e3ae1a49f295fd6d6cdf40e488221f517fb05fdfbe1773e7",
+      "bytes": 20313,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-ui-theme-0.1.3-alpha.1.tgz",
+      "sha256": "cbb42dd63e6298284392c73a4aebbab1d8862728f944224bb20f53d8ea7b927d",
+      "bytes": 36227,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-ui-tool-0.1.3-alpha.1.tgz",
+      "sha256": "8efc9fba5a5db5583a1a0c55dfa8adc35928f7787988c09fc420741d97e26b9d",
+      "bytes": 43982,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-ui-trajectory-0.1.3-alpha.1.tgz",
+      "sha256": "dcd6cfd31744b9cb538ee6d85c7e763ce0b894b85c1a722b8754c994c51611fe",
+      "bytes": 103805,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-ui-user-questions-0.1.3-alpha.1.tgz",
+      "sha256": "ee78c58a7d8c3e16b5734e8e69b5de9051a37d494732417c064e1deedbfd97a2",
+      "bytes": 22477,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-ui-workflow-run-0.1.3-alpha.1.tgz",
+      "sha256": "576c6eb527ff2b1300a977d47aee90c88ad819a81ec686a9e098448b3b23f7b0",
+      "bytes": 15005,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-client-ui-workspace-0.1.3-alpha.1.tgz",
+      "sha256": "7688d421baa3564c350ed0d4dfbf044718d0f9a30dcc300883ee30eb7ae578e9",
+      "bytes": 49973,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-cmdline-0.1.3-alpha.1.tgz",
+      "sha256": "11f585f248be6ccab6fea5b5811c15a777c42472ae5b2d33c5defdee3e3e08cc",
+      "bytes": 12771,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-code-runtime-0.1.3-alpha.1.tgz",
+      "sha256": "aed84c9a861c263449456c954db79be93576efcda9e930be8db92d208955d5b1",
+      "bytes": 14763,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-code-runtime-worker-thread-0.1.3-alpha.1.tgz",
+      "sha256": "31af6f1f0ea488cd3e2b5836954e725f22e84a45ea2172097f798c32119f1c76",
+      "bytes": 35358,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-command-compact-0.1.3-alpha.1.tgz",
+      "sha256": "d75b96e6d2a3300efe3d3bd27d76c9198a2885a65682d26c7cbfda7bff2464a2",
+      "bytes": 10933,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-command-feedback-0.1.3-alpha.1.tgz",
+      "sha256": "f1bcf6294cebe7f47338f053a2d20b8d4b9c320be8e7d1d5f0abe81d14f2f841",
+      "bytes": 11452,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-command-goal-0.1.3-alpha.1.tgz",
+      "sha256": "2e348d9d968c394fdc74af6ab6ea6038a0a5df45d4084e5dcd3cbf76d2eefe13",
+      "bytes": 11876,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-commands-0.1.3-alpha.1.tgz",
+      "sha256": "2896a701081f3c34f41e51acea0d7a5b4cbb75fefdd12f69cbd05b08b301860a",
+      "bytes": 32798,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-compaction-0.1.3-alpha.1.tgz",
+      "sha256": "9fa0cd21137328868f112ffc1923c2b23ecfc62e13efebc9cfbf88915e04fc77",
+      "bytes": 26149,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-compaction-basic-0.1.3-alpha.1.tgz",
+      "sha256": "c689cb8bb4e0937cabfbecd3c84236e4168235ca2405d4f786ee47d4239e7dca",
+      "bytes": 32829,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-compaction-tool-result-pruner-0.1.3-alpha.1.tgz",
+      "sha256": "14c3cd2f19687c8f40d6fe6f272f70fa7df6f2a90db55fc4d2074682ede75e04",
+      "bytes": 12355,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-cordis-client-runner-0.1.3-alpha.1.tgz",
+      "sha256": "ea30dbfe420b0ddf55aa743fb4f64197d462f6cc804f1996d28f792427813f4d",
+      "bytes": 70827,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-cordis-host-runner-0.1.3-alpha.1.tgz",
+      "sha256": "78dcb607f5dc86d70062fcffc11c6d8674cb24bd52272f66ffa06c9ceebbb928",
+      "bytes": 97877,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-credentials-0.1.3-alpha.1.tgz",
+      "sha256": "204731e382ab2d9b712e9e20fcaf82d31d36f91e38728d1403f4909997be4906",
+      "bytes": 20046,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-credentials-local-0.1.3-alpha.1.tgz",
+      "sha256": "012be07a8aeb4bb1eaba56a21360703e897ca2c04e8078ebcf1f5f976dd94579",
+      "bytes": 26211,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-deepseek-llm-api-extensions-0.1.3-alpha.1.tgz",
+      "sha256": "a6d7ec7be5d6094ae60304ed1ec29026e047e609d6bdb264cb3e0711116e56c0",
+      "bytes": 7702,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-deque-0.1.3-alpha.1.tgz",
+      "sha256": "18519c151aa97d7eff32d1f6533c7d49eb31acb0f94182e086192633fa013685",
+      "bytes": 6023,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-file-reference-0.1.3-alpha.1.tgz",
+      "sha256": "510d1ab4e6383d9d4435c027a59b1d7db4e1035948da178d9d9e153515573f2c",
+      "bytes": 8742,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-file-reference-local-0.1.3-alpha.1.tgz",
+      "sha256": "030de3e5c6c877cf5737d0b1aad813e683ba240c864c5aa28da1f5439ec8c77a",
+      "bytes": 17111,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-fs-0.1.3-alpha.1.tgz",
+      "sha256": "2162ebc584448c2ce21628be1d6ed2acb0218c02575ba220ae981c7c0b79d45a",
+      "bytes": 16298,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-fs-local-0.1.3-alpha.1.tgz",
+      "sha256": "45e95bfd23d347dcc5e8a87a576808207136960f370ff5d692b4c1d1185d52e2",
+      "bytes": 25231,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-fs-observation-policy-0.1.3-alpha.1.tgz",
+      "sha256": "8f63285b37bdf66ecce136251a8d44892ea759ab277b623c1e90549a2b2c333e",
+      "bytes": 11008,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-fs-sandbox-0.1.3-alpha.1.tgz",
+      "sha256": "beb5047f60708accd50ed38430e9986da3f995a990a33da5f537e51ae532512b",
+      "bytes": 11805,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-goal-0.1.3-alpha.1.tgz",
+      "sha256": "4f857753635dd8b9b695f58c9cd55da473a0105189fd19026044a0b123b32121",
+      "bytes": 44466,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-goal-round-driver-0.1.3-alpha.1.tgz",
+      "sha256": "f6be91dd954daf3bc6954f6d491c12d9bfc70bda5938cf7b2134315d559f5bde",
+      "bytes": 14006,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-headless-0.1.3-alpha.1.tgz",
+      "sha256": "fd44486c6ec74b9c24e8cb16930a188c0ef37350602e617c22edd573afa5daed",
+      "bytes": 12394,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-home-paths-0.1.3-alpha.1.tgz",
+      "sha256": "9b9595ad013c6729714ea22a95e311598c3ea6ca1b90d82784271e528d773218",
+      "bytes": 8016,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-hook-protocol-0.1.3-alpha.1.tgz",
+      "sha256": "769640ddbbf5280a5a19d0ccff2ddbb1d18fb32400f2c876d73cb4d811bf8387",
+      "bytes": 23943,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-hooks-claude-code-0.1.3-alpha.1.tgz",
+      "sha256": "b183012d2b3e9a77d14ad1970373f9360da89ce6803c6d809211923341172f80",
+      "bytes": 20096,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-hooks-codex-0.1.3-alpha.1.tgz",
+      "sha256": "2a304a68793af115f7493fb42b449a370fde15331c8b4328a6db3bd57f889a05",
+      "bytes": 17400,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-host-directory-picker-0.1.3-alpha.1.tgz",
+      "sha256": "f3506bc6cab1360f86bcb714ed277fc7de61ecee8a662fe41472843242ad1472",
+      "bytes": 9498,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-host-directory-picker-auto-0.1.3-alpha.1.tgz",
+      "sha256": "64afc1ee21961f409b56d69749869a041409d52057ea204a5f8a11ddb75ef08d",
+      "bytes": 10570,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-host-directory-picker-browse-0.1.3-alpha.1.tgz",
+      "sha256": "5752e196c06a371bdeecb55002bdb89e13da4c16276f1e699726a47dcc92a62c",
+      "bytes": 11885,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-host-directory-picker-native-0.1.3-alpha.1.tgz",
+      "sha256": "df523f56d9d95241a99eb4bc347a10d69a424de2e5dc18575214d8644d340456",
+      "bytes": 16845,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-host-frontend-static-0.1.3-alpha.1.tgz",
+      "sha256": "acc392a157f7fdcfcc955895fd143f16e1788f4c8defed62344eab8724bb424a",
+      "bytes": 9118,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-host-plugin-inventory-0.1.3-alpha.1.tgz",
+      "sha256": "7ecda0e31d056dec87a390c2e7a6ee609acda6b8696daf4c56750fc8520c8ae3",
+      "bytes": 12202,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-host-webserver-0.1.3-alpha.1.tgz",
+      "sha256": "e9e5ff2456bab40eb33841e4d9c89eb5635a3e19fa36c9fc55aa7bf45e306681",
+      "bytes": 14800,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-http-proxy-0.1.3-alpha.1.tgz",
+      "sha256": "ba3cafc559411fc88e8f9aaa504d6ecc22f390384d84e52490210418fa021e9e",
+      "bytes": 22950,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-invariants-0.1.3-alpha.1.tgz",
+      "sha256": "c36ed37430946180ce20dbbaeebc2962b85f89d7664133ee038dfe54559bdc6a",
+      "bytes": 12662,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-jobs-0.1.3-alpha.1.tgz",
+      "sha256": "8a65c318003b13edd11aac6ea0456384b8cf117084625a3219753906af5d266a",
+      "bytes": 16142,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-jobs-local-0.1.3-alpha.1.tgz",
+      "sha256": "87dad1d681fc5cfa63c7ae3591f178bac5b1f5c048b2f0785daa4a8bdf9b5142",
+      "bytes": 16481,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-launch-environment-0.1.3-alpha.1.tgz",
+      "sha256": "c95ac1ef48fec2dc2c11cf899f59438d0b4abb866ac057adb9275ce0356d1077",
+      "bytes": 8412,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-llm-0.1.3-alpha.1.tgz",
+      "sha256": "0386240ecff65de246fbb9fc0c32213e706cd918b13db2b12612d97db9554652",
+      "bytes": 96076,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-llm-deepseek-0.1.3-alpha.1.tgz",
+      "sha256": "77fe22817ed04670dbba5b5f111e562aadcb1256eb647a8ad8d44b4b1c1f1e28",
+      "bytes": 59005,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-llm-pi-ai-0.1.3-alpha.1.tgz",
+      "sha256": "ec6fca62212bdeabec05124eae64075ea91e7f0efa5fb9247927f75115e884ce",
+      "bytes": 67339,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-llm-retry-0.1.3-alpha.1.tgz",
+      "sha256": "5d03aaf9e9235e39bfb291775b7af5942475ac778b4f7c21c6a5aba346b0572a",
+      "bytes": 17870,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-mcp-client-0.1.3-alpha.1.tgz",
+      "sha256": "cffd28a7b8cb57bfcd034af30641a8029fc2e619498c7651637bd86829714916",
+      "bytes": 29327,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-message-feedback-0.1.3-alpha.1.tgz",
+      "sha256": "513912cb38f25650668143c5aab7ccb30e12ac70e6fa3437f4ad356ed91bf1b8",
+      "bytes": 24856,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-native-command-0.1.3-alpha.1.tgz",
+      "sha256": "4f0622109d51a7d646c181b66a4623f3409f08db481f47b2e058f9a69b3aa069",
+      "bytes": 9315,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-output-retention-0.1.3-alpha.1.tgz",
+      "sha256": "9fc5a2ac3e27b15d3a857ffcccb2e83ab0c32da3b46f3015e136dd7f70653adf",
+      "bytes": 13783,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-permission-presets-0.1.3-alpha.1.tgz",
+      "sha256": "7e3b96aea413d4024541cc72271d0784c376debfab6ebf2859af3ff57a9d4f04",
+      "bytes": 18312,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-persona-0.1.3-alpha.1.tgz",
+      "sha256": "f7f2afdae6eb0c5783e76bffc73a2c277f85d2b72a1692c330664d75eff5194a",
+      "bytes": 8430,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-plan-mode-0.1.3-alpha.1.tgz",
+      "sha256": "83bc1617ac363e74e8e84a691653ec48289d4ab63b2105da889c0ded9c2c7c58",
+      "bytes": 26391,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-plugin-package-inventory-deepseek-0.1.3-alpha.1.tgz",
+      "sha256": "cf1356d5df03dbb637ac5144507094292ac47f449da71b9a0c15363031792e2e",
+      "bytes": 9434,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-pwsh-local-0.1.3-alpha.1.tgz",
+      "sha256": "d90319c94a32f577611e1b968b7ab2e6d59830c8b8d8c35fd2731fc1937830fa",
+      "bytes": 18570,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-pwsh-sandbox-0.1.3-alpha.1.tgz",
+      "sha256": "5e32b592db40841eec3647b004d51c9c513b913c20cbb11b6e9687d795eee854",
+      "bytes": 12647,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-repeat-tool-reminder-0.1.3-alpha.1.tgz",
+      "sha256": "13c0b8fd0e60547de413d1696ab1afe5f1adf2aeb0d02ae5283927ec4b8dd9ca",
+      "bytes": 30487,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-sandbox-0.1.3-alpha.1.tgz",
+      "sha256": "44b089f73f8f86df0ffe0004244bf3cdfed4b890b8fbbbd43af45e44e9298af2",
+      "bytes": 19568,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-sandbox-local-0.1.3-alpha.1.tgz",
+      "sha256": "45b86b19eda1c947aa628d53316f0e2534c46339629b9e73fc8b20106cfab0cf",
+      "bytes": 20521,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-sandbox-policy-0.1.3-alpha.1.tgz",
+      "sha256": "8d9315deac15c207334a0e5cf9cd7715782bd19a14ad82584de0928c634aca02",
+      "bytes": 13508,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-sandbox-windows-acl-0.1.3-alpha.1.tgz",
+      "sha256": "ce9345d0711f23d943ca32bc9a9d45de0a3bf96c6e8ed8b850ef72c37dadf44c",
+      "bytes": 45071,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-schedule-0.1.3-alpha.1.tgz",
+      "sha256": "bd20ddca5a4b327171dcc877de9e2ef902715687097740316e9dff380d142d56",
+      "bytes": 51393,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-scope-0.1.3-alpha.1.tgz",
+      "sha256": "48d3bb7864d15a48c2c0dba4e7096b2d844078f4e2e70138d6d94a93e0e3d845",
+      "bytes": 15130,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-sdk-app-0.1.3-alpha.1.tgz",
+      "sha256": "023c65878298bd531d363a608f586a49b2e6b4003b4e839e8186bab6b8bd0d8b",
+      "bytes": 6978,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-sdk-jsonrpc-server-0.1.3-alpha.1.tgz",
+      "sha256": "7bbe1c61c8ee4dbc754655e42ce2a1db2d7605c37d86cddd6f1fb44ac90d4b4f",
+      "bytes": 14395,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-sdk-minimal-0.1.3-alpha.1.tgz",
+      "sha256": "e20e4c1784d9e09fdcd7fca21827a0b4b7c8fd7b6cdadb62cb443149dba3e82f",
+      "bytes": 7865,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-sdk-protocol-0.1.3-alpha.1.tgz",
+      "sha256": "d3d7a4a2203bffc78c6272897544edb6ffc065d35bca2a3929e8198ffa65a6d9",
+      "bytes": 13125,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-session-0.1.3-alpha.1.tgz",
+      "sha256": "a4bd4effc0aa71ba8b9ec6f68c0df08371e1182198fe6de3b931592b64af0160",
+      "bytes": 78187,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-session-checkpoint-policy-0.1.3-alpha.1.tgz",
+      "sha256": "521f408cdb1de1204bfbba4d0bc795d6f7ec7defa6f947aa3b2dabab17760d3a",
+      "bytes": 8800,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-session-format-0.1.3-alpha.1.tgz",
+      "sha256": "855828f0fb5af5a8ca0e02024c5f6dd216aa6da253221060c910e4f8647ebc24",
+      "bytes": 11959,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-session-format-catalog-0.1.3-alpha.1.tgz",
+      "sha256": "97a19d9a5d009ccdb098ff255ae074fffd2dba79ae3a82d8352a4064623cfb3b",
+      "bytes": 6366,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-session-format-v0-to-v1-0.1.3-alpha.1.tgz",
+      "sha256": "d2806721ac9389711a396b21f9a282e6b1b9b2da264ef775a2d8b944f323e31f",
+      "bytes": 30402,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-session-format-v1-to-v2-0.1.3-alpha.1.tgz",
+      "sha256": "eb54da67aa16ed4241524f5bc1e5b6b69a62b3c848e19dc6d9aeecb2d5c0b808",
+      "bytes": 14720,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-session-log-deepseek-0.1.3-alpha.1.tgz",
+      "sha256": "78349edb76ba867bf035b7d902f6da6f30ba76e60a3c77796b37a393dd24d348",
+      "bytes": 10397,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-session-log-export-0.1.3-alpha.1.tgz",
+      "sha256": "fe9fd137d54e9d00bb830a61202b4d90cc9e4c43d0f613c56ccd18bdad7c546e",
+      "bytes": 23422,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-session-persistence-0.1.3-alpha.1.tgz",
+      "sha256": "fa5afeab4ddece6174a82e1f61a4c0ae04466b6507f039ee1e7df78ed3cb57cf",
+      "bytes": 23267,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-session-persistence-jsonl-0.1.3-alpha.1.tgz",
+      "sha256": "70846125b69c50f190336cdc8abc3e3bc7a4e02523ad46754bc9e0f9dc63f481",
+      "bytes": 74889,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-session-projection-0.1.3-alpha.1.tgz",
+      "sha256": "2c42a55b6070aee40a7fa6d7acbd04d54f072a497d4b0f8b2ba91f182c6cca63",
+      "bytes": 22818,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-session-projection-cache-0.1.3-alpha.1.tgz",
+      "sha256": "323c9f55cc71e7f5d2551b3b3f45dcca586c10d5a87fe9187699015ffc2b0674",
+      "bytes": 20678,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-session-query-0.1.3-alpha.1.tgz",
+      "sha256": "ddbc1f52b4fd0f08aeb8c01e3e57612dd5892d43f49a466e4f05b21ed0cf3665",
+      "bytes": 32037,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-session-query-sqlite-0.1.3-alpha.1.tgz",
+      "sha256": "b51a7b243b51324efe7b07e64d6c0b3a5ee397d35b5cb2c0a9c672ea14541b31",
+      "bytes": 26817,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-session-reference-0.1.3-alpha.1.tgz",
+      "sha256": "dc367de4293a2792c0eaba30c21fa7ca483edad66d62f8d882c20eaec77b0cc1",
+      "bytes": 34940,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-session-stats-0.1.3-alpha.1.tgz",
+      "sha256": "e88667ba98378d8a6199b08f4c065c05b68b0f625aa6a708f4c2f44e21a168b0",
+      "bytes": 13380,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-session-telemetry-0.1.3-alpha.1.tgz",
+      "sha256": "ff39f6e1d08ba5e3ddf64a499f53a7f4818eb46d8157ff6ef350c533aad8526b",
+      "bytes": 17415,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-session-telemetry-otel-0.1.3-alpha.1.tgz",
+      "sha256": "d3801fc00323ce5348d12d08464c9c5d4e2d0402466a23312843354485e5fb0f",
+      "bytes": 14485,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-session-title-0.1.3-alpha.1.tgz",
+      "sha256": "9f2f2306b689a2ed6156efe5b1e504cc4455886b6dbabb40cee72e759482fc57",
+      "bytes": 26789,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-session-title-first-prompt-llm-0.1.3-alpha.1.tgz",
+      "sha256": "189608091d38445f97c07fca3f54b242c969878da8060ef11e19b9a75377de93",
+      "bytes": 7147,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-session-title-llm-0.1.3-alpha.1.tgz",
+      "sha256": "8b6ef54f2dfbb35dc62fbe3dd981774b2047c68c180ce345b76301a4d6109023",
+      "bytes": 12399,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-session-turn-outline-0.1.3-alpha.1.tgz",
+      "sha256": "616388a2dbdd98cea1ab47a712632cc6ea4f2fe19db9f09d93ea642fed0b6d25",
+      "bytes": 12472,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-settings-0.1.3-alpha.1.tgz",
+      "sha256": "e8b0afc3e1bd19f52e9327ee238828a045a91505b335f0138a468e53204d803a",
+      "bytes": 33018,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-settings-file-0.1.3-alpha.1.tgz",
+      "sha256": "748771a46a755d610650090f0c5612a4a7637f41387f6788730197eb4b2a421d",
+      "bytes": 15394,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-shell-0.1.3-alpha.1.tgz",
+      "sha256": "a380fc24e7999c1bbb0e9df5efae2a52796c09a172f486142ce8a33b39307559",
+      "bytes": 13796,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-shell-env-0.1.3-alpha.1.tgz",
+      "sha256": "2f1d09d5d61003962073840a4a01cf8a7ad4f41bfcb37ef05ceda97c6268ae91",
+      "bytes": 9887,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-skill-0.1.3-alpha.1.tgz",
+      "sha256": "3805097fc1ad3d922c55563e066e7078cca5252fb68ab3052f7af3af08de093b",
+      "bytes": 21103,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-skill-badge-0.1.3-alpha.1.tgz",
+      "sha256": "8378c99bbf95f5765b12ab2fc2094aee0f7a6f12dea9b3c344e0b8b9ec86cb06",
+      "bytes": 20256,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-skill-filesystem-0.1.3-alpha.1.tgz",
+      "sha256": "dab56836ccda3ee2d70c258a7866f210ef3c9d201e101435f3e8c0f6416826c9",
+      "bytes": 19800,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-spill-0.1.3-alpha.1.tgz",
+      "sha256": "634a87803caf2c2da91bae6515acdbb2d2c85f52ee5abca7650a43d3182cdece",
+      "bytes": 10967,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-spill-local-0.1.3-alpha.1.tgz",
+      "sha256": "805a8b27f98d09b7e541388310807a6103c68f7ba8e8f28a8792478847bc07ec",
+      "bytes": 18640,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-spill-policy-0.1.3-alpha.1.tgz",
+      "sha256": "07f8c7086415b023e4d89f2681c034d8f0b9dbf06e08b1b5046c1a6415d025c5",
+      "bytes": 12000,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-storage-0.1.3-alpha.1.tgz",
+      "sha256": "b80692c6256f6954ab9d693d188c57e878c90401b91c98b2215c76d7f277d373",
+      "bytes": 12806,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-storage-domain-0.1.3-alpha.1.tgz",
+      "sha256": "3aac26431940c351109cfefbe3e1c4b13182135d5bd907bd7a6e3df314b3ac87",
+      "bytes": 22218,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-storage-json-0.1.3-alpha.1.tgz",
+      "sha256": "e55415d79cdec2696965e1c59c3ca9c2040158295067a30bc8aebbf6dd91c286",
+      "bytes": 18216,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-subagent-0.1.3-alpha.1.tgz",
+      "sha256": "6f671d807711fc42c6ba8a492a8c912f695e811eef58b2c097ff7b201cb68c62",
+      "bytes": 139326,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-subagent-fork-in-process-0.1.3-alpha.1.tgz",
+      "sha256": "49941343b84633ea6bf6dfe40f8659bd2b7f54927dfdb11bb6b35f53ded6cf00",
+      "bytes": 10253,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-subagent-in-process-driver-0.1.3-alpha.1.tgz",
+      "sha256": "dc8a2b50811143c3f9a18b10f881f0d24d27e7fed68d2848c3a72d5f392e7586",
+      "bytes": 14654,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-subagent-spawn-in-process-0.1.3-alpha.1.tgz",
+      "sha256": "c822b5091962fccc8dcaea37fb6c5bf03212de8fede2632e902d3da34f791382",
+      "bytes": 9015,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-subprocess-0.1.3-alpha.1.tgz",
+      "sha256": "481488dd17c6895f81e2209772273d5490046af588b583db670d54a8e1bae462",
+      "bytes": 16672,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-subprocess-local-0.1.3-alpha.1.tgz",
+      "sha256": "dc0dc32c3ced10eb1c956d35f85b0b23f119f3936505c219ed01d2ec98baf0dd",
+      "bytes": 32829,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-system-prompt-0.1.3-alpha.1.tgz",
+      "sha256": "e424a672d5fbd6174e51ffffe233d644f71c6548a0f917baccad46adfb9a7011",
+      "bytes": 19369,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-terminal-0.1.3-alpha.1.tgz",
+      "sha256": "f3b93721db29400df51f9574ad59cc537ab037578fc5ac11f1890af2b61eec48",
+      "bytes": 16311,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-terminal-bash-0.1.3-alpha.1.tgz",
+      "sha256": "24a8dcb24961e6839fe04ec5cef9179278f76edb8113624917f1e213d396e306",
+      "bytes": 22800,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-time-context-0.1.3-alpha.1.tgz",
+      "sha256": "3206710bf20c9c3567ee137c2118cd38fc1d7bc11958e08cdf9993fcd950581b",
+      "bytes": 15036,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-timeout-0.1.3-alpha.1.tgz",
+      "sha256": "cda2110672899157f15043db826d0140d53c302243e3f0f2bc695966daf08a8c",
+      "bytes": 10420,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-tmux-context-0.1.3-alpha.1.tgz",
+      "sha256": "b5c80a17d6e831dd42c1fa1ffd976ba4c89460ae53e1c00a8fe68f54f903de0b",
+      "bytes": 27562,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-token-meter-0.1.3-alpha.1.tgz",
+      "sha256": "02ff1594f1b08e46d6e6afbb390502a3969200820b4ffa0374de7664407d14da",
+      "bytes": 37949,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-tool-ask-user-0.1.3-alpha.1.tgz",
+      "sha256": "0980a0ebbf6ac6293af2837f004e123e013a9f66e96dd56e6da5cdc22df68ee8",
+      "bytes": 8769,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-tool-bash-0.1.3-alpha.1.tgz",
+      "sha256": "9e5b924c710b06e4e19ca4bbaffdd597a4481bbb5b2ee2516c7a7b3bde7c182e",
+      "bytes": 19112,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-tool-bash-persistent-0.1.3-alpha.1.tgz",
+      "sha256": "2a153a972a373bee78037ef4957cc26c9a8e543397667e0ba6c7bce9db00e8fd",
+      "bytes": 14439,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-tool-call-timeout-policy-0.1.3-alpha.1.tgz",
+      "sha256": "f4cf71a2c589f8181b698fb0ef94f530282baabe28f22081be9e9f0a408cbd9c",
+      "bytes": 10823,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-tool-cordis-0.1.3-alpha.1.tgz",
+      "sha256": "b87118302ae7b1ccf34167ae68355f09eeeb0d4e4b8ba32bcb4aa3e2a076e60a",
+      "bytes": 126498,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-tool-fs-0.1.3-alpha.1.tgz",
+      "sha256": "d7a6142a2876040435b7c973826dd4b9d9b92a20767483263cc015c2d68727ec",
+      "bytes": 36834,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-tool-fs-search-0.1.3-alpha.1.tgz",
+      "sha256": "0188a9e764f22de7bd43e809dc3af5df4017f99d4d6ec941648ed472238cb2d3",
+      "bytes": 38437,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-tool-goal-0.1.3-alpha.1.tgz",
+      "sha256": "a2fff60eaa86eb399c739244f6f2581e5e86be429d092930d1dbc78c777d2f3a",
+      "bytes": 15635,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-tool-jobs-0.1.3-alpha.1.tgz",
+      "sha256": "4219b9cd52a2b6eae25eb33040d0a01644b70096f74c6419853732a1a9113a2e",
+      "bytes": 16143,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-tool-pwsh-0.1.3-alpha.1.tgz",
+      "sha256": "a5ec2286de6c0ee2111c9bca1e26db5ac5c315c7a4340e09a543dfc7c4a73a3f",
+      "bytes": 19460,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-tool-pwsh-persistent-0.1.3-alpha.1.tgz",
+      "sha256": "f21ccb9e4734d38ced47a858890358c6aebe487b64f0c1722261998e46b5a257",
+      "bytes": 15681,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-tool-ralph-0.1.3-alpha.1.tgz",
+      "sha256": "6499eb1fea939c1cd1602ac980a35542084aba72ae66f23eedc0023dab1744cb",
+      "bytes": 15170,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-tool-skill-0.1.3-alpha.1.tgz",
+      "sha256": "08260a5a3ed9d622d3022143c6c10dc90667f71198ce0222685a5b2df14ccfc0",
+      "bytes": 16538,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-tool-str-replace-editor-0.1.3-alpha.1.tgz",
+      "sha256": "c55fa85f0f47d7dac1d9a1ef90387d6f9dc315cd553e49e255e67b394ccb4afe",
+      "bytes": 13177,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-tool-subagent-0.1.3-alpha.1.tgz",
+      "sha256": "32f096b2fdef502d4129c78db4f6c85490071073cab8bd9dcd227edd9f23e443",
+      "bytes": 27875,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-tool-subagent-control-0.1.3-alpha.1.tgz",
+      "sha256": "99f21a19daff0d90f562384b0f9a64d078cad6edbceff272ebc9729c4bc5e0ed",
+      "bytes": 13489,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-tool-todo-0.1.3-alpha.1.tgz",
+      "sha256": "2a5c8c68bcc94c9f07aa55224d87a61bf6de78a5bb145aa7dce84e91e8fb6099",
+      "bytes": 18320,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-tool-web-0.1.3-alpha.1.tgz",
+      "sha256": "583cff725aea565ed1a02e0c36df5c807fa71c68d64410f7758a9658fa5fdc03",
+      "bytes": 28198,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-tool-workflow-0.1.3-alpha.1.tgz",
+      "sha256": "63feb99484c8f47693d6d9ce10cecfb04e4928acaddb5881ec64d32ac382f2d6",
+      "bytes": 20114,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-tools-0.1.3-alpha.1.tgz",
+      "sha256": "a3ccccb2b1f526d2237b50339e586077e627b990bba0b40b4b09f841b5a1b7e9",
+      "bytes": 140522,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-typert-loader-0.1.3-alpha.1.tgz",
+      "sha256": "5a3b7c487818280c9761c04bcdd80efd24504e243dff99985662a787ea3d63c8",
+      "bytes": 12290,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-typert-protocol-0.1.3-alpha.1.tgz",
+      "sha256": "58efa6d907853aac3c5fba1e4f50a79f4964d4378cf57c9299d7b205fffcc90d",
+      "bytes": 19195,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-typert-registry-0.1.3-alpha.1.tgz",
+      "sha256": "4eb51b2bbdfc2fac97b3c0e2a8bdf0f9e86ff0b9c0ba98eb07c02023e8d67680",
+      "bytes": 25454,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-user-approval-0.1.3-alpha.1.tgz",
+      "sha256": "776b2b2f23cba35acf177977d3bd0fcb701d62abcae09dde2b187ba86492e4e5",
+      "bytes": 19072,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-user-questions-0.1.3-alpha.1.tgz",
+      "sha256": "7bcb9be7f0faa8852951f1565de1a9775889f33b66abe102b8c53a8d8e3b14f6",
+      "bytes": 9919,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-util-crypto-0.1.3-alpha.1.tgz",
+      "sha256": "c5ae3ae9553e9f6e7d7d8beb215b14f8b16ef7336f983eb4323916f8a3cd1f9f",
+      "bytes": 4923,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-util-time-0.1.3-alpha.1.tgz",
+      "sha256": "b65903aa9d477f91df58e6721608d105de2cc6ca3d9ed2d13719ea98ffa42374",
+      "bytes": 4975,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-util-values-0.1.3-alpha.1.tgz",
+      "sha256": "0f527fe46f54e3e0485dc3e60b9e0f3a2c9e611137678d88f729957194a7a214",
+      "bytes": 7961,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-util-workspace-path-0.1.3-alpha.1.tgz",
+      "sha256": "f7e26debb068bcfa8001678bb40efd4e0cce5e3dca21f9b675805334494790fd",
+      "bytes": 4009,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-web-0.1.3-alpha.1.tgz",
+      "sha256": "3a3c7caa09d0d00f8d771e805974c195c40fc901aac89a47928e25f8d64e4d0a",
+      "bytes": 14819,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-web-app-0.1.3-alpha.1.tgz",
+      "sha256": "06212e36aba8266761cee637a73d45858e7465ddfec53e8f56cfe96c92e98bba",
+      "bytes": 22616,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-web-fetch-http-0.1.3-alpha.1.tgz",
+      "sha256": "397644fea00e08c01cb29001d439a6bc21afcaa2b246511db53abafb3953237d",
+      "bytes": 21318,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-web-frontend-0.1.3-alpha.1.tgz",
+      "sha256": "50e5ab114a6ec6e066de17f408e255d8424ce4e377ebb0a6e4f28c6c2231dfa9",
+      "bytes": 1425299,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-web-search-deepseek-0.1.3-alpha.1.tgz",
+      "sha256": "22566a5ff419284eae079871bfa8737c93d2c89666e0d2a5f05aa2cc4a8c2b65",
+      "bytes": 18300,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-webhook-0.1.3-alpha.1.tgz",
+      "sha256": "2bcfe85027a64413d28f8336a83fa2b5bb4bb326dcfb36181952ce21d8086d08",
+      "bytes": 14690,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-webhook-github-0.1.3-alpha.1.tgz",
+      "sha256": "04f69618cf8023815b7555aa5a4ede3f5d64277f446b20f214554bcd613fb142",
+      "bytes": 10156,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-win32-process-0.1.3-alpha.1.tgz",
+      "sha256": "c86c055dc0261a666821e25c337ac546c230ea30e0bbe074be8348072544b8a4",
+      "bytes": 14831,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-workflow-0.1.3-alpha.1.tgz",
+      "sha256": "d2a5bc70fbd1c9f4b77d1d8904ce96d195beb26daea8c8f3682407f7b106a587",
+      "bytes": 18166,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-workflow-worker-thread-0.1.3-alpha.1.tgz",
+      "sha256": "1c27d3562f7028b291c69717e5c63719e9773287decf57bd607f15d88cce0bfe",
+      "bytes": 42155,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-dsh-workspace-0.1.3-alpha.1.tgz",
+      "sha256": "f52e4d8c4b2a02251a11e5ba6435cce7cfeb458a82739cf9e30902758b18d72c",
+      "bytes": 32675,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/alpha-family/deepseek-ai-schemastery-3.18.2.tgz",
+      "sha256": "33462096cb3ef0c03bf51aa50cc54f735d46a8ab53cb095df8835096fb81a567",
+      "bytes": 25098,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/local-plugins/dsh-better-sidebar-0.18.0.tgz",
+      "sha256": "5f0fabcb20314539d7cba2ab63ac26267747be0db961c915c530c8eb3256e8c0",
+      "bytes": 3325123,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/local-plugins/jxl-brand-0.1.0.tgz",
+      "sha256": "ad67bc8ef9a70f1a398a5eddda290e1e5f0841190133c83d3dfb0a7b389e2aa6",
+      "bytes": 36161,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/local-plugins/jxl-campus-0.1.0.tgz",
+      "sha256": "1179f4ad45ec0ae7e0280a80706c0b14c99dd17de32a263f4c15297600432e26",
+      "bytes": 21023,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/local-plugins/jxl-theme-0.2.0.tgz",
+      "sha256": "556aef869b6ed33ff052c48ffc90052594ef33592b3370ee0c53004cfdf29816",
+      "bytes": 602526,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/local-plugins/mochi-approval-0.0.1.tgz",
+      "sha256": "68c5340f22d7e3543a33dca63bdf56543f162ec3bbcdaa9ed811021d6f5f43c0",
+      "bytes": 1684,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/local-plugins/mochi-campus-0.0.1-84cd59aa.tgz",
+      "sha256": "84cd59aa55f46c38c425cad3cf98e97089178ec895db6a35634a337675e7d406",
+      "bytes": 17967,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/local-plugins/mochi-dispatch-0.0.1-1a046cbc.tgz",
+      "sha256": "1a046cbce2e6d50c38eda53fd150542bbf6a0b646433071257cdff5a0afd4a52",
+      "bytes": 37639,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/local-plugins/mochi-documents-0.0.1-a6661beb.tgz",
+      "sha256": "a6661bebdcdd60e381bdf8959cfca60e2a5be4b5851e89c7b57452e52515c47d",
+      "bytes": 19080,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/local-plugins/mochi-grades-0.0.1-46c9d88b.tgz",
+      "sha256": "46c9d88b12fe4b556ed1297ac69825f477611273efb1433a06a08ee4448f1b26",
+      "bytes": 18438,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/local-plugins/mochi-hello-0.0.1-7ca832d0.tgz",
+      "sha256": "7ca832d0f5073ba3bb1c05f1fc6b0d45056805a6f4443551a61705123b304824",
+      "bytes": 3730,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/local-plugins/mochi-knowledge-0.0.1-85c73365.tgz",
+      "sha256": "85c733659c02a788a633e0bb348ba0b3a5541fbbe77acd8dc3fbf10529b05ca5",
+      "bytes": 28490,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/local-plugins/mochi-lan-0.0.1-841d1deb.tgz",
+      "sha256": "841d1deb63326a45c401d584b453d89b31c5d8ac15e4a7ef1cd0d0cde5aa3fba",
+      "bytes": 42233,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/local-plugins/mochi-lan-client-0.1.0-cce72b50.tgz",
+      "sha256": "cce72b50f0cce82743890ce94bfbeeecc49ee4e0da258b86d4de92e0fcac9c4c",
+      "bytes": 15686,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/local-plugins/mochi-llm-mimo-1.0.0.tgz",
+      "sha256": "427bb4a2bcd5d89ff00b753a9b6ecb041bc059b6b4db38dc6d2c75c29a10c244",
+      "bytes": 2215,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/local-plugins/mochi-memory-0.0.1-5ea318c1.tgz",
+      "sha256": "5ea318c1892ccb1009b7fe70446ee7b3bb665cdeb0984bad5b0234f60cfdd9db",
+      "bytes": 29019,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/local-plugins/mochi-model-presets-0.1.0.tgz",
+      "sha256": "10f75de775e6b73a5b83345f926633eff73bbca6134acfba2f221d480af12d32",
+      "bytes": 14091,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/local-plugins/mochi-modeling-0.0.1-3a5132d2.tgz",
+      "sha256": "3a5132d22310073a1f58e058380cbf87c9099159eb68108597f4a120d4275771",
+      "bytes": 271386,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/local-plugins/mochi-presentations-0.0.1-53a7d390.tgz",
+      "sha256": "53a7d39060761be6f6fdab7cff773b028306212b047a42c1848dde7ef22e93af",
+      "bytes": 11329054,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/local-plugins/mochi-web-search-0.0.1-2bc95d87.tgz",
+      "sha256": "2bc95d878e32e65d809434573f796ffd9cd929acba60a65ccbf036870b24e8db",
+      "bytes": 13780,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "vendor/local-plugins/mochi-workbench-0.1.0-636ee36c.tgz",
+      "sha256": "636ee36c48c286d080421c7f1894e2830b6fba6c4b7d89298992400fd8e2d8e0",
+      "bytes": 23969,
+      "categories": [
+        "desktop-lock:file-dependency"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/dsh/launch-role.ts",
+      "sha256": "80e7be4f29efba038907aef3bc7c04d5e625421e4d9b70a32f56a917043d0acc",
+      "bytes": 10709,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-launch-role.mjs",
+      "sha256": "9d1c1afa0fcd4ca5cbcd906762c536e3a32ab5ccd332ab269ee56a334ae7d50f",
+      "bytes": 8934,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "plugins/mochi-task-scheduler/index.mjs",
+      "sha256": "dd3eefcfc92b77799c637d6287cf317048aefdc7422b3066294a063f37ecc6da",
+      "bytes": 10454,
+      "categories": [
+        "staged-plugin:mochi-task-scheduler"
+      ]
+    },
+    {
+      "path": "plugins/mochi-task-scheduler/store.mjs",
+      "sha256": "befb8cae95690e582a067be5c396fb7703ee334a2f51169e2580bd7bb44d22e8",
+      "bytes": 9697,
+      "categories": [
+        "staged-plugin:mochi-task-scheduler"
+      ]
+    },
+    {
+      "path": "plugins/mochi-task-scheduler/scheduler.mjs",
+      "sha256": "48cca41498bac7190451b3f1be5bb0eb6a7f5e7b624bc9ad80765cafd1b469ab",
+      "bytes": 5696,
+      "categories": [
+        "staged-plugin:mochi-task-scheduler"
+      ]
+    },
+    {
+      "path": "plugins/mochi-task-scheduler/schedule-time.mjs",
+      "sha256": "5d223d205a802d38c73f744327bf980f34e8ec9de11ca5aba92ec7999911b172",
+      "bytes": 10847,
+      "categories": [
+        "staged-plugin:mochi-task-scheduler"
+      ]
+    },
+    {
+      "path": "plugins/mochi-task-scheduler/tools.mjs",
+      "sha256": "bd65fe77295f11729ff88f867925b58f88375657b060ef91c50ef6bc6fdd8fd4",
+      "bytes": 11668,
+      "categories": [
+        "staged-plugin:mochi-task-scheduler"
+      ]
+    },
+    {
+      "path": "plugins/mochi-task-scheduler/package.json",
+      "sha256": "812ecb4447cc334cb51159f183b0ae59757ada026002e4d64ee9ec6f033fdbeb",
+      "bytes": 544,
+      "categories": [
+        "staged-plugin:mochi-task-scheduler"
+      ]
+    },
+    {
+      "path": "plugins/mochi-documents/document-io.mjs",
+      "sha256": "207ffaa2839f9bb34d7ee9d89c64056f299d3c78ec3fd92c72634c7fe5cbf47e",
+      "bytes": 54101,
+      "categories": [
+        "staged-plugin:mochi-documents"
+      ]
+    },
+    {
+      "path": "plugins/mochi-files/index.mjs",
+      "sha256": "7dd1253676cb38ffdc248743171f553e386dff7d2ce1eb85c82add00ab62b7eb",
+      "bytes": 6969,
+      "categories": [
+        "staged-plugin:mochi-files"
+      ]
+    },
+    {
+      "path": "plugins/mochi-files/handlers.mjs",
+      "sha256": "1e19311dbac3863858941d8a751e521b0c946ff4e72da518cfd1e64dbd489722",
+      "bytes": 24775,
+      "categories": [
+        "staged-plugin:mochi-files"
+      ]
+    },
+    {
+      "path": "plugins/mochi-files/paths.mjs",
+      "sha256": "98efafb852b41ffdaf1ec8305b1b01f32502b6dc1565c878ad0c2601ef6d8722",
+      "bytes": 11757,
+      "categories": [
+        "staged-plugin:mochi-files"
+      ]
+    },
+    {
+      "path": "plugins/mochi-files/package.json",
+      "sha256": "2a4e380a6f61a14c38e029d42c58c8325b7454715c734538b475b82569812932",
+      "bytes": 488,
+      "categories": [
+        "staged-plugin:mochi-files"
+      ]
+    },
+    {
+      "path": "plugins/mochi-sheets/index.mjs",
+      "sha256": "4a3debbec9f27ecc9555aadbf9526cdf2027a433f045aa4e6e2e33657be2c5e2",
+      "bytes": 8828,
+      "categories": [
+        "staged-plugin:mochi-sheets"
+      ]
+    },
+    {
+      "path": "plugins/mochi-sheets/paths.mjs",
+      "sha256": "1e38960fe869497711a97a0e645e1869faef0c2731e30b02b7aadca186943d62",
+      "bytes": 12276,
+      "categories": [
+        "staged-plugin:mochi-sheets"
+      ]
+    },
+    {
+      "path": "plugins/mochi-sheets/address.mjs",
+      "sha256": "7846c9fb07bd92aecaa3c89c5244c1393122436d659beba46a71ef9d9d3af3d1",
+      "bytes": 7288,
+      "categories": [
+        "staged-plugin:mochi-sheets"
+      ]
+    },
+    {
+      "path": "plugins/mochi-sheets/sheet-read.mjs",
+      "sha256": "e7bfba944675cc25ac4d0a0626c045c8a77a3a2283903304cb554e4d7a4f2f68",
+      "bytes": 15521,
+      "categories": [
+        "staged-plugin:mochi-sheets"
+      ]
+    },
+    {
+      "path": "plugins/mochi-sheets/sheet-write.mjs",
+      "sha256": "f9fd088c4b47924235a703465d1f1db59f1ffc9d0c54af1f0ab07c3e6e438c98",
+      "bytes": 20784,
+      "categories": [
+        "staged-plugin:mochi-sheets"
+      ]
+    },
+    {
+      "path": "plugins/mochi-sheets/formula.mjs",
+      "sha256": "d7f2782adc8b03a04afccc195cb2a1634b28c6f279c92b17c08dfd5abc28c90b",
+      "bytes": 43161,
+      "categories": [
+        "staged-plugin:mochi-sheets"
+      ]
+    },
+    {
+      "path": "plugins/mochi-sheets/recalc.mjs",
+      "sha256": "da7f41c66336a444cf7cbac326aaea7d59e1c9640033db54e3acb0c589159275",
+      "bytes": 6742,
+      "categories": [
+        "staged-plugin:mochi-sheets"
+      ]
+    },
+    {
+      "path": "plugins/mochi-sheets/tools.mjs",
+      "sha256": "cddf3c95933388a958d256239a5e90dcd40a048ca6e716a444be893f5be22f19",
+      "bytes": 28290,
+      "categories": [
+        "staged-plugin:mochi-sheets"
+      ]
+    },
+    {
+      "path": "plugins/mochi-sheets/package.json",
+      "sha256": "684bafe04f35b6698ebb332d03d8cbc70aa0c8cbb9ffa0b27ac29f633b5432df",
+      "bytes": 569,
+      "categories": [
+        "staged-plugin:mochi-sheets"
+      ]
+    },
+    {
+      "path": "plugins/mochi-visuals/plugin.mjs",
+      "sha256": "e717ad56574098a6481f22770843c95895ee60c36c2a1dcc56c9e1164f7de343",
+      "bytes": 12962,
+      "categories": [
+        "staged-plugin:mochi-visuals"
+      ]
+    },
+    {
+      "path": "plugins/mochi-visuals/tools.mjs",
+      "sha256": "03bd201b947a4b1bd90ad09d5c7a63b6ac472b9fc55baedb8b06764262c45085",
+      "bytes": 27035,
+      "categories": [
+        "staged-plugin:mochi-visuals"
+      ]
+    },
+    {
+      "path": "plugins/mochi-visuals/paths.mjs",
+      "sha256": "83c99eaf010d8f80c87277d9bf9358d36936bb4672b1029d6cf6f247efcfdc48",
+      "bytes": 14979,
+      "categories": [
+        "staged-plugin:mochi-visuals"
+      ]
+    },
+    {
+      "path": "plugins/mochi-visuals/image-meta.mjs",
+      "sha256": "f20b7c50405beb36116661681c3e0bef56943e153f928300b4c0b5b6e55fcda7",
+      "bytes": 8784,
+      "categories": [
+        "staged-plugin:mochi-visuals"
+      ]
+    },
+    {
+      "path": "plugins/mochi-visuals/image-ops.mjs",
+      "sha256": "0ea9d603b23f1d37d15c7e3e1ebedf63a33967e4395005a741cc8bbbace7a043",
+      "bytes": 24076,
+      "categories": [
+        "staged-plugin:mochi-visuals"
+      ]
+    },
+    {
+      "path": "plugins/mochi-visuals/diagram.mjs",
+      "sha256": "e19642e7eb9428b8867564f112da281c4d27b5cbe10f4d814282839d3d812259",
+      "bytes": 59739,
+      "categories": [
+        "staged-plugin:mochi-visuals"
+      ]
+    },
+    {
+      "path": "plugins/mochi-visuals/raster.mjs",
+      "sha256": "907cea022cf294a778a27d8d3aaea8e71a38a3fb9ac5c1450c0c303050e74162",
+      "bytes": 2995,
+      "categories": [
+        "staged-plugin:mochi-visuals"
+      ]
+    },
+    {
+      "path": "plugins/mochi-visuals/fonts.mjs",
+      "sha256": "1c5def3cf03ff49d89cfa74143f874e4f857fd1269a7476d85b7f2dba1922f83",
+      "bytes": 9591,
+      "categories": [
+        "staged-plugin:mochi-visuals"
+      ]
+    },
+    {
+      "path": "plugins/mochi-visuals/textbook.mjs",
+      "sha256": "635dc1246a55248e3772b4c071c93e51c7b5949d14a687faa2e78c45b30eb220",
+      "bytes": 11363,
+      "categories": [
+        "staged-plugin:mochi-visuals"
+      ]
+    },
+    {
+      "path": "plugins/mochi-visuals/package.json",
+      "sha256": "574b0dd7d668632a789d3dd67a97e32ec87fd87a388940b86567788d7c4afde7",
+      "bytes": 636,
+      "categories": [
+        "staged-plugin:mochi-visuals"
+      ]
+    },
+    {
+      "path": "plugins/mochi-modes/index.mjs",
+      "sha256": "724c1789da548a53e7023dbb69dc73dbe8222ddfe85ab0149980c59aa2b87cc9",
+      "bytes": 9058,
+      "categories": [
+        "staged-plugin:mochi-modes"
+      ]
+    },
+    {
+      "path": "plugins/mochi-modes/modes.mjs",
+      "sha256": "58b83a7670c48f701eb1c574612751cfc58a35a585c2a4e4d517c2f08740a82d",
+      "bytes": 11854,
+      "categories": [
+        "staged-plugin:mochi-modes"
+      ]
+    },
+    {
+      "path": "plugins/mochi-modes/package.json",
+      "sha256": "a3de3928a94d2999cc761ab52f4bb34b109d9c8a5101ab25bec094c901005b14",
+      "bytes": 465,
+      "categories": [
+        "staged-plugin:mochi-modes"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-modes/index.mjs",
+      "sha256": "bc931d63a9df9ba4d1e7da0a49fab2872588748a65f965520c95ec66d007ea6f",
+      "bytes": 803,
+      "categories": [
+        "staged-plugin:mochi-modes-client"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-modes/client.js",
+      "sha256": "d4b567c8f4f5c864a1a27246df76afb35803be842db9a1d25770d889d92747c8",
+      "bytes": 9776,
+      "categories": [
+        "staged-plugin:mochi-modes-client"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-modes/package.json",
+      "sha256": "21c59aa67892cb98a1fad74a06b77dc0314e1430f7ef01df9d639a40edbc04bc",
+      "bytes": 702,
+      "categories": [
+        "staged-plugin:mochi-modes-client"
+      ]
+    },
+    {
+      "path": "plugins/mochi-presentations/render.mjs",
+      "sha256": "6e92334375c8623b004f02fc01b427137fdb5ac8071c48b110386fcc5de5b76d",
+      "bytes": 22514,
+      "categories": [
+        "staged-plugin:mochi-presentations"
+      ]
+    },
+    {
+      "path": "vendor/local-plugins/mochi-pdf-layout-0.1.0-c4a3d2c2.tgz",
+      "sha256": "c4a3d2c2bb6ad2a7d553aeb0c61f6121756cf3a5229d8e011931c3c851c75b3b",
+      "bytes": 6320052,
+      "categories": [
+        "vendored-tarball"
+      ]
+    }
+  ]
+}

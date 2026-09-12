@@ -3,7 +3,14 @@
 > Skill = 完成某项教师工作的**工作方法**（官方 skill 机制：catalog + `skill` 工具 + `/name` 直调），
 > 不是关键词→固定回答。P0 = 5 个（修订官裁定）。
 
-## 1. P0 技能（工具名以 plan/01 §1.2 为唯一权威）
+## 1. P0 技能
+
+> ⛔ **工具名口径已更新（2026-09-12）**：原文的「工具名以 `plan/01 §1.2` 为唯一权威」**已作废**
+> ——`plan/` 整目录是历史规划（见 `docs/DOC-AUTHORITY.md` §4），其 38 工具点号清单同样作废。
+> **现行真值 = `apps/desktop/scripts/prepare-mochi-resources.cjs` 的 `PLUGINS`（26 个插件）**，
+> 工具名一律 `^[a-zA-Z0-9_-]+$`（下划线，禁点号）。
+> 下表左列的 `jxl.movement_list` 等**点号形态只作历史追溯**；对应现行名为
+> `jxl_movement_request_list` / `jxl_clinic_status` 等，全表见 `docs/agent-integration-handbook.md` §6。
 
 | Skill | 方法要点 | 主要工具 |
 |---|---|---|

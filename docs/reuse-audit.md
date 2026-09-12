@@ -1,5 +1,18 @@
 # 开源复用审查
 
+> ⚠️ **历史记录（historical）· 2026-09-12 标注**
+>
+> **status**: archived　**last_verified**: 2026-09-12　**verified_by**: 工具线
+>
+> 本文是 2026-09-06 前后的复用审查留痕，**其中的数字均为该时点数字，不是现行真值**：
+> 文中出现的「插件总数 12 / 11」「只限 12 插件、29 运行模块资源闭包」，
+> 与「桌面实际 0.1.2-rc.1」等，**均已过时**。
+> **现行真值**：插件 **26** 个（`prepare-mochi-resources.cjs` 的 `PLUGINS`）、
+> 内核 **`0.1.3-alpha.1`**（同文件 `PLUGIN_RUNTIME_VERSIONS`）。
+> 正文原样保留，仅供追溯。参见 `docs/DOC-AUTHORITY.md`。
+
+> 打包/出包的唯一路径、什么会进包、快照清单重算方法，见 [`build-standard.md`](./build-standard.md)。本文仅保留当时的复用审查记录。
+
 ## 2026-09-06 · MOCHI-P0-PACKAGE-01
 
 目标：修复已有 Electron 资源 staging 的实际依赖缺失，保持 dsh、官方 SPA、runtime-profile.json 和现有安装链路。
@@ -206,3 +219,72 @@ P1字体缺口只读续核：普通 PDF 继续复用此前完整 Office 生态�
 
 
 GIT-COMPAT01 固定1.41.9实测补充：正常基础链可复用，但 linked worktree 提交对象写入私有 gitdir/objects，common objects缺失，root独立从主/linked git cat-file均exit128。global identity需显式适配；revert/text diff无现成公开等价API，cherryPick冲突语义需维护。证据 artifacts/architect-audit/p1-git-compat01。暂不采用其作为完整后端替换；不能以基础链PASS掩盖现有功能丢失。随包内置Git方向等待用户裁定，当前没有接入任何候选。
+
+
+## 2026-09-08 · URGENT-08 LAN生态复用
+
+实际先搜 `site:github.com/localsend/localsend protocol pairing authentication`、`site:github.com/schlagmichdoch/PairDrop pairing peer` 和 `site:github.com/a2aproject/a2a-js agent authentication`，覆盖完整LocalSend/PairDrop应用与官方A2A SDK后核协议/身份概念。只读GitHub API固定：localsend/localsend 6279d3e30d1d1290caee3b81549f8128a8b01d9f (2026-08-30,Apache-2.0)；schlagmichdoch/PairDrop 1b0c9c9d903c3cfc706df1303dc75c3b54d04c77 (2026-04-22,GPL-3.0)；a2aproject/a2a-js 69d88990113cf42f9ac34e3fcde0c5a3c1ceae24 (2026-09-08,Apache-2.0)。实际读取固定LICENSE正文，三者未归档。仓库地址分别 https://github.com/localsend/localsend 、https://github.com/schlagmichdoch/PairDrop 、https://github.com/a2aproject/a2a-js 。localsend/protocol API检索HTTP失败，不写成已核协议仓库。
+
+部分采用发现/持久相识/显式身份授权思路，不复制代码或直接接依赖：LocalSend Flutter整应用、PairDrop WebRTC/信令栈都不等于既有DSH插件；官方A2A SDK提供任务/服务协议，但不为Mochi重建七态任务层，其认证仍依赖应用授权。沿用总体§31–37 Node内置dgram/http/crypto与dispatch；接入仍须真实双进程/双端验收。原文“超时必然未投递”不成立，保留UNKNOWN+幂等；endpointId可被冒用，新增内置签名绑定与人工指纹确认以满足用户防串号班要求，保持四层架构，不宣称完整标准A2A互操作已通过。
+
+## 2026-09-08 · LOCAL-VISION-01 本机中转视觉配置
+
+实际搜索 `site:github.com/deepseek-ai/deepseek-harness llm-pi-ai OpenAI compatible image input` 与 `site:github.com "deepseek-v4-flash-vision-exp"`，先沿用已核完整官方框架/插件生态。命中 https://github.com/deepseek-ai/deepseek-harness/blob/master/docs/user/guide/providers.md 与 https://github.com/deepseek-ai/deepseek-harness/blob/master/packages/llm/llm-pi-ai/README.md 。精确模型无公开实现证据；未认证模型目录返回 API_KEY_REQUIRED。root读取固定 d347e703908d0406b7a7ef80e3a0e594d86b2215 config.ts，确认 input/defaultInput/apiKeyEnv 已有能力，沿用已核MIT与固定依赖，不新增网关或升级。实际视觉wire和性能待测，不把模式声明视为兼容证明。用户已确认仅本人使用未限额key，配置不得随包分发。
+
+## 2026-09-08 · TEACHER-PRESETS-01
+
+实际搜索 `site:github.com/deepseek-ai/deepseek-harness agent-presets custom presets teacher`，复用完整官方框架已有插件生态，命中 https://github.com/deepseek-ai/deepseek-harness/blob/master/packages/preset/agent-presets/README.md 与 https://github.com/deepseek-ai/deepseek-harness/blob/master/packages/client/ui-agent-preset/README.md 。root实际读取固定d347源码下四个preset.yml和agent-presets/README.md，已核MIT沿用此前记录。采用custom roots/persona/tools/skills现有机制，拒绝把编程四模式仅改名当教师适配；无需新框架/依赖升级。真实作用域、旧会话兼容及打包功能未验收，不能仅据README称完成。
+
+## 2026-09-09 · Mochi shell/Playwright 运行修复预检
+
+实际搜索 `site:github.com/deepseek-ai/deepseek-harness sandbox macos windows shell playwright` 与 `site:github.com/microsoft/playwright browsers install chromium PLAYWRIGHT_BROWSERS_PATH`。先核完整Harness的shell/sandbox插件生态，再核Playwright执行库/浏览器管理。命中 https://github.com/deepseek-ai/deepseek-harness/blob/master/docs/subsystems/sandbox.md 与 https://github.com/microsoft/playwright/blob/main/docs/src/browsers.md 。固定alpha d347供应链已有sandbox-local/bash-sandbox/pwsh-sandbox/windows-acl，不另造执行框架；Playwright每版本要求配套browser且支持受管路径。当前只完成选型入口检索，Playwright具体版本、许可、Win10兼容与实际功能待执行者核验，不声称已安装或适配。
+
+## 2026-09-09 · 主动记忆生态预检
+
+实际搜索 `site:github.com letta-ai letta memory agent blocks sleep-time`、`site:github.com mem0ai mem0 memory extraction local sqlite`，先覆盖Letta完整Agent与Mem0记忆框架。GitHub API核 https://github.com/letta-ai/letta-code commit b326eb7cb4e02a63f5a5d1e73deb93ea4b27349e（2026-09-08）与 https://github.com/mem0ai/mem0 commit dae67f74f5cc7bf138c7d7d6f9cec5ce4b4373b3（2026-09-04），仓库许可元数据均Apache-2.0/未归档；尚未审完整依赖或接入。部分采用自动上下文召回思路，不引整套框架/云存储/额外常驻推理。Mochi已有独立身份记忆底座，优先通过固定DSH公开生命周期补主动召回，避免重复数据库与新增模型延迟；具体hook与真实效果仍待实现验收。
+
+## 2026-09-09 · 中文通用搜索候选实测
+
+TEXTBOOK-KB-01执行者实证补充（尚待root复跑）：Lagrange实际搜索 `site:github.com/Mintplex-Labs/anything-llm PDF citations local knowledge base SQLite`、`site:github.com/mozilla/pdf.js getTextContent Node pdfjs-dist example`；隔离消费pdfjs-dist6.3.289 SRI `sha512-ZHjSVpDa3D6izMq8/04lvkhkATUmL9px6ChPaXc1k6nU2Mrhlg1/7F0bdUqCwUjw3NsPTfPZsMDUU6ZIcRaeQw==`，Node22六科真实第20页逐页读取通过。实际cleanup路径为document.cleanup()+loadingTask.destroy()，不照猜测调用document.destroy。npm装入optional@napi-rs/canvas1.0.8 darwin-arm64/MIT，文字读取未调用canvas渲染，不等于Windows渲染能力通过。继续最小PDF库+本地页级索引，不采用AnythingLLM整套服务；5册扫描正文仍需处理，不以pending-OCR称最终完成。
+
+扫描教材识别补核：实际搜索 `site:github.com macOS Vision OCR PDF Chinese swift`、`site:developer.apple.com VNRecognizeTextRequest recognitionLanguages zh-Hans`、`site:github.com/naptha/tesseract.js v6.0.1 license node recognize createWorker chi_sim`、`site:github.com/ocrmypdf/OCRmyPDF license windows`，覆盖OCRmyPDF完整PDF识别工具链与Vision CLI后核现成Tesseract.js。OCRmyPDF Windows仍需Python/Tesseract/Ghostscript，不直接增加桌面安装前置；Apple Vision只适用Mac，不称Windows可用。root实际本机runtime已有tesseract.js/core7.0.0（搜索词v6非最终读取版本），README公开createWorker/recognize/terminate已读。官方 https://github.com/naptha/tesseract.js v7.0.0 release线索42eae66、Apache-2.0；尚未做完整分发许可与供应链核验，不接入生产依赖。
+
+root本地只读OCR样本：教科物理选择性必修二PDF第20页（印刷15页）由现成PDFium渲染，调用已有Node22/Tesseract.js7及本地chi_sim语言文件，exit0、1597ms、943字符、引擎confidence85。主题关键词可读，root对照原图发现公式多处误识别，confidence不能当公式正确性；只作为检索定位+原图核验候选。首次同时加载chi_sim/eng出现乱码language加载stderr但仍返回文本，单chi_sim重测无该stderr，不能遮盖前项异常。未上传教材、无模型付费调用；语料与WASM/语言包跨平台正式集成仍待实现验证。
+
+教材KB生态补核：实际搜索 `site:github.com Mintplex-Labs anything-llm license desktop PDF citations`，再搜 `site:github.com mozilla pdf.js getTextContent Node pdfjs-dist`。完整应用 https://github.com/Mintplex-Labs/anything-llm 固定 effcf539e70c10d0bb37d61e66ca2cd6a3ed8499（2026-09-08），MIT全文已读；其独立桌面/文档/向量库体系不整体替换既有Harness，仅参考按来源引用设计。https://github.com/mozilla/pdf.js 固定66646a60f355a40be5bd0b038a3ad8ec2f7553cb（2026-09-08），Apache-2.0许可文件已取得；实际读取官方examples/node/getinfo.mjs，getDocument/getPage/getTextContent及cleanup/destroy是现成逐页文字读取接口，不自写PDF解析器。npm候选pdfjs-dist6.3.289要求Node>=22.13（本机22.22.2符合），optional canvas^1.0.0；npm gitHead=1c8020a7d4e43668ac287a3ecf9a8dbea17e4c56与上述source HEAD不是同一提交，不混称同版验证。尚未安装或通过6.3.289实际功能/打包测试，执行者须核固定发行物和native依赖；扫描PDF仍需识别流程，文字解析器不自带OCR。
+
+桌面角色选择补核：沿用此前完整Electron应用生态及固定39.8.10/MIT。Halley实际搜索 `site:github.com/electron/electron docs api dialog showMessageBox main process` 并读官方dialog文档，采用已有主进程dialog.showMessageBox有限教师/教室/退出按钮；无新依赖、无需网页IPC传role。线上main文档仅API线索，最终角色持久化、独立home和真实39.8.10调用由桌面集成验证，不把文档阅读等同适配完成。
+
+实际搜索 `site:github.com searxng searxng search API json`、`site:github.com agents web search duckduckgo nodejs search`，先核 SearXNG 完整服务生态，再核多引擎 Agent SDK。官方 https://github.com/searxng/searxng/blob/master/docs/dev/search_api.rst 明确公共实例可能未开放 JSON（403），不能凭一个公共网址承诺默认可用；沿用已有可配置 SearXNG provider，不为桌面新增 Python/Docker 服务。
+
+候选 https://github.com/potato47/agent-webtool 固定 581628f179c0bf407ee1332eefd290b6c4675e50（2026-08-27）；API 未归档，MIT 正文已读，历史仅 12 次提交，维护成熟度有限。npm 0.6.0 gitHead 与该提交相符，发行物 SHA1 `4a9b5332511ffaa62cf1e59808616189fb5cb3c5`。根 SDK 提供结构化 results、逐引擎状态与 AbortSignal。直接依赖最低版本 cheerio1.2.0、marked18.0.4、marked-terminal7.3.0、turndown7.2.4、undici7.25.0、zod4.4.3 的 registry 元数据均 MIT，Node 要求兼容本机22.22.2；完整锁定传递图及许可正文尚待隔离安装核验。源码 HTTP 层与 LICENSE 已读，猜测路径 src/search.ts 的404随后由实际 tree 定位为 src/core/search.ts，不称搜索能力缺失。
+
+root 真实执行发行物 bundled CLI（未安装依赖、未接入项目）：`node22 /private/tmp/mochi-search-audit-20260909/package/dist/cli.mjs search '人教版 高中 化学 化学平衡 教学' --limit 5 --timeout-ms 5000 --raw`，session3607 exit0，得到化学平衡教学、学科网、文库及微信候选，DDG失败有显式状态。对比既有 mochi-free-web 同查询约10秒返回不相关学术论文，候选相关性有改善证据，但文库/自媒体年份、教材版本和教学内容未核，不作为权威事实。采用方向为最小 SDK provider 适配候选，不解析 CLI 文本或复制搜索框架；正式接入前仍须实际 SDK 兼容、取消、空结果、并发隔离及多条中文检索验证。网页抓取依赖站点结构，存在后续维护成本，不宣称永远免费可靠或已经完成生产接入。
+
+root 后续实际 SDK 验证：在 `/private/tmp/mochi-search-sdk-audit-20260909` 正常 npm 安装同一固定发行物，72依赖包lock许可证元数据为54 MIT、11 BSD-2-Clause、6 ISC、1 BSD-3-Clause，无缺项；这是元数据清单，不是逐包许可全文审查。Node22直接调用 webSearch，化学平衡教学和外研英语教学设计两个查询并发各约5.04秒返回各自结构化结果；预先取消的请求0ms抛AbortError，session99875 exit0。DuckDuckGo两次均超时拖尾，后续provider应核短预算/引擎选择。部分文库标题的章节或年份可疑，尚未核正文，不能把搜索匹配当权威教材证据。尚未接入生产provider或最终桌面包。
+
+教材页图沿用上述PDF完整生态与固定pdfjs，采用官方alpha的 tool output image / attachments.saveImage seam，不新造附件协议。执行者提供 @napi-rs/canvas1.0.8 核验：gitHead95db9ae7783b6acb9320e6c36a22abd943d3351c，SRI `sha512-/SaLcvlqGWdm0HSCWMgHu7cjJiQXfP8/mOY+6dUyV9flQz7sPBBZ+ed2zYtoukojPmxOaL7bm+d/G4GeWWoN7g==`，LICENSE全文MIT、Node>=10，manifest列win32 x64/arm64预编译optional包。macOS单页渲染由执行者实测；root尚未复跑，Windows包目标不等于实机PASS。将pdfjs原optional渲染依赖显式固定，维护面限受管单页工具；模型image能力门、有限尺寸/并发及真实alpha输出仍待验收。
+
+搜索正式候选首次复审 CHANGES REQUIRED：root 单测12/12通过，但安装 mochi-web-search tgz SHA256 `9c64bdda2abd84f81a05376bdaab677607a45a58ee45c6c75d3b177dc850aa54` 后，以默认配置真实查询“外研版 高中 英语 必修第一册 教学设计”，约3001ms前三均被无关OpenAlex DOI论文占据（社交媒体焦虑、历史翻译、外国文学出版）。session84252 exit0只证明调用成功，未证明质量通过；物理查询约3023ms网页相关。已派修 general网页与学术元数据的来源优先策略，禁止只靠权威域名压过相关性。此tgz暂不作为最终交付版本。
+
+搜索修复候选通过root复审：新tgz `2bc95d878e32e65d809434573f796ffd9cd929acba60a65ccbf036870b24e8db` 将有效通用网页与学术回退按来源分组，不再混排。13/13单测session24386通过；正常安装后入口hash与源码一致。同一英语反例session33901约1919ms返回三条相关教学网页，无DOI挤占；这是实际单次测量，不是校园性能承诺。允许进入桌面集成。
+
+Playwright候选固定为 microsoft/playwright v1.55.0 commit `f992162f04ae0b0b5a0f4b6114b894215be98995`。root直接读取该commit的docs/src/intro-js.md与packages/playwright-core/browsers.json，确认官方Windows10+支持范围，以及Chromium/Chromium-headless-shell revision1187、140.0.7339.16。沿用先前完整Harness/Playwright生态检索；执行者核包Apache-2.0与受管PLAYWRIGHT_BROWSERS_PATH，不采用不经Win10核验的latest。尚待配套browser实际安装/随包启动/NOTICE闭包，官方系统范围不等于学校20H2实机通过。
+
+Playwright候选root独立复验：亲读 `/private/tmp/mochi-playwright155-probe-20260909/run-playwright-runtime-probe.cjs` 与实际probe，使用Node22运行现成runner exit0。其子进程为Electron39 run-as-node、隔离HOME与显式browser-cache，实际Chromium1187读取本地DOM并输出PNG后退出；仅说明隔离consumer功能通过，最终安装包内浏览器路径/许可资源仍由desktop owner集成。
+
+课堂workbench缺失betterSidebar修复沿用固定官方Harness/Cordis生态。Maxwell实际检索 `site:github.com deepseek-ai dsh Cordis optional inject service ctx.inject optional`，核官方插件指南及本地固定alpha Cordis4.0.2 Context.inject嵌套fiber机制；采用现成ctx.inject延迟注册sidebar，不新增框架或课堂教师工具。root亲读最终修改并独立Node22运行8/8相关测试PASS；执行者真实Electron诊断02显示页面mounted、LAN overlay/footer和桥存在、无console错误，root已审其JSON。与此前硬依赖导致整页boot失败的证据分开保留。完整消息链与最终包仍待测。
+
+离线导入器Windows分发补核：root实际搜索 `site:learn.microsoft.com powershell about character encoding UTF8 BOM Windows PowerShell non ASCII scripts`，读取微软官方 https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_character_encoding?view=powershell-7.6 ，其Windows PowerShell章节明确含非ASCII脚本需要UTF-8 BOM，缺BOM会按传统ANSI解释。root读当前私有ps1字节确认无BOM且含中文，已派Lagrange在Windows启动器封装修复；不是Windows实机已失败或已通过的替代证据。
+
+受管shell提示语法复审：root实际查询 `site:learn.microsoft.com PowerShell call operator variable executable path ampersand`，微软官方 https://learn.microsoft.com/en-us/powershell/scripting/learn/shell/running-commands?view=powershell-7.6 确认以变量路径执行命令需call operator。hello候选PowerShell示例漏掉&，已派Halley最小修复；不是Windows实际执行PASS。沿用已固定Harness shellEnv/systemPrompt扩展，无新依赖。
+
+## 2026-09-09 · 文档教师工具适配
+
+沿用上列 P1-PDF01 实际完整 Office 应用搜索与已固定 docx9.7.1/shared PDF 底座；不重写引擎或引入 Office 服务。采用 https://github.com/deepseek-ai/deepseek-harness 固定 d347e703908d0406b7a7ef80e3a0e594d86b2215 的 dsh-tools0.1.3-alpha.1（MIT）defineTool 与双参数 output.render。root 读取适配器及真实固定 alpha verifier 并在包内 Electron 独立运行 exit0，验证结构化文档生成与参数拒绝；最终 profile/stager/依赖闭包仍由集成验收确认。净插件 a6661beb 仅新增调用入口，维护范围限正式工具契约与受管输出位置。
+
+## 2026-09-09 · 自动发现组播备用通道
+
+沿用已核完整 LocalSend/PairDrop/A2A 生态及上列固定提交/许可证。本次执行者补搜 `site:github.com/localsend/localsend multicast discovery UDP broadcast protocol`、`site:github.com/schlagmichdoch/PairDrop multicast discovery local network`、`site:github.com/nodejs/node dgram addMembership setBroadcast multicast UDP example`，读取 LocalSend 的组播仅宣告、后续 HTTP 单播说明。部分采用该职责划分，继续 Node22 现成 dgram；不引入完整传输框架、Bonjour 服务或另一个任务域，维护成本限同一信标/TTL/设备表的双通道。执行者已提供 loopback 组播收包预检；root 尚未独立验证生产双进程备用通道，已要求单独屏蔽广播测试目标再验证组播。学校交换机/Windows 防火墙效果未实测。
+
+组播集成前root实证更新：独立Node22运行真实双进程test.mjs与durable测试exit0；主信标投向无监听端口时仍通过组播收到候选，恢复双路径只保留一个endpoint。组播加入失败保留原路径、UDP端口占用保留HTTP/手动连接降级通过。仅本机网络栈和测试进程，不宣称学校网络实测完成。

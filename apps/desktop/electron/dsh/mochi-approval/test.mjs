@@ -15,7 +15,7 @@ function installedListener() {
   return listener;
 }
 
-const request = { toolName: 'jxl.relay_send', reason: 'test-only request' };
+const request = { toolName: 'jxl_relay_send', reason: 'test-only request' };
 
 console.log('① no downstream UI/answerer: unavailable (fail closed)');
 {

@@ -1,0 +1,29 @@
+{
+  "name": "mochi-visuals",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "plugin.mjs",
+  "description": "Mochi 视觉工具：本地图片检索、真实像素编辑、SVG/PNG 图表绘制、本地教材配图匹配",
+  "engines": {
+    "node": ">=22"
+  },
+  "files": [
+    "plugin.mjs",
+    "tools.mjs",
+    "paths.mjs",
+    "image-meta.mjs",
+    "image-ops.mjs",
+    "diagram.mjs",
+    "raster.mjs",
+    "fonts.mjs",
+    "textbook.mjs"
+  ],
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "dependencies": {
+    "@deepseek-ai/dsh-tools": "0.1.3-alpha.1",
+    "@napi-rs/canvas": "1.0.8"
+  }
+}

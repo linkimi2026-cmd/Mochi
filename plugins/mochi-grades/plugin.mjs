@@ -1,24 +1,10 @@
 // mochi-grades · 成绩分析聊天接线（MOCHI-P2-TS-01）。
-// 工具 mochi.grade_analyze：读老师给的成绩表（.xlsx/.csv）-> validateStructuredGrades
+// 工具 mochi_grade_analyze：读老师给的成绩表（.xlsx/.csv）-> validateStructuredGrades
 // -> generateGradeWorkbook（teacher-internal 内部审计工作簿，真 .xlsx）-> 返回预消化中文摘要。
 // 统计口径零自算，全部走 index.mjs 的库内函数；拿不准的输入标待核对，不猜。
 import { access } from 'node:fs/promises';
 import { isAbsolute } from 'node:path';
-
-// dsh-tools 未安装进本插件的 node_modules（工单禁止 npm install）：
-// 先按标准裸说明符解析（宿主将来装好依赖即走这条），失败时回退到本仓库
-// mochi-dispatch 已装好的同版本副本，保证本机插件与测试都能加载。
-async function loadDefineTool() {
-  try {
-    return (await import('@deepseek-ai/dsh-tools')).defineTool;
-  } catch (error) {
-    if (error?.code !== 'ERR_MODULE_NOT_FOUND') throw error;
-    const fallback = new URL('../mochi-dispatch/node_modules/@deepseek-ai/dsh-tools/lib/index.js', import.meta.url);
-    return (await import(fallback.href)).defineTool;
-  }
-}
-
-const defineTool = await loadDefineTool();
+import { defineTool } from '@deepseek-ai/dsh-tools';
 
 import { MochiGradesError, generateGradeWorkbook, validateStructuredGrades } from './index.mjs';
 import { SheetReadError, readGradeSheet } from './sheet-read.mjs';
@@ -212,7 +198,7 @@ export function apply(ctx) {
     execute: executeFn,
   }));
 
-  register('mochi.grade_analyze', '把老师给的成绩表（.xlsx 或 .csv 绝对路径）读成结构化输入，用既有成绩核验库生成教师内部审计工作簿（真 .xlsx，含逐行处理依据），并返回预消化的中文统计摘要。满分、及格线、优秀线必须由主人明确给出，模块不猜；缺考/免修/空白不按零分统计，学号保留前导零，重复学号整批待核对不合并。', {
+  register('mochi_grade_analyze', '把老师给的成绩表（.xlsx 或 .csv 绝对路径）读成结构化输入，用既有成绩核验库生成教师内部审计工作簿（真 .xlsx，含逐行处理依据），并返回预消化的中文统计摘要。满分、及格线、优秀线必须由主人明确给出，模块不猜；缺考/免修/空白不按零分统计，学号保留前导零，重复学号整批待核对不合并。', {
     filePath: { type: 'string', required: true, description: '成绩表文件绝对路径（.xlsx 或 .csv）。' },
     outputDirectory: { type: 'string', required: true, description: '输出目录绝对路径；调用时必须不存在，不会被覆盖。' },
     examName: { type: 'string', required: true, description: '考试名称，如「期中数学测验」。' },
@@ -223,5 +209,5 @@ export function apply(ctx) {
     scopeLabel: { type: 'string', description: '可选来源标签，写入审计工作簿。' },
   }, execute);
 
-  console.log('[mochi-grades] 成绩分析就绪：mochi.grade_analyze @ 内部审计工作簿（teacher-internal）');
+  console.log('[mochi-grades] 成绩分析就绪：mochi_grade_analyze @ 内部审计工作簿（teacher-internal）');
 }

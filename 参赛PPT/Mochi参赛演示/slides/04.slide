@@ -1,0 +1,76 @@
+<Slide style={{ width: 1280, height: 720, background: '#16211d', position: 'relative', overflow: 'hidden' }}>
+
+    {/* A 区 · 标题块 */}
+    <Box style={{ height: 120, paddingLeft: 96, paddingRight: 96, paddingTop: 20, justifyContent: 'center' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Text style={{ fontSize: 15, color: '#e8b34b', letterSpacing: 3 }}>01</Text>
+            <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#f5f2e9' }}>谁在外面，谁没回来</Text>
+        </Box>
+    </Box>
+
+    {/* B 区 · 内容区 */}
+    <Box style={{
+        height: 540, paddingLeft: 96, paddingRight: 96,
+        flexDirection: 'row', gap: 44, alignItems: 'center',
+    }}>
+
+        {/* 宽侧：真实界面截图 */}
+        <Box style={{ flexDirection: 'column', gap: 12 }}>
+            <Box style={{
+                width: 648, height: 364,
+                borderRadius: 12, overflow: 'hidden',
+                border: '1px solid rgba(245,242,233,0.14)',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
+            }}>
+                <Image src="assets/ui-student-query.png" style={{ width: 648, height: 364, objectFit: 'cover' }} />
+            </Box>
+            <Text style={{ fontSize: 14, color: 'rgba(245,242,233,0.4)' }}>
+                真实界面：一句话问出全班外出状态，数据来自校园系统
+            </Text>
+        </Box>
+
+        {/* 窄侧：四类事务 + 判断落点 */}
+        <Box style={{ flex: 1, flexDirection: 'column', gap: 15 }}>
+
+            <Box style={{ flexDirection: 'column', gap: 5 }}>
+                <Text style={{ fontSize: 19, fontWeight: 600, color: '#f5f2e9' }}>一句话问全班去向</Text>
+                <Text style={{ fontSize: 15, color: 'rgba(245,242,233,0.5)', lineHeight: 1.6 }}>「有没有学生外出超时还没返班」——它列出 4 个名字、状态和出行原因</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'column', gap: 5 }}>
+                <Text style={{ fontSize: 19, fontWeight: 600, color: '#f5f2e9' }}>工具真的去查了</Text>
+                <Text style={{ fontSize: 15, color: 'rgba(245,242,233,0.5)', lineHeight: 1.6 }}>调用校园接口取实时流动单，不是凭印象编一个听起来合理的答案</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'column', gap: 5 }}>
+                <Text style={{ fontSize: 19, fontWeight: 600, color: '#f5f2e9' }}>异常会被主动点出</Text>
+                <Text style={{ fontSize: 15, color: 'rgba(245,242,233,0.5)', lineHeight: 1.6 }}>林小禾近期多次就医记录，是它自己发现并提示「建议关注」</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'column', gap: 5 }}>
+                <Text style={{ fontSize: 19, fontWeight: 600, color: '#f5f2e9' }}>查完能直接往下做</Text>
+                <Text style={{ fontSize: 15, color: 'rgba(245,242,233,0.5)', lineHeight: 1.6 }}>「需要我联系相关老师吗」——从查状态到处置，不用换系统</Text>
+            </Box>
+
+            <Box style={{ height: 1, background: 'rgba(245,242,233,0.12)', marginTop: 6 }} />
+
+            <Text style={{ fontSize: 16, color: '#e8b34b', lineHeight: 1.75 }}>
+                原本要打三个电话、翻两张表。现在一句话，而且每个数字都能点开查证。
+            </Text>
+
+        </Box>
+    </Box>
+
+    {/* C 区 · 页脚条 */}
+    <Box style={{
+        position: 'absolute', bottom: 0, left: 0, width: 1280, height: 60,
+        paddingLeft: 96, paddingRight: 96,
+        flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <Box style={{ width: 10, height: 10, borderRadius: 5, background: '#e8b34b' }} />
+            <Text style={{ fontSize: 14, color: 'rgba(245,242,233,0.45)' }}>Mochi · 嘉祥教育集团 AI 创意实践大赛</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: 'rgba(245,242,233,0.45)' }}>04 / 17</Text>
+    </Box>
+</Slide>

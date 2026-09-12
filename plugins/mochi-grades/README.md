@@ -1,6 +1,6 @@
 # Mochi Grades
 
-这个独立模块接收已经由上游授权、结构化后的成绩记录，生成一个真实的 XLSX。它不读取文件、不调用模型、不连接会话或校园数据库，也不接入 Mochi profile 或界面。
+这个独立模块接收已经由上游授权、结构化后的成绩记录，生成一个真实的 XLSX。它不读取文件、不调用模型、不连接会话或校园数据库。（⚠️ 2026-09-12 更正：原文写「也不接入 Mochi profile 或界面」，**与事实不符**——`apps/desktop/resources/mochi-web/runtime-profile.json` 中 `mochi-grades` 已在 profile 的 plugins 列表里。）
 
 调用者必须明确提供考试名称、科目、满分、及格线、优秀线和报告范围。模块不会猜测任何一个阈值。`present` 的 `0` 是有效的零分；`absent`、`exempt` 和 `blank` 都不会按零分统计。学号必须是字符串，以保留前导零；同名但不同学号保持为不同记录；重复学号全部标为待核对，绝不自动合并，并暂时排除在统计之外。
 
@@ -15,6 +15,8 @@
 ## 依赖选择
 
 选用 [ExcelJS](https://github.com/exceljs/exceljs) `4.4.0`：其官方仓库说明它能读写 XLSX 并提供工作表、样式和公式对象，适合这份需要多张可审计工作表的本机插件。该版本的包元数据声明 MIT 许可与 Node `>=8.3.0`，本插件再以 Node `>=22` 约束宿主，覆盖当前 Node 22 与 24 运行环境。
+
+运行时依赖由 `apps/desktop/package-lock.json` 与仓库 `vendor/alpha-family` 中固定的 alpha tarball 统一解析；本目录不维护独立锁文件。
 
 也核对了 [SheetJS Community Edition](https://github.com/SheetJS/sheetjs)。它是 Apache-2.0 的广泛格式读写候选；本模块目前不需要它的跨格式导入范围，因此不同时引入两套 XLSX 库，避免长期重复维护。
 

@@ -1,0 +1,22 @@
+{
+  "name": "mochi-files",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "index.mjs",
+  "description": "Mochi 文件工具族：在允许根目录内真实搜索/读取/复制/移动/重命名文件与新建文件夹",
+  "engines": {
+    "node": ">=22"
+  },
+  "files": [
+    "index.mjs",
+    "handlers.mjs",
+    "paths.mjs"
+  ],
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "dependencies": {
+    "@deepseek-ai/dsh-tools": "0.1.3-alpha.1"
+  }
+}

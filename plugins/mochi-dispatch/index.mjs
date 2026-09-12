@@ -1,11 +1,12 @@
 // mochi-dispatch · Mochi 任务域（foundation PHASE_5 / 14_MOCHI_DISPATCH_V1 / 15_TASK_STATE_MACHINE）
 //
 // 四原语：ASK（问一句话等回话）· REQUEST（请求做事等批准）· FIND（找资源）· APPROVE（对入站请求的应答动作，
-// 由 mochi.respond 承载）。v1 载体=单机模拟：任务事实落本地 sqlite（$DSH_HOME/dispatch/），
+// 由 mochi_respond 承载）。v1 载体=单机模拟：任务事实落本地 sqlite（$DSH_HOME/dispatch/），
 // 到校内同事的投递走既有 Mochi 传话网络（campus relay，服务器只投递一句话、应答永远由人决定）。
 // 未知投递结果绝不重发；已确认未写入的失败只能经 retryTaskId 和第二次人工确认后建立新 attempt。
 import { defineTool } from '@deepseek-ai/dsh-tools';
 import { CampusRequestError, campusConnection as connection } from '../mochi-campus/connection.mjs';
+import { lanTaskMessageId, listLanClassrooms, localLanOwnerKey, sendLanFile, sendLanNotification } from './lan-transport.mjs';
 import { TERMINAL_STATES, relayStatusToTask, deriveCardState, expiryFor, idempotencyKeyFor } from './state-machine.mjs';
 import { createStore } from './store.mjs';
 
@@ -29,6 +30,7 @@ const RELAY_PRE_INSERT_FAILURES = new Map([
   ['ASSISTANT_RELAY_PEER_NOT_FOUND', 404],
   ['ASSISTANT_RELAY_PEER_AMBIGUOUS', 409],
 ]);
+const RELAY_SYNC_BUDGET_MS = 2_000;
 
 const cleanBody = (body) => String(body || '').replace(/^[^：]{1,24}的 Mochi 替主人(带话|找东西)：/, '');
 
@@ -52,6 +54,15 @@ function parseDispatchControls(args) {
   const newTask = args.newTask === true;
   if (hasRetry && newTask) throw new Error('retryTaskId 与 newTask 不能同时使用。');
   return { retryTaskId, newTask };
+}
+
+function sameLanIdentity(left, right) {
+  return left?.endpointId === right?.endpointId
+    && left?.role === right?.role
+    && left?.schoolId === right?.schoolId
+    && left?.classId === right?.classId
+    && left?.displayName === right?.displayName
+    && left?.fingerprint === right?.fingerprint;
 }
 
 export function apply(ctx, connectionArg = connection, storeArg = null) {
@@ -79,6 +90,33 @@ export function apply(ctx, connectionArg = connection, storeArg = null) {
     if (!approval) throw new Error('【未派发】当前会话没有人工确认通道，任务没有派出去。请如实告知主人，不要说成已发送。');
     return approval;
   };
+  let lanToolsRegistered = false;
+  let lanService = null;
+  // `mochiLan` is a trusted in-process service, but the tool itself is only
+  // registered when that service exists. There is deliberately no Connection
+  // HTTP send route: every model-originated classroom notification must pass
+  // this existing approval waterfall first.
+  ctx.inject?.(['mochiLan'], (hostCtx) => {
+    if (lanToolsRegistered) return;
+    const lan = hostCtx.get?.('mochiLan') ?? hostCtx.mochiLan;
+    if (!lan) return;
+    lanService = lan;
+    lanToolsRegistered = true;
+    register('mochi_list_classrooms', '查看本机局域网的教室名册：已人工配对教室与仅发现的附近候选分开返回。只有 paired=true 的精确 endpointId 才可用于 mochi_notify_classroom；候选、同名设备和未配对设备都不能自动选择、配对或发送。已配对设备即使当前未发现，也可由已知地址经人工确认发送。online 只是当前发现信标有效，不代表确定在线。此工具只读，不触发配对或外发。', {}, async () => listLanClassrooms(lan));
+    register('mochi_notify_classroom', '向已人工配对、同校指定班级的教室端发送一条通知。只能由已配置教师端使用：先展示学校、班级、设备指纹和正文，主人确认后才走签名局域网投递；教室端收到后由人点击“已看到”回执。不能用它改身份、配对或重发结果不明的旧通知。', {
+      classroomEndpointId: { type: 'string', required: true, description: '教室端 endpointId，必须来自本机已配对教室列表，不能猜测。' },
+      message: { type: 'string', required: true, description: '发送给教室的纯文本通知；投递前会显示精确学校、班级、设备和正文以供主人确认。' },
+      retryTaskId: { type: 'integer', description: '仅重试已明确未投递的同内容通知；结果不明通知不能重发。' },
+      newTask: { type: 'boolean', description: '主人明确要把同一内容作为独立通知发送；结果不明通知不能绕过。' },
+    }, async (args, exec) => sendLanNotification({ lan, approval: requireApproval(), args, exec, store }));
+    register('mochi_send_classroom_file', '向已人工配对、同校指定班级的教室端发送已生成的 PPTX、DOCX、XLSX、PDF 或图片。必须给出受管导出目录内的绝对 sourcePath；先展示精确学校、班级、设备指纹、文件路径和正文，主人确认后才分块签名传输。接收端校验文件哈希后才收到引用该 fileId 的通知，不能自动执行文件。', {
+      classroomEndpointId: { type: 'string', required: true, description: '教室端 endpointId，必须来自已配对教室列表。' },
+      sourcePath: { type: 'string', required: true, description: '已生成课件的绝对路径；仅受管导出目录内的白名单文件可发送。' },
+      message: { type: 'string', required: true, description: '教室端显示的纯文本说明。' },
+      retryTaskId: { type: 'integer', description: '仅重试已明确未投递的同一文件任务；结果不明任务不能重发。' },
+      newTask: { type: 'boolean', description: '主人明确要把同一文件作为独立任务再次发送；结果不明任务不能绕过。' },
+    }, async (args, exec) => sendLanFile({ lan, approval: requireApproval(), args, exec, store }));
+  });
 
   // ── 与 Relay 的同步：出站任务按 relay 状态迁移；入站 relay 镜像为本地任务 ──
   async function syncWithRelay(binding, exec) {
@@ -130,19 +168,103 @@ export function apply(ctx, connectionArg = connection, storeArg = null) {
     return { outgoing, incoming };
   }
 
+  async function syncWithRelayBudget(binding, exec) {
+    const budgetSignal = AbortSignal.timeout(RELAY_SYNC_BUDGET_MS);
+    const relayExec = {
+      ...(exec || {}),
+      signal: exec?.signal ? AbortSignal.any([exec.signal, budgetSignal]) : budgetSignal,
+    };
+    try {
+      await syncWithRelay(binding, relayExec);
+      return { status: 'synchronized' };
+    } catch (error) {
+      const reason = String(error?.message || error).slice(0, 140);
+      const status = budgetSignal.aborted ? 'timed-out' : 'failed';
+      console.log('[mochi-dispatch] relay 同步未完成（保留本地任务事实）：', reason);
+      return { status, reason };
+    }
+  }
+
+  function syncLanSeenReceipts(lan, localOwnerKey, tasks) {
+    if (!lan || !localOwnerKey || !Array.isArray(tasks)) return tasks;
+    const snapshot = lan.snapshot?.();
+    const outbox = new Map((Array.isArray(snapshot?.outbox) ? snapshot.outbox : [])
+      .filter((row) => typeof row?.messageId === 'string')
+      .map((row) => [row.messageId, row]));
+    const receipts = new Map((Array.isArray(snapshot?.receipts) ? snapshot.receipts : [])
+      .filter((row) => typeof row?.messageId === 'string' && typeof row?.seenAt === 'string')
+      .map((row) => [row.messageId, row]));
+    for (const task of tasks) {
+      if (task.transport !== 'lan') continue;
+      const messageId = lanTaskMessageId(task);
+      const outgoing = outbox.get(messageId);
+      const receipt = receipts.get(messageId);
+      // `receipts` are created only after MochiLanService verifies the signed
+      // classroom receipt.  Still bind it to the signed outbox peer here so a
+      // same message ID cannot project a different classroom's receipt.
+      const acknowledgedDelivery = ['DELIVERED', 'COMPLETED'].includes(task.status)
+        && outgoing?.delivery === 'ACKNOWLEDGED';
+      // A delivery ACK can be lost after the classroom has durably received
+      // the message.  A later signed human-seen receipt is stronger evidence
+      // of delivery than that missing ACK, but it may recover only this exact
+      // still-active UNKNOWN attempt.  It never retries or revives a failed,
+      // expired, unrelated, or explicitly NOT_SENT task.
+      const lateSeenRecovery = task.status === 'DISPATCHING'
+        && task.delivery_outcome === 'UNKNOWN'
+        && ['UNKNOWN', 'ACKNOWLEDGED'].includes(outgoing?.delivery);
+      if ((!acknowledgedDelivery && !lateSeenRecovery) || !outgoing.peer || !receipt?.from
+        || !sameLanIdentity(outgoing.peer, receipt.from)) continue;
+      const fileNotice = Boolean(outgoing.attachment?.fileId);
+      const note = fileNotice
+        ? '教室端已看到文件通知（文件已验证可用；不代表已打开、展示或执行）。'
+        : '教室端已看到通知。';
+      let current = task;
+      if (lateSeenRecovery) {
+        try {
+          current = store.transition(task.id, 'DELIVERED', {
+            deliveryOutcome: 'DELIVERED',
+            resultAnswer: note,
+          }).task;
+        } catch {
+          current = store.getTask(task.id) || task;
+        }
+      }
+      if (!fileNotice && current.status === 'DELIVERED') {
+        try {
+          current = store.transition(task.id, 'COMPLETED', {
+            deliveryOutcome: 'DELIVERED',
+            resultAnswer: note,
+          }).task;
+        } catch {
+          current = store.getTask(task.id) || task;
+        }
+      }
+      if (!['DELIVERED', 'COMPLETED'].includes(current.status)) continue;
+      store.recordLanReceipt({
+        taskId: current.id,
+        localOwnerKey,
+        seenAt: receipt.seenAt,
+        resultAnswer: note,
+      });
+    }
+    return store.listTasksByLanOwner(localOwnerKey);
+  }
+
   const taskBrief = (task) => ({
     taskId: task.id,
     taskType: task.task_type,
     status: task.status,
     任务类型: TYPE_LABEL[task.task_type] || task.task_type,
-    方向: task.from_user_id ? `发给「${task.to_peer_name}」` : `来自「${task.from_user_name}」`,
+    方向: task.transport === 'lan' || task.from_user_id ? `发给「${task.to_peer_name}」` : `来自「${task.from_user_name}」`,
     目标: task.goal,
     状态: task.status,
+    ...(task.transport ? { transport: task.transport } : {}),
     任务卡: `${CARD_LABEL[deriveCardState(task.status)]}（${deriveCardState(task.status)}）`,
     ...(task.correlation_id ? { correlationId: task.correlation_id } : {}),
     ...(Number.isSafeInteger(Number(task.attempt_no)) && Number(task.attempt_no) > 0 ? { attemptNo: Number(task.attempt_no) } : {}),
     ...(task.retry_of_task_id ? { retryOfTaskId: task.retry_of_task_id } : {}),
     ...(task.delivery_outcome ? { 投递结果: DELIVERY_LABEL[task.delivery_outcome] || task.delivery_outcome } : {}),
+    ...(task.receipt_seen_at ? { 教室已看到: task.receipt_seen_at } : {}),
     ...(task.failure_code ? { failureCode: task.failure_code } : {}),
     ...(task.result_answer ? { 回话: task.result_answer } : {}),
     ...(task.relay_message_id ? { relayMessageId: task.relay_message_id } : {}),
@@ -253,7 +375,7 @@ export function apply(ctx, connectionArg = connection, storeArg = null) {
     });
   };
 
-  register('mochi.ask', '以 Mochi 任务的方式替主人向本校同事问一句话、等对方回话（例如换课、借物、约时间——主人说“帮我问某某能不能…”就用本工具）。走审批闸：先展示目标，主人确认后才投递给对方的 Mochi；对方是否答应由对方决定。', {
+  register('mochi_ask', '以 Mochi 任务的方式替主人向本校同事问一句话、等对方回话（例如换课、借物、约时间——主人说“帮我问某某能不能…”就用本工具）。走审批闸：先展示目标，主人确认后才投递给对方的 Mochi；对方是否答应由对方决定。', {
     peerName: { type: 'string', required: true, description: '同事姓名或称呼。' },
     goal: { type: 'string', required: true, description: '要问的目标（一句话，≤110 字），来自主人原话。' },
     context: { type: 'string', description: '可选背景说明（≤200 字）。' },
@@ -261,7 +383,7 @@ export function apply(ctx, connectionArg = connection, storeArg = null) {
     newTask: { type: 'boolean', description: '主人明确要把相同内容作为一件新任务发送；在途或结果不明的旧任务不能绕过。' },
   }, dispatchTextTask('ASK', '【问询】'));
 
-  register('mochi.request', '替主人向本校同事的 Mochi 提出一个做事请求、等对方批准或给结果（例如“请某某帮忙留意班级设备”）。走审批闸；对方批不批由对方决定。日常“问一句话”用 mochi.ask，找东西用 mochi.find。', {
+  register('mochi_request', '替主人向本校同事的 Mochi 提出一个做事请求、等对方批准或给结果（例如“请某某帮忙留意班级设备”）。走审批闸；对方批不批由对方决定。日常“问一句话”用 mochi_ask，找东西用 mochi_find。', {
     peerName: { type: 'string', required: true, description: '同事姓名或称呼。' },
     goal: { type: 'string', required: true, description: '请求的目标（一句话，≤110 字）。' },
     context: { type: 'string', description: '可选背景说明（≤200 字）。' },
@@ -269,7 +391,7 @@ export function apply(ctx, connectionArg = connection, storeArg = null) {
     newTask: { type: 'boolean', description: '主人明确要把相同内容作为一件新任务发送；在途或结果不明的旧任务不能绕过。' },
   }, dispatchTextTask('REQUEST', '【请求】'));
 
-  register('mochi.find', '替主人找一件东西：先在全校共享登记里实查；登记里没有时，经主人确认后把寻物任务派给指定同事的 Mochi（对方在其主人授权范围内找，找到也不自动给，由对方主人决定）。主人说“帮我找某物”就用本工具。', {
+  register('mochi_find', '替主人找一件东西：先在全校共享登记里实查；登记里没有时，经主人确认后把寻物任务派给指定同事的 Mochi（对方在其主人授权范围内找，找到也不自动给，由对方主人决定）。主人说“帮我找某物”就用本工具。', {
     item: { type: 'string', required: true, description: '要找的东西名（≤64 字）。' },
     peerName: { type: 'string', description: '登记未命中时要委托的同事；省略且未命中时返回提示。' },
     retryTaskId: { type: 'integer', description: '仅重试这件已明确未投递的同物品委托；会再次请求主人确认。' },
@@ -293,8 +415,8 @@ export function apply(ctx, connectionArg = connection, storeArg = null) {
     });
   });
 
-  register('mochi.respond', '替主人回应一个收到的 Mochi 任务（别人托给我们的事）：approve=答应 / decline=婉拒，可附 120 字内回话。是否答应由主人决定——必须先念出任务内容与拟定回话，获人工确认后才提交。', {
-    taskId: { type: 'integer', required: true, description: '任务 ID（来自 mochi.tasks 的“来自”方向任务，不得猜测）。' },
+  register('mochi_respond', '替主人回应一个收到的 Mochi 任务（别人托给我们的事）：approve=答应 / decline=婉拒，可附 120 字内回话。是否答应由主人决定——必须先念出任务内容与拟定回话，获人工确认后才提交。', {
+    taskId: { type: 'integer', required: true, description: '任务 ID（来自 mochi_tasks 的“来自”方向任务，不得猜测）。' },
     decision: { type: 'string', enum: ['approve', 'decline'], required: true },
     note: { type: 'string', description: '附带回话（≤120 字）。' },
   }, async (args, exec) => {
@@ -310,7 +432,7 @@ export function apply(ctx, connectionArg = connection, storeArg = null) {
     if (TERMINAL_STATES.has(task.status)) throw new Error(`任务 #${taskId} 已终态（${task.status}），不能再回应。`);
     const approval = requireApproval();
     return memo(binding, `respond:${taskId}:${decision}:${note}`, async () => {
-      const ok = await approval.request({ agent: exec.agent, toolName: 'mochi.respond', callId: exec.callId, signal: exec.signal,
+      const ok = await approval.request({ agent: exec.agent, toolName: 'mochi_respond', callId: exec.callId, signal: exec.signal,
         reason: `以 ${binding.user.name} 的名义${decision === 'approve' ? '答应' : '婉拒'}任务 #${taskId}（来自「${task.from_user_name}」：${task.goal}）${note ? `，并回话：\n\n${note}` : ''}\n\n（应答以这条确认卡为准——主人确认即是决定。）`,
       });
       if (ok !== 'allowed-once') throw new Error('【未回应】任务没有被回应：主人未确认。请如实告知，不要谎称已回应。');
@@ -323,22 +445,39 @@ export function apply(ctx, connectionArg = connection, storeArg = null) {
     });
   });
 
-  register('mochi.tasks', '查看主人的 Mochi 任务清单：发出的问询/请求/寻物任务和收到的待回应任务，含状态与回话。返回值已按“等我回应 / 已派出的任务 / 收到的任务”分组摘要，直接照着读，不要编造。', {}, async (_args, exec) => {
-    const binding = await send.binding(exec);
+  register('mochi_tasks', '查看主人的 Mochi 任务清单：校园 relay 任务和本机已受管 LAN 教室任务分开显示。没有校园账号时仍可只读查看本机 LAN 任务；未绑定的来源会明确标为不可用，不能据此认领别人的任务。', {}, async (_args, exec) => {
     store.expireScan();
-    await syncWithRelay(binding, exec).catch((error) => console.log('[mochi-dispatch] relay 同步失败（保留本地任务事实）：', String(error?.message || error).slice(0, 140)));
-    const all = store.listTasksByUser(binding.user.id);
-    const inboundPending = all.filter((task) => String(task.idempotency_key || '').startsWith('relay-in:') && task.status === 'DELIVERED');
-    const outbound = all.filter((task) => task.from_user_id === binding.user.id);
-    const inbound = all.filter((task) => task.from_user_id !== binding.user.id);
-    const 摘要 = inboundPending.length > 0
-      ? `有 ${inboundPending.length} 个别人托给主人的任务等你决定：${inboundPending.map((task) => `#${task.id} ${task.from_user_name}的${TYPE_LABEL[task.task_type] || task.task_type}`).join('、')}。`
+    let binding = null;
+    let campusUnavailable = null;
+    let campusRelaySync = null;
+    try {
+      binding = await send.binding(exec);
+      campusRelaySync = await syncWithRelayBudget(binding, exec);
+    } catch (error) {
+      campusUnavailable = String(error?.message || error).slice(0, 140);
+    }
+    const campusTasks = binding ? store.listTasksByUser(binding.user.id) : [];
+    const lanOwner = localLanOwnerKey(lanService);
+    const lanTasks = lanOwner ? syncLanSeenReceipts(lanService, lanOwner, store.listTasksByLanOwner(lanOwner)) : [];
+    const inboundPending = campusTasks.filter((task) => String(task.idempotency_key || '').startsWith('relay-in:') && task.status === 'DELIVERED');
+    const relayOutbound = binding ? campusTasks.filter((task) => task.from_user_id === binding.user.id) : [];
+    const inbound = binding ? campusTasks.filter((task) => task.from_user_id !== binding.user.id) : [];
+    const outbound = [...lanTasks, ...relayOutbound].sort((left, right) => right.id - left.id);
+    const all = [...campusTasks, ...lanTasks];
+    const summary = inboundPending.length > 0
+      ? '有 ' + inboundPending.length + ' 个别人托给主人的校园任务等你决定。'
       : outbound.some((task) => task.status === 'DELIVERED')
-        ? `没有等你决定的任务；你派出的 ${outbound.filter((task) => task.status === 'DELIVERED').length} 个任务还在等对方回音。`
-        : all.length === 0 ? '任务清单是空的。' : '没有等你决定的任务。';
+        ? '没有等你决定的任务；已派出的 ' + outbound.filter((task) => task.status === 'DELIVERED').length + ' 个任务还在等对方回音。'
+        : all.length === 0 ? '当前可绑定的任务清单是空的。' : '没有等你决定的任务。';
     return {
       source: 'mochi-dispatch',
-      摘要,
+      摘要: summary,
+      campus: binding
+        ? { available: true, userId: binding.user.id, relaySync: campusRelaySync || { status: 'not-attempted' } }
+        : { available: false, reason: campusUnavailable || '当前没有可用校园账号绑定；本机 LAN 任务仍可只读查看。' },
+      lan: lanOwner
+        ? { available: true, owner: lanOwner }
+        : { available: false, reason: '本机 LAN 身份尚未启动或配置，无法查询局域网任务。' },
       等我回应: inboundPending.map(taskBrief),
       已派出的任务: outbound.map(taskBrief),
       收到的任务: inbound.map(taskBrief),

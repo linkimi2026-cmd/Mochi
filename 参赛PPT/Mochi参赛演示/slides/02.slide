@@ -1,0 +1,76 @@
+<Slide style={{ width: 1280, height: 720, background: '#16211d', position: 'relative', overflow: 'hidden' }}>
+
+    <Box style={{
+        position: 'relative', zIndex: 1,
+        width: 1280, height: 720,
+        paddingLeft: 96, paddingRight: 96, paddingTop: 72, paddingBottom: 60,
+        flexDirection: 'row', gap: 80,
+    }}>
+
+        {/* 左窄栏 */}
+        <Box style={{ width: 280, flexDirection: 'column', gap: 18, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 14, color: '#e8b34b', letterSpacing: 5 }}>CONTENTS</Text>
+            <Text style={{ fontSize: 54, fontWeight: 'bold', color: '#f5f2e9', lineHeight: 1.1 }}>
+                目录
+            </Text>
+            <Box style={{ width: 56, height: 3, background: '#e8b34b', borderRadius: 2 }} />
+            <Text style={{ fontSize: 17, color: 'rgba(245,242,233,0.48)', lineHeight: 1.8 }}>
+                四章，回答四个问题：
+                <br />
+                为什么做、是什么、
+                <br />
+                好在哪、做成了什么。
+            </Text>
+        </Box>
+
+        {/* 右内容 */}
+        <Box style={{ flex: 1, flexDirection: 'column', justifyContent: 'center' }}>
+
+            <Box style={{ flexDirection: 'row', gap: 26, alignItems: 'flex-start', paddingTop: 20, paddingBottom: 20, borderBottom: '1px solid rgba(245,242,233,0.10)' }}>
+                <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#e8b34b', width: 58 }}>01</Text>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 7 }}>
+                    <Text style={{ fontSize: 25, fontWeight: 600, color: '#f5f2e9' }}>问题 · 教师的时间去哪了</Text>
+                    <Text style={{ fontSize: 16, color: 'rgba(245,242,233,0.5)', lineHeight: 1.6 }}>一个班主任的上午，被多少件事切碎</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 26, alignItems: 'flex-start', paddingTop: 20, paddingBottom: 20, borderBottom: '1px solid rgba(245,242,233,0.10)' }}>
+                <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#e8b34b', width: 58 }}>02</Text>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 7 }}>
+                    <Text style={{ fontSize: 25, fontWeight: 600, color: '#f5f2e9' }}>答案 · 一个跑在校园里的 Agent</Text>
+                    <Text style={{ fontSize: 16, color: 'rgba(245,242,233,0.5)', lineHeight: 1.6 }}>Mochi 到底是什么，它凭什么能办事</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 26, alignItems: 'flex-start', paddingTop: 20, paddingBottom: 20, borderBottom: '1px solid rgba(245,242,233,0.10)' }}>
+                <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#e8b34b', width: 58 }}>03</Text>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 7 }}>
+                    <Text style={{ fontSize: 25, fontWeight: 600, color: '#f5f2e9' }}>亮点 · 五个不一样</Text>
+                    <Text style={{ fontSize: 16, color: 'rgba(245,242,233,0.5)', lineHeight: 1.6 }}>和普通教育 Chatbot 之间，那条分界线</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 26, alignItems: 'flex-start', paddingTop: 20, paddingBottom: 20 }}>
+                <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#e8b34b', width: 58 }}>04</Text>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 7 }}>
+                    <Text style={{ fontSize: 25, fontWeight: 600, color: '#f5f2e9' }}>成果 · 真的能装、真的能用</Text>
+                    <Text style={{ fontSize: 16, color: 'rgba(245,242,233,0.5)', lineHeight: 1.6 }}>交付了什么，以及它自己做出了什么</Text>
+                </Box>
+            </Box>
+
+        </Box>
+    </Box>
+
+    {/* C 区页脚 */}
+    <Box style={{
+        position: 'absolute', bottom: 0, left: 0, width: 1280, height: 60,
+        paddingLeft: 96, paddingRight: 96,
+        flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <Box style={{ width: 10, height: 10, borderRadius: 5, background: '#e8b34b' }} />
+            <Text style={{ fontSize: 14, color: 'rgba(245,242,233,0.45)' }}>Mochi · 嘉祥教育集团 AI 创意实践大赛</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: 'rgba(245,242,233,0.45)' }}>02 / 17</Text>
+    </Box>
+</Slide>

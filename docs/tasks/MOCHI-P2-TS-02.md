@@ -1,5 +1,9 @@
 # MOCHI-P2-TS-02 · 课件二次编辑聊天接线：mochi.ppt_create / mochi.ppt_revise（真 .pptx，禁止 HTML）
 
+> ⚠️ **工具名与状态口径更正（2026-09-12 补加，正文一字未删）**
+> - 本文写作时的工具名为**点号形态**（如 `mochi.xxx`）<!-- allow-dotted-tool-name -->，该形态已于 2026-09-12 因模型网关 400 事故**全面禁用**；现行注册名一律下划线（如 `mochi_memory_note` / `mochi_ppt_create` / `mochi_grade_analyze`）。以源码为准，见 `docs/mochi-naming-convention.md` §5。
+> - 本文中的插件计数与 PASS 结论均为**写作时点**成立，可能已被后续改动推翻。现状以 `docs/DELIVERY-LEDGER.md` 与源码为准。
+
 > 派发对象：GLM 5.3 flash 实现代理 · 监制：WorkBuddy（只审计不编码）
 > 依据：总体方案第 11 章 #7（教案/材料→可继续修改的上课 PPT）、任务书 Golden Demo「班会 PPT 二次编辑不重做」。
 > 边界：只允许新建两个文件：`plugins/mochi-presentations/plugin.mjs`、`plugins/mochi-presentations/test-plugin.mjs`；允许**改一处**：`package.json` 的 `main` 改为 `plugin.mjs`。**禁止**改 index.mjs / 其他任何文件 / npm install / 重启服务 / git。

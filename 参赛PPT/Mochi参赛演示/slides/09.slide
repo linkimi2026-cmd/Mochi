@@ -1,0 +1,81 @@
+<Slide style={{ width: 1280, height: 720, background: '#16211d', position: 'relative', overflow: 'hidden' }}>
+
+    {/* A 区 · 标题块 */}
+    <Box style={{ height: 120, paddingLeft: 96, paddingRight: 96, paddingTop: 20, justifyContent: 'center' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Text style={{ fontSize: 15, color: '#e8b34b', letterSpacing: 3 }}>02</Text>
+            <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#f5f2e9' }}>一切皆插件</Text>
+        </Box>
+    </Box>
+
+    {/* B 区 · 内容区 */}
+    <Box style={{
+        height: 540, paddingLeft: 96, paddingRight: 96,
+        flexDirection: 'column', gap: 20,
+    }}>
+
+        {/* 上半：真实工作台界面 */}
+        <Box style={{
+            width: 1088, height: 296,
+            borderRadius: 12, overflow: 'hidden',
+            border: '1px solid rgba(245,242,233,0.14)',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
+        }}>
+            <Image src="assets/ui-workbench.png" style={{ width: 1088, height: 296, objectFit: 'cover' }} />
+        </Box>
+
+        {/* 下半：三张非等宽卡片 */}
+        <Box style={{ flex: 1, flexDirection: 'row', gap: 20 }}>
+
+            <Box style={{
+                flex: 1.25, flexDirection: 'column', gap: 10,
+                background: 'rgba(245,242,233,0.05)',
+                border: '1px solid rgba(245,242,233,0.12)',
+                borderRadius: 10, padding: 20,
+            }}>
+                <Text style={{ fontSize: 20, fontWeight: 600, color: '#f5f2e9' }}>本地知识库</Text>
+                <Text style={{ fontSize: 15, color: 'rgba(245,242,233,0.55)', lineHeight: 1.7 }}>
+                    33 册教材导入本机，按页检索。老师问"这个知识点在哪一册哪一页"，它直接给到页码；公式与图表会提醒核对原页，绝不编造原文。
+                </Text>
+            </Box>
+
+            <Box style={{
+                flex: 1, flexDirection: 'column', gap: 10,
+                background: 'rgba(245,242,233,0.05)',
+                border: '1px solid rgba(245,242,233,0.12)',
+                borderRadius: 10, padding: 20,
+            }}>
+                <Text style={{ fontSize: 20, fontWeight: 600, color: '#f5f2e9' }}>记忆</Text>
+                <Text style={{ fontSize: 15, color: 'rgba(245,242,233,0.55)', lineHeight: 1.7 }}>
+                    记住老师的工作习惯与明确要求，下次自动带出来。老师能查看、能纠正、能一键清空——记忆不是黑箱，也绝不偷偷记学生明细。
+                </Text>
+            </Box>
+
+            <Box style={{
+                flex: 0.85, flexDirection: 'column', gap: 10,
+                background: 'rgba(245,242,233,0.05)',
+                border: '1px solid rgba(245,242,233,0.12)',
+                borderRadius: 10, padding: 20,
+            }}>
+                <Text style={{ fontSize: 20, fontWeight: 600, color: '#f5f2e9' }}>定时任务</Text>
+                <Text style={{ fontSize: 15, color: 'rgba(245,242,233,0.55)', lineHeight: 1.7 }}>
+                    到点在原会话里发提醒或产出通知。边界说在前面：应用没打开就不会执行——我们不假装它是云服务。
+                </Text>
+            </Box>
+
+        </Box>
+    </Box>
+
+    {/* C 区 · 页脚条 */}
+    <Box style={{
+        position: 'absolute', bottom: 0, left: 0, width: 1280, height: 60,
+        paddingLeft: 96, paddingRight: 96,
+        flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <Box style={{ width: 10, height: 10, borderRadius: 5, background: '#e8b34b' }} />
+            <Text style={{ fontSize: 14, color: 'rgba(245,242,233,0.45)' }}>Mochi · 嘉祥教育集团 AI 创意实践大赛</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: 'rgba(245,242,233,0.45)' }}>09 / 17</Text>
+    </Box>
+</Slide>

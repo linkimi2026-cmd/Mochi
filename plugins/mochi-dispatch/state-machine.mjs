@@ -99,6 +99,29 @@ export function idempotencyKeyFor(input, _at = undefined) {
   return taskFingerprintFor(input);
 }
 
+// LAN-only counterpart: a standalone teacher endpoint has no campus account
+// number. The opaque owner key comes from the locked, persisted LAN identity;
+// callers must never derive it from model-supplied text. It deliberately has a
+// different prefix from relay fingerprints, so the two transports cannot claim
+// each other's historical task rows.
+export function localTaskFingerprintFor({ tool, localOwnerKey, peerEndpointId, goal, context = '' }) {
+  const owner = String(localOwnerKey ?? '').trim();
+  const endpoint = String(peerEndpointId ?? '').trim();
+  if (!owner.startsWith('local:') || owner.length > 512 || !endpoint || endpoint.length > 120) {
+    throw new Error('局域网任务必须绑定受管本机身份和精确教室 endpoint。');
+  }
+  const canonical = JSON.stringify({
+    v: 1,
+    transport: 'lan',
+    tool: canonicalText(tool),
+    localOwnerKey: owner,
+    peerEndpointId: endpoint,
+    goal: canonicalText(goal),
+    context: canonicalText(context),
+  });
+  return `dispatch:lan:v1:${createHash('sha256').update(canonical).digest('hex')}`;
+}
+
 // 一次实际 relay 投递的幂等身份。它与上方逻辑任务 identity 分离：失败重提
 // 会创建新的 attempt key，但仍关联同一 correlation_id。
 export function attemptKeyFor(correlationId, attemptNo) {

@@ -141,7 +141,9 @@ function staticHandler(req, res) {
     return;
   }
   const url = new URL(req.url ?? "/", "http://x");
-  const rel = normalize(decodeURIComponent(url.pathname)).replace(/^\/campus\/?/, "");
+  // 先在 URL pathname（恒为正斜杠）上剥前缀，再 normalize 为平台路径；
+  // Windows 上先 normalize 会变成反斜杠导致前缀正则失配（CI 实锤 404）。
+  const rel = decodeURIComponent(url.pathname).replace(/^\/campus\/?/, "");
   if (rel === "sw.js") {
     // 嵌入形态绝不注册校园 Service Worker（避免劫持 3090 根作用域）
     res.writeHead(204).end();

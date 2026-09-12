@@ -21,6 +21,62 @@ The direct renderer handles the bounded generic pages, paragraphs and tables; it
 - `checklist.json`: structure, editable-file and PDF-path checks;
 - `manifest.json`: hashes, `sourcePageCount` and parsed `pdfPageCount`.
 
+## Teacher tool entries
+
+The package entry is `plugin.mjs`. In a teacher runtime profile it registers
+six registered tool names through the fixed Alpha `@deepseek-ai/dsh-tools` `defineTool`
+contract. Names must stay gateway-safe (`^[a-zA-Z0-9_-]+$`); dotted legacy
+names from `plan/01_TOOLCHAIN.md` (`doc.create`) are not registrable.
+
+| Tool | Writes | Behaviour |
+| --- | --- | --- |
+| `mochi_document_create` | yes | Existing Alpha contract: validated structured content → editable DOCX + same-source PDF + questions/checklist/manifest in a fresh host-generated directory. |
+| `doc_create` | yes | The name the teacher skills reference. Same single implementation as above; only the reported `工具` field differs. There is deliberately no second DOCX generator. |
+| `doc_read` | no | Parses `word/document.xml` + `word/styles.xml` into an ordered block model: paragraph text, style id/name, heading level, list marker, real tables (header, rows, merges), image and section counts. Block `序号` is the index `doc_edit` targets. |
+| `doc_edit` | yes (new version) | Applies 1–50 explicit paragraph ops (`set_block_text`, `replace_text`, `insert_paragraph`, `delete_block`) and republishes a *new* DOCX. Only affected `w:t` nodes in `word/document.xml` are re-serialised; every other OOXML part is copied from its original compressed bytes. Tables are not re-laid-out and are refused as edit targets. |
+| `doc_export` | yes | DOCX → real PDF via the host's local LibreOffice/soffice. The engine is probed first; when absent the tool returns `EXPORT_ENGINE_UNAVAILABLE` with the probed paths and publishes nothing. |
+| `pdf_read` | no | Page count, per-page size/rotation/font count/text, document metadata, and an optional `"1-3,5"` page range. See the extraction boundary below. |
+
+`doc_read`, `doc_edit`, `doc_export` and `pdf_read` accept an input path (the
+model must be able to name an existing file), but the path is constrained to the
+current session's real workspace root: absolute or workspace-relative, an
+ordinary non-symlink file, matching extension. Generated output never uses a
+model-provided path: `doc_edit` and `doc_export` write into a fresh
+`<session workspace>/Mochi Documents/document-<uuid>/` directory.
+
+`doc_edit` reports the real absolute path, real byte count, per-op before/after
+text, the list of parts kept verbatim, and a re-read verification (paragraph
+texts and block kinds match the intended model, tables unchanged, all other
+parts byte-identical). A failed op publishes nothing.
+
+## PDF text extraction: what is actually available
+
+Reading PDF *text* is not something `pdf-lib` can do. This package does not use
+`jszip`, HTML, or a page-image stand-in. The implementation is:
+
+- page structure and metadata: `pdf-lib` (`PDFDocument`, `PDFPageLeaf`,
+  `PDFArray` content streams);
+- page content streams: decompressed through `pdf-lib`'s `decodePDFRawStream`,
+  then tokenised locally and decoded for `Tj`/`TJ`/`'`/`"` operations;
+- text decoding: the **ToUnicode CMap of each font in that page's resource
+  dictionary**. Both `beginbfchar` and the `beginbfrange` single-target and
+  target-array forms are parsed;
+- document-level fallback: `@mochi/pdf-layout`'s `extractPdfText` (same
+  CMap-based boundary, but document-wide, so it can also reach text inside Form
+  XObjects).
+
+Honest boundary, reported in every result:
+
+- If a page's fonts provide no usable ToUnicode map **and** its text is not pure
+  ASCII single-byte, that page is reported as `unavailable` and the tool returns
+  `文本抽取可用: false` with `文本抽取不可用原因`. Nothing is guessed, no OCR is
+  run, and no "looks-like-text" value is produced (unmapped codes are surfaced as
+  U+FFFD counts).
+- Pure-ASCII text without a ToUnicode map is returned and explicitly labelled
+  `ascii-during-missing-tounicode`.
+- Text inside Form XObjects is only reached through the document-level fallback;
+  CID fonts without ToUnicode and OCR of scanned pages are out of scope.
+
 ## Host contract
 
 `generateDocumentBundle({ document, outputDirectory, converter, signal })` separates host controls from content:
@@ -40,7 +96,28 @@ The ordinary PDF verifier opens the generated file with `pdf-lib`, confirms page
 
 ```sh
 pnpm install --frozen-lockfile --modules-dir node_modules.nosync
-node --test test/generator.test.mjs
+node --test test/*.test.mjs
 ```
 
-The ordinary suite uses only Node packages: JSZip opens DOCX XML to verify editable text/table structure, and the shared inspector verifies actual PDF page count, searchable text, embedded font and absence of page images. `test/exam-template.test.mjs` deliberately retains the pre-existing macOS LibreOffice and Poppler verification for the special Sichuan template; it is separate from the ordinary zero-process acceptance path.
+`test/generator.test.mjs` opens DOCX with the plugin's own ZIP reader instead of
+`jszip`: `jszip` is a devDependency that this checkout's production install does
+not link, so importing it aborted the suite. `test/document-io.test.mjs`
+cross-checks that reader/writer against the system `unzip` binary.
+
+The ordinary suite uses only Node packages: the plugin reader opens DOCX XML to
+verify editable text/table structure, and the shared inspector verifies actual
+PDF page count, searchable text, embedded font and absence of page images.
+`test/document-io.test.mjs` covers block-level `doc_read`, byte-preserving
+`doc_edit`, `pdf_read` on a real PDF plus the no-ToUnicode degradation path, and
+`doc_export` both with and without a local engine. `test/exam-template.test.mjs`
+deliberately retains the pre-existing macOS LibreOffice and Poppler verification
+for the special Sichuan template; it is separate from the ordinary
+zero-process acceptance path.
+
+## Packaging note
+
+`document-io.mjs` is imported by `plugin.mjs`, so it must be added to the
+`PLUGINS` file list for `mochi-documents` in
+`apps/desktop/scripts/prepare-mochi-resources.cjs`. It only requires Node
+builtins, `pdf-lib` and `@mochi/pdf-layout` — both already staged — and does not
+need `jszip` at runtime.

@@ -1,0 +1,31 @@
+{
+  "name": "mochi-knowledge",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "index.mjs",
+  "description": "Mochi 受管本地高中教材库：PDF逐页索引、来源页码引用与离线OCR标记",
+  "files": [
+    "index.mjs",
+    "knowledge-store.mjs",
+    "knowledge-host-bridge.mjs",
+    "knowledge-page-image.mjs",
+    "scripts/build-catalog-from-audit.mjs",
+    "scripts/build-private-textbook-snapshot.mjs",
+    "scripts/import-textbooks.mjs",
+    "scripts/install-textbook-snapshot.mjs",
+    "scripts/ocr-scanned-books.mjs",
+    "scripts/render-pdf-page.py"
+  ],
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "build-catalog": "node scripts/build-catalog-from-audit.mjs",
+    "import": "node scripts/import-textbooks.mjs",
+    "ocr": "node scripts/ocr-scanned-books.mjs"
+  },
+  "dependencies": {
+    "@deepseek-ai/dsh-tools": "0.1.3-alpha.1",
+    "@napi-rs/canvas": "1.0.8",
+    "pdfjs-dist": "6.3.289"
+  }
+}

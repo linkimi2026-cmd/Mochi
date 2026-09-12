@@ -1,0 +1,89 @@
+<Slide style={{ width: 1280, height: 720, background: '#16211d', position: 'relative', overflow: 'hidden' }}>
+
+    {/* 背景柔光 */}
+    <Box style={{
+        position: 'absolute', left: 120, top: 80, width: 720, height: 560,
+        background: 'radial-gradient(circle, rgba(232,179,75,0.13) 0%, rgba(232,179,75,0) 70%)',
+    }} />
+
+    {/* A 区 · 标题块 */}
+    <Box style={{ height: 120, paddingLeft: 96, paddingRight: 96, paddingTop: 20, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#f5f2e9' }}>交付了什么</Text>
+    </Box>
+
+    {/* B 区 · 内容区 */}
+    <Box style={{
+        position: 'relative', zIndex: 1,
+        height: 540, paddingLeft: 96, paddingRight: 96,
+        flexDirection: 'row', gap: 52, alignItems: 'center',
+    }}>
+
+        {/* 左：巨型数字 + 洞察 */}
+        <Box style={{ flex: 1, flexDirection: 'column' }}>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 18 }}>
+                <Text style={{ fontSize: 120, fontWeight: 'bold', color: '#e8b34b', lineHeight: 1, letterSpacing: -6 }}>
+                    2
+                </Text>
+                <Text style={{ fontSize: 26, fontWeight: 600, color: '#f5f2e9', paddingBottom: 22 }}>
+                    个平台，真的能装
+                </Text>
+            </Box>
+
+            <Text style={{ fontSize: 17, color: 'rgba(245,242,233,0.58)', lineHeight: 1.8, marginTop: 10 }}>
+                Windows 与 macOS 的安装包都已交付，老师双击即用，
+                <br />
+                不出现终端、不出现英文报错。能在两个平台都装起来、打开、
+                <br />
+                用起来——这一条就把大多数参赛项目挡在门外。
+            </Text>
+
+            <Box style={{ height: 1, background: 'rgba(245,242,233,0.14)', marginTop: 26, marginBottom: 22 }} />
+
+            <Box style={{ flexDirection: 'row', gap: 52 }}>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 40, fontWeight: 'bold', color: '#f5f2e9', lineHeight: 1.1 }}>26</Text>
+                    <Text style={{ fontSize: 14, color: 'rgba(245,242,233,0.48)' }}>个插件随包交付</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 40, fontWeight: 'bold', color: '#f5f2e9', lineHeight: 1.1 }}>33</Text>
+                    <Text style={{ fontSize: 14, color: 'rgba(245,242,233,0.48)' }}>册教材入本地库</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 40, fontWeight: 'bold', color: '#f5f2e9', lineHeight: 1.1 }}>491</Text>
+                    <Text style={{ fontSize: 14, color: 'rgba(245,242,233,0.48)' }}>个构建文件受哈希守护</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        {/* 右：小图（L2 支撑） */}
+        <Box style={{ width: 372, flexDirection: 'column', gap: 12 }}>
+            <Box style={{
+                width: 372, height: 209,
+                borderRadius: 12, overflow: 'hidden',
+                border: '1px solid rgba(245,242,233,0.14)',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
+            }}>
+                <Image src="assets/ui-campus.png" style={{ width: 372, height: 209, objectFit: 'cover' }} />
+            </Box>
+            <Text style={{ fontSize: 14, color: 'rgba(245,242,233,0.4)', lineHeight: 1.5 }}>
+                真实界面：班主任的待办台——交付的不只是一段对话
+            </Text>
+        </Box>
+
+    </Box>
+
+    {/* C 区 · 页脚条 */}
+    <Box style={{
+        position: 'absolute', bottom: 0, left: 0, width: 1280, height: 60,
+        paddingLeft: 96, paddingRight: 96,
+        flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <Box style={{ width: 10, height: 10, borderRadius: 5, background: '#e8b34b' }} />
+            <Text style={{ fontSize: 14, color: 'rgba(245,242,233,0.45)' }}>Mochi · 嘉祥教育集团 AI 创意实践大赛</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: 'rgba(245,242,233,0.45)' }}>14 / 17</Text>
+    </Box>
+</Slide>

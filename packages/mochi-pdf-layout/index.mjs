@@ -76,6 +76,77 @@ export function color(hex) {
   );
 }
 
+// ═══════════════════════════════════════════════════════════════════════════
+// 分段绘制 —— 一个会让整份 PDF 文本层失效、并且直接阻断出片的坑（2026-09-12 排查）
+//
+// 现象：PDF 画面完全正常，但文字抽取（复制/搜索，以及上游 inspectPdfArtifact 的
+// requiredText 校验）拿到乱码。后果不只是"复制不出来"：mochi-presentations 的
+// generatePresentationBundle 会因此判定整份课件生成失败——换句话说
+// **只要有一句话同时含数字/空格与拉丁字母，整册 PPT 就产不出来**。
+// 实测 9 条真实中文课件句子里有 3 条触发，例如「PPT 的制作要 3 步」
+// 「42 students 参加 3 次活动」「1  Mochi 校验第 1 页」。
+//
+// 根因（已实证，非猜测）：pdf-lib 用 fontkit 的 layout() 决定每个字符落哪个 glyph，
+// 而 fontkit 会**按脚本同类挑 cmap 子表**。同一段里同时出现数字/空格（Common）
+// 与拉丁字母（Latin）时，数字会被换成另一套替换字形，而这套字形**没有 ToUnicode 映射**：
+//   '1  Mochi'    -> 0x7760 0x0001 ...   0x7760 在 CMap 里查不到 -> \uFFFD
+//   '1  教学样例'  -> 0x0012 ...          0x0012 -> '1'          -> 正常
+// 与 OpenType 特性无关：features 传 []、['-pwid']、['-hwid'] 等一律无效；
+// 字体本身也没问题（'1' 在 cmap 里就是 glyph 18）。所以只能从"怎么画"这一层解决。
+//
+// 解法：把一行文本按脚本同类切成 run 分别 drawText。字形分配于是回到 CMap
+// 可解释的那一套，画面与文字层对得上；行宽量法也换成同一口径（measureText），
+// 保证"量出来的宽度"就是"画出来的宽度"。
+// ═══════════════════════════════════════════════════════════════════════════
+const LATIN_SCRIPT = 'latin';
+const CJK_SCRIPT = 'cjk';
+const COMMON_SCRIPT = 'common';
+
+/** 粗略但够用的脚本归类：拉丁字母 / 中日韩（含全角） / 其余（数字、空格、标点、符号）。 */
+function scriptClassOf(codePoint) {
+  if ((codePoint >= 0x41 && codePoint <= 0x5A) || (codePoint >= 0x61 && codePoint <= 0x7A)) return LATIN_SCRIPT;
+  if (codePoint >= 0xC0 && codePoint <= 0x24F && codePoint !== 0xD7 && codePoint !== 0xF7) return LATIN_SCRIPT;
+  if (codePoint >= 0x2E80) return CJK_SCRIPT;
+  return COMMON_SCRIPT;
+}
+
+/** 把一行文本切成脚本同类的 run（相邻同类合并）。 */
+export function splitScriptRuns(text) {
+  if (typeof text !== 'string') throw new TypeError('text must be a string');
+  const runs = [];
+  for (const character of text) {
+    const script = scriptClassOf(character.codePointAt(0));
+    const last = runs[runs.length - 1];
+    if (last && last.script === script) last.text += character;
+    else runs.push({ script, text: character });
+  }
+  return runs.map((run) => run.text);
+}
+
+/** 与 drawTextLine 完全同一口径的行宽：分段宽度之和。 */
+export function measureText(text, font, size) {
+  if (typeof text !== 'string') throw new TypeError('text must be a string');
+  requireFont(font);
+  finite(size, 'size');
+  return splitScriptRuns(text).reduce((total, run) => total + font.widthOfTextAtSize(run, size), 0);
+}
+
+/** 按脚本分段绘制一行文本，返回实际绘制宽度。 */
+export function drawTextLine({ page, text, x, y, size, font, fill }) {
+  if (!page || typeof page.drawText !== 'function') throw new TypeError('page must be a pdf-lib page');
+  requireFont(font);
+  finite(x, 'x');
+  finite(y, 'y');
+  finite(size, 'size');
+  let cursor = x;
+  for (const run of splitScriptRuns(text)) {
+    if (!run) continue;
+    page.drawText(run, { x: cursor, y, size, font, ...(fill === undefined ? {} : { color: fill }) });
+    cursor += font.widthOfTextAtSize(run, size);
+  }
+  return cursor - x;
+}
+
 export function wrapText({ text, font, size, maxWidth }) {
   if (typeof text !== 'string') throw new TypeError('text must be a string');
   requireFont(font);
@@ -91,7 +162,7 @@ export function wrapText({ text, font, size, maxWidth }) {
     let line = '';
     for (const character of Array.from(paragraph)) {
       const candidate = `${line}${character}`;
-      if (line && font.widthOfTextAtSize(candidate, size) > maxWidth) {
+      if (line && measureText(candidate, font, size) > maxWidth) {
         lines.push(line.trimEnd());
         line = character === ' ' ? '' : character;
       } else {
@@ -112,7 +183,7 @@ export function drawTextBlock({ page, text, x, top, width, font, size, lineHeigh
   finite(lineHeight, 'lineHeight');
   const lines = wrapText({ text, font, size, maxWidth: width });
   lines.forEach((line, index) => {
-    if (line) page.drawText(line, { x, y: top - size - index * lineHeight, size, font, color: fill });
+    if (line) drawTextLine({ page, text: line, x, y: top - size - index * lineHeight, size, font, fill });
   });
   return { lines, height: lines.length * lineHeight, bottom: top - lines.length * lineHeight };
 }
@@ -185,12 +256,14 @@ function drawTableRow({ page, row, columnWidths, x, top, font, size, lineHeight,
       borderWidth: 0.7,
     });
     row.lines[index].forEach((line, lineIndex) => {
-      if (line) page.drawText(line, {
+      if (line) drawTextLine({
+        page,
+        text: line,
         x: cellX + padding,
         y: top - padding - size - lineIndex * lineHeight,
         size,
         font,
-        color: textColor,
+        fill: textColor,
       });
     });
     cellX += cellWidth;
@@ -296,18 +369,76 @@ export function extractPdfText(bytes) {
     }
   }
   if (cmap.size === 0) throw failure('PDF_TEXT_UNVERIFIABLE', 'generated PDF has no ToUnicode text map');
-  const fragments = [];
+  // 按**视觉行**归并，而不是一个 Tj 一行。
+  // 分段绘制（见 splitScriptRuns）会把同一行拆成多个 Tj（'表格由真实' + ' ' + 'Word' + …），
+  // 如果每个 Tj 之间都插换行，抽出来就变成
+  // 「表格由真实\n \nWord\n \n表格元素生成」——空格两侧凭空多出换行，
+  // 复制/搜索与上游断言全部走样。这里的口径与 mochi-documents 的逐页抽取一致：
+  //   同一个 y（同一条基线）且首尾相接 -> 直接拼接；
+  //   同一个 y 但横向留了明显空隙（表格相邻单元格）-> 补一个空格；
+  //   y 变了、或换了一条内容流（= 换页）-> 换行。
+  const lines = [];
+  let currentLine = '';
   for (const stream of streams) {
+    let lastY = null;
+    let lastX = null;
+    let lastText = '';
+    let lastSize = 12;
     for (const block of stream.matchAll(/\bBT\b([\s\S]*?)\bET\b/g)) {
-      for (const text of block[1].matchAll(/<([0-9A-Fa-f]+)>\s*Tj\b/g)) {
-        fragments.push(decodePdfText(text[1], cmap));
+      const body = block[1];
+      const parts = [];
+      for (const text of body.matchAll(/<([0-9A-Fa-f]+)>\s*Tj\b/g)) parts.push(decodePdfText(text[1], cmap));
+      for (const textArray of body.matchAll(/\[([\s\S]*?)\]\s*TJ\b/g)) {
+        for (const text of textArray[1].matchAll(/<([0-9A-Fa-f]+)>/g)) parts.push(decodePdfText(text[1], cmap));
       }
-      for (const textArray of block[1].matchAll(/\[([\s\S]*?)\]\s*TJ\b/g)) {
-        for (const text of textArray[1].matchAll(/<([0-9A-Fa-f]+)>/g)) fragments.push(decodePdfText(text[1], cmap));
+      if (parts.length === 0) continue;
+      const text = parts.join('');
+      const position = textPosition(body);
+      const y = position?.y ?? null;
+      const x = position?.x ?? null;
+      const size = position?.size ?? 12;
+      if (lastY !== null && y !== null && Math.abs(y - lastY) < 0.01) {
+        if (x !== null && lastX !== null && !/\s$/u.test(lastText) && !/^\s/u.test(text)
+          && x - (lastX + approximateTextWidth(lastText, lastSize)) > Math.max(size, 12) * 0.45) currentLine += ' ';
+        currentLine += text;
+      } else {
+        if (currentLine) lines.push(currentLine);
+        currentLine = text;
       }
+      lastY = y;
+      lastX = x;
+      lastText = text;
+      lastSize = size;
     }
+    if (currentLine) { lines.push(currentLine); currentLine = ''; }
   }
-  return fragments.join('\n');
+  return lines.join('\n');
+}
+
+/** 粗略估算一段文本的推进宽度（pt）：CJK/全角 ~1em，宽字符 ~0.88em，窄字符 ~0.3em，空格 ~0.28em，其余 ~0.55em。 */
+function approximateTextWidth(text, size) {
+  const unit = Number.isFinite(size) && size > 0 ? size : 12;
+  const WIDE = 'MWmw@%&';
+  const NARROW = "ijltfr.,:;!|'`()[]";
+  return [...text].reduce((total, character) => {
+    const codePoint = character.codePointAt(0);
+    if (codePoint >= 0x2E80) return total + unit;
+    if (character === ' ') return total + unit * 0.28;
+    if (WIDE.includes(character)) return total + unit * 0.88;
+    if (NARROW.includes(character)) return total + unit * 0.3;
+    return total + unit * 0.55;
+  }, 0);
+}
+
+/** 取 BT 块内文本矩阵的位置与字号：`a b c d e f Tm` 给出 x=e、y=f；`/Font size Tf` 给出字号。 */
+function textPosition(block) {
+  const matrix = block.match(/(-?[\d.]+)\s+(-?[\d.]+)\s+(-?[\d.]+)\s+(-?[\d.]+)\s+(-?[\d.]+)\s+(-?[\d.]+)\s+Tm\b/);
+  const font = block.match(/\/([^\s/]+)\s+(-?[\d.]+)\s+Tf\b/);
+  const size = font ? Number.parseFloat(font[2]) : 12;
+  if (matrix) return { x: Number.parseFloat(matrix[5]), y: Number.parseFloat(matrix[6]), size };
+  const offset = block.match(/(-?[\d.]+)\s+(-?[\d.]+)\s+T[dD]\b/);
+  if (offset) return { x: null, y: Number.parseFloat(offset[2]), size };
+  return { x: null, y: null, size };
 }
 
 export async function inspectPdfArtifact(bytes, { expectedPageCount, requiredText = [] } = {}) {

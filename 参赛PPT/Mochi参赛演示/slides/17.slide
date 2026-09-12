@@ -1,0 +1,60 @@
+<Slide style={{ width: 1280, height: 720, background: '#16211d', position: 'relative', overflow: 'hidden' }}>
+
+    {/* 全幅界面柔焦铺底 */}
+    <Image
+        src="assets/ui-home.png"
+        style={{
+            position: 'absolute', top: 0, left: 0, width: 1280, height: 720,
+            objectFit: 'cover', filter: 'blur(4px)', opacity: 0.42,
+        }}
+    />
+
+    {/* 深绿蒙版 */}
+    <Box style={{
+        position: 'absolute', top: 0, left: 0, width: 1280, height: 720,
+        background: 'linear-gradient(120deg, rgba(22,33,29,0.94) 0%, rgba(22,33,29,0.86) 55%, rgba(22,33,29,0.70) 100%)',
+    }} />
+
+    {/* 内容层 */}
+    <Box style={{
+        position: 'relative', zIndex: 1,
+        width: 1280, height: 720,
+        paddingLeft: 96, paddingRight: 96, paddingTop: 96, paddingBottom: 72,
+        justifyContent: 'space-between',
+    }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 10, height: 10, borderRadius: 5, background: '#e8b34b' }} />
+            <Text style={{ fontSize: 16, color: 'rgba(245,242,233,0.55)', letterSpacing: 2 }}>
+                嘉祥教育集团 AI 创意实践大赛 · 高中组
+            </Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'column', gap: 24, width: 820 }}>
+            <Text style={{ fontSize: 64, fontWeight: 'bold', color: '#f5f2e9', lineHeight: 1.22, letterSpacing: -1 }}>
+                让老师，
+                <br />
+                把时间还给教学
+            </Text>
+            <Box style={{ width: 88, height: 4, background: '#e8b34b', borderRadius: 2 }} />
+            <Text style={{ fontSize: 19, color: 'rgba(245,242,233,0.6)', lineHeight: 1.8 }}>
+                校园里那些必须有人做的事，交给我们做的那部分去跑；
+                <br />
+                老师只做只有老师能做的事。
+            </Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 28 }}>
+            <Text style={{ fontSize: 20, fontWeight: 600, color: '#f5f2e9' }}>Mochi</Text>
+            <Box style={{ width: 1, height: 14, background: 'rgba(245,242,233,0.22)' }} />
+            <Text style={{ fontSize: 16, color: 'rgba(245,242,233,0.5)' }}>
+                跑在校园里的 Agent 协作网络
+            </Text>
+            <Box style={{ width: 1, height: 14, background: 'rgba(245,242,233,0.22)' }} />
+            <Text style={{ fontSize: 16, color: 'rgba(245,242,233,0.5)' }}>
+                2026 年 9 月
+            </Text>
+        </Box>
+
+    </Box>
+</Slide>

@@ -27,7 +27,7 @@ if (!existsSync(compiled) || statSync(compiled).mtimeMs < statSync(source).mtime
   throw new Error("web-host 测试需要最新编译输出；请先运行 npm run build");
 }
 
-const { buildDshArgs, resolveDshBin } = createRequire(import.meta.url)(compiled);
+const { buildDshArgs, managedPlaywrightBrowsersPath, managedRuntimeNodeModulesPath, resolveDshBin } = createRequire(import.meta.url)(compiled);
 const originalResourcesPath = Object.getOwnPropertyDescriptor(process, "resourcesPath");
 const originalDshBin = process.env.MOCHI_DSH_BIN;
 const root = mkdtempSync(join(tmpdir(), "mochi-web-host-runtime-"));
@@ -41,6 +41,27 @@ try {
   mkdirSync(dirname(unpacked), { recursive: true });
   writeFileSync(unpacked, "// fixture only\n");
   setResourcesPath(root);
+
+  assert.equal(
+    managedPlaywrightBrowsersPath(true, "/unused-app", root),
+    join(root, "mochi", "playwright", "browsers"),
+    "packaged DSH must use the physical managed Playwright browser resource",
+  );
+  assert.equal(
+    managedPlaywrightBrowsersPath(false, "/workspace/app", root),
+    "/workspace/app/.mochi-package-resources-v1.nosync/playwright/browsers",
+    "development DSH must use the staged browser resource instead of a user cache",
+  );
+  assert.equal(
+    managedRuntimeNodeModulesPath(true, "/unused-app", root),
+    join(root, "app.asar.unpacked", "node_modules"),
+    "packaged shell automation must resolve Node modules from builder's physical unpacked tree",
+  );
+  assert.equal(
+    managedRuntimeNodeModulesPath(false, "/workspace/app", root),
+    "/workspace/app/node_modules",
+    "development shell automation must resolve from the desktop runtime dependency tree",
+  );
 
   delete process.env.MOCHI_DSH_BIN;
   assert.equal(resolveDshBin(), unpacked, "packaged launch must prefer the physical DSH entrypoint");

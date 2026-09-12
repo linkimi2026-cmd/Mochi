@@ -1,7 +1,20 @@
 # 00 · 执行摘要（MOCHI_HARNESS_FOUNDATION_PACK）
 
+> ⛔ **本包已归档（archived）· 2026-09-12 裁定**
+>
+> **status**: archived　**last_verified**: 2026-09-12　**verified_by**: 工具线
+>
+> **本包的权威范围已终止。** 它是 2026-09-04 的 FOUNDATION 开工包，其「唯一权威开工依据」的授权
+> **仅在当时有效**；现行实施依据见 `docs/DOC-AUTHORITY.md`（L0/L1 分层）。
+> 包内技术事实多数仍成立，但**不作为现行决策依据**——凡与 `Mochi-总体方案.md` v2.0、
+> `docs/build-standard.md` 或源码冲突的，以后者为准。正文原样保留，仅供追溯。
+>
+> 已知过时点举例：`11_TOOL_CONTRACT.md` 的 `<domain>.<action>` 点号工具名、
+> `12_TEACHER_PRODUCTIVITY_TOOLS.md` 的点号工具表、`06_CLIENT_UI_PLUGIN_MAP.md` 的
+> 「用 `conversation.view` 新增 tab」——三者均已被源码裁定作废（见各文件头部横幅）。
+
 > 项目：嘉行联 · Mochi ｜ 日期：2026-09-04 ｜ 状态：FOUNDATION 完成，待 Codex 落地
-> 本包是 Codex 的唯一权威开工依据。`Mochi/plan/01–12` 为历史规划材料，与其冲突时以本包为准。
+> 本包是 Codex 的**当时**开工依据。`Mochi/plan/01–12` 为更早的历史规划材料，与其冲突时以本包为准。
 
 ## 一句话结论
 

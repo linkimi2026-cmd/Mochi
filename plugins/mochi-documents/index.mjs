@@ -1258,3 +1258,56 @@ export async function generateDocumentBundle({ document, outputDirectory, conver
     }
   }
 }
+
+/**
+ * Exports an existing DOCX to a real PDF with the host-configured local
+ * LibreOffice engine. It reuses the same converter contract, process-group
+ * cancellation and artifact inspection as the Sichuan exam template path, so
+ * there is a single Office-conversion implementation in this package.
+ *
+ * `outputDirectory` must be a host-assigned, already-reserved absolute
+ * directory; the PDF is published there without replacing an existing file.
+ */
+export async function exportDocxToPdfFile({ docxPath, outputDirectory, sofficePath, timeoutMs, signal } = {}) {
+  if (typeof docxPath !== 'string' || !isAbsolute(docxPath)) {
+    throw failure('INVALID_EXPORT_SOURCE', 'docxPath must be an absolute path to an existing DOCX');
+  }
+  if (typeof outputDirectory !== 'string' || !isAbsolute(outputDirectory)) {
+    throw failure('INVALID_OUTPUT_DIRECTORY', 'outputDirectory must be an absolute host-assigned path');
+  }
+  const converterOptions = validateConverterOptions({ sofficePath, timeoutMs });
+  throwIfAborted(signal);
+  await assertConverterAvailable(converterOptions.sofficePath);
+  const resolvedOutput = resolve(outputDirectory);
+  let stagingDirectory;
+  try {
+    stagingDirectory = await mkdtemp(join(resolvedOutput, '.mochi-documents-export-'));
+    await convertDocxToPdf({ docxPath, stagingDirectory, converter: converterOptions, signal });
+    const pdfFilename = `${basename(docxPath).replace(/\.docx$/i, '')}.pdf`;
+    const producedPath = join(stagingDirectory, pdfFilename);
+    const pdf = await inspectConvertedPdfArtifact(producedPath);
+    throwIfAborted(signal);
+    const pdfPath = join(resolvedOutput, pdfFilename);
+    await link(producedPath, pdfPath);
+    const bytes = await readFile(pdfPath);
+    return {
+      pdfPath,
+      pdfFilename,
+      pageCount: pdf.pageCount,
+      bytes: bytes.length,
+      sha256: await sha256File(pdfPath),
+      engine: converterOptions.sofficePath,
+    };
+  } catch (error) {
+    if (error instanceof MochiDocumentsError) throw error;
+    if (error?.code === 'ENOENT' && typeof error.syscall === 'string' && error.syscall.startsWith('spawn')) {
+      throw failure('CONVERTER_MISSING', 'configured soffice executable is unavailable');
+    }
+    if (error?.code === 'ENOENT' || error?.code === 'EEXIST') {
+      throw failure('INVALID_OUTPUT_DIRECTORY', 'host export directory is missing or a target filename already exists');
+    }
+    throw failure('CONVERTER_FAILED', 'DOCX to PDF export failed before publication');
+  } finally {
+    if (stagingDirectory) await rm(stagingDirectory, { recursive: true, force: true }).catch(() => {});
+  }
+}

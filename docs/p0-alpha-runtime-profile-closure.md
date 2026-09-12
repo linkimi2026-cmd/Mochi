@@ -1,5 +1,15 @@
 # MOCHI-P0-ALPHA：runtime-profile family 闭包准备
 
+> ⚠️ **时点报告（point-in-time）· 2026-09-12 标注**
+>
+> **status**: archived　**last_verified**: 2026-09-12　**verified_by**: 工具线
+>
+> 本文是 RUNTIME02 闭包准备阶段的**只读分析**，文中的 SHA-256 / 包计数 / 「12 插件」口径
+> 均为**该时点快照**，不是现行真值。**现行真值**：
+> 插件 26 个（`prepare-mochi-resources.cjs` 的 `PLUGINS`）、内核 `0.1.3-alpha.1`；
+> 快照清单用 `scripts/reconcile-snapshot-manifest.mjs --write` 收敛、
+> `scripts/check-snapshot-manifest.mjs --fail` 校验。正文原样保留。
+
 **结论：RUNTIME02 的 family 选择应为 230 个包。** 相对 RUNTIME01 的 CLI 228 包闭包，只新增两个官方 alpha family 包：`@deepseek-ai/dsh-client-ui-primitives@0.1.3-alpha.1` 与 `@deepseek-ai/dsh-client-ui-slots@0.1.3-alpha.1`。本报告只准备名字和范围；没有安装、生成 consumer/lock、改插件 manifest 或验证 profile 启动。
 
 ## 固定输入和算法

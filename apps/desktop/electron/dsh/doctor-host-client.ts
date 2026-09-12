@@ -4,6 +4,7 @@ import type {
   DoctorHostModelCheckResult,
   DoctorHostModelOutcome,
   DoctorHostModelProbe,
+  DoctorHostModelProbeUnavailableReason,
   DoctorHostModelStatus,
 } from "./doctor";
 
@@ -56,7 +57,7 @@ class DoctorHostResponseTooLargeError extends Error {
   }
 }
 
-function fixedUnavailable(reason: DoctorHostModelCheckResult["reason"]): DoctorHostModelCheckResult {
+function fixedUnavailable(reason: DoctorHostModelProbeUnavailableReason): DoctorHostModelCheckResult {
   return { kind: "unavailable", reason };
 }
 
@@ -186,7 +187,6 @@ export function createDoctorHostModelProbe(config: DoctorHostClientConfig): Doct
         body: "{}",
         credentials: "include",
         redirect: "manual",
-        cache: "no-store",
         signal,
       });
       throwIfAborted(signal);

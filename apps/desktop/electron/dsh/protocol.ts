@@ -5,11 +5,12 @@
  * 命名空间统一 `mochi:*`（见 {@link IPC}）。
  * 本文件是纯类型 + 常量，无任何运行时依赖，main 与 preload 都能安全 import。
  *
- * 通道总览（5 个，任务要求）：
+ * 通道总览：
  *   renderer → main
  *     mochi:prompt:send      { text }                      投一个用户 prompt
  *     mochi:prompt:cancel    { promptId }                  取消（SDK 通道暂无 mid-turn cancel，占位）
  *     mochi:approval:respond { requestId, decision }       用户对确认卡的答复
+ *     mochi:lan:attention    LanAttentionKind               已认证 LAN 页面请求本机提醒
  *   main → renderer
  *     mochi:event:stream     DshStreamEvent                 dsh 事件流（状态/思考/工具/文本/最终回答）
  *     mochi:approval:request ApprovalRequest               需要用户确认的工具（Batch 2 后半段由 answerer IPC 化触发）
@@ -113,6 +114,9 @@ export interface ApprovalResponse {
   decision: 'allow' | 'reject';
 }
 
+/** The renderer can request attention only for these fixed, content-free LAN events. */
+export type LanAttentionKind = 'incoming-message' | 'pairing-request';
+
 /* ───────────────────────── IPC 通道名（命名空间 mochi:*） ───────────────────────── */
 
 export const IPC = {
@@ -128,6 +132,8 @@ export const IPC = {
   approvalRequest: 'mochi:approval:request',
   /** renderer → main：审批答复。 */
   approvalRespond: 'mochi:approval:respond',
+  /** renderer → main：已认证 LAN 页面请求固定本机提醒。 */
+  lanAttention: 'mochi:lan:attention',
 } as const;
 
 export type IpcChannel = (typeof IPC)[keyof typeof IPC];

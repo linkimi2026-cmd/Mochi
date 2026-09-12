@@ -58,12 +58,37 @@ plan/**                 历史规划
 |---|---|
 | 品牌 / 产品名 | `Mochi` |
 | 运行时底座（文档显示层） | `Mochi Harness` |
-| 插件目录 / 包名 | `mochi-*`（已有 11 个先例） |
+| 插件目录 / 包名 | `mochi-*`（先例很多，**不写死数字**——数量随迭代变化，写死必然过时） |
 | 环境变量（新增） | `MOCHI_*` 前缀；**不得**新造 `DSH_*` |
 | 服务 / label（新增） | `com.mochi.*` |
 | 内部缩写 | **待定**，B 档统一（候选 `MOCH`，与 `.mochi-home` 同源）。在定死之前**不要引入第三种形态** |
 
-## 5. 违规处理
+## 5. 工具名硬约束（2026-09-12 新增，与品牌无关但是硬红线）
+
+**模型可见的工具名只能由 `[a-zA-Z0-9_-]` 组成。** 点号、空格、斜杠、中文一律不允许。
+
+- 起因：Mochi 的工具原本写成 `mochi.ppt_create` / `jxl.campus_status` 这种 <!-- allow-dotted-tool-name -->
+  `命名空间.动作` 形态，被模型网关以
+  `400 invalid_request_error: Invalid 'tools[6].***.name': string does not match pattern '^[a-zA-Z0-9_-]+$'`
+  整轮拒收——**一个工具名不合规，整个会话都发不出去**。
+- 底座自带的 31 个工具（`bash` / `web_search` / `terminal_create` …）**全部是下划线**，
+  我们改成下划线即与底座约定对齐。
+- 正确写法：`mochi_ppt_create`、`jxl_campus_status`、`message_send`。
+- **不是品牌问题，不要因为"看起来像命名空间"就换回点号。**
+
+### 已有的防回归守卫
+
+`apps/desktop/scripts/test-package-resources.mjs` 里有两道断言（⚠️ 2026-09-12 更正：**公开 CI 跑不了它**——该脚本需要先装 `apps/desktop/node_modules`，CI 不装依赖，见 `docs/build-standard.md` §4.6。目前只能本机跑）：
+
+1. `assertModelFacingToolNames()` —— 对实际注册出来的每个工具名用
+   `^[a-zA-Z0-9_-]+$` 校验；
+2. `assertNoDottedToolNameLiterals()` —— 源码级扫描 staged 插件，任何
+   `'jxl.xxx' / 'mochi.xxx' / 'message.xxx'` 形态的字符串字面量直接判红
+   （覆盖静态注册与循环里的别名数组，例如 `for (const n of ['campus_query_student', 'jxl.student_query'])`）。
+
+这两道守卫属于**正确性门禁**，不是第 3 节否掉的"品牌命名门禁"，别一起删掉。
+
+## 6. 违规处理
 
 新写的代码/文档里出现非白名单 `deepseek`：
 
@@ -71,7 +96,7 @@ plan/**                 历史规划
 2. 属于技术契约但不在上表 → **先补白名单并注明理由，再写**，不得先写后补；
 3. 引用 vendor 路径/包名 → 确认是否落在豁免区，不是的话按 2 处理。
 
-## 6. 风险背景（为什么不做批量替换）
+## 7. 风险背景（为什么不做批量替换）
 
 - **依赖链**：`@deepseek-ai/*` 改名 = 257 tarball + 230 family 重新打包，peer 全断，
   P0 已 PASS 的 RUNTIME01/02、PACKLIST、BUNDLE 全票重跑。

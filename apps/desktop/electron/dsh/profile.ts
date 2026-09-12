@@ -3,6 +3,7 @@ import { createRequire } from "node:module";
 import { homedir } from "node:os";
 import { join, resolve } from "node:path";
 import { app } from "electron";
+import { seedRuntimeHome } from "./seed";
 
 type RuntimeProfileOptions = {
   homeDir: string;
@@ -10,7 +11,11 @@ type RuntimeProfileOptions = {
   skillsDir: string;
   workspaceRoot?: string;
   pluginRoot?: string;
+  runtimeNodeModulesRoot: string;
+  role: MochiRuntimeRole;
 };
+
+export type MochiRuntimeRole = "teacher" | "classroom";
 
 export type MochiServiceDefaults = {
   campusApiUrl?: string;
@@ -32,21 +37,28 @@ const requireFromHere = createRequire(__filename);
 /**
  * `DSH_HOME` is the explicit Harness override. `MOCHI_RUNTIME_HOME` provides
  * a product-level override for both the shell launcher and Electron. A source
- * checkout defaults to its existing `.mochi-home.nosync`; a packaged app has
- * no workspace and defaults to the user's non-iCloud `~/.mochi-home`.
+ * checkout defaults to a role-specific managed home; a packaged app has no
+ * workspace and defaults to the corresponding non-iCloud user home.
  */
-export function resolveMochiRuntimeHome(): string {
+export function resolveMochiRuntimeHome(role: MochiRuntimeRole): string {
   const explicitHome = process.env.DSH_HOME ?? process.env.MOCHI_RUNTIME_HOME;
   if (explicitHome) return resolve(explicitHome);
-  if (app.isPackaged) return join(homedir(), ".mochi-home");
+  const homeName = role === "teacher" ? ".mochi-home" : ".mochi-classroom-home";
+  if (app.isPackaged) return join(homedir(), homeName);
   const workspaceRoot = resolve(process.env.MOCHI_WORKSPACE_ROOT ?? join(app.getAppPath(), "..", ".."));
-  return join(workspaceRoot, ".mochi-home.nosync");
+  return join(workspaceRoot, `${homeName}.nosync`);
 }
 
 function resolveRuntimeResourceRoot(): string {
   if (process.env.MOCHI_RUNTIME_RESOURCES) return resolve(process.env.MOCHI_RUNTIME_RESOURCES);
   if (app.isPackaged) return join(process.resourcesPath, "mochi", "profile");
   return join(app.getAppPath(), "resources", "mochi-web");
+}
+
+function resolveRuntimeNodeModulesRoot(): string {
+  if (process.env.MOCHI_RUNTIME_NODE_MODULES) return resolve(process.env.MOCHI_RUNTIME_NODE_MODULES);
+  if (app.isPackaged) return join(process.resourcesPath, "app.asar.unpacked", "node_modules");
+  return join(app.getAppPath(), "node_modules");
 }
 
 function loadRuntimeProfileModule(resourceRoot: string): RuntimeProfileModule {
@@ -73,8 +85,8 @@ export function resolveMochiServiceDefaults(
  * versioned source is shared with `mochi.sh`; credentials, sessions, locks,
  * home-level patches and user-owned profile content are outside this operation.
  */
-export function prepareDshHome(): string {
-  const dshHome = resolveMochiRuntimeHome();
+export function prepareDshHome(role: MochiRuntimeRole): string {
+  const dshHome = resolveMochiRuntimeHome(role);
   const resourceRoot = resolveRuntimeResourceRoot();
   const skillsDir = process.env.MOCHI_SKILLS_DIR
     ? resolve(process.env.MOCHI_SKILLS_DIR)
@@ -86,6 +98,8 @@ export function prepareDshHome(): string {
     homeDir: dshHome,
     resourceRoot,
     skillsDir,
+    runtimeNodeModulesRoot: resolveRuntimeNodeModulesRoot(),
+    role,
   };
   if (app.isPackaged || process.env.MOCHI_PLUGIN_ROOT) {
     options.pluginRoot = resolve(process.env.MOCHI_PLUGIN_ROOT ?? join(process.resourcesPath, "mochi", "plugins"));
@@ -94,5 +108,15 @@ export function prepareDshHome(): string {
   }
 
   loadRuntimeProfileModule(resourceRoot).provisionMochiProfiles(options);
+  // 首启模型种子（WO-3）：teacher 角色把打包内置的凭据 refs 与默认模型链
+  // 幂等补进运行时 home；已有配置一律不覆盖。失败不阻塞宿主启动。
+  try {
+    const seedSummary = seedRuntimeHome({ homeDir: dshHome, resourceRoot, role });
+    if (seedSummary.status !== "disabled") {
+      console.log(`[mochi] 模型种子：${seedSummary.status}（refs: ${seedSummary.credentialRefsPresent.join("、") || "无"}；settings: ${seedSummary.settingsAction}）`);
+    }
+  } catch (error) {
+    console.error(`[mochi] 模型种子写入失败（可继续在设置页配置）：${error instanceof Error ? error.message : String(error)}`);
+  }
   return dshHome;
 }

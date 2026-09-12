@@ -11,6 +11,8 @@
     "typecheck": "tsc -p tsconfig.node.json --noEmit",
     "test:profile-skills": "node scripts/test-profile-skills.mjs",
     "test:runtime-profile": "node scripts/test-runtime-profile.mjs",
+    "test:launch-role": "npm run build && node scripts/test-launch-role.mjs",
+    "test:wo7": "npm run build && node scripts/test-launch-role.mjs && node scripts/test-tray-runtime.mjs && node scripts/wo7-switch-e2e.mjs && node scripts/wo7-e2e.mjs && node scripts/wo7-evidence.mjs",
     "test:web-host-runtime": "npm run build && node scripts/test-web-host-runtime.mjs",
     "prepare:mochi-resources": "node scripts/prepare-mochi-resources.cjs",
     "test:package-resources": "node scripts/test-package-resources.mjs",
@@ -153,7 +155,7 @@
     "@deepseek-ai/dsh-client-ui-brand-official": "file:../../vendor/alpha-family/deepseek-ai-dsh-client-ui-brand-official-0.1.3-alpha.1.tgz",
     "@deepseek-ai/dsh-client-ui-chat": "file:../../vendor/alpha-family/deepseek-ai-dsh-client-ui-chat-0.1.3-alpha.1.tgz",
     "@deepseek-ai/dsh-client-ui-commands": "file:../../vendor/alpha-family/deepseek-ai-dsh-client-ui-commands-0.1.3-alpha.1.tgz",
-    "@deepseek-ai/dsh-client-ui-conversation": "file:../../vendor/alpha-family/deepseek-ai-dsh-client-ui-conversation-0.1.3-alpha.1.tgz",
+    "@deepseek-ai/dsh-client-ui-conversation": "file:../../vendor/alpha-family/deepseek-ai-dsh-client-ui-conversation-0.1.3-alpha.1-c3a16aa2.tgz",
     "@deepseek-ai/dsh-client-ui-cordis": "file:../../vendor/alpha-family/deepseek-ai-dsh-client-ui-cordis-0.1.3-alpha.1.tgz",
     "@deepseek-ai/dsh-client-ui-deliverables": "file:../../vendor/alpha-family/deepseek-ai-dsh-client-ui-deliverables-0.1.3-alpha.1.tgz",
     "@deepseek-ai/dsh-client-ui-goal": "file:../../vendor/alpha-family/deepseek-ai-dsh-client-ui-goal-0.1.3-alpha.1.tgz",
@@ -278,26 +280,44 @@
     "jxl-theme": "file:../../vendor/local-plugins/jxl-theme-0.2.0.tgz",
     "mochi-approval": "file:../../vendor/local-plugins/mochi-approval-0.0.1.tgz",
     "mochi-campus": "file:../../vendor/local-plugins/mochi-campus-0.0.1-84cd59aa.tgz",
-    "mochi-dispatch": "file:../../vendor/local-plugins/mochi-dispatch-0.0.1.tgz",
-    "mochi-hello": "file:../../vendor/local-plugins/mochi-hello-0.0.1-da57cf19.tgz",
+    "mochi-dispatch": "file:../../vendor/local-plugins/mochi-dispatch-0.0.1-1a046cbc.tgz",
+    "mochi-documents": "file:../../vendor/local-plugins/mochi-documents-0.0.1-a6661beb.tgz",
+    "mochi-hello": "file:../../vendor/local-plugins/mochi-hello-0.0.1-7ca832d0.tgz",
     "mochi-llm-mimo": "file:../../vendor/local-plugins/mochi-llm-mimo-1.0.0.tgz",
     "mochi-model-presets": "file:../../vendor/local-plugins/mochi-model-presets-0.1.0.tgz",
-    "mochi-web-search": "file:../../vendor/local-plugins/mochi-web-search-0.0.1.tgz",
-    "mochi-workbench": "file:../../vendor/local-plugins/mochi-workbench-0.1.0.tgz",
+    "mochi-web-search": "file:../../vendor/local-plugins/mochi-web-search-0.0.1-2bc95d87.tgz",
+    "mochi-workbench": "file:../../vendor/local-plugins/mochi-workbench-0.1.0-636ee36c.tgz",
     "schemastery": "3.18.0",
     "cosmokit": "1.8.1",
     "unist-util-visit-parents": "6.0.2",
-    "micromark-util-subtokenize": "2.1.0"
+    "micromark-util-subtokenize": "2.1.0",
+    "@mochi/pdf-layout": "file:../../vendor/local-plugins/mochi-pdf-layout-0.1.0-c4a3d2c2.tgz",
+    "exceljs": "4.4.0",
+    "jszip": "3.10.1",
+    "mochi-grades": "file:../../vendor/local-plugins/mochi-grades-0.0.1-46c9d88b.tgz",
+    "mochi-memory": "file:../../vendor/local-plugins/mochi-memory-0.0.1-5ea318c1.tgz",
+    "mochi-modeling": "file:../../vendor/local-plugins/mochi-modeling-0.0.1-3a5132d2.tgz",
+    "mochi-presentations": "file:../../vendor/local-plugins/mochi-presentations-0.0.1-53a7d390.tgz",
+    "pptxgenjs": "4.0.1",
+    "mochi-knowledge": "file:../../vendor/local-plugins/mochi-knowledge-0.0.1-85c73365.tgz",
+    "mochi-lan": "file:../../vendor/local-plugins/mochi-lan-0.0.1-841d1deb.tgz",
+    "mochi-lan-client": "file:../../vendor/local-plugins/mochi-lan-client-0.1.0-cce72b50.tgz",
+    "playwright": "1.55.0"
   },
   "build": {
     "appId": "cn.jiaxinglian.mochi",
     "productName": "Mochi",
     "directories": {
-      "output": "release"
+      "output": "release",
+      "buildResources": "build"
     },
     "files": [
       "dist-electron/**/*",
-      "package.json"
+      "package.json",
+      "!node_modules/**/*.map",
+      "!node_modules/**/*.d.ts",
+      "!node_modules/**/*.d.mts",
+      "!node_modules/**/*.d.cts"
     ],
     "mac": {
       "target": [
@@ -310,6 +330,7 @@
         }
       ],
       "category": "public.app-category.productivity",
+      "icon": "icon.icns",
       "identity": null,
       "hardenedRuntime": false,
       "gatekeeperAssess": false
@@ -323,6 +344,7 @@
           ]
         }
       ],
+      "icon": "icon.ico",
       "verifyUpdateCodeSignature": false
     },
     "dmg": {

@@ -1,5 +1,17 @@
 # 11 · 工具契约（TOOL_CONTRACT）
 
+> ⚠️ **本文件已归档（archived）· 2026-09-12 标注**
+>
+> **status**: archived　**last_verified**: 2026-09-12　**verified_by**: 工具线
+>
+> **§3 的命名口径 `<domain>.<action>` 已作废（点号工具名）。**
+> 铁律：**模型可见工具名必须匹配 `^[a-zA-Z0-9_-]+$`**——**点号会让模型网关整轮 400 拒收**
+> （2026-09-12 真实事故：`file.search` 这一类名字导致整轮对话被拒）。
+> 现行实现一律用下划线：`jxl_query`、`mochi_ask`、`mochi_ppt_create`、`file_search`。
+> 校验已在 `plugins/mochi-files/index.mjs:30`、`plugins/mochi-visuals/plugin.mjs:30` 处硬编码为运行时断言。
+> §2 的返回包络仍是有效设计目标；§4 的权限分级仍成立。
+> 现行工具清单见 `docs/agent-integration-handbook.md`。
+
 ## 1. 铁律
 
 **TOOLS RETURN FACTS. MOCHI SPEAKS.** 工具返回结构化事实，永远不返回聊天话术。
@@ -22,9 +34,13 @@
 
 ## 3. 命名与注册
 
-- 命名：`<domain>.<action>`（`jxl.movement_list`、`ppt.create`、`mochi.ask`）。
+- 命名：~~`<domain>.<action>`（`jxl.movement_list`、`ppt.create`、`mochi.ask`）~~ ⛔ **已作废**
+  → **现行口径：`^[a-zA-Z0-9_-]+$`，用下划线**（`jxl_movement_request_list`、`mochi_ppt_create`、`mochi_ask`）。
+  点号会被模型网关整轮 400 拒收。详见本文件头部横幅。
 - 注册：`ctx.tools`（官方工具注册表）；schema 进系统提示组装（官方机制，不手拼 prompt）。
-- 数量：P0 = 38（唯一权威清单 = `Mochi/plan/01_TOOLCHAIN.md` §1.2；已由修订官裁定）。
+- 数量：~~P0 = 38~~ ⛔ 已作废（该数字属 `plan/01_TOOLCHAIN.md` 的早期口径）。
+  **现行真值 = `apps/desktop/scripts/prepare-mochi-resources.cjs` 的 `PLUGINS` 数组**（当前 26 个插件），
+  工具名全表见 `docs/agent-integration-handbook.md`。
 
 ## 4. 权限分级（answerer 按工具名判定——官方 payload 无参数）
 

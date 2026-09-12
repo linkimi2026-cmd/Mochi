@@ -19,11 +19,17 @@
         "mochi-dispatch",
         "mochi-campus",
         "mochi-web-search",
+        "mochi-knowledge",
         "mochi-llm-mimo",
         "mochi-grades",
         "mochi-presentations",
+        "mochi-documents",
+        "mochi-files",
+        "mochi-sheets",
+        "mochi-visuals",
         "mochi-modeling",
-        "mochi-memory"
+        "mochi-memory",
+        "mochi-task-scheduler"
       ]
     },
     "mochi": {
@@ -40,11 +46,18 @@
         "mochi-dispatch",
         "mochi-campus",
         "mochi-web-search",
+        "mochi-knowledge",
         "mochi-llm-mimo",
         "mochi-grades",
         "mochi-presentations",
+        "mochi-documents",
+        "mochi-files",
+        "mochi-sheets",
+        "mochi-visuals",
         "mochi-modeling",
         "mochi-memory",
+        "mochi-task-scheduler",
+        "mochi-modes",
         "mochi-approval"
       ]
     },
@@ -62,18 +75,70 @@
         "mochi-dispatch",
         "mochi-campus",
         "mochi-web-search",
+        "mochi-knowledge",
         "mochi-llm-mimo",
         "mochi-grades",
         "mochi-presentations",
+        "mochi-documents",
+        "mochi-files",
+        "mochi-sheets",
+        "mochi-visuals",
         "mochi-modeling",
         "mochi-memory",
+        "mochi-task-scheduler",
+        "mochi-modes",
+        "mochi-modes-client",
         "jxl-theme",
         "jxl-brand",
         "jxl-campus",
         "mochi-workbench",
         "mochi-model-presets",
-        "dsh-better-sidebar"
+        "dsh-better-sidebar",
+        "mochi-lan",
+        "mochi-lan-client"
       ]
+    }
+  },
+  "roleProfiles": {
+    "teacher": {
+      "defaultPreset": "lesson-planning",
+      "managedPreset": {
+        "workspacePath": "client-plugins/teacher-agent-presets",
+        "resourcePath": "teacher-agent-presets"
+      },
+      "includeInstalledPresetRoot": true,
+      "includeUserPresetRoot": true
+    },
+    "classroom": {
+      "defaultPreset": "classroom",
+      "managedPreset": {
+        "profilePath": "classroom-agent-presets"
+      },
+      "includeInstalledPresetRoot": false,
+      "includeUserPresetRoot": false,
+      "profilePlugins": {
+        "headless": [
+          "mochi-hello",
+          "mochi-llm-mimo",
+          "mochi-knowledge"
+        ],
+        "mochi": [
+          "mochi-hello",
+          "mochi-llm-mimo",
+          "mochi-knowledge",
+          "mochi-approval"
+        ],
+        "mochi-web": [
+          "mochi-hello",
+          "mochi-llm-mimo",
+          "mochi-knowledge",
+          "jxl-theme",
+          "jxl-brand",
+          "mochi-workbench",
+          "mochi-lan",
+          "mochi-lan-client"
+        ]
+      }
     }
   },
   "plugins": {
@@ -93,6 +158,10 @@
       "workspacePath": "plugins/mochi-web-search",
       "resourcePath": "mochi-web-search"
     },
+    "mochi-knowledge": {
+      "workspacePath": "plugins/mochi-knowledge",
+      "resourcePath": "mochi-knowledge"
+    },
     "mochi-grades": {
       "workspacePath": "plugins/mochi-grades",
       "resourcePath": "mochi-grades"
@@ -101,6 +170,30 @@
       "workspacePath": "plugins/mochi-presentations",
       "resourcePath": "mochi-presentations"
     },
+    "mochi-documents": {
+      "workspacePath": "plugins/mochi-documents",
+      "resourcePath": "mochi-documents"
+    },
+    "mochi-files": {
+      "workspacePath": "plugins/mochi-files",
+      "resourcePath": "mochi-files"
+    },
+    "mochi-sheets": {
+      "workspacePath": "plugins/mochi-sheets",
+      "resourcePath": "mochi-sheets"
+    },
+    "mochi-visuals": {
+      "workspacePath": "plugins/mochi-visuals",
+      "resourcePath": "mochi-visuals"
+    },
+    "mochi-modes": {
+      "workspacePath": "plugins/mochi-modes",
+      "resourcePath": "mochi-modes"
+    },
+    "mochi-modes-client": {
+      "workspacePath": "client-plugins/mochi-modes",
+      "resourcePath": "mochi-modes-client"
+    },
     "mochi-modeling": {
       "workspacePath": "plugins/mochi-modeling",
       "resourcePath": "mochi-modeling"
@@ -108,6 +201,10 @@
     "mochi-memory": {
       "workspacePath": "plugins/mochi-memory",
       "resourcePath": "mochi-memory"
+    },
+    "mochi-task-scheduler": {
+      "workspacePath": "plugins/mochi-task-scheduler",
+      "resourcePath": "mochi-task-scheduler"
     },
     "mochi-llm-mimo": {
       "workspacePath": "plugins/mochi-llm-mimo",
@@ -121,6 +218,10 @@
             "id": "mimo-v2.5",
             "contextWindow": 131072,
             "maxTokens": 8192,
+            "inputModalities": [
+              "text",
+              "image"
+            ],
             "reasoningEfforts": [
               "off",
               "low",
@@ -132,6 +233,10 @@
             "id": "mimo-v2.5-pro",
             "contextWindow": 131072,
             "maxTokens": 8192,
+            "inputModalities": [
+              "text",
+              "image"
+            ],
             "reasoningEfforts": [
               "off",
               "low",
@@ -165,6 +270,14 @@
     "mochi-model-presets": {
       "workspacePath": "client-plugins/mochi-model-presets",
       "resourcePath": "mochi-model-presets"
+    },
+    "mochi-lan": {
+      "workspacePath": "plugins/mochi-lan",
+      "resourcePath": "mochi-lan"
+    },
+    "mochi-lan-client": {
+      "workspacePath": "client-plugins/mochi-lan",
+      "resourcePath": "mochi-lan-client"
     },
     "dsh-better-sidebar": {
       "workspacePath": "plugins/dsh-better-sidebar",

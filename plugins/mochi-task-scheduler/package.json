@@ -1,0 +1,24 @@
+{
+  "name": "mochi-task-scheduler",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "index.mjs",
+  "description": "Mochi 定时任务：本机 SQLite 持久化 + 进程内定时器，到点在原会话发提醒或产出本机通知",
+  "engines": {
+    "node": ">=22"
+  },
+  "files": [
+    "index.mjs",
+    "store.mjs",
+    "scheduler.mjs",
+    "schedule-time.mjs",
+    "tools.mjs"
+  ],
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "dependencies": {
+    "@deepseek-ai/dsh-tools": "0.1.3-alpha.1"
+  }
+}

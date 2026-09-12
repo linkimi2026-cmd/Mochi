@@ -1,0 +1,194 @@
+# Mochi CI：源码回归门禁。
+#
+# 这个 workflow 只做两件事：
+#   1) 跑不需要任何第三方安装的测试入口（`node --test`），防止改坏无人发现；
+#   2) 报告 Windows 出包源码快照是否与清单一致。
+#
+# 它刻意不安装依赖、不起宿主、不碰原生模块：Windows 出包是另一个 workflow
+# （windows-native-package.yml）的职责，这里只跑能确定性复现的部分。
+#
+# 为什么只用 ubuntu-latest：跑测试不需要 Windows；Windows 上装 Electron、
+# 签安装包才是另一个流程的事。
+#
+# ── 测试入口是怎么选的（实测依据）──────────────────────────────────────────
+# 本机把 `apps/desktop/node_modules` 与各插件 `node_modules` 全部移走后逐个跑过；
+# 只有下面这些入口在“干净检出、零安装”下仍然 exit=0，所以进 CI。
+#
+# 被排除的入口与原因（不要因为“看起来应该跑”就往回加）：
+#   * plugins/mochi-campus/test.mjs、aggregation.test.mjs、plugins/mochi-dispatch/test.mjs、
+#     plugins/mochi-memory/test.mjs、plugins/mochi-modeling/test.mjs、
+#     plugins/mochi-task-scheduler/test/plugin.test.mjs
+#       → 依赖 `@deepseek-ai/*`（内部 registry 包，公开 runner 拉不到）。
+#   * plugins/mochi-documents/test/exam-template.test.mjs（docx）、
+#     plugins/mochi-documents/test/plugin.test.mjs（pdf-lib）、
+#     plugins/mochi-presentations/test/presentation.test.mjs（jszip）、
+#     plugins/mochi-grades/test/generator.test.mjs（exceljs）、
+#     plugins/mochi-hello/test.mjs（@deepseek-ai/cordis）
+#       → 需要先安装第三方包，且多数插件没有可用 lockfile。
+#   * plugins/mochi-web-search/test/provider.test.mjs
+#       → 直接 import `apps/desktop/node_modules/...`，要先在 desktop 里 npm ci。
+#   * apps/desktop/scripts/test-migrate.mjs
+#       → 需要 better-sqlite3 原生模块（按 Electron ABI 编译，Node 下加载失败）。
+#   * apps/desktop/scripts/test-profile-skills.mjs
+#       → 起宿主并加载 fs-ext 原生模块，Linux runner 上架构/ABI 不保证。
+#   * apps/desktop/scripts/test-startup-runtime.mjs、
+#     test-host-lifecycle-runtime.mjs
+#       → 需要真实宿主进程与网络回环探测，实测报 fetch failed。
+#   * apps/desktop/scripts/test-classroom-role-runtime.mjs、
+#     test-service-wiring-runtime.mjs、test-web-host-runtime.mjs、
+#     test-tray-runtime.mjs、test-tray-integration-runtime.mjs、
+#     test-doctor-window.mjs
+#       → require("electron")，需要 Electron 二进制。
+#   * apps/desktop/scripts/test-package-resources.mjs、
+#     test-runtime-profile.mjs、test-installer-config.mjs、
+#     test-host-peers 检查脚本的测试
+#       → 需要 apps/desktop 已安装 node_modules（electron-builder / semver /
+#         @deepseek-ai 闭包 / presets 目录）。
+#   * 审批插件（apps/desktop/electron 下的 mochi-approval）的测试
+#       → 需要 @deepseek-ai/cordis。
+#
+# 待办（需要主控决策）：插件测试大多要 `@deepseek-ai/*` 内部包，公开 CI 装不上。
+# 若要守护它们，只能把测试搬到私有出包仓库里跑，或为插件补可离线安装的 lockfile。
+
+name: Mochi CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mochi-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  snapshot-manifest:
+    name: 快照清单一致性（报告）
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Set up Node 22
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: "22.22.2"
+          package-manager-cache: false
+
+      # 初期只报告、不阻断：当前清单里有 9 个文件因为别人未提交的改动而对不上，
+      # 直接 --fail 会让所有 PR 变红。清单 owner 重算哈希后，把这里的
+      # `continue-on-error: true` 删掉、并给脚本加 `--fail`，即可升级为硬门禁。
+      # 重算方法见 docs/build-standard.md「CI 快照清单铁律」。
+      - name: Report snapshot drift
+        continue-on-error: true
+        run: node scripts/check-snapshot-manifest.mjs
+
+  tests:
+    name: 零依赖回归测试
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Set up Node 22
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: "22.22.2"
+          package-manager-cache: false
+
+      # node --test 会为每个文件起独立子进程；从仓库根目录运行，
+      # 因此脚本里凡是相对 cwd 的路径都能解析。
+      #
+      # ⚠️ 已知覆盖缺口：本 job 不装任何依赖，所以凡是 `import '@deepseek-ai/dsh-tools'`
+      # 的插件测试（mochi-modes / mochi-visuals / mochi-sheets / mochi-documents /
+      # mochi-presentations 的绝大多数用例）在这里跑不了，只能本地跑。要补上需要
+      # 在 CI 里放一个 dsh-tools 的测试替身，属于待办项，不要假装已覆盖。
+      #
+      # ✅ 部分补上的例子（2026-09-12）：公式引擎是纯函数 + 只 import ../address.mjs，
+      # 完全不需要第三方包，所以为它单独建了零依赖入口
+      # `plugins/mochi-sheets/test/formula-engine.test.mjs` 并列在下面。
+      # 历史教训：formula.test.mjs 需要 exceljs，进不了 CI，于是 SUBSTITUTE 第 4 参
+      # 与 COUNTIF/SUMIF 通配符两个静默错值长期无人拦。**新写核心纯函数时优先给它
+      # 配一个零依赖测试入口**，而不是只写进需要依赖的那个文件。
+      - name: 插件测试（plugins/**）
+        run: |
+          node --test \
+            plugins/mochi-campus/connection.test.mjs \
+            plugins/mochi-lan/test.mjs \
+            plugins/mochi-lan/test-limits.mjs \
+            plugins/mochi-knowledge/test/knowledge-store.test.mjs \
+            plugins/mochi-knowledge/test/page-image.test.mjs \
+            plugins/mochi-knowledge/test/plugin.test.mjs \
+            plugins/mochi-office/test/server.test.mjs \
+            plugins/mochi-office/test/store.test.mjs \
+            plugins/mochi-files/test/paths.test.mjs \
+            plugins/mochi-task-scheduler/test/schedule-time.test.mjs \
+            plugins/mochi-task-scheduler/test/scheduler.test.mjs \
+            plugins/mochi-task-scheduler/test/store.test.mjs \
+            plugins/mochi-sheets/test/formula-engine.test.mjs
+
+      - name: 客户端插件测试（client-plugins/**）
+        run: |
+          node --test \
+            client-plugins/jxl-brand/scripts/avatar-lifecycle.test.mjs \
+            client-plugins/mochi-lan/test/client.test.mjs \
+            client-plugins/mochi-model-presets/test/client.test.mjs \
+            client-plugins/mochi-modes/test/client.test.mjs \
+            client-plugins/mochi-workbench/test/client.test.mjs
+
+      - name: 仓库脚本测试（scripts/**）
+        run: |
+          node --test \
+            scripts/test-campus-paths.cjs \
+            scripts/test-jxl-campus-static-root.mjs \
+            scripts/test-run-detached.cjs
+
+      # 技能/文档层的工具名守卫（零依赖，硬门禁）。
+      #
+      # 为什么单独需要它：test-package-resources.mjs 的两层守卫
+      # （assertModelFacingToolNames 重放注册面、assertNoDottedToolNameLiterals 扫
+      # stageRoot/plugins 源码）**都不扫 skills/**，于是
+      # skills/class-meeting-prep/SKILL.md 的 `jxl.*`、
+      # 以及三个 SKILL.md 里的 `jxl_student_query`（不存在的工具名）长期漏网。
+      # 本步骤只读、不装依赖，扫 skills/ + docs/（排除 docs/reference 与 docs/tasks 历史证据）。
+      #
+      # 故意展示错误写法的对照行，行尾加 `<!-- allow-dotted-tool-name -->` 即为豁免。
+      - name: 技能与文档工具名守卫
+        run: node scripts/check-skill-tools.mjs
+
+      # 文档漂移报告（初期只报告、不阻断）：列出现行口径与陈旧写法的 文件:行号。
+      - name: 报告文档漂移
+        continue-on-error: true
+        run: node scripts/scan-doc-drift.mjs
+
+      # 这些 desktop 测试只用相对路径 + Node 内置模块；已在
+      # 「没有 apps/desktop/node_modules」的条件下实测通过。
+      - name: 桌面端纯 Node 测试（apps/desktop/scripts/**）
+        run: |
+          node --test \
+            apps/desktop/scripts/test-release-input.mjs \
+            apps/desktop/scripts/test-doctor.mjs \
+            apps/desktop/scripts/test-launch-role.mjs
+
+      # 缓存可观测性守卫。与上面那批不同：它**需要** apps/desktop/node_modules
+      # （要读 dsh-llm-deepseek 的产物文本）。产物不存在时它会大声打印跳过原因
+      # 并退出 0 —— 静默跳过会让"没检查"看起来像"检查通过"。
+      #
+      # 为什么值得单开一步：dsh 适配器里的 `stream_options:{include_usage:true}`
+      # 一旦丢失，网关就不再回传 usage，请求照常成功、界面照常回话，只有
+      # `assistant/message` 里的 cacheReadTokens 悄悄消失 —— 我们对外承诺的
+      # 「缓存命中率 ≥99%」会瞬间变成不可观测。这类没有症状的失效必须由断言兜住。
+      # 口径与实测数据见 docs/cache-hit-rate.md。
+      - name: 缓存可观测性守卫（依赖 node_modules，缺则显式跳过）
+        run: node apps/desktop/scripts/test-llm-cache-observability.mjs

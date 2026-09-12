@@ -1,6 +1,6 @@
 // mochi-modeling · Mochi 教学建模工作空间（方案第 15-20 章）
 //
-// 首样：椭圆切线交互模型。工具 mochi.model_create 在指定目录生成：
+// 首样：椭圆切线交互模型。工具 mochi_model_create 在指定目录生成：
 //   model.html            自包含交互页（零 http(s) 外链，JSXGraph 走本地 vendor 副本）
 //   model.json            模型说明（类型/参数/公式/假设/版本/验证摘要）
 //   assets/jsxgraph*.{js,css}  从插件 assets 复制的本地副本
@@ -360,12 +360,12 @@ export function apply(ctx) {
     name: toolName, description, parameters, output, execute,
   }));
 
-  register('mochi.model_create', '生成交互教学数学模型页面（自包含 HTML，可拖动/可核对/离线零依赖）。本期支持 type=conic-tangent：椭圆切线交互模型（可拖切点、切线/焦点/辅助线、参数滑块、结论分步揭示、课堂模式）。', {
+  register('mochi_model_create', '生成交互教学数学模型页面（自包含 HTML，可拖动/可核对/离线零依赖）。本期支持 type=conic-tangent：椭圆切线交互模型（可拖切点、切线/焦点/辅助线、参数滑块、结论分步揭示、课堂模式）。', {
     type: { type: 'string', required: true, description: '模型类型，本期仅 conic-tangent。' },
     a: { type: 'number', required: true, description: '椭圆半长轴（>0 的有限数）。' },
     b: { type: 'number', required: true, description: '椭圆半短轴（>0 的有限数）。' },
     outputDirectory: { type: 'string', required: true, description: '输出目录（自动创建），生成 model.html / model.json / assets/。' },
   }, (args) => modelCreate(args));
 
-  console.log('[mochi-modeling] 教学建模域就绪：mochi.model_create（conic-tangent 首样，JSXGraph ' + JSXGRAPH_VERSION + ' 本地 vendor）');
+  console.log('[mochi-modeling] 教学建模域就绪：mochi_model_create（conic-tangent 首样，JSXGraph ' + JSXGRAPH_VERSION + ' 本地 vendor）');
 }

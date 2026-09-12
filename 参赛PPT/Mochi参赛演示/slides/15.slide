@@ -1,0 +1,95 @@
+<Slide style={{ width: 1280, height: 720, background: '#16211d', position: 'relative', overflow: 'hidden' }}>
+
+    {/* 背景柔光 */}
+    <Box style={{
+        position: 'absolute', right: -80, top: 140, width: 620, height: 620,
+        background: 'radial-gradient(circle, rgba(232,179,75,0.12) 0%, rgba(232,179,75,0) 70%)',
+    }} />
+
+    <Box style={{
+        position: 'relative', zIndex: 1,
+        width: 1280, height: 720,
+        paddingLeft: 96, paddingRight: 96, paddingTop: 72, paddingBottom: 60,
+        flexDirection: 'row', gap: 76,
+    }}>
+
+        {/* 左窄栏 · 标题块 */}
+        <Box style={{ width: 320, flexDirection: 'column', gap: 18, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 14, color: '#e8b34b', letterSpacing: 5 }}>自证</Text>
+            <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#f5f2e9', lineHeight: 1.2 }}>
+                它不只是
+                <br />
+                回答问题
+            </Text>
+            <Box style={{ width: 56, height: 3, background: '#e8b34b', borderRadius: 2 }} />
+            <Text style={{ fontSize: 16, color: 'rgba(245,242,233,0.5)', lineHeight: 1.8 }}>
+                一个 AI 产品最有说服力的证据，
+                不是它的参数，是它自己做出来的东西。
+            </Text>
+        </Box>
+
+        {/* 右内容 */}
+        <Box style={{ flex: 1, flexDirection: 'column', gap: 22, justifyContent: 'center' }}>
+
+            <Text style={{ fontSize: 30, fontWeight: 600, color: '#f5f2e9', lineHeight: 1.4 }}>
+                它会交东西
+            </Text>
+
+            <Text style={{ fontSize: 17, color: 'rgba(245,242,233,0.58)', lineHeight: 1.85 }}>
+                老师说要一份课件、一份周报、一张成绩分析表，
+                Mochi 交回来的不是一段文字描述，而是一个能打开、能继续改的文件。
+                文件存在本机会话工作区里，老师随时能拿到。
+            </Text>
+
+            <Box style={{ height: 1, background: 'rgba(245,242,233,0.14)' }} />
+
+            <Box style={{ flexDirection: 'row', gap: 22 }}>
+
+                <Box style={{
+                    flex: 1, flexDirection: 'column', gap: 10,
+                    background: 'rgba(245,242,233,0.05)',
+                    border: '1px solid rgba(245,242,233,0.12)',
+                    borderRadius: 10, padding: 22,
+                }}>
+                    <Text style={{ fontSize: 19, fontWeight: 600, color: '#f5f2e9' }}>文档与表格</Text>
+                    <Text style={{ fontSize: 15, color: 'rgba(245,242,233,0.55)', lineHeight: 1.7 }}>
+                        可编辑的 Word 与 Excel，写进真实文件、落在工作区，
+                        不是"复制这段文字自己去粘"。
+                    </Text>
+                </Box>
+
+                <Box style={{
+                    flex: 1, flexDirection: 'column', gap: 10,
+                    background: 'rgba(245,242,233,0.05)',
+                    border: '1px solid rgba(245,242,233,0.12)',
+                    borderRadius: 10, padding: 22,
+                }}>
+                    <Text style={{ fontSize: 19, fontWeight: 600, color: '#f5f2e9' }}>课件</Text>
+                    <Text style={{ fontSize: 15, color: 'rgba(245,242,233,0.55)', lineHeight: 1.7 }}>
+                        真 PPTX，支持"改第 X 页"这种局部修改——
+                        保留旧版、写入新目录，不用整套重做。
+                    </Text>
+                </Box>
+
+            </Box>
+
+            <Text style={{ fontSize: 15, color: 'rgba(232,179,75,0.85)', lineHeight: 1.7 }}>
+                ※ 现场将展示一份由 Mochi 自己生成的产物。
+            </Text>
+
+        </Box>
+    </Box>
+
+    {/* C 区 · 页脚条 */}
+    <Box style={{
+        position: 'absolute', bottom: 0, left: 0, width: 1280, height: 60,
+        paddingLeft: 96, paddingRight: 96,
+        flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <Box style={{ width: 10, height: 10, borderRadius: 5, background: '#e8b34b' }} />
+            <Text style={{ fontSize: 14, color: 'rgba(245,242,233,0.45)' }}>Mochi · 嘉祥教育集团 AI 创意实践大赛</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: 'rgba(245,242,233,0.45)' }}>15 / 17</Text>
+    </Box>
+</Slide>

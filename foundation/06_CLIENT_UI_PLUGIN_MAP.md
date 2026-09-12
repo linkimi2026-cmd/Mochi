@@ -1,7 +1,16 @@
 # 06 · Client UI 插件地图（CLIENT_UI_PLUGIN_MAP）
 
-> 目标：保留 Harness 的真实 UI 结构，把嘉行联视觉与教师视角叠上去。
-> 事实基础见 `01` §5（slot 名全部 grep 自官方仓库）。
+> ⚠️ **本文件已归档（archived）· 2026-09-12 标注**
+>
+> **status**: archived　**last_verified**: 2026-09-12　**verified_by**: 工具线
+>
+> **§2 表内 `jxl-workspace` 的「`conversation.view`（新增 tab）」已作废。**
+> 现行裁定（用户 2026-09-12）：**会话只有一个官方 chat 视图，不再新增视图 tab。**
+> 「对话 / 工作」两模式的正确扩展点是 **`ctx.uiConversation.views.register({id:"work"})`**
+> + `conversation.view` slot，**不是** `conversation.view` 新增 tab，也**不得劫持 trajectory**。
+> 现行实现见 `client-plugins/mochi-workbench`（`conversation.session.header.actions`）；
+> 客户端插件实际上线的 slot 全表见 `docs/agent-integration-handbook.md` §7。
+> §1 的官方 UI 处置与 §2 的其余 slot 规划（brand / settings / theme）仍成立。
 
 ## 1. 官方 UI 能力 → Mochi 处置
 

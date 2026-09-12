@@ -42,6 +42,11 @@ plugins/dsh-better-sidebar/
 # 打包资源备份目录（时间戳后缀，未被 *.nosync/ 规则覆盖）
 **/.mochi-package-resources*.backup-*/
 
+# 破损/改名保留下来的依赖树与临时备份：`git add -A` 时绝对不能入库
+**/node_modules.broken/
+node_modules.broken/
+*.bak
+
 # 日志
 *.log
 npm-debug.log*
@@ -60,3 +65,7 @@ Thumbs.db
 .env
 .env.local
 .env.*.local
+
+# 打包密钥与首启种子（key 值只允许存在于本地文件与运行时凭据，永不入仓）
+/secrets/
+apps/desktop/resources/mochi-web/seeds/

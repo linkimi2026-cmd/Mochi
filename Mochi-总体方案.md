@@ -1,9 +1,16 @@
 # Mochi 总体方案（最终整合版）
 
+> **status**: active　**last_verified**: 2026-09-12　**verified_by**: 工具线
+>
+> **权威范围（2026-09-12 裁定，见 `docs/DOC-AUTHORITY.md`）**：本文是 **L1 产品设计事实源**——
+> 管产品定位、功能设计、章节编号、术语表。**不管排期**（排期归 `docs/tasks/MOCHI-URGENT-REPLAN-2026-09-11.md`，L0-A），
+> **不管出包路径**（归 `docs/build-standard.md`，L0-B），**不管当前实现状态**（以源码为准，L2）。
+> 本文此前自称的「唯一事实源」指的就是 L1 这一层，不是全仓唯一。
+>
 > **版本**：v2.0 · 2026-09-06（合并《最终能力与功能总纲》：新增教学建模、岗位能力、学生端终态、视觉体系；含实施督导审校修订与 MIMO 主力裁定）
-> **状态**：主规划文档，唯一事实源。此后所有实现以本文为准；旧文档保留作历史档案，来源对照见附录 A。
 > **硬约束**：本文档只规划，不含实现代码；插件实现由后续专人按本文执行。
-> **答辩日期**：2026-09-30（嘉祥教育集团 AI 创意实践大赛）。
+> **日期口径**：**2026-09-30** 是**嘉行联参赛材料**截止日（另一条线）；
+> Mochi 出包/演示截止已由 2026-09-08 裁定**提前到 2026-09-11**，并**已交付**（`release/2026-09-09`、`release/2026-09-10`）。
 
 ---
 
@@ -337,7 +344,7 @@
 
 | # | 阻断项 | 位置 | 后果 |
 |---|---|---|---|
-| 1 | 打包白名单只有 9 个插件，`runtime-profile.json` 已声明 12 个 | `scripts/prepare-mochi-resources.cjs` + `test-package-resources.mjs:191` 硬断言 ===9 | **打包版 mochi-web profile 起不来**（缺 mochi-web-search / mochi-llm-mimo / dsh-better-sidebar） |
+| 1 | 打包白名单只有 9 个插件，`runtime-profile.json` 已声明 12 个 | `scripts/prepare-mochi-resources.cjs` + `test-package-resources.mjs:191` 硬断言 ===9 | **打包版 mochi-web profile 起不来**（缺 mochi-web-search / mochi-llm-mimo / dsh-better-sidebar）。**✅ 已解决（2026-09-12 复核）：白名单现为 26 个插件，本行数字为 2026-09-06 的历史快照** |
 | 2 | 打包 profile 资源目录疑似为空 | `.mochi-package-resources-v1.nosync/profile` 空 + `profile.ts:37` 要求 `runtime-profile.cjs` 存在 | 打包版**可能启动失败**（P0 第一件事验证） |
 | 3 | 无品牌图标（无 .icns/.ico） | `apps/desktop/` | 默认 Electron 图标，不像正经应用（第 26 章规格已备，专人绘制） |
 | 4 | `web-host.ts:94` `cwd: process.cwd()` | Finder 双击时 cwd=`/` | dsh 在根目录建文件 → 改 `app.getPath('userData')` |
@@ -591,19 +598,19 @@
 
 | PHASE | 内容 | 现状 | 本方案落点 |
 |---|---|---|---|
-| 0 | 迁移真实性与工程验收 | ✅ 已完成（MIGRATION_AUDIT_REPORT） | — |
-| 1 | A2A 真实有效性验收 | ✅ 已完成（A2A_RELIABILITY_REPORT，15 类异常场景） | — |
+| 0 | 迁移真实性与工程验收 | 🟡 **PARTIAL**（⚠️ 2026-09-12 更正：被引报告自身结论为 PARTIAL —— `MIGRATION_AUDIT_REPORT.md:7,11` 写「仍未满足 Phase 0」） | — |
+| 1 | A2A 真实有效性验收 | 🟡 **PARTIAL**（⚠️ 2026-09-12 更正：`A2A_RELIABILITY_REPORT.md:3` 写「不能作为 Phase 1 已通过的证明」） | — |
 | 2 | Relay → Dispatch v1 | ✅ 已完成（四原语 + 7 态机） | 第 8 章 |
 | 3 | Artifact Exchange | 🟡 FIND+共享登记有雏形；统一 Artifact Contract/Grant 未做 | 第 36/43 章 |
 | 4 | Agent Discovery | ⬜ Capability Registry 未做（现靠显式指定 peer）；方向=结构化 capability + LLM 选择 | 第 8 章设计，本期靠名录（9.5 章导入） |
 | 5 | Memory v1（五层） | 🟡 调研与表结构完成、未实现；五层模型已对齐；Confidence/forget/inspect 未做 | 第 38–40 章、P5 |
 | 6 | 自然语言去规则化 | 🟡 dsh 本体模型驱动；残留 canned response 待清；目标 Local Rule Direct Response Rate < 5% | 第 13.8 条、持续项 |
 | 7 | Chat UX | 🟡 Streaming/取消/重试 dsh 自带；引用 Artifact/页面/Memory、"查看过程"收敛未做 | 第 7 章、P1/P3 |
-| 8 | Work UX（首页极简） | ⬜ 双界面由用户自己接手，不派发 | 第 5 章原则保留 |
+| 8 | Work UX（首页极简） | 🟡 **部分完成**（2026-09-12 更正：`mochi-modes` + `mochi-modes-client` 已落地并进 26 项白名单，原「由用户自己接手，不派发」已过时） | 第 5 章原则保留 |
 | 9 | Teacher Productivity Tools | 🟡 PPT/Word/Excel 插件在位，soffice 依赖未清；PLAN→CREATE→…→DELIVER 闭环未走通 | 第 24 章、P2 |
 | 10 | 第一条 Work Golden Demo（班会 PPT 二次编辑不重做） | 🟡 class-meeting-prep 在位；"改第三页不重新生成"未验证 | P5 验收项 |
 | 11 | Browser Chat Bridge | ⬜ 未做（dsh-browser 未装）；Selected Text Handoff 兜底思路保留；不绕登录/不盗 Cookie/不后台监听 | 答辩后 |
-| 12 | Chat→Work Handoff | ⬜ 随双界面由用户接手 | — |
+| 12 | Chat→Work Handoff | 🟡 **已实现**（2026-09-12 更正：对话/工作双模式用官方 `ctx.tools.restrict()` 收窄工具面，同一会话内切换） | — |
 | 13 | Mochi Network UI | 🟡 对话内任务状态呈现已有；"任务协作网络"视图未做 | 第 8 章、后续阶段 |
 | 14 | Approval UX | 🟡 审批闸在位；文案必须明确"准备做什么"待打磨 | P2 共用地基 |
 | 15 | Teacher Skills 第一批 | 🟡 任务书 10 个：6 个在位（daily-brief/class-meeting/student-follow-up/weekly-report/material-find/movement）；teacher-message/schedule-coordination/classroom-support/document-preparation 映射进第 11 章清单 | 第三部分 |
@@ -615,7 +622,15 @@
 
 ## 45. 工作事项总清单与终态路线
 
+> 🔴 **时间已提前（2026-09-08 用户裁定）：外部截止 2026-09-30 → 2026-09-11（周五），本波次的人日估算不再适用。**
+> **排期语境唯一事实源 = `docs/tasks/MOCHI-URGENT-REPLAN-2026-09-11.md`（L0-A）。**
+> ⚠️ 以下「本期实施波次」章节自 2026-09-11 出包交付起**已不再适用**；
+> 后续排期一律以 L0-A 为准，本段仅作历史追溯。
+> 本轮（9/9–9/11）只保 P0 中"能演示"的最小集；**P3 教室端能力、P4 LAN 直连、P4.5 第二三项小样、P5 记忆 UI 全部移出本轮**（答辩时作"下一步"讲）。P0/P1/P2 三波压缩到三天，见紧急表 §3 倒排。
+
 **本期实施波次（按优先级，前一条不通不做下一条）**
+
+**波次时间盒（现行）**：P0 → 9/9 全天；P1（仅"双击即用"最小集）→ 9/10；P2 教师 Skills 三件事中**只保已完成的 PPT/成绩分析两项做演示**，组织信息导入延后；P3–P5 延后。
 
 **P0 · 打地基（阻塞一切，1–2 天）**
 
@@ -654,6 +669,8 @@
 **已有阶段部分完成的，验收后直接复用，不要求机械重做。**
 
 ## 46. 里程碑（对齐 9-30 答辩）
+
+> ⛔ **本节排期已作废（2026-09-12 补加，正文一字未删）**：外部已于 2026-09-08 把截止提前到 **2026-09-11**，本表周次不再适用。现行排期以 `docs/tasks/MOCHI-URGENT-REPLAN-2026-09-11.md`（L0-A）为准。
 
 | 时间 | 节点 |
 |---|---|

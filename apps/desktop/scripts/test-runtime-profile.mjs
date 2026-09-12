@@ -12,6 +12,7 @@ import {
   lstatSync,
   mkdirSync,
   mkdtempSync,
+  readdirSync,
   readFileSync,
   realpathSync,
   rmSync,
@@ -19,7 +20,7 @@ import {
 } from "node:fs";
 import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
-import { dirname, join } from "node:path";
+import { dirname, join, relative } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
@@ -35,15 +36,15 @@ const nodeBin = process.env.MOCHI_DSH_NODE ?? process.execPath;
 const expectedProfiles = {
   headless: {
     bundles: ["@deepseek-ai/dsh-base", "@deepseek-ai/dsh-headless"],
-    plugins: ["mochi-hello", "mochi-dispatch", "mochi-campus", "mochi-web-search", "mochi-llm-mimo"],
+    plugins: ["mochi-hello", "mochi-dispatch", "mochi-campus", "mochi-web-search", "mochi-knowledge", "mochi-llm-mimo", "mochi-grades", "mochi-presentations", "mochi-documents", "mochi-files", "mochi-sheets", "mochi-visuals", "mochi-modeling", "mochi-memory", "mochi-task-scheduler"],
   },
   mochi: {
     bundles: ["@deepseek-ai/dsh-base", "@deepseek-ai/dsh-headless"],
-    plugins: ["mochi-hello", "mochi-dispatch", "mochi-campus", "mochi-web-search", "mochi-llm-mimo", "mochi-approval"],
+    plugins: ["mochi-hello", "mochi-dispatch", "mochi-campus", "mochi-web-search", "mochi-knowledge", "mochi-llm-mimo", "mochi-grades", "mochi-presentations", "mochi-documents", "mochi-files", "mochi-sheets", "mochi-visuals", "mochi-modeling", "mochi-memory", "mochi-task-scheduler", "mochi-modes", "mochi-approval"],
   },
   "mochi-web": {
     bundles: ["@deepseek-ai/dsh-base", "@deepseek-ai/dsh-web-app"],
-    plugins: ["mochi-hello", "mochi-dispatch", "mochi-campus", "mochi-web-search", "mochi-llm-mimo", "jxl-theme", "jxl-brand", "jxl-campus", "mochi-workbench", "mochi-model-presets", "dsh-better-sidebar"],
+    plugins: ["mochi-hello", "mochi-dispatch", "mochi-campus", "mochi-web-search", "mochi-knowledge", "mochi-llm-mimo", "mochi-grades", "mochi-presentations", "mochi-documents", "mochi-files", "mochi-sheets", "mochi-visuals", "mochi-modeling", "mochi-memory", "mochi-task-scheduler", "mochi-modes", "mochi-modes-client", "jxl-theme", "jxl-brand", "jxl-campus", "mochi-workbench", "mochi-model-presets", "dsh-better-sidebar", "mochi-lan", "mochi-lan-client"],
   },
 };
 
@@ -56,18 +57,27 @@ const expectedMimoInitialConfig = {
       id: "mimo-v2.5",
       contextWindow: 131072,
       maxTokens: 8192,
+      // inputModalities 必须显式声明图像：底座只在该路由声明了图像输入时
+      // 才注册 `read_image`（见 @deepseek-ai/dsh-tool-fs 的路由闸）。
+      // 少了它，「让 Mochi 看一眼自己渲出来的 PPT 截图」这类自查能力直接不存在。
+      inputModalities: ["text", "image"],
       reasoningEfforts: ["off", "low", "medium", "high"],
     },
     {
       id: "mimo-v2.5-pro",
       contextWindow: 131072,
       maxTokens: 8192,
+      inputModalities: ["text", "image"],
       reasoningEfforts: ["off", "low", "medium", "high"],
     },
   ],
 };
 
 const runtimeProfile = JSON.parse(readFileSync(join(resourceRoot, "runtime-profile.json"), "utf8"));
+for (const [name, expected] of Object.entries(expectedProfiles)) {
+  assert.deepEqual(runtimeProfile.profiles?.[name]?.bundles, expected.bundles, `${name} bundles must remain versioned with the runtime profile`);
+  assert.deepEqual(runtimeProfile.profiles?.[name]?.plugins, expected.plugins, `${name} plugin whitelist must remain versioned with the runtime profile`);
+}
 const expectedServiceDefaults = { campusApiUrl: null, searxngEndpoint: null };
 assert.deepEqual(runtimeProfile.serviceDefaults, expectedServiceDefaults, "service defaults must be versioned with the runtime profile");
 assert.deepEqual(
@@ -118,6 +128,15 @@ for (const source of [
   assert.doesNotMatch(readFileSync(source, "utf8"), /\/Users\/a1379\//, `${source} contains a machine-specific path`);
 }
 
+// [Mochi patch] 教师端只有「对话 / 工作」两个模式：官方原始轨迹面（trajectory）
+// 必须关闭，聊天视图必须保留为默认模式。两处都锁死，任一回归都会让本测试失败。
+const webPatchTemplate = readFileSync(join(resourceRoot, "patches", "web.patch.yml"), "utf8");
+assert.match(
+  webPatchTemplate,
+  /- id: ui-trajectory\n\s+name: '@deepseek-ai\/dsh-client-ui-trajectory'\n\s+disabled: true/,
+  "the teacher web overlay must disable the raw trajectory view",
+);
+
 function redact(value) {
   return value.replace(/token=[^\s]+/gi, "token=[redacted]");
 }
@@ -152,6 +171,64 @@ function configuredRow(dump, id) {
 
 function pluginRowCount(patch, id) {
   return [...patch.matchAll(new RegExp(`^\\s*-\\s+id:\\s*(?:["']${id}["']|${id})\\s*(?:#.*)?$`, "gm"))].length;
+}
+
+// [Mochi patch] 教师端预设选择器只保留“创造模式”。下面这组断言锁死：
+// 生成器把底座预设目录过滤成 home 下的 presets-visible/，只含白名单预设，
+// 且 cordis 的全部文件逐字节保留。
+const installedPresetsRoot = join(desktopRoot, "node_modules", "@deepseek-ai", "dsh-agent-presets", "presets");
+const VISIBLE_PRESET_ROOT_NAME = "presets-visible";
+const EXCLUDED_INSTALLED_PRESETS = ["standard", "ptc", "minimal"];
+
+function agentPresetsConfigFromPatch(patch) {
+  const match = patch.match(/^- id: agent-presets\n\s+config: (.+)$/m);
+  assert.ok(match, "the mochi-web patch must expand the agent-presets config");
+  return JSON.parse(match[1]);
+}
+
+function relativeFiles(root, current = root, found = []) {
+  for (const entry of readdirSync(current, { withFileTypes: true })) {
+    const path = join(current, entry.name);
+    if (entry.isDirectory()) relativeFiles(root, path, found);
+    else found.push(relative(root, path));
+  }
+  return found.sort();
+}
+
+function assertVisiblePresetRoot(home) {
+  const visibleRoot = join(home, VISIBLE_PRESET_ROOT_NAME);
+  assert.deepEqual(
+    readdirSync(visibleRoot).sort(),
+    ["cordis"],
+    "the teacher-visible preset root must expose exactly the creative preset",
+  );
+  const sourceRoot = join(installedPresetsRoot, "cordis");
+  const targetRoot = join(visibleRoot, "cordis");
+  const files = relativeFiles(sourceRoot);
+  assert.ok(files.includes("preset.yml"), "the creative preset must carry its preset.yml");
+  assert.ok(files.includes("agent.cordis.yml"), "the creative preset must carry its agent composition");
+  assert.deepEqual(relativeFiles(targetRoot), files, "the filtered preset must keep every cordis file");
+  for (const relativePath of files) {
+    assert.ok(
+      readFileSync(join(targetRoot, relativePath)).equals(readFileSync(join(sourceRoot, relativePath))),
+      `${VISIBLE_PRESET_ROOT_NAME}/cordis/${relativePath} changed while filtering`,
+    );
+  }
+  for (const excluded of EXCLUDED_INSTALLED_PRESETS) {
+    assert.equal(existsSync(join(visibleRoot, excluded)), false, `${excluded} must not be visible to teachers`);
+  }
+  const config = agentPresetsConfigFromPatch(readFileSync(join(home, "profiles", "mochi-web", "cordis.patch.yml"), "utf8"));
+  assert.equal(config.default, "lesson-planning");
+  assert.equal(config.roots.length, 2, "teacher presets must combine the managed root and the filtered installed root");
+  assert.equal(config.roots[1].path, visibleRoot, "the installed preset root must be the filtered visible root");
+  assert.equal(config.roots[1].trust, "system");
+  for (const root of config.roots) {
+    assert.equal(
+      root.path.includes(join("@deepseek-ai", "dsh-agent-presets", "presets")),
+      false,
+      "the raw installed preset directory must never be exposed to the teacher",
+    );
+  }
 }
 
 function assertMimoConfig(dump, expectedConfig = expectedMimoInitialConfig) {
@@ -308,7 +385,60 @@ try {
     assert.ok(current.includes(`config: ${JSON.stringify(expectedMimoInitialConfig)}`), `${name} omitted the versioned MIMO config`);
     assertMimoConfig(dumpProfile(cleanHome, name));
   }
+  assertVisiblePresetRoot(cleanHome);
+  // 负向对照：过滤必须真的把非白名单预设挡在外面，而不是“目录恰好为空”。
+  assert.equal(existsSync(join(cleanHome, VISIBLE_PRESET_ROOT_NAME, "cordis", "preset.yml")), true);
   await assertMimoPluginApply();
+
+  // [Mochi patch] The win32 directory picker is pinned to the browse interaction
+  // (the koffi/COM child process never reports back on a real Windows install).
+  // MOCHI_DIRECTORY_PICKER forces the choice so both settings are provable here.
+  const pinHome = join(home, "directory-picker-pin");
+  const pinOptions = { homeDir: pinHome, resourceRoot, workspaceRoot, skillsDir };
+  const previousPickerSetting = process.env.MOCHI_DIRECTORY_PICKER;
+  try {
+    delete process.env.MOCHI_DIRECTORY_PICKER;
+    runtime.provisionMochiProfiles(pinOptions);
+    const unpinned = readFileSync(join(pinHome, "profiles", "mochi-web", "cordis.patch.yml"), "utf8");
+    if (process.platform === "win32") {
+      assert.match(unpinned, /- id: directory-picker\n\s+disabled: true/, "win32 must disable the adaptive picker row by default");
+      assert.match(unpinned, /name: '@deepseek-ai\/dsh-host-directory-picker-browse'/, "win32 must mount the browse backend by default");
+    } else {
+      assert.doesNotMatch(unpinned, /directory-picker-browse/, "only win32 pins the browse interaction by default");
+    }
+
+    process.env.MOCHI_DIRECTORY_PICKER = "browse";
+    runtime.provisionMochiProfiles(pinOptions);
+    const pinned = readFileSync(join(pinHome, "profiles", "mochi-web", "cordis.patch.yml"), "utf8");
+    assert.match(pinned, /- id: directory-picker\n\s+disabled: true/, "the pinned profile must disable the adaptive picker row");
+    assert.match(pinned, /name: '@deepseek-ai\/dsh-host-directory-picker-browse'/, "the pinned profile must mount the browse backend");
+    assert.match(pinned, /name: '@deepseek-ai\/dsh-client-ui-directory-picker-browse'/, "the pinned profile must mount the browse surface");
+    for (const name of ["headless", "mochi"]) {
+      assert.doesNotMatch(
+        readFileSync(join(pinHome, "profiles", name, "cordis.patch.yml"), "utf8"),
+        /directory-picker-browse/,
+        `${name} has no web bundle and must not carry the picker pin`,
+      );
+    }
+    const pinnedDump = dumpProfile(pinHome, "mochi-web");
+    assert.match(configuredRow(pinnedDump, "directory-picker"), /disabled: true/, "the composed tree must disable the adaptive picker row");
+    assert.equal(configuredRow(pinnedDump, "directory-picker-browse").includes("dsh-host-directory-picker-browse"), true);
+    assert.equal(configuredRow(pinnedDump, "directory-picker-browse-surface").includes("dsh-client-ui-directory-picker-browse"), true);
+
+    process.env.MOCHI_DIRECTORY_PICKER = "native";
+    runtime.provisionMochiProfiles(pinOptions);
+    assert.doesNotMatch(
+      readFileSync(join(pinHome, "profiles", "mochi-web", "cordis.patch.yml"), "utf8"),
+      /directory-picker-browse/,
+      "MOCHI_DIRECTORY_PICKER=native must hand the picker back to the adaptive row",
+    );
+
+    process.env.MOCHI_DIRECTORY_PICKER = "bogus";
+    assert.throws(() => runtime.provisionMochiProfiles(pinOptions), /MOCHI_DIRECTORY_PICKER/);
+  } finally {
+    if (previousPickerSetting === undefined) delete process.env.MOCHI_DIRECTORY_PICKER;
+    else process.env.MOCHI_DIRECTORY_PICKER = previousPickerSetting;
+  }
 
   const migrationHome = join(home, "managed-migration");
   const migrationPatchPath = join(migrationHome, "profiles", "mochi", "cordis.patch.yml");
@@ -365,6 +495,7 @@ try {
   assert.deepEqual(first.profiles, Object.keys(expectedProfiles));
   const second = runtime.provisionMochiProfiles(options);
   assert.deepEqual(second.updated, [], "a second provision must be idempotent");
+  assertVisiblePresetRoot(home);
 
   assert.equal(readFileSync(userPatch, "utf8"), "[]\n", "home-level user patch changed");
   assert.equal(readFileSync(sessionFile, "utf8"), '{"keep":"session"}\n', "existing session changed");
@@ -435,6 +566,12 @@ try {
         assert.match(row, new RegExp(`name: ['\"]${packageName}['\"]`));
         assert.doesNotMatch(row, /^\s*disabled:\s*true\s*$/m, `${id} must retain its official web capability`);
       }
+      const trajectoryRow = configuredRow(dump, "ui-trajectory");
+      assert.match(trajectoryRow, /name: ['"]@deepseek-ai\/dsh-client-ui-trajectory['"]/);
+      assert.match(trajectoryRow, /^\s*disabled:\s*true\s*$/m, "the teacher composition must not mount the raw trajectory view");
+      const chatRow = configuredRow(dump, "ui-chat");
+      assert.match(chatRow, /name: ['"]@deepseek-ai\/dsh-client-ui-chat['"]/);
+      assert.doesNotMatch(chatRow, /^\s*disabled:\s*true\s*$/m, "the chat view must stay mounted as the default mode");
     }
   }
 

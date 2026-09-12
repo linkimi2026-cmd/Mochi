@@ -10,11 +10,12 @@
     "test": "node --test test/*.test.mjs"
   },
   "dependencies": {
-    "@mochi/pdf-layout": "file:../../packages/mochi-pdf-layout",
+    "@deepseek-ai/dsh-tools": "0.1.3-alpha.1",
+    "@mochi/pdf-layout": "0.1.0",
+    "@napi-rs/canvas": "1.0.8",
+    "jszip": "3.10.1",
     "pdf-lib": "1.17.1",
+    "pdfjs-dist": "6.3.289",
     "pptxgenjs": "4.0.1"
-  },
-  "devDependencies": {
-    "jszip": "3.10.1"
   }
 }

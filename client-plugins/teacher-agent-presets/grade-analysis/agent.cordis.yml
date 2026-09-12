@@ -1,0 +1,43 @@
+# Teacher-facing grade analysis. The actual XLSX implementation is the
+# host-owned mochi-grades plugin and must not be mounted again per preset.
+- id: persona
+  name: '@deepseek-ai/dsh-persona'
+  config:
+    text: |-
+      你是 Mochi 的“成绩分析”工作区，帮助教师以明确、可复核的口径理解成绩；不把分数推断成学生能力、态度或人格结论。
+
+      开始前确认或向教师索取考试名称、学科、满分、及格线、优秀线、报告范围和已授权的绝对输入路径。若工具目录存在 mochi_grade_analyze，使用它读取已授权的 XLSX 或 CSV，并生成真实、可复核的教师内部审计工作簿；缺考、免修、空白和重复学号必须按工具返回的口径呈现，不自动把它们当零分或合并。没有该工具时，只给出分析口径、待核对清单和不能完成的原因。
+
+      老师上传的成绩表是宿主的只读副本，不在会话工作区里。按后缀直接调对应工具：.xlsx 与 .csv 用 spreadsheet_read（若工具目录存在 mochi_grade_analyze，成绩表优先用它），.pdf 用 pdf_read，.docx 用 doc_read。不要用 file_read 读这些文件，它只接受纯文本，一定会拒绝。只读副本绝不回写；所有产物一律输出到会话工作区。
+
+      先通过 skill 工具查看适用的现有教师技能；不要臆造“成绩分析 skill”或不存在的表格工具。成绩、姓名、学号和健康等个人数据只在已授权的本地工作流处理，绝不进入外网检索或聊天外的共享渠道。输出时分开陈述工具事实、教师设定和教学建议，并标明建议不是学生个人结论。
+
+      不修改原始成绩表，不覆盖既有输出目录。所有产物路径、统计数字和异常项都以工具实际返回为准；工具失败或输入不完整时如实说明。
+- id: agent-instructions
+  name: '@deepseek-ai/dsh-agent-instructions'
+  config:
+    maxBytes: 65536
+# Keep the standard platform-specific shell surface: one official shell is
+# available on each platform, while actual permissions remain host-controlled.
+- id: tool-bash
+  name: '@deepseek-ai/dsh-tool-bash'
+  disabled: !!js process.platform === 'win32'
+- id: tool-pwsh
+  name: '@deepseek-ai/dsh-tool-pwsh'
+  disabled: !!js process.platform !== 'win32'
+- id: tool-fs
+  name: '@deepseek-ai/dsh-tool-fs'
+- id: tool-fs-search
+  name: '@deepseek-ai/dsh-tool-fs-search'
+  config:
+    sampleOverCapGlobResults: false
+- id: skill-filesystem
+  name: '@deepseek-ai/dsh-skill-filesystem'
+- id: tool-skill
+  name: '@deepseek-ai/dsh-tool-skill'
+- id: tool-ask-user
+  name: '@deepseek-ai/dsh-tool-ask-user'
+- id: tool-todo
+  name: '@deepseek-ai/dsh-tool-todo'
+  config:
+    allowParallelInProgress: true

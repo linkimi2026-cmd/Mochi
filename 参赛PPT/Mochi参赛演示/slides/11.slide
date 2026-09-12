@@ -1,0 +1,77 @@
+<Slide style={{ width: 1280, height: 720, background: '#16211d', position: 'relative', overflow: 'hidden' }}>
+
+    {/* A 区 · 标题块 */}
+    <Box style={{ height: 120, paddingLeft: 96, paddingRight: 96, paddingTop: 20, justifyContent: 'center' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Text style={{ fontSize: 15, color: '#e8b34b', letterSpacing: 3 }}>04</Text>
+            <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#f5f2e9' }}>Mochi 之间，直接说话</Text>
+        </Box>
+    </Box>
+
+    {/* B 区 · 内容区 */}
+    <Box style={{
+        height: 540, paddingLeft: 96, paddingRight: 96,
+        flexDirection: 'row', gap: 44, alignItems: 'center',
+    }}>
+
+        {/* 宽侧：A2A 审批卡真实截图 */}
+        <Box style={{ flexDirection: 'column', gap: 12 }}>
+            <Box style={{
+                width: 556, height: 445,
+                borderRadius: 12, overflow: 'hidden',
+                border: '1px solid rgba(245,242,233,0.14)',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
+            }}>
+                <Image src="assets/ui-a2a-approval.png" style={{ width: 556, height: 445, objectFit: 'cover' }} />
+            </Box>
+            <Text style={{ fontSize: 14, color: 'rgba(245,242,233,0.4)' }}>
+                真实界面：老师的 Mochi 要给校医的 Mochi 带话，先请老师确认
+            </Text>
+        </Box>
+
+        {/* 窄侧：三件事 */}
+        <Box style={{ flex: 1, flexDirection: 'column', gap: 17 }}>
+
+            <Box style={{ flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 19, fontWeight: 600, color: '#f5f2e9' }}>同事的 Mochi 直接收</Text>
+                <Text style={{ fontSize: 15, color: 'rgba(245,242,233,0.5)', lineHeight: 1.7 }}>
+                    老师的 Mochi 把口信投递给另一位老师的 Mochi，不经人肉转述
+                </Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 19, fontWeight: 600, color: '#f5f2e9' }}>投递前必须确认</Text>
+                <Text style={{ fontSize: 15, color: 'rgba(245,242,233,0.5)', lineHeight: 1.7 }}>
+                    接收人、口信内容摆清楚，老师点「允许一次」才发得出去
+                </Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 19, fontWeight: 600, color: '#f5f2e9' }}>答不答应，由对方决定</Text>
+                <Text style={{ fontSize: 15, color: 'rgba(245,242,233,0.5)', lineHeight: 1.7 }}>
+                    服务器只投递这一句话，不替对方承诺，也不替老师催办
+                </Text>
+            </Box>
+
+            <Box style={{ height: 1, background: 'rgba(245,242,233,0.12)', marginTop: 4 }} />
+
+            <Text style={{ fontSize: 16, color: '#e8b34b', lineHeight: 1.75 }}>
+                校园里最贵的成本，是信息在人之间传丢。这一层，我们让两个 Agent 直接对上。
+            </Text>
+
+        </Box>
+    </Box>
+
+    {/* C 区 · 页脚条 */}
+    <Box style={{
+        position: 'absolute', bottom: 0, left: 0, width: 1280, height: 60,
+        paddingLeft: 96, paddingRight: 96,
+        flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <Box style={{ width: 10, height: 10, borderRadius: 5, background: '#e8b34b' }} />
+            <Text style={{ fontSize: 14, color: 'rgba(245,242,233,0.45)' }}>Mochi · 嘉祥教育集团 AI 创意实践大赛</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: 'rgba(245,242,233,0.45)' }}>11 / 17</Text>
+    </Box>
+</Slide>

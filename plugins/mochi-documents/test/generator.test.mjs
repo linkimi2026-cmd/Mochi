@@ -3,10 +3,10 @@ import { lstat, mkdir, mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
-import JSZip from 'jszip';
 
 import { inspectPdfArtifact } from '@mochi/pdf-layout';
 import { demonstrationStructuredNotice } from '../demo.mjs';
+import { readZipArchive, zipEntryText } from '../document-io.mjs';
 import { generateDocumentBundle, MochiDocumentsError, validateStructuredDocument } from '../index.mjs';
 
 async function createTestRoot(t) {
@@ -29,10 +29,16 @@ async function assertRejectsCode(operation, code) {
   await assert.rejects(operation, (error) => error instanceof MochiDocumentsError && error.code === code);
 }
 
+// JSZip stays a devDependency but is not linked in this checkout's production
+// install, so the suite opens DOCX with the plugin's own zero-dependency ZIP
+// reader instead. `test/document-io.test.mjs` cross-checks that reader against
+// the system `unzip` binary.
 async function editableDocument(path) {
-  const archive = await JSZip.loadAsync(await readFile(path));
-  const documentXml = await archive.file('word/document.xml').async('text');
-  return { documentXml, names: Object.keys(archive.files) };
+  const entries = readZipArchive(await readFile(path));
+  return {
+    documentXml: zipEntryText(entries.find((entry) => entry.name === 'word/document.xml')),
+    names: entries.map((entry) => entry.name),
+  };
 }
 
 test('ordinary structured input creates an editable DOCX and searchable embedded-font PDF without an Office process', { timeout: 30_000 }, async (t) => {

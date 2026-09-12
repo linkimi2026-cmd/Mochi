@@ -5,7 +5,16 @@
   name: '@deepseek-ai/dsh-client-ui-brand-official'
   disabled: true
 
-# Keep the official advanced trajectory UI available.
+# [Mochi patch 2026-09-12] 教师端只有「对话 / 工作」两个模式。
+# 官方 trajectory 视图（conversation.view target "trajectory"、标签「轨迹」）是
+# 开发用的原始工具轨迹面，不再对教师可见：显式关闭该行，它注册的视图与
+# target 整体消失，默认视图因此稳定落在聊天（DEFAULT_VIEW_ID="chat"）。
 - id: ui-trajectory
   name: '@deepseek-ai/dsh-client-ui-trajectory'
-  disabled: false
+  disabled: true
+
+# The Electron main process chooses the immutable device role before creating a
+# DSH home. The profile generator expands this JSON value from that role; the
+# browser never supplies or changes it.
+- id: agent-presets
+  config: __MOCHI_AGENT_PRESETS_CONFIG_JSON__

@@ -1,11 +1,23 @@
-import { app, BrowserWindow, clipboard, shell } from "electron";
+import { join } from "node:path";
+import { app, BrowserWindow, clipboard, dialog, ipcMain, Notification, shell, type IpcMainInvokeEvent } from "electron";
 import {
   createDesktopDoctorConfig,
   createDoctorWindowController,
   installDoctorMenu,
   type DoctorWindowController,
 } from "./dsh/doctor-window";
+// [Mochi 2026-09-11] WO-7 角色解析/写入收敛到 launch-role 模块。
+import {
+  adoptLegacyLaunchRole,
+  LAUNCH_ROLE_ARG_PREFIX,
+  launchRoleLabel,
+  persistLaunchRole,
+  resolveLaunchRole as resolveRecordedLaunchRole,
+  resolveRequestedRole,
+  type MochiRuntimeRole,
+} from "./dsh/launch-role";
 import { resolveMochiServiceDefaults } from "./dsh/profile";
+import { IPC, type LanAttentionKind } from "./dsh/protocol";
 import { destroyMochiTray, initializeMochiTray, type MochiTrayHandle } from "./dsh/tray";
 import { DshWebHost } from "./dsh/web-host";
 
@@ -23,6 +35,17 @@ process.env.DSH_TELEMETRY_DISABLED = "1";
 
 const STARTUP_RETRY_URL = "mochi-startup://retry";
 const STARTUP_COPY_DIAGNOSTIC_URL = "mochi-startup://copy-diagnostic";
+// [Mochi 2026-09-11] WO-7 同一台机器可以同时保留教师端与教室端入口：角色
+// 声明按角色分文件，Electron 的 userData 目录也按角色隔离。userData 里放着
+// 单实例锁（SingletonLock）与会话缓存，共用一份会导致「先起教师端、再双击
+// 教室端快捷方式」被第二实例逻辑并进教师端窗口。隔离后两个角色各自单实例，
+// 且与「同角色单实例」的原语义完全一致。DshWebHost 的 env 会过滤所有
+// ELECTRON_* 变量，所以这个隔离不会渗进 Harness 子进程。
+const ROLE_USER_DATA_DIR_SUFFIX: Record<MochiRuntimeRole, string> = {
+  teacher: "",
+  classroom: "-classroom",
+};
+const LAN_ATTENTION_THROTTLE_MS = 3_000;
 
 type StartupStage = "starting" | "stopping" | "restoring";
 type StartupDiagnosticCode =
@@ -56,9 +79,165 @@ let automaticRecoveryUsed = false;
 let appIsQuitting = false;
 let quitStopPromise: Promise<void> | null = null;
 let quitStopComplete = false;
+let runtimeRole: MochiRuntimeRole | null = null;
+let roleSwitchedTo: MochiRuntimeRole | null = null;
+let lanAttentionInstalled = false;
+let lastLanAttentionAt = 0;
+
+/**
+ * [Mochi 2026-09-11] WO-7 每个角色一个 Electron userData 目录。教师端沿用
+ * 历史上的 `Mochi`（兼容旧 mochi-launch.json 与既有缓存），教室端用
+ * `Mochi-classroom`，互不抢占单实例锁。
+ *
+ * 例外：命令行显式给了 `--user-data-dir`（测试夹具、调试运行）时不再派生，
+ * 否则测试会绕过自己的临时目录去抢真实用户目录的单实例锁。
+ */
+function hasExplicitUserDataDir(argv: readonly string[]): boolean {
+  return argv.some((value) => value === "--user-data-dir" || value.startsWith("--user-data-dir="));
+}
+
+function roleUserDataDir(role: MochiRuntimeRole): string {
+  if (hasExplicitUserDataDir(process.argv)) return app.getPath("userData");
+  return `${app.getPath("appData")}/${app.getName()}${ROLE_USER_DATA_DIR_SUFFIX[role]}`;
+}
+
+function applyRoleUserDataPath(role: MochiRuntimeRole): void {
+  app.setPath("userData", roleUserDataDir(role));
+}
+
+// [Mochi 2026-09-11] WO-7 隔离前的旧 userData 目录仍然持有角色文件，提出来
+// 供迁移与「切换本机角色」读写。只在真的用了角色专属目录（也就是没有显式
+// `--user-data-dir`）时才算旧目录，否则测试/调试实例会把真实用户目录里的
+// 角色误认成自己的，跳过首启询问。
+function legacyUserDataDirs(): string[] {
+  if (hasExplicitUserDataDir(process.argv)) return [];
+  return [`${app.getPath("appData")}/${app.getName()}`];
+}
+
+function currentUserDataDir(): string {
+  return app.getPath("userData");
+}
+
+// [Mochi 2026-09-11] WO-7 迁移只做读取与补写，不移动旧文件；失败不影响启动。
+function migrateLaunchRoleFiles(): void {
+  for (const directory of legacyUserDataDirs()) {
+    try {
+      adoptLegacyLaunchRole(directory);
+    } catch {
+      // 旧布局迁移失败时保留旧文件，resolveRecordedLaunchRole 仍能识别它。
+    }
+  }
+}
+
+function recordedLaunchRole(): MochiRuntimeRole | null {
+  const requested = resolveRequestedRole(process.argv, process.env);
+  if (requested !== null) return requested;
+  const directory = currentUserDataDir();
+  const recorded = resolveRecordedLaunchRole(directory);
+  if (recorded !== null) return recorded;
+  for (const legacy of legacyUserDataDirs()) {
+    if (legacy === directory) continue;
+    const fromLegacy = resolveRecordedLaunchRole(legacy);
+    if (fromLegacy !== null) {
+      // 老机器第一次升到分文件布局：把识别到的角色补写到当前目录。
+      try {
+        persistLaunchRole(directory, fromLegacy);
+      } catch {
+        // 补写失败也能用本次识别结果启动。
+      }
+      return fromLegacy;
+    }
+  }
+  return null;
+}
+
+function requestedRole(): MochiRuntimeRole | null {
+  return resolveRequestedRole(process.argv, process.env);
+}
+
+async function resolveLaunchRole(): Promise<MochiRuntimeRole | null> {
+  migrateLaunchRoleFiles();
+  const existing = recordedLaunchRole();
+  if (existing !== null) return existing;
+
+  const choice = await dialog.showMessageBox({
+    type: "question",
+    title: "设置 Mochi 本机角色",
+    message: "这台设备用于教师办公电脑还是教室一体机？",
+    detail:
+      "本机选择只影响默认启动角色，之后可以在托盘菜单里切换；两套数据互相隔离，教室端不读取教师密钥、记忆、会话。",
+    buttons: ["教师办公电脑", "教室一体机", "退出"],
+    defaultId: 0,
+    cancelId: 2,
+    noLink: true,
+  });
+  if (choice.response === 2) return null;
+  const role: MochiRuntimeRole = choice.response === 0 ? "teacher" : "classroom";
+  persistLaunchRole(currentUserDataDir(), role);
+  return role;
+}
+
+async function reportLaunchRoleFailure(): Promise<void> {
+  console.error("[mochi] 本机角色信息无法使用");
+  await dialog.showMessageBox({
+    type: "error",
+    title: "Mochi 无法启动",
+    message: "无法读取本机角色设置。",
+    detail: "请联系管理员恢复本机角色设置后重试。此操作不会修改现有数据。",
+    buttons: ["退出"],
+    noLink: true,
+  });
+}
 
 function isLiveWindow(window: BrowserWindow): boolean {
   return !window.isDestroyed();
+}
+
+function isLanAttentionKind(value: unknown): value is LanAttentionKind {
+  return value === "incoming-message" || value === "pairing-request";
+}
+
+function isCurrentHarnessMainFrame(event: IpcMainInvokeEvent): boolean {
+  const window = mainWindow;
+  return window !== null
+    && isLiveWindow(window)
+    && event.sender === window.webContents
+    && event.senderFrame === event.sender.mainFrame
+    && isHarnessUrl(event.sender.getURL());
+}
+
+function lanAttentionCopy(kind: LanAttentionKind): { title: string; body: string } {
+  return kind === "incoming-message"
+    ? { title: "Mochi 教室连接", body: "收到新的教师通知，请在应用中人工确认已看到。" }
+    : { title: "Mochi 教室连接", body: "收到新的配对申请，请在应用中核对后人工处理。" };
+}
+
+function showLanAttention(kind: LanAttentionKind): void {
+  const window = mainWindow;
+  if (window === null || !isLiveWindow(window)) return;
+  const now = Date.now();
+  if (now - lastLanAttentionAt < LAN_ATTENTION_THROTTLE_MS) return;
+  lastLanAttentionAt = now;
+
+  const wasBackgrounded = window.isMinimized() || !window.isVisible();
+  focusWindow(window);
+  if (!wasBackgrounded || !Notification.isSupported()) return;
+
+  const notification = new Notification(lanAttentionCopy(kind));
+  notification.once("click", () => {
+    if (mainWindow !== null && isLiveWindow(mainWindow)) focusWindow(mainWindow);
+  });
+  notification.show();
+}
+
+function installLanAttentionBridge(): void {
+  if (lanAttentionInstalled) return;
+  lanAttentionInstalled = true;
+  ipcMain.handle(IPC.lanAttention, (event, kind: unknown) => {
+    if (!isLanAttentionKind(kind) || !isCurrentHarnessMainFrame(event)) return false;
+    showLanAttention(kind);
+    return true;
+  });
 }
 
 function isHarnessUrl(url: string): boolean {
@@ -176,6 +355,7 @@ function createWindow(): BrowserWindow {
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: true,
+      preload: join(__dirname, "lan-attention-preload.js"),
     },
   });
   mainWindow = window;
@@ -275,8 +455,9 @@ async function recoverReadyHostExit(host: DshWebHost, error: Error): Promise<voi
 
 function startStartup(): Promise<void> {
   if (startupPromise !== null) return startupPromise;
+  if (runtimeRole === null) return Promise.reject(new Error("Mochi 启动角色尚未设置"));
 
-  const host = new DshWebHost();
+  const host = new DshWebHost(runtimeRole);
   webHost = host;
   failedWebHost = null;
   failedWebHostStop = null;
@@ -372,6 +553,7 @@ function copyDiagnostic(window: BrowserWindow): void {
 }
 
 function openWindowForCurrentState(): void {
+  if (runtimeRole === null) return;
   if (mainWindow !== null && isLiveWindow(mainWindow)) {
     focusWindow(mainWindow);
     return;
@@ -457,6 +639,62 @@ function restartHostFromTray(): Promise<void> {
   return run;
 }
 
+/**
+ * [Mochi 2026-09-11] WO-7 切换本机角色：只在桌面壳层做（网页设置拿不到这条
+ * 路径）。流程是「中文确认 → 改写角色声明 → 重启应用」，数据一律不动：两套
+ * home 各自独立，切回来内容原样还在。
+ */
+async function switchLaunchRole(role: MochiRuntimeRole): Promise<void> {
+  const current = runtimeRole;
+  const fromLabel = current === null ? "未知" : launchRoleLabel(current);
+  const targetLabel = launchRoleLabel(role);
+  const confirmation = await dialog.showMessageBox({
+    type: "question",
+    title: "切换本机角色",
+    message: `要把这台设备切换到「${targetLabel}」吗？`,
+    detail:
+      `当前角色：${fromLabel}。\n`
+      + "切换只影响下次启动的角色，不会删除任何数据；"
+      + "教师端与教室端使用互相隔离的数据目录，切回原角色后内容仍在。\n"
+      + `切换后 Mochi 会立即重启，并以「${targetLabel}」重新启动本地服务。`,
+    buttons: ["切换并重启", "取消"],
+    defaultId: 1,
+    cancelId: 1,
+    noLink: true,
+  });
+  if (confirmation.response !== 0) return;
+
+  try {
+    persistLaunchRole(currentUserDataDir(), role);
+  } catch {
+    await dialog.showMessageBox({
+      type: "error",
+      title: "切换失败",
+      message: "无法写入本机角色设置。",
+      detail: "Mochi 仍以原角色继续运行，现有数据未受影响。请检查本机磁盘权限后重试。",
+      buttons: ["知道了"],
+      noLink: true,
+    });
+    return;
+  }
+
+  // 切换必须重启才生效：当前进程已经带着旧角色的 home 与 Harness 子进程在跑。
+  roleSwitchedTo = role;
+  console.log(`[mochi] 本机角色已切换为 ${targetLabel}，准备重启`);
+  relaunchForRoleSwitch();
+}
+
+function relaunchForRoleSwitch(): void {
+  const targetRole = roleSwitchedTo;
+  if (targetRole === null) return;
+  appIsQuitting = true;
+  destroyDesktopTray();
+  // 目标角色文件已经落盘，所以重启后不会再次弹首启对话框。
+  const args = process.argv.slice(1).filter((value) => !value.startsWith(LAUNCH_ROLE_ARG_PREFIX));
+  app.relaunch({ args: [...args, `${LAUNCH_ROLE_ARG_PREFIX}${targetRole}`] });
+  app.exit(0);
+}
+
 function quitFromTray(): void {
   if (appIsQuitting) return;
   appIsQuitting = true;
@@ -472,8 +710,10 @@ function initializeDesktopTray(): void {
       if (appIsQuitting) return;
       mochiTray = initializeMochiTray({
         icon,
+        currentRoleLabel: runtimeRole === null ? "未设置" : launchRoleLabel(runtimeRole),
         open: focusOrRestoreMainWindow,
         restart: restartHostFromTray,
+        switchRole: switchLaunchRole,
         quit: quitFromTray,
       });
     } catch {
@@ -516,19 +756,51 @@ if (process.type !== "browser") {
 // 用户数据目录要叫 Mochi，而不是 package.json 的 name（mochi-desktop）。
 app.setName("Mochi");
 
+// [Mochi 2026-09-11] WO-7 单实例锁按角色隔离。锁与缓存都位于 userData，
+// 因此必须在 requestSingleInstanceLock() 之前决定目录：教师端沿用 `Mochi`
+// （老机器的锁文件与缓存原地不动），教室端用 `Mochi-classroom`。这也是
+// 「同角色单实例、不同角色各自单实例」这条语义的实现方式——不引入第二个
+// 进程常驻，也不改 DSH 的两套 home 命名。
+const explicitRole = requestedRole();
+if (explicitRole !== null) applyRoleUserDataPath(explicitRole);
+
 const hasSingleInstanceLock = app.requestSingleInstanceLock();
 if (!hasSingleInstanceLock) {
   app.quit();
 } else {
-  app.on("second-instance", () => {
+  app.on("second-instance", (_event, argv) => {
+    // 同一个 userData 目录意味着同一角色：第二个实例只把已有窗口带到前台。
+    // 例外是显式带了另一个 `--role=` 的启动（角色切换后的 relaunch），
+    // 此时当前进程自己重启到新角色目录。
+    const incomingRole = resolveRequestedRole(argv, {});
+    if (incomingRole !== null && incomingRole !== runtimeRole) {
+      roleSwitchedTo ??= incomingRole;
+      relaunchForRoleSwitch();
+      return;
+    }
     if (app.isReady()) focusOrRestoreMainWindow();
     else app.once("ready", () => focusOrRestoreMainWindow());
   });
 
-  app.whenReady().then(() => {
-    initializeDoctorWindow();
-    openWindowForCurrentState();
-    initializeDesktopTray();
+  app.whenReady().then(async () => {
+    try {
+      const selectedRole = await resolveLaunchRole();
+      if (selectedRole === null) {
+        app.quit();
+        return;
+      }
+      runtimeRole = selectedRole;
+      // [Mochi 2026-09-11] WO-7 角色由存量文件/首启对话框决定时也要落到
+      // 角色专属 userData 目录，保证下次启动的单实例锁落在同一处。
+      applyRoleUserDataPath(selectedRole);
+      installLanAttentionBridge();
+      initializeDoctorWindow();
+      openWindowForCurrentState();
+      initializeDesktopTray();
+    } catch {
+      await reportLaunchRoleFailure();
+      app.quit();
+    }
   });
 
   app.on("activate", () => {

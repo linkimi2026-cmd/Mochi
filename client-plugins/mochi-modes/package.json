@@ -1,0 +1,30 @@
+{
+  "name": "mochi-modes-client",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Mochi 对话 / 工作模式开关：读宿主 mochiModes 投影显示模式，经官方命令通道直接切换（不弹窗）。",
+  "main": "index.mjs",
+  "type": "module",
+  "dsh": {
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-api-remotes",
+        "@deepseek-ai/dsh-client-ui-renderer",
+        "@deepseek-ai/dsh-client-ui-conversation"
+      ]
+    }
+  },
+  "exports": {
+    ".": "./index.mjs",
+    "./client": "./client.js"
+  },
+  "files": [
+    "index.mjs",
+    "client.js",
+    "package.json"
+  ],
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  }
+}

@@ -172,6 +172,16 @@ export function openWorldState(homeDir = defaultMemoryHome()) {
       sectionOf(parsed, '待办').lines.push(`- ${String(text)}`);
       save(parsed);
     },
+    // 主动上下文只读取少量最新未完成事项；保留写入顺序，返回时最近项在前。
+    listTodos({ limit = 20 } = {}) {
+      const parsed = load().parsed;
+      const boundedLimit = Math.max(0, Math.min(100, Number(limit) || 0));
+      const todos = sectionOf(parsed, '待办').lines
+        .map(stripBullet)
+        .map((line) => line.trim())
+        .filter(Boolean);
+      return boundedLimit === 0 ? [] : todos.slice(-boundedLimit).reverse();
+    },
     // 按文本匹配移除待办，返回是否命中（先精确匹配，退化为包含匹配）。
     completeTodo(text) {
       const parsed = load().parsed;

@@ -38,10 +38,13 @@ console.log('② 段落替换/追加/完成待办/约定去重');
   const ws = openWorldState(home);
   ws.replaceSection('todos', ['- 旧任务一', '- 旧任务二']);
   ws.appendTodo('给张老师回电话');
+  ws.appendTodo('准备下周课件');
   const doc = ws.readWorldState();
   const todosPart = doc.split('## 待办')[1].split('## ')[0];
   assert.ok(todosPart.includes('- 旧任务一'));
   assert.ok(todosPart.includes('- 给张老师回电话'));
+  assert.deepEqual(ws.listTodos({ limit: 1 }), ['准备下周课件'], '主动上下文只读最新的有界待办');
+  assert.deepEqual(ws.listTodos({ limit: 2 }), ['准备下周课件', '给张老师回电话']);
   // completeTodo：命中移除，二次未命中返回 false
   assert.equal(ws.completeTodo('给张老师回电话'), true);
   assert.equal(ws.completeTodo('给张老师回电话'), false);

@@ -11,7 +11,7 @@
 
 const { existsSync, readFileSync, statSync } = require("node:fs");
 const { spawnSync } = require("node:child_process");
-const { join, resolve } = require("node:path");
+const { dirname, join, resolve } = require("node:path");
 const {
   prepareReleaseInput,
   verifyReleaseInput,
@@ -83,14 +83,40 @@ function createElectronBuilderArgs(target, arch, directoryOnly) {
   return args;
 }
 
-function run(command, args, env) {
+function run(command, args, env, extra = {}) {
   const result = spawnSync(command, args, {
     cwd: desktopRoot,
     env,
     stdio: "inherit",
+    ...extra,
   });
   if (result.error) throw result.error;
   if (result.status !== 0) throw new Error(`${command} ${args.join(" ")} 退出码为 ${result.status ?? "unknown"}。`);
+}
+
+// Node >= 18.20 / 20.12 refuses to spawn a `.cmd` shim directly (EINVAL, from
+// the CVE-2024-27980 fix). Invoke npm's JavaScript entry with the current Node
+// binary instead of the `npm.cmd` wrapper: identical result on every platform,
+// no shell involved, and no quoting/注入 surface.
+function npmCliPath() {
+  const candidate = join(dirname(process.execPath), "node_modules", "npm", "bin", "npm-cli.js");
+  if (existsSync(candidate)) return candidate;
+  const bundled = join(dirname(process.execPath), "..", "lib", "node_modules", "npm", "bin", "npm-cli.js");
+  if (existsSync(bundled)) return bundled;
+  return null;
+}
+
+function runNpm(args, env) {
+  const cli = npmCliPath();
+  if (cli) {
+    run(process.execPath, [cli, ...args], env);
+    return;
+  }
+  // Fallback for a Node install without a bundled npm CLI: keep the platform
+  // shim but go through a shell, which is what makes `.cmd` spawnable.
+  run(process.platform === "win32" ? "npm.cmd" : "npm", args, env, {
+    shell: process.platform === "win32",
+  });
 }
 
 function expectedInstallerPath(target, arch) {
@@ -101,14 +127,25 @@ function expectedInstallerPath(target, arch) {
   return join(desktopRoot, metadata.build.directories.output, filename);
 }
 
+function runPackagingSeed(env) {
+  // WO-3：打包前把首启凭据/模型链种子渲染进 resources/mochi-web/seeds/。
+  // 无密钥源时脚本自身 warning 并 0 退出（安装包降级为设置页引导），不让构建崩。
+  const result = spawnSync(process.execPath, [join(__dirname, "seed-packaging-keys.cjs")], { encoding: "utf8", env });
+  if (result.error) throw result.error;
+  if (result.status !== 0) throw new Error(`打包种子脚本失败：${(result.stderr || result.stdout || "").trim()}`);
+  if (result.stdout) process.stdout.write(result.stdout);
+  if (result.stderr) process.stderr.write(result.stderr);
+}
+
 function packageDesktop(argv = process.argv.slice(2)) {
   const options = parseArguments(argv);
   const target = resolvedTarget(options.target);
   assertNativeTarget(target, options.arch);
   run(process.execPath, [join(__dirname, "check-dsh-host-peers.cjs")], process.env);
+  runPackagingSeed(process.env);
   const releaseInput = selectReleaseInput(options);
   const env = { ...process.env, MOCHI_CAMPUS_STATIC_ROOT: releaseInput.staticRoot };
-  run(process.platform === "win32" ? "npm.cmd" : "npm", ["run", "build"], env);
+  runNpm(["run", "build"], env);
   const startedAt = Date.now();
   run(process.execPath, createElectronBuilderArgs(target, options.arch, options.directoryOnly), env);
   const installer = options.directoryOnly ? null : expectedInstallerPath(target, options.arch);
@@ -143,5 +180,6 @@ module.exports = {
   packageDesktop,
   parseArguments,
   resolvedTarget,
+  runPackagingSeed,
   selectReleaseInput,
 };

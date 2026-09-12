@@ -5,9 +5,10 @@
 import { defineTool } from '@deepseek-ai/dsh-tools';
 import { createStore } from './mem-store.mjs';
 import { openWorldState } from './world-state.mjs';
+import { installActiveMemoryPrompt } from './active-context.mjs';
 
 export const name = 'mochi-memory';
-export const inject = ['tools'];
+export const inject = ['tools', 'systemPrompt'];
 // render 签名必须是 (args, value)（2026-09-05 大坑 17）：单参写法会把调用参数当结果给模型。
 export const output = { schema: { type: 'object', additionalProperties: true }, render: (_args, value) => [{ type: 'text', text: JSON.stringify(value) }] };
 
@@ -33,9 +34,11 @@ export function apply(ctx, storeArg = null, worldArg = null) {
   const store = storeArg || createStore();
   const world = worldArg || openWorldState();
   const register = (toolName, description, parameters, execute) => ctx.tools.register(defineTool({ name: toolName, description, parameters, output, execute }));
+  // 动态历史资料是 user-role context；工具写入纪律是独立 system section，二者不能混为一谈。
+  installActiveMemoryPrompt(ctx, store, world);
 
   // 1) 写长期记忆。描述即纪律：只有三种情况允许写，敏感内容绝不写（存储层护栏还会拒一次）。
-  register('mochi.memory_note', '把一条长期记忆写入 Mochi 的记忆库。写入纪律（Memory Confidence，必须遵守）：只在三种情况写——①主人明确表达长期偏好（例如"我以后都要…""记住我…"）；②同一偏好多次稳定重复；③主人主动要求记住。一次性闲聊、成绩明细、医疗健康、密码令牌、私人文件全文绝不写入（即使写了，存储层护栏也会拒绝）。主人随口一提的临时事项请用 mochi.memory_world 的 append-todo，不要写进长期记忆。', {
+  register('mochi_memory_note', '把一条长期记忆写入 Mochi 的记忆库。写入纪律（Memory Confidence，必须遵守）：只在三种情况写——①主人明确表达长期偏好（例如"我以后都要…""记住我…"）；②同一偏好多次稳定重复；③主人主动要求记住。一次性闲聊、成绩明细、医疗健康、密码令牌、私人文件全文绝不写入（即使写了，存储层护栏也会拒绝）。主人随口一提的临时事项请用 mochi_memory_world 的 append-todo，不要写进长期记忆。', {
     kind: { type: 'string', enum: ['preference', 'task_fact', 'org_knowledge', 'convention'], required: true, description: '记忆类型：preference=个人偏好 / task_fact=任务事实 / org_knowledge=组织知识 / convention=班级约定。' },
     content: { type: 'string', required: true, description: '记忆正文（一句话，写清事实本身，不含敏感信息）。' },
     summary: { type: 'string', description: '可选的更短摘要（≤40 字），便于检索与展示。' },
@@ -65,7 +68,7 @@ export function apply(ctx, storeArg = null, worldArg = null) {
   });
 
   // 2) 检索记忆。每条结果带「为什么Mochi知道这个」（存储层已生成）；tightened 时如实说明。
-  register('mochi.memory_recall', '从 Mochi 的长期记忆里检索相关条目。主人问"你还记得我…吗"或回答前想核对主人偏好/班级约定时使用。结果每条都带"为什么Mochi知道这个"（来源+时间+被召回次数），要如实转述给主人，方便主人检查和纠正。', {
+  register('mochi_memory_recall', '从 Mochi 的长期记忆里检索相关条目。主人问"你还记得我…吗"或回答前想核对主人偏好/班级约定时使用。结果每条都带"为什么Mochi知道这个"（来源+时间+被召回次数），要如实转述给主人，方便主人检查和纠正。', {
     query: { type: 'string', required: true, description: '检索关键词（2-8 个字效果最好）。' },
     topK: { type: 'integer', description: '最多返回几条，默认由系统决定（引用率低时会自动收紧）。' },
   }, async (args) => {
@@ -88,7 +91,7 @@ export function apply(ctx, storeArg = null, worldArg = null) {
   });
 
   // 3) 忘记一条。主人说"忘掉/别记了"时用；审计行保留快照，不静默消失。
-  register('mochi.memory_forget', '从长期记忆里彻底忘掉一条（主人说"忘掉这个""别记了"时使用）。需要记忆 ID（来自 mochi.memory_recall 的结果），不得猜测。忘记是删除性的，执行前应向主人复述要忘的内容。', {
+  register('mochi_memory_forget', '从长期记忆里彻底忘掉一条（主人说"忘掉这个""别记了"时使用）。需要记忆 ID（来自 mochi_memory_recall 的结果），不得猜测。忘记是删除性的，执行前应向主人复述要忘的内容。', {
     id: { type: 'integer', required: true, description: '要忘记的记忆 ID。' },
   }, async (args) => {
     const id = Math.floor(Number(args.id));
@@ -102,7 +105,7 @@ export function apply(ctx, storeArg = null, worldArg = null) {
   });
 
   // 4) 列出全部记忆与统计。主人问"你记了我什么"时用；真实调 store.listAll + store.stats，如实完整展示。
-  register('mochi.memory_list', '列出 Mochi 长期记忆库里的全部记忆和统计（主人问"你记了我什么""让我看看你记住了哪些"时使用）。返回每条记忆的 ID、类型、内容、来源、创建时间、被召回次数和是否 pinned。要如实完整展示，方便主人检查和纠正。', {
+  register('mochi_memory_list', '列出 Mochi 长期记忆库里的全部记忆和统计（主人问"你记了我什么""让我看看你记住了哪些"时使用）。返回每条记忆的 ID、类型、内容、来源、创建时间、被召回次数和是否 pinned。要如实完整展示，方便主人检查和纠正。', {
     scopeId: { type: 'string', description: '可选的作用域过滤（默认全部）。' },
     includeInvalid: { type: 'boolean', description: '是否连同已被取代的记忆一起列出，默认 false。' },
   }, async (args) => {
@@ -134,7 +137,7 @@ export function apply(ctx, storeArg = null, worldArg = null) {
   });
 
   // 5) 工作状态快照。描述写明：跨天开始工作时先 read 恢复上下文。
-  register('mochi.memory_world', '读写 Mochi 的工作状态快照（world-state.md：待办 / 近 24h 变更 / 已知约定）。跨天开始工作时先 action=read 恢复上下文，再继续干活。临时事项（今天要做的事）用 append-todo 记进待办；完成待办用 complete-todo；干完一件值得留痕的事用 append-change；班级固定约定用 set-convention。', {
+  register('mochi_memory_world', '读写 Mochi 的工作状态快照（world-state.md：待办 / 近 24h 变更 / 已知约定）。跨天开始工作时先 action=read 恢复上下文，再继续干活。临时事项（今天要做的事）用 append-todo 记进待办；完成待办用 complete-todo；干完一件值得留痕的事用 append-change；班级固定约定用 set-convention。', {
     action: { type: 'string', enum: ['read', 'append-todo', 'complete-todo', 'append-change', 'set-convention'], required: true, description: 'read=读全文 / append-todo=加待办 / complete-todo=勾掉待办 / append-change=记一条变更 / set-convention=登记约定。' },
     text: { type: 'string', description: 'append-todo / complete-todo / append-change / set-convention 时必填的一句话内容。' },
   }, async (args) => {
@@ -168,7 +171,7 @@ export function apply(ctx, storeArg = null, worldArg = null) {
 
   // 6) 一键清空全部记忆。描述即纪律：批量删除必须先向主人复述条数（含 pinned 数）并获明确同意。
   //    决策记录（工单 MEM-03c）：不接 approval 审批闸；防误清靠 ①模型侧复述确认 ②forget 审计快照可恢复。
-  register('mochi.memory_clear', '清空 Mochi 长期记忆库里的全部记忆（一键清空）。这是批量删除操作：执行前必须先向主人复述"将删除全部 N 条记忆（含 X 条 pinned 免疫记忆）"，获得主人明确同意后才可执行，绝不擅自执行。清空是不可逆的，但审计日志会保留每条记忆的快照备查。', {}, async () => {
+  register('mochi_memory_clear', '清空 Mochi 长期记忆库里的全部记忆（一键清空）。这是批量删除操作：执行前必须先向主人复述"将删除全部 N 条记忆（含 X 条 pinned 免疫记忆）"，获得主人明确同意后才可执行，绝不擅自执行。清空是不可逆的，但审计日志会保留每条记忆的快照备查。', {}, async () => {
     const stats = store.stats();
     if (stats.total === 0) {
       return { 已清空: true, 删除条数: 0, 说明: '记忆库本来就是空的。' };

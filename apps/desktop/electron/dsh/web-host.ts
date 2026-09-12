@@ -3,7 +3,13 @@ import { EventEmitter } from "node:events";
 import { existsSync } from "node:fs";
 import { createRequire } from "node:module";
 import { join } from "node:path";
-import { prepareDshHome, resolveMochiServiceDefaults, type MochiServiceDefaults } from "./profile";
+import { app } from "electron";
+import {
+  prepareDshHome,
+  resolveMochiServiceDefaults,
+  type MochiRuntimeRole,
+  type MochiServiceDefaults,
+} from "./profile";
 
 const READY_TIMEOUT_MS = 90_000;
 const GRACEFUL_KILL_MS = 5_000;
@@ -52,6 +58,18 @@ export function buildDshArgs(dshBin: string, port: string, runAsNode: boolean): 
     : [dshBin, "--profile", PROFILE, "--port", port, "--no-open"];
 }
 
+export function managedPlaywrightBrowsersPath(packaged: boolean, appPath: string, resourcesPath: string): string {
+  return packaged
+    ? join(resourcesPath, "mochi", "playwright", "browsers")
+    : join(appPath, ".mochi-package-resources-v1.nosync", "playwright", "browsers");
+}
+
+export function managedRuntimeNodeModulesPath(packaged: boolean, appPath: string, resourcesPath: string): string {
+  return packaged
+    ? join(resourcesPath, "app.asar.unpacked", "node_modules")
+    : join(appPath, "node_modules");
+}
+
 function resolveNodeBin(): { command: string; runAsNode: boolean } {
   if (process.env.MOCHI_DSH_NODE && existsSync(process.env.MOCHI_DSH_NODE)) {
     return { command: process.env.MOCHI_DSH_NODE, runAsNode: false };
@@ -67,7 +85,13 @@ function buildEnv(
   const env: NodeJS.ProcessEnv = {};
   for (const [key, value] of Object.entries(process.env)) {
     if (value === undefined) continue;
-    if (key === "ELECTRON_RUN_AS_NODE" || key.startsWith("ELECTRON_")) continue;
+    if (
+      key === "ELECTRON_RUN_AS_NODE"
+      || key.startsWith("ELECTRON_")
+      || key === "PLAYWRIGHT_BROWSERS_PATH"
+      || key === "NODE_PATH"
+      || key === "MOCHI_RUNTIME_NODE"
+    ) continue;
     env[key] = value;
   }
   env.DSH_HOME = dshHome;
@@ -79,6 +103,18 @@ function buildEnv(
   if (serviceDefaults.searxngEndpoint !== undefined) {
     env.MOCHI_SEARXNG_ENDPOINT = serviceDefaults.searxngEndpoint;
   }
+  const playwrightBrowsers = managedPlaywrightBrowsersPath(app.isPackaged, app.getAppPath(), process.resourcesPath);
+  if (existsSync(playwrightBrowsers)) env.PLAYWRIGHT_BROWSERS_PATH = playwrightBrowsers;
+  else if (app.isPackaged) throw new Error(`Mochi 随包 Playwright 浏览器资源不存在：${playwrightBrowsers}`);
+  const runtimeNodeModules = managedRuntimeNodeModulesPath(app.isPackaged, app.getAppPath(), process.resourcesPath);
+  if (!existsSync(runtimeNodeModules)) {
+    throw new Error(`Mochi 运行时 Node 模块不存在：${runtimeNodeModules}`);
+  }
+  if (!existsSync(process.execPath)) {
+    throw new Error(`Mochi 运行时 Node 不存在：${process.execPath}`);
+  }
+  env.MOCHI_RUNTIME_NODE = process.execPath;
+  env.NODE_PATH = runtimeNodeModules;
   if (runAsNode) env.ELECTRON_RUN_AS_NODE = "1";
   return env;
 }
@@ -89,6 +125,10 @@ export class DshWebHost extends EventEmitter {
   private killTimer: NodeJS.Timeout | null = null;
   private stopPromise: Promise<void> | null = null;
 
+  constructor(private readonly role: MochiRuntimeRole) {
+    super();
+  }
+
   async start(): Promise<string> {
     if (this.child) throw new Error("Mochi Web Host 已启动");
     const dshBin = resolveDshBin();
@@ -96,7 +136,7 @@ export class DshWebHost extends EventEmitter {
 
     const node = resolveNodeBin();
     const serviceDefaults = resolveMochiServiceDefaults();
-    const dshHome = prepareDshHome();
+    const dshHome = prepareDshHome(this.role);
     const env = buildEnv(node.runAsNode, dshHome, serviceDefaults);
     const port = process.env.MOCHI_DSH_PORT ?? "0";
     // Harness uses Node's internal module loader to resolve profile-local ESM

@@ -1,0 +1,84 @@
+<Slide style={{ width: 1280, height: 720, background: '#16211d', position: 'relative', overflow: 'hidden' }}>
+
+    {/* A 区 · 标题块 */}
+    <Box style={{ height: 120, paddingLeft: 96, paddingRight: 96, paddingTop: 20, justifyContent: 'center' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Text style={{ fontSize: 15, color: '#e8b34b', letterSpacing: 3 }}>05</Text>
+            <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#f5f2e9' }}>教室端也是 Agent</Text>
+        </Box>
+    </Box>
+
+    {/* B 区 · 内容区 */}
+    <Box style={{
+        height: 540, paddingLeft: 96, paddingRight: 96,
+        flexDirection: 'row', gap: 44, alignItems: 'center',
+    }}>
+
+        {/* 宽侧：教室连接面板真实截图 */}
+        <Box style={{ flexDirection: 'column', gap: 12 }}>
+            <Box style={{
+                width: 628, height: 353,
+                borderRadius: 12, overflow: 'hidden',
+                border: '1px solid rgba(245,242,233,0.14)',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
+            }}>
+                <Image src="assets/ui-classroom.png" style={{ width: 628, height: 353, objectFit: 'cover' }} />
+            </Box>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <Box style={{ paddingLeft: 12, paddingRight: 12, paddingTop: 7, paddingBottom: 7, borderRadius: 6, background: 'rgba(232,179,75,0.15)', border: '1px solid rgba(232,179,75,0.45)' }}>
+                    <Text style={{ fontSize: 14, fontWeight: 600, color: '#e8b34b' }}>教师端 Mochi</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: 'rgba(245,242,233,0.3)' }}>→</Text>
+                <Box style={{ paddingLeft: 10, paddingRight: 10, paddingTop: 8, paddingBottom: 8, borderRadius: 6, background: 'rgba(245,242,233,0.06)', border: '1px solid rgba(245,242,233,0.14)' }}>
+                    <Text style={{ fontSize: 13, color: 'rgba(245,242,233,0.55)' }}>局域网 47832</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: 'rgba(245,242,233,0.3)' }}>→</Text>
+                <Box style={{ paddingLeft: 12, paddingRight: 12, paddingTop: 7, paddingBottom: 7, borderRadius: 6, background: 'rgba(232,179,75,0.15)', border: '1px solid rgba(232,179,75,0.45)' }}>
+                    <Text style={{ fontSize: 14, fontWeight: 600, color: '#e8b34b' }}>教室端 Mochi</Text>
+                </Box>
+            </Box>
+            <Text style={{ fontSize: 14, color: 'rgba(245,242,233,0.4)' }}>
+                真实界面：教师端的「教室连接」面板——身份、相识、发现三段式
+            </Text>
+        </Box>
+
+        {/* 窄侧：三条关系 */}
+        <Box style={{ flex: 1, flexDirection: 'column', gap: 16 }}>
+
+            <Box style={{ flexDirection: 'column', gap: 5 }}>
+                <Text style={{ fontSize: 19, fontWeight: 600, color: '#f5f2e9' }}>两种身份，各跑一个 Agent</Text>
+                <Text style={{ fontSize: 15, color: 'rgba(245,242,233,0.5)', lineHeight: 1.6 }}>教室一体机上的 Mochi 有自己的身份、模型和数据根，不登录任何老师的账号</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'column', gap: 5 }}>
+                <Text style={{ fontSize: 19, fontWeight: 600, color: '#f5f2e9' }}>发现不等于相识</Text>
+                <Text style={{ fontSize: 15, color: 'rgba(245,242,233,0.5)', lineHeight: 1.6 }}>自动发现只是「看见」；要先核对学校、班级、角色和指纹，再由老师发起相识</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'column', gap: 5 }}>
+                <Text style={{ fontSize: 19, fontWeight: 600, color: '#f5f2e9' }}>推的是通知与课件</Text>
+                <Text style={{ fontSize: 15, color: 'rgba(245,242,233,0.5)', lineHeight: 1.6 }}>连上后把通知和文件推到教室大屏，教室端点「我已看到」回传签名回执</Text>
+            </Box>
+
+            <Box style={{ height: 1, background: 'rgba(245,242,233,0.12)', marginTop: 4 }} />
+
+            <Text style={{ fontSize: 16, color: '#e8b34b', lineHeight: 1.75 }}>
+                界面原话：「教师与教室各自独立身份；发现不等于相识，投递不等于已看到。」
+            </Text>
+
+        </Box>
+    </Box>
+
+    {/* C 区 · 页脚条 */}
+    <Box style={{
+        position: 'absolute', bottom: 0, left: 0, width: 1280, height: 60,
+        paddingLeft: 96, paddingRight: 96,
+        flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <Box style={{ width: 10, height: 10, borderRadius: 5, background: '#e8b34b' }} />
+            <Text style={{ fontSize: 14, color: 'rgba(245,242,233,0.45)' }}>Mochi · 嘉祥教育集团 AI 创意实践大赛</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: 'rgba(245,242,233,0.45)' }}>12 / 17</Text>
+    </Box>
+</Slide>

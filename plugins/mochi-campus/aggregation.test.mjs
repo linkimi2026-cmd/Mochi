@@ -85,7 +85,7 @@ test('canonical movement status/destination mapping preserves cloud-demo provena
     throw new Error(`unexpected path ${path}`);
   });
 
-  const student = tools.get('jxl.student_query');
+  const student = tools.get('jxl_student_query');
   const inClinic = await student.execute({ status: 'in_clinic' }, exec);
   assert.deepEqual(inClinic.items.map((item) => item.学生), ['医务室就诊']);
   assert.equal(inClinic.source, 'https://demo.example.test');
@@ -105,7 +105,7 @@ test('canonical movement status/destination mapping preserves cloud-demo provena
   assert.equal(returned.范围.activeOnly, false);
   assert.ok(calls.some((call) => call.path === '/api/movements?active=false'), 'returned must read history rather than the active list');
 
-  const clinic = await tools.get('jxl.clinic_status').execute({}, exec);
+  const clinic = await tools.get('jxl_clinic_status').execute({}, exec);
   assert.deepEqual(clinic.流动单.items.map((item) => item.学生), ['前往医务室', '医务室就诊', '医务室返班']);
   assert.equal(clinic.流动单.范围.总数, null);
   assert.deepEqual(clinic.医务事件.items.map((item) => item.状态), ['检查中'], 'canonical terminal event statuses must not be reported as active');
@@ -119,18 +119,18 @@ test('canonical movement status/destination mapping preserves cloud-demo provena
   assert.match(clinic.医务事件.计数说明, /本页匹配记录/);
   assert.match(clinic.医务事件.范围.说明, /本页匹配记录/);
 
-  const overdueClinic = await tools.get('jxl.clinic_status').execute({ onlyOverdue: true }, exec);
+  const overdueClinic = await tools.get('jxl_clinic_status').execute({ onlyOverdue: true }, exec);
   assert.equal(overdueClinic.流动单.count, 0, 'onlyOverdue still uses the movement fields that actually exist');
   assert.equal(overdueClinic.医务事件.count, 1, 'events without overdueAt must not be filtered into a fake zero');
   assert.equal(overdueClinic.医务事件.filterStatus, 'unsupported');
   assert.match(overdueClinic.医务事件.filterNotice, /不返回 overdueAt/);
 
-  const dorm = await tools.get('jxl.dorm_status').execute({ building: '东楼', floor: 3 }, exec);
+  const dorm = await tools.get('jxl_dorm_status').execute({ building: '东楼', floor: 3 }, exec);
   assert.equal(dorm.count, 3, 'unsupported location filters must not turn available dorm records into zero');
   assert.equal(dorm.filterStatus, 'unsupported');
   assert.match(dorm.filterNotice, /不提供楼栋或楼层字段/);
 
-  const campus = await tools.get('jxl.campus_status').execute({}, exec);
+  const campus = await tools.get('jxl_campus_status').execute({}, exec);
   assert.deepEqual(campus.在途学生.map((item) => item.学生), active.map((item) => item.studentName));
   assert.equal(campus.在途范围.服务端上限, 100);
   assert.equal(campus.在途范围.总数, null);
@@ -149,7 +149,7 @@ test('partial and failed aggregation responses remain structured and never becom
     if (path === '/api/events?limit=30') return response({ items: [event(41)] });
     throw new Error(`unexpected path ${path}`);
   });
-  const clinic = await partial.tools.get('jxl.clinic_status').execute({}, exec);
+  const clinic = await partial.tools.get('jxl_clinic_status').execute({}, exec);
   assert.equal(clinic.queryStatus, 'partial');
   assert.equal(clinic.流动单.count, null);
   assert.equal(clinic.流动单.items, null);
@@ -158,7 +158,7 @@ test('partial and failed aggregation responses remain structured and never becom
   assert.ok(!JSON.stringify(clinic).includes('do-not-leak'), 'internal transport text must not reach a tool result');
 
   const allFailed = setup(() => transportFailure(), 'https://offline.example.test');
-  const campus = await allFailed.tools.get('jxl.campus_status').execute({}, exec);
+  const campus = await allFailed.tools.get('jxl_campus_status').execute({}, exec);
   assert.equal(campus.queryStatus, 'error');
   assert.equal(campus.dataMode, 'unknown');
   assert.match(campus.sourceNotice, /均未获得可用结果/);
@@ -179,7 +179,7 @@ test('missing or mixed dataMode is explicit, and malformed dashboard counters st
     if (path === '/api/dashboard?limit=8') return response({ counts: { overdue: null, active: '', unread: false }, events: [] }, { dataMode: undefined });
     throw new Error(`unexpected path ${path}`);
   });
-  const missing = await missingMode.tools.get('jxl.campus_status').execute({}, exec);
+  const missing = await missingMode.tools.get('jxl_campus_status').execute({}, exec);
   assert.equal(missing.queryStatus, 'complete');
   assert.equal(missing.dataMode, 'unknown');
   assert.equal(missing.missingDataMode, true);
@@ -194,7 +194,7 @@ test('missing or mixed dataMode is explicit, and malformed dashboard counters st
     if (path === '/api/dashboard?limit=8') return response({ counts: { overdue: 1, active: 2, unread: 3 }, events: [] }, { dataMode: 'cloud-demo' });
     throw new Error(`unexpected path ${path}`);
   });
-  const mixed = await mixedMode.tools.get('jxl.campus_status').execute({}, exec);
+  const mixed = await mixedMode.tools.get('jxl_campus_status').execute({}, exec);
   assert.equal(mixed.dataMode, 'mixed');
   assert.deepEqual(mixed.dataModes.sort(), ['campus-api', 'cloud-demo']);
   assert.match(mixed.sourceNotice, /多个数据模式/);
@@ -205,7 +205,7 @@ test('missing or mixed dataMode is explicit, and malformed dashboard counters st
     if (path === '/api/dashboard?limit=8') return response({ counts: { overdue: 1, active: 2, unread: 3 }, events: [] }, { dataMode: 'campus-api' });
     throw new Error(`unexpected path ${path}`);
   });
-  const incomplete = await incompleteMode.tools.get('jxl.campus_status').execute({}, exec);
+  const incomplete = await incompleteMode.tools.get('jxl_campus_status').execute({}, exec);
   assert.equal(incomplete.queryStatus, 'complete');
   assert.equal(incomplete.dataMode, 'mixed', 'a declared mode cannot stand for successful responses that omit dataMode');
   assert.equal(incomplete.missingDataMode, true);
@@ -219,7 +219,7 @@ test('a 100-record movement response is marked as potentially truncated rather t
     if (path === '/api/movements?active=true') return response({ items: hundred });
     throw new Error(`unexpected path ${path}`);
   });
-  const result = await tools.get('jxl.student_query').execute({ status: 'out' }, exec);
+  const result = await tools.get('jxl_student_query').execute({ status: 'out' }, exec);
   assert.equal(result.count, 100);
   assert.equal(result.items.length, 20);
   assert.equal(result.范围.接口返回记录数, 100);

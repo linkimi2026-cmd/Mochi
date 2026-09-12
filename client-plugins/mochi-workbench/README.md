@@ -1,6 +1,10 @@
 # Mochi Workbench
 
-教师工作台是一个浏览器侧 Harness 插件。2026-09-06 起与 dsh-better-sidebar 合并：面板本体经 `ctx.betterSidebar.registerTab` 注册为侧边栏首位 tab（`mochi-workbench:panel`，single 实例），不再占用 `shell.overlay`；`conversation.session.header.actions` 槽位的「工作台」按钮通过 `openTab`（内容型 seed，面板折叠时自动展开）定向打开/聚焦该 tab。不会替换对话、原生详情栏或工具详情。
+教师工作台是一个浏览器侧 Harness 插件。它占用两个官方槽位：`conversation.session.header.actions` 里的模式胶囊（`对话 / 工作`）与工作台面板本体作为 `chat` 视图上的覆盖层。面板不再注册成侧边栏 tab，也不再注册独立会话视图。不会替换对话、原生详情栏或工具详情。
+
+**对话模式与工作模式都是聊天界面。** 教师端只保留官方 `chat` 会话视图（`ui-trajectory` 已在补丁中整体关闭）：官方 `conversation.view` 槽按 `only: active.id` 一次只渲染一个 view，且 `renderSlot` 授权被 `children` 声明锁死（`ui-renderer`：`slot '<key>' is not declared by this entry's children`），所以自定义视图**无法**内嵌官方 chat 渲染。因此本插件不注册第二个视图——两种模式的差别只是工作台面板是否展开，对话始终可见、可输入。面板是 `position:fixed` 覆盖层（会话头只有 ~44px 高，`position:absolute` 会锚到 header 上），`z-index:30` 高于官方 `.composerSeat` 的 7。
+
+模式切换走**官方缝**：`ui-conversation` 渲染会话头时把 `{ selectedView, selectView }` 作为 owner props 展开进 `conversation.session.header.actions` 的每个条目（renderer 按 `{...kit, ...injected, ...ownerProps}` 组装），插件用它把会话钉回 `chat`。旧的 DOM relay（`querySelectorAll` 找官方 tablist 再 `click`）已整体删除，不存在第二套机制。回合打开时自动展开面板（agent 开始干活），回合结束在教师未接管时自动收起。
 
 Office 入口只请求本机 `127.0.0.1:18100` 的 `mochi-office` 合同。只有健康响应同时确认 `engine.online` 和 `engine.callbackReachable`，且 `editor-config` 完整有效时，面板才加载 ONLYOFFICE 的官方 DocsAPI 脚本。离线或回调桥接未验证时只显示状态，绝不伪造可编辑文本。
 

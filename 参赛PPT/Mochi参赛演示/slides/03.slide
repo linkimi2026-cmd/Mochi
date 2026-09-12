@@ -1,0 +1,34 @@
+<Slide style={{ width: 1280, height: 720, background: '#16211d', position: 'relative', overflow: 'hidden' }}>
+
+    {/* 右侧同心弧纹样 */}
+    <Box style={{ position: 'absolute', top: 0, right: 0, width: 560, height: 720 }}>
+        <svg width={560} height={720} viewBox='0 0 560 720'>
+            <circle cx='560' cy='360' r='130' fill='none' stroke='rgba(232,179,75,0.20)' strokeWidth='1' />
+            <circle cx='560' cy='360' r='215' fill='none' stroke='rgba(232,179,75,0.13)' strokeWidth='1' />
+            <circle cx='560' cy='360' r='305' fill='none' stroke='rgba(232,179,75,0.08)' strokeWidth='1' />
+            <circle cx='560' cy='360' r='400' fill='none' stroke='rgba(232,179,75,0.04)' strokeWidth='1' />
+        </svg>
+    </Box>
+
+    {/* 左侧竖向焦糖细线 */}
+    <Box style={{ position: 'absolute', left: 96, top: 180, width: 2, height: 360, background: 'linear-gradient(180deg, rgba(232,179,75,0.65) 0%, rgba(232,179,75,0.05) 100%)' }} />
+
+    <Box style={{
+        position: 'relative', zIndex: 1,
+        width: 1280, height: 720,
+        paddingLeft: 152, paddingRight: 96,
+        justifyContent: 'center', gap: 28,
+    }}>
+        <Text style={{ fontSize: 15, color: '#e8b34b', letterSpacing: 6 }}>01 / 问题</Text>
+        <Text style={{ fontSize: 72, fontWeight: 'bold', color: '#f5f2e9', lineHeight: 1.15, letterSpacing: -1 }}>
+            教师的时间，
+            <br />
+            被切碎了
+        </Text>
+        <Text style={{ fontSize: 20, color: 'rgba(245,242,233,0.55)', lineHeight: 1.8, width: 660 }}>
+            跑腿、传话、找材料、催审批——每一件都不难，
+            <br />
+            加起来却占掉一整个上午。
+        </Text>
+    </Box>
+</Slide>

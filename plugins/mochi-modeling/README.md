@@ -17,7 +17,7 @@ node verify.mjs   # node 数值验证（不开浏览器）：斜率对解析解 
 node test.mjs     # 单测：注册/三件套/零外链/model.json schema/解析解/render 双参
 ```
 
-工具 `mochi.model_create`（参数 `type='conic-tangent'`、`a`、`b`、
+工具 `mochi_model_create`（参数 `type='conic-tangent'`、`a`、`b`、
 `outputDirectory`）在输出目录生成：
 
 - `model.html` —— 自包含交互页（浏览器直接打开即可）
@@ -36,6 +36,6 @@ node test.mjs     # 单测：注册/三件套/零外链/model.json schema/解析
   MIT License"，仓库根有 LICENSE.LGPL 与 LICENSE.MIT 两份文本）
 
 **目录**：`conic.mjs`（计算核心）/ `index.mjs`（插件入口，dsh 工具
-`mochi.model_create`）/ `verify.mjs`（数值验证）/ `test.mjs`（单测）/
+`mochi_model_create`）/ `verify.mjs`（数值验证）/ `test.mjs`（单测）/
 `assets/`（vendor 副本与许可文本）。依赖以 node_modules 符号链接指向
 mochi-campus 的 pnpm store（`.nosync` 副本同），不重复安装。

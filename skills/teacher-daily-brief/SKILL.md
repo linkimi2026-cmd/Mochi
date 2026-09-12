@@ -11,7 +11,7 @@ user-invocable: true
 
 ## 工作法
 
-1. 根据用户角色与问题，只查询必要范围。默认依次调用 `jxl.clinic_status`、`jxl.dorm_status`、`jxl.campus_status`（`notice`）和 `jxl.message`（`unread`）；用户只问单一主题时不要扩大查询。
+1. 根据用户角色与问题，只查询必要范围。默认依次调用 `jxl_clinic_status`、`jxl_dorm_status`、`jxl_campus_status`（`notice`）和 `jxl_message`（`unread`）；用户只问单一主题时不要扩大查询。
 2. 把工具返回分成：需立即处理、今天留意、仅供知悉。不得根据常识补写校园实时状态。
 3. 任一结果带 `dataMode: demo` 时，开头明确写“以下为演示数据”，不能写成真实校情。
 4. 输出最多 8 行，先报异常和责任动作，再报正常项。没有异常时直说“当前查询范围内没有待处理项”。
@@ -21,7 +21,7 @@ user-invocable: true
 
 - 老师只需说“给我看下今天情况”，不要求填写表单或工具参数。
 - 晨报默认只读，不触发发送、修改记录或审批。
-- 如果老师要求通知他人，先起草内容；真正发送必须转入 `message.send` 并等待明确确认。
+- 如果老师要求通知他人，先起草内容；真正发送必须转入 `message_send` 并等待明确确认。
 
 ## 能力缺口
 

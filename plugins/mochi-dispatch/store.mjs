@@ -13,6 +13,8 @@ CREATE TABLE IF NOT EXISTS mochi_tasks (
   organization_id TEXT NOT NULL DEFAULT 'jiaxinglian',
   -- 本地任务归属的校园账号 ID。旧行迁移时保持 NULL，不能由昵称反推归属。
   owner_user_id INTEGER,
+  -- 独立 LAN 启动根的受管身份键。它不替代校园账号 ID，也不参与 relay 查询。
+  local_owner_key TEXT,
   task_type TEXT NOT NULL CHECK (task_type IN ('ASK','REQUEST','FIND','APPROVE')),
   status TEXT NOT NULL CHECK (status IN ('CREATED','DISPATCHING','DELIVERED','COMPLETED','DECLINED','FAILED','EXPIRED')),
   from_user_id INTEGER NOT NULL,
@@ -33,6 +35,8 @@ CREATE TABLE IF NOT EXISTS mochi_tasks (
   retry_of_task_id INTEGER,
   delivery_outcome TEXT NOT NULL DEFAULT 'PENDING',
   failure_code TEXT,
+  -- 已验证 LAN 教室端“已看到”回执时间。它不是校园账号或文件已执行的证据。
+  receipt_seen_at TEXT,
   created_at TEXT NOT NULL,
   updated_at TEXT NOT NULL,
   completed_at TEXT,
@@ -84,12 +88,14 @@ function ensureSchema(db) {
   db.exec(SCHEMA);
   const columns = new Set(db.prepare('PRAGMA table_info(mochi_tasks)').all().map((column) => column.name));
   if (!columns.has('owner_user_id')) db.exec('ALTER TABLE mochi_tasks ADD COLUMN owner_user_id INTEGER');
+  if (!columns.has('local_owner_key')) db.exec('ALTER TABLE mochi_tasks ADD COLUMN local_owner_key TEXT');
   if (!columns.has('correlation_id')) db.exec('ALTER TABLE mochi_tasks ADD COLUMN correlation_id TEXT');
   if (!columns.has('request_fingerprint')) db.exec('ALTER TABLE mochi_tasks ADD COLUMN request_fingerprint TEXT');
   if (!columns.has('attempt_no')) db.exec('ALTER TABLE mochi_tasks ADD COLUMN attempt_no INTEGER NOT NULL DEFAULT 1');
   if (!columns.has('retry_of_task_id')) db.exec('ALTER TABLE mochi_tasks ADD COLUMN retry_of_task_id INTEGER');
   if (!columns.has('delivery_outcome')) db.exec("ALTER TABLE mochi_tasks ADD COLUMN delivery_outcome TEXT NOT NULL DEFAULT 'PENDING'");
   if (!columns.has('failure_code')) db.exec('ALTER TABLE mochi_tasks ADD COLUMN failure_code TEXT');
+  if (!columns.has('receipt_seen_at')) db.exec('ALTER TABLE mochi_tasks ADD COLUMN receipt_seen_at TEXT');
   // 旧出站任务的 from_user_id 是创建时的稳定校园账号，可安全回填；
   // 旧入站镜像没有收件账号，靠 relay-in 前缀保留为 NULL，绝不能按昵称归属。
   db.prepare(`UPDATE mochi_tasks
@@ -118,6 +124,8 @@ function ensureSchema(db) {
   db.prepare("UPDATE mochi_tasks SET delivery_outcome = 'UNKNOWN' WHERE delivery_outcome = 'PENDING' AND status IN ('DISPATCHING', 'EXPIRED')").run();
   db.exec('CREATE INDEX IF NOT EXISTS idx_tasks_owner ON mochi_tasks (owner_user_id, id DESC)');
   db.exec('CREATE INDEX IF NOT EXISTS idx_tasks_dispatch_fingerprint ON mochi_tasks (owner_user_id, request_fingerprint, id DESC)');
+  db.exec('CREATE INDEX IF NOT EXISTS idx_tasks_local_owner ON mochi_tasks (local_owner_key, id DESC) WHERE local_owner_key IS NOT NULL');
+  db.exec('CREATE INDEX IF NOT EXISTS idx_tasks_local_fingerprint ON mochi_tasks (local_owner_key, request_fingerprint, id DESC) WHERE local_owner_key IS NOT NULL');
   db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_tasks_dispatch_attempt ON mochi_tasks (correlation_id, attempt_no) WHERE correlation_id IS NOT NULL');
 }
 
@@ -125,6 +133,14 @@ function requireOwnerUserId(ownerUserId) {
   const id = Number(ownerUserId);
   if (!Number.isSafeInteger(id) || id <= 0) throw new Error('任务必须绑定有效的校园账号 ID。');
   return id;
+}
+
+function requireLocalOwnerKey(localOwnerKey) {
+  const key = String(localOwnerKey ?? '').trim();
+  if (!key.startsWith('local:') || key.length > 512 || /[\u0000-\u001f\u007f]/u.test(key)) {
+    throw new Error('局域网任务必须绑定受管本机身份。');
+  }
+  return key;
 }
 
 function requireTaskId(taskId, label = '任务 ID') {
@@ -173,6 +189,14 @@ export function createStore(db = openStore()) {
      transport, idempotency_key, correlation_id, request_fingerprint, attempt_no, retry_of_task_id, delivery_outcome,
      created_at, updated_at, expired_at)
     VALUES (?, ?, 'CREATED', ?, ?, ?, ?, ?, ?, 'relay', ?, ?, ?, ?, ?, 'PENDING', ?, ?, ?)`);
+  // LAN rows deliberately preserve owner_user_id/from_user_id as the
+  // non-account sentinel 0. Their ownership is only local_owner_key, and all
+  // relay queries remain keyed by a positive campus account ID.
+  const insertLanAttempt = db.prepare(`INSERT INTO mochi_tasks
+    (local_owner_key, owner_user_id, task_type, status, from_user_id, from_user_name, to_peer_name, to_peer_role, goal, context,
+     transport, idempotency_key, correlation_id, request_fingerprint, attempt_no, retry_of_task_id, delivery_outcome,
+     created_at, updated_at, expired_at)
+    VALUES (?, 0, ?, 'CREATED', 0, ?, ?, ?, ?, ?, 'lan', ?, ?, ?, ?, ?, 'PENDING', ?, ?, ?)`);
   const insertMirror = db.prepare(`INSERT INTO mochi_tasks
     (owner_user_id, task_type, status, from_user_id, from_user_name, to_peer_name, to_peer_role, goal, context,
      transport, relay_message_id, idempotency_key, correlation_id, request_fingerprint, attempt_no, delivery_outcome,
@@ -182,8 +206,10 @@ export function createStore(db = openStore()) {
   const byKey = db.prepare('SELECT * FROM mochi_tasks WHERE idempotency_key = ?');
   const byRelayForOwner = db.prepare('SELECT * FROM mochi_tasks WHERE relay_message_id = ? AND owner_user_id = ? ORDER BY id DESC');
   const listByOwner = db.prepare('SELECT * FROM mochi_tasks WHERE owner_user_id = ? ORDER BY id DESC LIMIT 100');
+  const listByLocalOwner = db.prepare('SELECT * FROM mochi_tasks WHERE local_owner_key = ? AND transport = \'lan\' ORDER BY id DESC LIMIT 100');
   const listAll = db.prepare('SELECT * FROM mochi_tasks ORDER BY id DESC LIMIT 200');
   const byFingerprint = db.prepare('SELECT * FROM mochi_tasks WHERE owner_user_id = ? AND request_fingerprint = ? ORDER BY id DESC');
+  const byLocalFingerprint = db.prepare('SELECT * FROM mochi_tasks WHERE local_owner_key = ? AND transport = \'lan\' AND request_fingerprint = ? ORDER BY id DESC');
   const byCorrelation = db.prepare('SELECT * FROM mochi_tasks WHERE correlation_id = ? ORDER BY attempt_no DESC, id DESC');
   const uncertainLegacyByOwnerAndType = db.prepare(`SELECT * FROM mochi_tasks
     WHERE owner_user_id = ? AND task_type = ? AND request_fingerprint = 'legacy:' || id AND delivery_outcome = 'UNKNOWN'
@@ -201,6 +227,14 @@ export function createStore(db = openStore()) {
         result_answer = CASE WHEN ? <> '' THEN ? ELSE result_answer END,
         updated_at = ?
     WHERE id = ? AND status = 'DISPATCHING'`);
+  const recordLanReceiptStmt = db.prepare(`UPDATE mochi_tasks
+    SET receipt_seen_at = ?,
+        result_answer = CASE WHEN ? <> '' THEN ? ELSE result_answer END,
+        updated_at = ?
+    WHERE id = ?
+      AND transport = 'lan'
+      AND local_owner_key = ?
+      AND status IN ('DELIVERED', 'COMPLETED')`);
   const expireStmt = db.prepare(`UPDATE mochi_tasks
     SET status = 'EXPIRED', updated_at = ?, completed_at = ?
     WHERE status IN ('CREATED','DISPATCHING','DELIVERED') AND expired_at IS NOT NULL AND expired_at <= ?`);
@@ -223,6 +257,18 @@ export function createStore(db = openStore()) {
     };
   }
 
+  function lanDispatchState(localOwnerKey, requestFingerprint) {
+    const owner = requireLocalOwnerKey(localOwnerKey);
+    const fingerprint = requireFingerprint(requestFingerprint);
+    const rows = byLocalFingerprint.all(owner, fingerprint);
+    return {
+      latest: rows[0] || null,
+      active: rows.find((task) => ACTIVE_STATUSES.has(task.status)) || null,
+      blocking: rows.find(isBlocking) || null,
+      rows,
+    };
+  }
+
   function retryEligibility({ ownerUserId, taskId, taskType, requestFingerprint }) {
     const ownerId = requireOwnerUserId(ownerUserId);
     const retryId = requireTaskId(taskId, '重试任务 ID');
@@ -237,6 +283,26 @@ export function createStore(db = openStore()) {
       throw new Error(`任务 #${retryId} 没有可确认的未投递失败，不能重试。`);
     }
     const state = dispatchState(ownerId, fingerprint, taskType, target.to_peer_name);
+    if (state.blocking) return { task: state.blocking, reused: true, reason: 'blocking' };
+    const latestForCorrelation = byCorrelation.all(target.correlation_id)[0] || target;
+    if (latestForCorrelation.id !== target.id) return { task: latestForCorrelation, reused: true, reason: 'superseded' };
+    return { task: target, reused: false, nextAttemptNo: Number(target.attempt_no) + 1 };
+  }
+
+  function lanRetryEligibility({ localOwnerKey, taskId, taskType, requestFingerprint }) {
+    const owner = requireLocalOwnerKey(localOwnerKey);
+    const retryId = requireTaskId(taskId, '重试任务 ID');
+    const fingerprint = requireFingerprint(requestFingerprint);
+    const target = get.get(retryId);
+    if (!target) throw new Error(`任务 #${retryId} 不存在。`);
+    if (target.transport !== 'lan' || target.local_owner_key !== owner) throw new Error(`任务 #${retryId} 不属于当前局域网教师身份，不能重试。`);
+    if (target.task_type !== taskType || target.request_fingerprint !== fingerprint) {
+      throw new Error(`任务 #${retryId} 与本次教室通知内容不一致，不能重试。`);
+    }
+    if (target.status !== 'FAILED' || target.delivery_outcome !== 'NOT_SENT') {
+      throw new Error(`任务 #${retryId} 没有可确认的未投递失败，不能重试。`);
+    }
+    const state = lanDispatchState(owner, fingerprint);
     if (state.blocking) return { task: state.blocking, reused: true, reason: 'blocking' };
     const latestForCorrelation = byCorrelation.all(target.correlation_id)[0] || target;
     if (latestForCorrelation.id !== target.id) return { task: latestForCorrelation, reused: true, reason: 'superseded' };
@@ -306,6 +372,39 @@ export function createStore(db = openStore()) {
         return { task: get.get(Number(info.lastInsertRowid)), reused: false, reason: mode };
       });
     },
+    // Standalone LAN teacher attempts share mochi_tasks and the same seven
+    // states, but never impersonate a positive campus account. `0` is a
+    // documented non-account sentinel; local_owner_key is the sole owner
+    // selector for these rows, so relay rows cannot be claimed by a LAN root.
+    createLanDispatchAttempt({ mode = 'default', retryTaskId = null, localOwnerKey, taskType = 'REQUEST', fromUserName, toPeerName, toPeerRole = 'classroom', goal, context = '', requestFingerprint, expiredAt = null }) {
+      const owner = requireLocalOwnerKey(localOwnerKey);
+      const fingerprint = requireFingerprint(requestFingerprint);
+      if (!['default', 'new', 'retry'].includes(mode)) throw new Error(`未知任务创建方式：${mode}`);
+      return inImmediateTransaction(() => {
+        const state = lanDispatchState(owner, fingerprint);
+        if (state.blocking) return { task: state.blocking, reused: true, reason: 'blocking' };
+        if (mode === 'default' && state.latest) return { task: state.latest, reused: true, reason: 'existing' };
+
+        let correlationId;
+        let attemptNo;
+        let retryOfTaskId = null;
+        if (mode === 'retry') {
+          const eligibility = lanRetryEligibility({ localOwnerKey: owner, taskId: retryTaskId, taskType, requestFingerprint: fingerprint });
+          if (eligibility.reused) return eligibility;
+          correlationId = eligibility.task.correlation_id;
+          attemptNo = eligibility.nextAttemptNo;
+          retryOfTaskId = eligibility.task.id;
+        } else {
+          correlationId = randomUUID();
+          attemptNo = 1;
+        }
+        const t = now();
+        const idempotencyKey = attemptKeyFor(correlationId, attemptNo);
+        const info = insertLanAttempt.run(owner, taskType, String(fromUserName || '').trim(), String(toPeerName || '').trim(), String(toPeerRole || '').trim(),
+          String(goal || '').trim(), String(context || ''), idempotencyKey, correlationId, fingerprint, attemptNo, retryOfTaskId, t, t, expiredAt);
+        return { task: get.get(Number(info.lastInsertRowid)), reused: false, reason: mode };
+      });
+    },
     // 镜像入站 relay 行为本地任务（幂等键 relay-in:<owner-id>:<id>）；to_peer_* = 收件主人。
     // peer 是对端，owner 是当前认证的收件校园账号，二者不得混用。
     mirrorInboundTask({ ownerUserId, taskType, peerId = 0, peerName, peerRole = '', toPeerName, toPeerRole = '', goal, relayMessageId, idempotencyKey, createdAt, expiredAt }) {
@@ -325,8 +424,11 @@ export function createStore(db = openStore()) {
     getTaskByRelayMessage: (relayMessageId, ownerUserId) => byRelayForOwner.get(Number(relayMessageId), requireOwnerUserId(ownerUserId)) || null,
     getTaskByIdempotencyKey: (key) => byKey.get(key) || null,
     getDispatchState: (input) => dispatchState(input.ownerUserId, input.requestFingerprint, input.taskType, input.peerName),
+    getLanDispatchState: (input) => lanDispatchState(input.localOwnerKey, input.requestFingerprint),
     preflightRetry: (input) => retryEligibility(input),
+    preflightLanRetry: (input) => lanRetryEligibility(input),
     listTasksByUser: (ownerUserId) => listByOwner.all(requireOwnerUserId(ownerUserId)),
+    listTasksByLanOwner: (localOwnerKey) => listByLocalOwner.all(requireLocalOwnerKey(localOwnerKey)),
     listAll: () => listAll.all(),
     // 条件迁移：状态机断言 + WHERE status=? 双保险。同目标态重放=幂等成功。
     transition(id, to, { resultAnswer = '', relayMessageId = null, deliveryOutcome = undefined, failureCode = undefined } = {}) {
@@ -351,6 +453,20 @@ export function createStore(db = openStore()) {
       const t = now();
       recordOutcomeStmt.run(outcome, String(failureCode || '').slice(0, 120), resultAnswer, resultAnswer, t, Number(id));
       return get.get(Number(id)) || null;
+    },
+    // Receipt ingestion is local-only: the LAN service has already verified
+    // the signed peer and original outbox binding before dispatch reaches this
+    // conditional projection.  It never claims a relay row or another local
+    // identity's task.
+    recordLanReceipt({ taskId, localOwnerKey, seenAt, resultAnswer = '' }) {
+      const current = get.get(Number(taskId));
+      if (!current || current.transport !== 'lan' || current.local_owner_key !== requireLocalOwnerKey(localOwnerKey)
+        || !['DELIVERED', 'COMPLETED'].includes(current.status)) return null;
+      const timestamp = String(seenAt || '').trim();
+      if (!timestamp || timestamp.length > 120) throw new Error('教室已看到回执时间无效。');
+      const note = String(resultAnswer || '').slice(0, 500);
+      recordLanReceiptStmt.run(timestamp, note, note, now(), Number(taskId), current.local_owner_key);
+      return get.get(Number(taskId)) || null;
     },
     // 到期扫描：非终态且过期 → EXPIRED（单条条件批量更新，天然幂等）。
     expireScan(nowMs = Date.now()) {

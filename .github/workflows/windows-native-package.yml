@@ -1,0 +1,328 @@
+# Review template: copy this workflow and the separately reviewed mochi-source/
+# snapshot into the private linkimi2026-cmd/jyl-campus-health build branch.
+# It refuses any other repository. The snapshot is an exact white-list rather
+# than a public Mochi checkout: it contains no node_modules, campus data,
+# credentials, user data, textbooks, WORKLOG, or release output.
+name: Windows native package (private campus snapshot)
+
+on:
+  push:
+    branches:
+      - "codex/mochi-windows-*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package-win-x64:
+    runs-on: windows-2022
+    timeout-minutes: 90
+    env:
+      npm_config_audit: "false"
+      npm_config_fund: "false"
+    steps:
+      - name: Refuse non-private build hosts
+        shell: pwsh
+        env:
+          EXPECTED_REPOSITORY: linkimi2026-cmd/jyl-campus-health
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference = "Stop"
+          $PSNativeCommandUseErrorActionPreference = $true
+          if ($env:GITHUB_REPOSITORY -ne $env:EXPECTED_REPOSITORY) {
+            throw "This workflow must run only in the private campus repository; refusing to build campus-static artifacts here."
+          }
+          $isPrivate = (gh api "repos/$env:GITHUB_REPOSITORY" --jq ".private").Trim()
+          if ($isPrivate -ne "true") {
+            throw "This workflow requires a private repository for campus-static artifacts."
+          }
+
+      - name: Check out private campus source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          path: campus-source
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Move approved Mochi snapshot beside campus-source
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $PSNativeCommandUseErrorActionPreference = $true
+          # Release staging writes under `mochi-source/apps/desktop`. While that
+          # tree sits inside campus-source, the output directory is nested in a
+          # declared input root and the release-output guard rejects it by
+          # design. Move it out so the two inputs stay siblings, exactly like
+          # the development checkout does.
+          $nested = Join-Path $env:GITHUB_WORKSPACE "campus-source/mochi-source"
+          $sibling = Join-Path $env:GITHUB_WORKSPACE "mochi-source"
+          if (-not (Test-Path -LiteralPath $nested -PathType Container)) {
+            throw "Private build branch has no mochi-source snapshot."
+          }
+          if (Test-Path -LiteralPath $sibling) {
+            throw "mochi-source already exists at the workspace root."
+          }
+          Move-Item -LiteralPath $nested -Destination $sibling
+          if (Test-Path -LiteralPath $nested) {
+            throw "mochi-source is still present inside campus-source."
+          }
+
+      - name: Verify approved Mochi source snapshot
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $PSNativeCommandUseErrorActionPreference = $true
+          $sourceRoot = Join-Path $env:GITHUB_WORKSPACE "mochi-source"
+          if (-not (Test-Path -LiteralPath $sourceRoot -PathType Container)) {
+            throw "Private build branch has no mochi-source snapshot."
+          }
+          $sourceItem = Get-Item -LiteralPath $sourceRoot -Force
+          if ($sourceItem.Attributes -band [IO.FileAttributes]::ReparsePoint) {
+            throw "mochi-source must be a real directory, not a reparse point."
+          }
+          $manifestPath = Join-Path $sourceRoot ".github/windows-native-package-inputs.json"
+          if (-not (Test-Path -LiteralPath $manifestPath -PathType Leaf)) {
+            throw "mochi-source is missing its input manifest."
+          }
+          $manifest = Get-Content -LiteralPath $manifestPath -Raw | ConvertFrom-Json
+          if ($manifest.schemaVersion -ne 1 -or $manifest.kind -ne "mochi-windows-native-source-snapshot") {
+            throw "Unsupported Mochi source snapshot manifest."
+          }
+          $expectedEntries = @($manifest.files)
+          if ($expectedEntries.Count -ne [int]$manifest.verification.expectedFileCount) {
+            throw "Snapshot manifest entry count is inconsistent."
+          }
+          $sourceFull = [IO.Path]::GetFullPath($sourceRoot).TrimEnd([char[]]@([IO.Path]::DirectorySeparatorChar, [IO.Path]::AltDirectorySeparatorChar))
+          $sourcePrefix = $sourceFull + [IO.Path]::DirectorySeparatorChar
+          $allowed = @{}
+          foreach ($entry in $expectedEntries) {
+            $relative = [string]$entry.path
+            if ([string]::IsNullOrWhiteSpace($relative) -or $relative.Contains("\") -or $relative.Contains(":") -or $relative -match "(^|/)\.\.?(?:/|$)") {
+              throw "Snapshot manifest has an unsafe relative path."
+            }
+            $full = [IO.Path]::GetFullPath((Join-Path $sourceRoot $relative.Replace("/", [IO.Path]::DirectorySeparatorChar)))
+            if (-not $full.StartsWith($sourcePrefix, [StringComparison]::OrdinalIgnoreCase)) {
+              throw "Snapshot manifest path escapes mochi-source."
+            }
+            if (-not (Test-Path -LiteralPath $full -PathType Leaf)) {
+              throw "Snapshot input is missing: $relative"
+            }
+            $item = Get-Item -LiteralPath $full -Force
+            if ($item.Attributes -band [IO.FileAttributes]::ReparsePoint) {
+              throw "Snapshot input must not be a reparse point: $relative"
+            }
+            if ($entry.sha256 -notmatch "^[a-f0-9]{64}$" -or [long]$entry.bytes -ne [long]$item.Length) {
+              throw "Snapshot metadata is invalid: $relative"
+            }
+            $actual = (Get-FileHash -LiteralPath $full -Algorithm SHA256).Hash.ToLowerInvariant()
+            if ($actual -ne $entry.sha256) {
+              throw "Snapshot input hash mismatch: $relative"
+            }
+            $allowed[$relative] = $true
+          }
+          $manifestRelative = ".github/windows-native-package-inputs.json"
+          $allowed[$manifestRelative] = $true
+          $actualFiles = @()
+          foreach ($item in Get-ChildItem -LiteralPath $sourceRoot -Force -Recurse) {
+            if ($item.Attributes -band [IO.FileAttributes]::ReparsePoint) {
+              throw "Snapshot must not contain a reparse point: $($item.FullName)"
+            }
+            if (-not $item.PSIsContainer) {
+              $relative = $item.FullName.Substring($sourcePrefix.Length).Replace([IO.Path]::DirectorySeparatorChar, "/")
+              if (-not $allowed.ContainsKey($relative)) {
+                throw "Snapshot contains an unapproved file: $relative"
+              }
+              $actualFiles += $relative
+            }
+          }
+          if ($actualFiles.Count -ne $allowed.Count) {
+            throw "Snapshot file count does not match its exact manifest."
+          }
+          Write-Host "Verified $($expectedEntries.Count) approved Mochi source inputs."
+
+      - name: Set up Node 22 and fixed npm
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 22.22.2
+          package-manager-cache: false
+
+      - name: Install fixed npm 11.6
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $PSNativeCommandUseErrorActionPreference = $true
+          npm install --global npm@11.6.0 --ignore-scripts --no-audit --no-fund
+          if ((npm --version).Trim() -ne "11.6.0") {
+            throw "Expected fixed npm 11.6.0 after installation."
+          }
+
+      - name: Build reviewed campus static client
+        shell: pwsh
+        working-directory: campus-source
+        run: |
+          $ErrorActionPreference = "Stop"
+          $PSNativeCommandUseErrorActionPreference = $true
+          corepack enable
+          corepack prepare pnpm@11.22.0 --activate
+          if ((pnpm --version).Trim() -ne "11.22.0") {
+            throw "Expected fixed pnpm 11.22.0."
+          }
+          pnpm install --frozen-lockfile
+          pnpm run build:mochi
+          pnpm run verify:runtime-assets
+          if (-not (Test-Path "mochi-dist/client/assets/embed.js" -PathType Leaf)) {
+            throw "Campus build did not produce mochi-dist/client/assets/embed.js."
+          }
+
+      - name: Install and verify desktop runtime closure
+        shell: pwsh
+        working-directory: mochi-source/apps/desktop
+        env:
+          MOCHI_CAMPUS_SOURCE_ROOT: ${{ github.workspace }}/campus-source
+          MOCHI_CAMPUS_STATIC_ROOT: ${{ github.workspace }}/campus-source/mochi-dist/client
+        run: |
+          $ErrorActionPreference = "Stop"
+          $PSNativeCommandUseErrorActionPreference = $true
+          # Native postinstall must run before Node-based checks: fs-ext,
+          # node-pty, and koffi must load under this runner's Node ABI.
+          npm ci --no-audit --no-fund
+          node -e "const fsExt=require('fs-ext'); if (typeof fsExt.flock !== 'function') throw new Error('fs-ext flock is unavailable')"
+          node -e "const pty=require('node-pty'); if (typeof pty.spawn !== 'function') throw new Error('node-pty spawn is unavailable')"
+          node -e "const koffi=require('koffi'); if (typeof koffi.load !== 'function') throw new Error('koffi load is unavailable')"
+          npm ls dsh-better-sidebar --omit=dev
+          npm run test:installer-config
+          npm run test:dsh-host-peers
+          npm run test:runtime-profile
+          npm run test:release-input
+
+      - name: Prepare and probe fixed Playwright Chromium
+        shell: pwsh
+        working-directory: mochi-source/apps/desktop
+        run: |
+          $ErrorActionPreference = "Stop"
+          $PSNativeCommandUseErrorActionPreference = $true
+          node -e "const p=require('playwright/package.json'); if (p.version !== '1.55.0') throw new Error('Expected Playwright 1.55.0')"
+          $resourceRoot = Join-Path $env:RUNNER_TEMP "mochi-playwright-1.55.0"
+          $browserRoot = Join-Path $resourceRoot "browsers"
+          New-Item -ItemType Directory -Force -Path $browserRoot | Out-Null
+          $env:PLAYWRIGHT_BROWSERS_PATH = $browserRoot
+          node node_modules/playwright/cli.js install chromium
+          $chrome = Join-Path $browserRoot "chromium-1187/chrome-win/chrome.exe"
+          foreach ($required in @(
+            $chrome,
+            (Join-Path $browserRoot "chromium-1187/INSTALLATION_COMPLETE"),
+            (Join-Path $browserRoot "chromium_headless_shell-1187/INSTALLATION_COMPLETE"),
+            (Join-Path $browserRoot "ffmpeg-1011/INSTALLATION_COMPLETE")
+          )) {
+            if (-not (Test-Path -LiteralPath $required -PathType Leaf)) {
+              throw "Playwright Chromium 1187 resource is incomplete."
+            }
+          }
+          $licenseSource = Join-Path $env:GITHUB_WORKSPACE "mochi-source/.github/windows-native-package-assets/chromium-140.0.7339.16-LICENSE"
+          Copy-Item -LiteralPath $licenseSource -Destination (Join-Path $resourceRoot "LICENSE") -Force
+          $profile = Join-Path $env:RUNNER_TEMP "mochi-chromium-credits-profile"
+          $stderr = Join-Path $env:RUNNER_TEMP "mochi-chromium-credits.stderr"
+          $rawCredits = & $chrome --headless=new --disable-gpu --no-first-run "--user-data-dir=$profile" --dump-dom chrome://credits 2> $stderr
+          if ($LASTEXITCODE -ne 0) {
+            throw "Chromium credits export failed."
+          }
+          $creditsHtml = [string]::Join([Environment]::NewLine, @($rawCredits))
+          # 只断言 `<html` 是**不够**的：Chromium 会静默地 dump 新标签页
+          # （约 26 KB、标题「新标签页」、Copyright 零命中），而新标签页同样含
+          # `<html` —— 旧写法抓不住「导错了页」，会把一份假许可清单打进安装包。
+          # 必须同时卡体量与许可指纹。这个坑不止一种触发方式：开发机 macOS 实测
+          # Chromium 能启动、CDP 能连，chrome://credits 却渲染为空文档，
+          # 所以唯一可靠的判据就是下面这两个数。
+          if ($creditsHtml -notmatch "<html" -or $creditsHtml.Length -lt 200000 -or $creditsHtml -notmatch "Copyright") {
+            throw "Chromium credits export did not return the credits page (got $($creditsHtml.Length) chars with $(([regex]::Matches($creditsHtml, 'Copyright')).Count) Copyright hits; a ~26 KB page with zero hits means Chromium dumped the new tab page instead of chrome://credits)."
+          }
+          $creditsHtmlPath = Join-Path $resourceRoot "credits.html"
+          $creditsTextPath = Join-Path $resourceRoot "credits.txt"
+          Set-Content -LiteralPath $creditsHtmlPath -Value $creditsHtml -Encoding utf8 -NoNewline
+          $creditsText = $creditsHtml -replace "(?is)<(script|style)[^>]*>.*?</(script|style)>", ""
+          $creditsText = $creditsText -replace "(?s)<[^>]+>", " "
+          $creditsText = [System.Net.WebUtility]::HtmlDecode($creditsText)
+          Set-Content -LiteralPath $creditsTextPath -Value $creditsText -Encoding utf8 -NoNewline
+          function Get-Sha256([string]$Path) {
+            return (Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash.ToLowerInvariant()
+          }
+          $metadata = [ordered]@{
+            schemaVersion = 1
+            playwrightVersion = "1.55.0"
+            chromiumRevision = "1187"
+            chromiumVersion = "140.0.7339.16"
+            browserExecutable = "chromium-1187/chrome-win/chrome.exe"
+            browserExecutableSha256 = Get-Sha256 $chrome
+            licenseSha256 = Get-Sha256 (Join-Path $resourceRoot "LICENSE")
+            creditsHtmlSha256 = Get-Sha256 $creditsHtmlPath
+            creditsTextSha256 = Get-Sha256 $creditsTextPath
+          }
+          $metadata | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $resourceRoot "metadata.json") -Encoding utf8 -NoNewline
+          $probe = Join-Path $env:RUNNER_TEMP "mochi-playwright-probe.cjs"
+          @'
+const { chromium } = require("playwright");
+const { statSync } = require("node:fs");
+const { join } = require("node:path");
+(async () => {
+  const browser = await chromium.launch({ headless: true });
+  try {
+    const page = await browser.newPage();
+    await page.setContent("<main id=ready>managed Chromium</main>");
+    if (await page.textContent("#ready") !== "managed Chromium") throw new Error("Playwright DOM check failed");
+    const output = join(process.env.RUNNER_TEMP, "mochi-playwright-probe.png");
+    await page.screenshot({ path: output });
+    if (statSync(output).size < 1) throw new Error("Playwright screenshot is empty");
+  } finally {
+    await browser.close();
+  }
+})().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});
+'@ | Set-Content -LiteralPath $probe -Encoding utf8 -NoNewline
+          node $probe
+          "MOCHI_PLAYWRIGHT_BROWSER_RESOURCE_ROOT=$resourceRoot" | Add-Content -LiteralPath $env:GITHUB_ENV -Encoding utf8
+
+      - name: Validate staged desktop resources
+        shell: pwsh
+        working-directory: mochi-source/apps/desktop
+        env:
+          MOCHI_CAMPUS_SOURCE_ROOT: ${{ github.workspace }}/campus-source
+          MOCHI_CAMPUS_STATIC_ROOT: ${{ github.workspace }}/campus-source/mochi-dist/client
+        run: |
+          $ErrorActionPreference = "Stop"
+          $PSNativeCommandUseErrorActionPreference = $true
+          npm run test:package-resources
+
+      - name: Build native Windows installer
+        shell: pwsh
+        working-directory: mochi-source/apps/desktop
+        env:
+          MOCHI_CAMPUS_SOURCE_ROOT: ${{ github.workspace }}/campus-source
+          MOCHI_CAMPUS_STATIC_ROOT: ${{ github.workspace }}/campus-source/mochi-dist/client
+        run: |
+          $ErrorActionPreference = "Stop"
+          $PSNativeCommandUseErrorActionPreference = $true
+          npm run dist:win:x64
+          $installer = Get-ChildItem -Path release -Filter "Mochi-Setup-*-win-x64.exe" -File | Sort-Object LastWriteTimeUtc -Descending | Select-Object -First 1
+          if ($null -eq $installer) {
+            throw "Native package command completed without a Windows installer."
+          }
+          $hash = (Get-FileHash -Algorithm SHA256 -Path $installer.FullName).Hash.ToLowerInvariant()
+          "$hash  $($installer.Name)" | Set-Content -Encoding ascii -NoNewline "$env:RUNNER_TEMP/Mochi-Setup-win-x64.sha256"
+          "## Windows native package" | Add-Content "$env:GITHUB_STEP_SUMMARY"
+          ("SHA-256: {0}" -f $hash) | Add-Content "$env:GITHUB_STEP_SUMMARY"
+          ("Installer: {0}" -f $installer.Name) | Add-Content "$env:GITHUB_STEP_SUMMARY"
+
+      # Artifacts remain in the private campus repository and are never
+      # uploaded from public Mochi or published through a public release.
+      - name: Retain private Windows installer
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: mochi-windows-x64-${{ github.run_id }}
+          path: |
+            mochi-source/apps/desktop/release/Mochi-Setup-*-win-x64.exe
+            ${{ runner.temp }}/Mochi-Setup-win-x64.sha256
+          if-no-files-found: error
+          retention-days: 14

@@ -1,0 +1,72 @@
+<Slide style={{ width: 1280, height: 720, background: '#16211d', position: 'relative', overflow: 'hidden' }}>
+
+    {/* A 区 · 标题块 */}
+    <Box style={{ height: 120, paddingLeft: 96, paddingRight: 96, paddingTop: 20, justifyContent: 'center' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Text style={{ fontSize: 15, color: '#e8b34b', letterSpacing: 3 }}>01</Text>
+            <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#f5f2e9' }}>真的 Agent Harness</Text>
+        </Box>
+    </Box>
+
+    {/* B 区 · 内容区 */}
+    <Box style={{
+        height: 540, paddingLeft: 96, paddingRight: 96,
+        flexDirection: 'row', gap: 44, alignItems: 'center',
+    }}>
+
+        {/* 宽侧：真实"教学建模"会话，完整工具轨迹 */}
+        <Box style={{ flexDirection: 'column', gap: 12 }}>
+            <Box style={{
+                width: 652, height: 367,
+                borderRadius: 12, overflow: 'hidden',
+                border: '1px solid rgba(245,242,233,0.14)',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
+            }}>
+                <Image src="assets/ui-modeling.png" style={{ width: 652, height: 367, objectFit: 'cover' }} />
+            </Box>
+            <Text style={{ fontSize: 14, color: 'rgba(245,242,233,0.4)' }}>
+                真实界面：一次物理建模会话的完整轨迹——它自己查公式、写文件、交付产物
+            </Text>
+        </Box>
+
+        {/* 窄侧 */}
+        <Box style={{ flex: 1, flexDirection: 'column', gap: 18 }}>
+
+            <Text style={{ fontSize: 22, fontWeight: 600, color: '#f5f2e9', lineHeight: 1.5 }}>
+                它不是自己拼的"像 Agent 的外壳"
+            </Text>
+
+            <Text style={{ fontSize: 16, color: 'rgba(245,242,233,0.55)', lineHeight: 1.8 }}>
+                Mochi 的底座是 DeepSeek 官方开源的 Agent 内核（MIT 协议），
+                我们在这之上做校园领域的组合——而不是从零造一个聊天机器人。
+            </Text>
+
+            <Box style={{ height: 1, background: 'rgba(245,242,233,0.12)' }} />
+
+            <Box style={{ flexDirection: 'column', gap: 11 }}>
+                <Text style={{ fontSize: 15, color: 'rgba(245,242,233,0.62)' }}>· 工具调用：真的去执行，不是文字模拟</Text>
+                <Text style={{ fontSize: 15, color: 'rgba(245,242,233,0.62)' }}>· 会话轨迹：每一步都看得见、可回溯</Text>
+                <Text style={{ fontSize: 15, color: 'rgba(245,242,233,0.62)' }}>· 子代理：一个 Mochi 可以派活给另一个</Text>
+                <Text style={{ fontSize: 15, color: 'rgba(245,242,233,0.62)' }}>· 审批门：敏感动作必须人点头</Text>
+            </Box>
+
+            <Text style={{ fontSize: 16, color: '#e8b34b', lineHeight: 1.75 }}>
+                这些能力是继承来的，不是我们逐条实现出来的——所以它们真的能用。
+            </Text>
+
+        </Box>
+    </Box>
+
+    {/* C 区 · 页脚条 */}
+    <Box style={{
+        position: 'absolute', bottom: 0, left: 0, width: 1280, height: 60,
+        paddingLeft: 96, paddingRight: 96,
+        flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <Box style={{ width: 10, height: 10, borderRadius: 5, background: '#e8b34b' }} />
+            <Text style={{ fontSize: 14, color: 'rgba(245,242,233,0.45)' }}>Mochi · 嘉祥教育集团 AI 创意实践大赛</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: 'rgba(245,242,233,0.45)' }}>08 / 17</Text>
+    </Box>
+</Slide>

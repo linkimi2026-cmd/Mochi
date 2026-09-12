@@ -58,7 +58,9 @@ function sha256File(path) {
 
 function isWithin(path, ancestor) {
   const rel = relative(ancestor, path);
-  return rel === "" || (rel !== ".." && !rel.startsWith(`..${sep}`) && !isAbsolute(rel));
+  // Windows 跨盘符时 relative 返回绝对路径，必然不属于包含关系。
+  if (isAbsolute(rel)) return false;
+  return rel === "" || (rel !== ".." && !rel.startsWith(`..${sep}`));
 }
 
 function isForbiddenCampusArtifact(path) {
@@ -109,18 +111,32 @@ function staticInventory(staticRoot) {
   return files;
 }
 
-function outputAnchor(rawOutput) {
+function temporaryAnchors(env = process.env) {
+  // CI runners expose RUNNER_TEMP on a different volume than the Node temp
+  // directory (windows-2022: D:\a\_temp vs C:\Users\...\Temp). Both are
+  // runner-managed scratch space, so both may host a reviewed staging tree.
+  const anchors = new Set([resolve(tmpdir())]);
+  const runnerTemp = env.RUNNER_TEMP ?? env.TEMP ?? env.TMP;
+  if (typeof runnerTemp === "string" && runnerTemp.trim() !== "") {
+    const resolved = resolve(runnerTemp);
+    if (existsSync(resolved)) anchors.add(realpathSync(resolved));
+  }
+  return [...anchors];
+}
+
+function outputAnchor(rawOutput, env = process.env) {
   if (rawOutput === DEFAULT_RELEASE_INPUT_ROOT) {
     return { rawAnchor: desktopRoot, realAnchor: realpathSync(desktopRoot) };
   }
-  const temporaryRoot = resolve(tmpdir());
   const parent = dirname(rawOutput);
-  if (
-    basename(rawOutput) === RELEASE_INPUT_DIRECTORY_NAME
-    && isWithin(parent, temporaryRoot)
-    && basename(parent).startsWith("mochi-release-input-test-")
-  ) {
-    return { rawAnchor: temporaryRoot, realAnchor: realpathSync(temporaryRoot) };
+  const isDedicatedStagingName = basename(rawOutput) === RELEASE_INPUT_DIRECTORY_NAME
+    && basename(parent).startsWith("mochi-release-input-test-");
+  if (isDedicatedStagingName) {
+    for (const anchor of temporaryAnchors(env)) {
+      if (isWithin(parent, anchor)) {
+        return { rawAnchor: anchor, realAnchor: realpathSync(anchor) };
+      }
+    }
   }
   throw new Error(`拒绝非专用的桌面发布输入目录：${rawOutput}`);
 }
@@ -153,9 +169,9 @@ function canonicalOutputPath(rawOutput, rawAnchor, realAnchor) {
   return resolvedOutput;
 }
 
-function assertSafeOutputRoot(outputRoot, inputs) {
+function assertSafeOutputRoot(outputRoot, inputs, env = process.env) {
   const rawOutput = resolve(outputRoot);
-  const { rawAnchor, realAnchor } = outputAnchor(rawOutput);
+  const { rawAnchor, realAnchor } = outputAnchor(rawOutput, env);
   assertNoSymlinkPath(rawAnchor, rawOutput, "桌面发布输入目录");
   const output = canonicalOutputPath(rawOutput, rawAnchor, realAnchor);
   for (const input of inputs) {
@@ -235,7 +251,7 @@ function prepareReleaseInput({ outputRoot = DEFAULT_RELEASE_INPUT_ROOT, campusSt
   const source = resolveCampusSource({ workspaceRoot, env: resolvedEnv });
   const staticInput = resolveCampusStaticRoot({ workspaceRoot, env: resolvedEnv });
   const inventory = staticInventory(staticInput.root);
-  const output = assertSafeOutputRoot(outputRoot, [source.root, staticInput.root]);
+  const output = assertSafeOutputRoot(outputRoot, [source.root, staticInput.root], resolvedEnv);
   const manifest = buildManifest({ source: sourceMetadata(source), inventory });
   const working = workingRootFor(output);
   try {
@@ -250,7 +266,7 @@ function prepareReleaseInput({ outputRoot = DEFAULT_RELEASE_INPUT_ROOT, campusSt
     }
     const manifestPath = join(working, RELEASE_MANIFEST_NAME);
     writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, { mode: 0o600 });
-    assertSafeOutputRoot(outputRoot, [source.root, staticInput.root]);
+    assertSafeOutputRoot(outputRoot, [source.root, staticInput.root], resolvedEnv);
     if (existsSync(output)) rmSync(output, { recursive: true, force: true });
     renameSync(working, output);
     chmodSync(output, 0o700);

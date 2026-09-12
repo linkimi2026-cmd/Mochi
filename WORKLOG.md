@@ -228,13 +228,13 @@
 - 重启会打断当时「进行中」的会话，抱歉——要跑长任务建议等这次载入完成后再起。
 - ✅ 完成（13:2x）：加载页四文案已带「Mochi 正在…」口吻 + 省略号逐点浮现动画；
   hop 动画未动。本线已再次重启 3090，**当前有效 token**：
-  `http://127.0.0.1:3090/?token=jO8M-Y4ma3JQAYAyI6jD2FP_BRmi1-Va3yGu1d2hosw`
+  `http://127.0.0.1:3090/?token=<已脱敏-本机开发令牌>`
   （ anyone 再重启就又变——重启后请把自己的 token 回写在此文件，这是第 3 次互踢了，
   建议约定：谁最后重启谁回写，其他人别在 5 分钟窗口内跟着重启）。
   E2E：应用挂载 ✓、5 个校园入口 ✓、班主任待办面板 ✓、开机画面三要素 ✓（hop/dots/文案）。
 - 🔄 13:33 更新（WorkBuddy 线）：上一实例 18 分钟寿命到期退出 + 残留 node 占口回 502，
   已清理重启。**当前有效 token**：
-  `http://127.0.0.1:3090/?token=guAOozAa5zYkt_fqRwuz_UlCVblNEo58Fbljnuu0jgI`
+  `http://127.0.0.1:3090/?token=<已脱敏-本机开发令牌>`
   （托管后台约 18 分钟寿命，过期后谁在用谁重启 + 回写新 token 到此处）
 
 ## 2026-09-05 11:55 · Agent(修复校园登录态跨重启丢失)
@@ -252,7 +252,7 @@
 - 用户澄清：现在**只有一个 Agent** 在干活。之前观察到的"别的实例"全部是**更早多 Agent 会话的残留进程**（如 pid 44042 的启动器带着「校园医务联动。」工作区旧会话 ID、用 ~/.mochi-home-test 启动；npx 缓存里的裸 `dsh web` 也是残留，会自动重生但不在 3090 上服务）。这些进程会随旧会话关闭而死，不再构成干扰
 - **今日服务"随机暴毙"真因**：dsh 启动时要 unlink 上次崩溃残留的 `~/.mochi-home/.credentials.yaml.lock`，WorkBuddy 注入的 NODE_OPTIONS node-language-shim hook 了 fs.unlink → 沙箱无回收站后端 → EPERM → 启动即崩。与本次业务修复无关
 - **修复**：mochi.sh 增加 `unset NODE_OPTIONS`（shim 不再被加载，unlink 走真实系统调用，锁文件自愈）；手动 /bin/rm 清了一次存量锁
-- **最终状态（全绿）**：3090 存活，入口 `http://127.0.0.1:3090/?token=eXdYtBN8paEEAtMONOtDfLCAcvfBfAKjNW_fGv3cCwQ`；穿透登录 200；campus-session.json 由运行中实例实时落盘（token PDDefht7…, 06:00:40Z）——运行实例已是新版代码
+- **最终状态（全绿）**：3090 存活，入口 `http://127.0.0.1:3090/?token=<已脱敏-本机开发令牌>`；穿透登录 200；campus-session.json 由运行中实例实时落盘（token PDDefht7…, 06:00:40Z）——运行实例已是新版代码
 - 用户下一步：浏览器打开上面入口 → 校园面板登录一次（或用已有登录态）→ 直接问 Mochi「现在班里谁在外面/医务室情况」即可拿到真实数据；**此后服务随便重启都不用重新登录**
 
 ## 2026-09-05 14:3x · 【预告】PHASE_4 传话网络落地中，稍后重启 3090（WorkBuddy）
@@ -295,7 +295,7 @@
   预期，答辩演示走 web 通道）；② glm-4-flash 偶发选错工具（已用描述引导缓解）；③ 剩余
   PHASE_5-12（Dispatch/Artifact/Registry/生产力工具…）未动工；④ Orb 状态桥（PHASE_3 残项）
   与亮色主题截图验收仍未做。
-- **当前有效 token**：`http://127.0.0.1:3090/?token=hIDPqmoS3fB6gOTyw_8DvhVd5aMuhUctTnPwJsqhpkc`
+- **当前有效 token**：`http://127.0.0.1:3090/?token=<已脱敏-本机开发令牌>`
   （启动方式 `DSH_HOME=/Users/a1379/Documents/Mochi/.mochi-home.nosync ./mochi.sh --profile
   mochi-web --port 3090 --no-open`；**注意 mochi.sh 默认 DSH_HOME=~/.mochi-home，后者是旧运行
   时根**——所有已验证配置/登录态落盘在 .nosync，务必显式指定；~/.mochi-home 的 credentials
@@ -344,7 +344,7 @@
   Mochi 读到问询 → jxl.relay_respond 答应+回话（人决定）→ accepted；发端再问 → mochi.tasks
   同步 → task#1 COMPLETED + 回话「可以，周四第三节我等你」。DB 双库核验通过。
 - **演示数据**：relay#5/7/8/9/10 + task#1 真实闭环保留；E2E审批探针登记行已删。
-- **当前有效 token**：`http://127.0.0.1:3090/?token=ghRCfAyV2DCVXDOo_5dqoQwwuXcxYERkIPiXbFL78l4`
+- **当前有效 token**：`http://127.0.0.1:3090/?token=<已脱敏-本机开发令牌>`
 - **给 Codex 的交接**：① PHASE_5 验收达成（结构化事实+状态机正确），六态卡 UI 已由「对话摘要」承载，
   若做任务卡渲染须遵守对话即界面裁定（对话内嵌卡片，不开新面板）；② 下一步 PHASE_6 Artifact →
   PHASE_7 Registry（假想 Agent：周老师/信息中心/医务）；③ PHASE_3 残项 Orb mood 桥、亮色主题截图；
@@ -372,7 +372,7 @@
 - **挂载路线（今后装第三方插件的标准做法）**：runtime-profile.json 注册 → 生成器自动三件套，
   见 plugins/dsh-better-sidebar（源码 --depth 1 克隆，lib/ 已构建）。只挂 mochi-web。
 - 截图存档 artifacts/better-sidebar/（01 皮肤完好、02 Files 工作台）。
-- **当前有效 token**：`http://127.0.0.1:3090/?token=4sCwDVWn39YJiJaE23InQ7M1jgXU4Gmm_946_c-gHzE`
+- **当前有效 token**：`http://127.0.0.1:3090/?token=<已脱敏-本机开发令牌>`
   （PID 45287，8787 未动）
 
 ## 2026-09-06 09:3x · 【预告】workbench×better-sidebar 合并完成，稍后重启 3090（WorkBuddy）
@@ -394,7 +394,7 @@
   single)；open/closeWorkbench 同步 openTab/closeTab（closeTab 未知 id 严格 no-op 天然安全）；
   inject 增加 betterSidebar；测试 6/6 绿（断言更新：无 overlay、registerTab 描述符、order<10）。
 - 截图 artifacts/better-sidebar/03-merged-workbench-tab.png。
-- **当前有效 token**：`http://127.0.0.1:3090/?token=lyusgX9TlNYY7qBHuG3R_nsMjsNU5RZ6D11C53k6qsA`
+- **当前有效 token**：`http://127.0.0.1:3090/?token=<已脱敏-本机开发令牌>`
   （PID 52951，8787 未动）
 - 后续可选：① 面板内 Office/网页预览/框选三个子 tab 可拆成独立 sidebar tab（v2）；
   ② 开发向 tab（终端/浏览器/Git）老师可在设置页「侧边卡片」自行关闭，不做硬裁剪。
@@ -419,7 +419,7 @@
      mochi-mimo/mimo-v2.5。
 - 验证：mochi-mimo web_search E2E ✅、deepseek-official glm-4-flash E2E ✅（headless）。
 - **其他人请勿在我重启窗口内动 3090；重启后回写 token。**
-token=0R6sLZzZ61rm7tqI1ZwMRF5ZeO7BAAicsuH6-zTExSQ
+token=<已脱敏-本机开发令牌>
 
 
 ## 2026-09-06 11:5x · 重启完成回写
@@ -431,12 +431,12 @@ token=0R6sLZzZ61rm7tqI1ZwMRF5ZeO7BAAicsuH6-zTExSQ
 - 起因：3090 无监听（上一轮进程被回收），用户要求「把 mochi 打开」。本次无代码改动，纯拉起。
 - 模式：MOCHI_CAMPUS_MODE=cloud（默认），不启动本地 8787。
 - **其他人请勿在我重启窗口内动 3090；重启后回写 token。**
-token=F1OpMTmlazBqgGtAM_uTZtKG7TXnbAeIxLXzPB2WVNg
+token=<已脱敏-本机开发令牌>
 
 ## 2026-09-06 12:29 · 重启完成回写（3090 已就绪）
 
 - PID 88770；日志 `[mochi-dispatch] 任务域就绪：mochi_tasks @ sqlite`；探活 401（认证边界，正常）。
-- 完整入口：http://127.0.0.1:3090/?token=F1OpMTmlazBqgGtAM_uTZtKG7TXnbAeIxLXzPB2WVNg
+- 完整入口：http://127.0.0.1:3090/?token=<已脱敏-本机开发令牌>
 
 
 ## 2026-09-06 · 主架构师接管（P0，未放行P1）
@@ -887,6 +887,13 @@ root 亲读托盘main草稿，定位重启先从webHost脱离旧host后立即退
 - 挂载协调：用户裁定走 agent-mail，但收件箱无对方邮件、地址未知 → 改走项目既有通道：协调单 `docs/tasks/MOCHI-P5-MEM-MOUNT-01.md`（desktop 线 WorkBuddy 巡仓必经之路），含注册请求 / 打包白名单 12→13 提醒 / 落盘核验纪律 / 验收回写要求。待对方回写 WORKLOG 后关闭挂载项。
 - 测试回归命令（三份，监制均用 node 22.22.2-2 复跑）：`cd plugins/mochi-memory && node test.mjs / test-worldstate.mjs / test-memstore.mjs`。
 
+## 2026-09-08 00:0x · Git 基线建成：私有仓库 + 本地 commit e568c16（WorkBuddy 主对话）
+
+- 用户已建 GitHub 私有仓库 `linkimi2026-cmd/Mochi`；本地 `origin` 已指向。**基线 commit `e568c16`：601 文件**（vendor 245 / apps 87 / plugins 76 / docs 57 / client-plugins 42 / foundation 39 / plan 13 / skills 9 / scripts 7 / packages 7 / tools 3 + 根文档）。最大单文件 17.7MB（NotoSansSC-VF.ttf）。安全闸：credentials/db/sqlite/dev.vars/pem 零入库。
+- **.gitignore 新增忽略裁定**（入库前必读）：`artifacts/`（421M 审计产物，结论已沉淀 docs/ 与本 WORKLOG）、`tools/searxng/`（可重取第三方）、`plugins/dsh-better-sidebar/`（内嵌 .git，固定 commit 可重建，见 BUILD02 证据）、`**/.mochi-package-resources*.backup-*/`。
+- ⚠️ **并发事故实录（其他 Agent 线必读）**：git 写操作期间撞上 `config.lock`（23:56）与 `index.lock`（23:59）死锁各一次，均为被中断进程的 stale 锁，判定后清除；另清 15 个 `tmp_obj_*` 垃圾。**各线做 git 写操作（add/commit/config/remote）前先检查 `.git/*.lock`，撞锁时等 20s 再判死锁，勿盲目删。**
+- 待办：① push 需凭据——连接器令牌无 repo 写权限（403 integration）、本地无 gh/ssh/钥匙串凭据，等用户提供 classic PAT（scope=repo）后存钥匙串再推；② 仓库简介待填（拿到凭据后 PATCH）；③ 中期建议：仓库整体迁离 iCloud（`~/Developer/Mochi` 或 `--separate-git-dir`），worktree 方案在 iCloud 问题解决前不要开。
+
 ## 2026-09-07 23:4x · 工具线收口：三插件注册 + 记忆挂载回执 + 3090 重启预告（WorkBuddy 工具线监制）
 
 **分工背景**：用户 22:1x 裁定——本线（WorkBuddy 工具线）只做审核监制不写码，GLM 5.3 flash 子代理实现；记忆线由另一 WorkBuddy 专管；打包/后端归主控（额度恢复后）。质量 bar：与 Codex 同级但不无谓返工（卡两轮记录偏差放行）。
@@ -911,7 +918,859 @@ root 亲读托盘main草稿，定位重启先从webHost脱离旧host后立即退
 **【预告】即将重启 3090** 使新插件生效（token 稍后回写本条下方）。8787 wrangler 不动。
 
 **【重启完成回写】** 3090 新实例 PID 76878（旧 88770@9/6 12:29 已停）。
-- **入口：`http://127.0.0.1:3090/?token=HnPTa35wdsileolXy3ZXq-SJYFtjU6nziKCAtcfGRIk`**
+- **入口：`http://127.0.0.1:3090/?token=<已脱敏-本机开发令牌>`**
 - 插件加载日志实证：`[mochi-presentations] 课件域就绪`、`[mochi-modeling] 教学建模域就绪`、`[mochi-grades] 成绩分析就绪`、`[Mochi] hello plugin loaded!`（dsh-llm 修复生效）；mochi-memory 无启动日志行（index.mjs 未打 console.log，非故障）。
 - 记忆挂载验证（MOUNT-01 验收项）：headless 真调 `mochi.memory_world action=read` → 返回 world-state 骨架（待办/近24h变更/已知约定三段，空库正常）。**记忆线可据此关闭挂载项**。
 - 观察：dev-up 本次走「云端校园服务」未起本地 8787（serviceDefaults.campusApiUrl=null 的默认行为）；云端健康端点可达性属主控/用户待办，本线未动。
+
+## 2026-09-08 22:2x · 🔴 时间表紧急重排：截止提前至 2026-09-11，范围收窄为「可运行演示桌面 APP」（WorkBuddy）
+
+- **用户裁定一**：「之前那个时间表有问题，他们把时间提前了」→ **外部新截止 = 2026-09-11（周五）**，此前所有按 2026-09-30 倒排的排期作废。
+- **用户裁定二**：「只弄演示的可运行的桌面 APP，其他的不管」→ **本轮唯一交付物 = 双击能开、能现场演示的 Mochi 桌面 APP**。
+- 新建唯一事实源 `docs/tasks/MOCHI-URGENT-REPLAN-2026-09-11.md`：紧急标注纪律（**无 `URGENT-xx` 编号 + 判据的"紧急"不算数**）+ URGENT-01~06 清单 + 三天倒排（每步带止损线）+ 砍项清单 + 待确认三项。
+- 已给六份旧时间表打「已作废/已提前」横幅：`Mochi-方案总纲.md` §九、`plan/03_RUNTIME_AND_PLAN.md` §9.2、`1.5阶段任务/README.md`、`1.5阶段任务/Mochi-桌面端原生化方案.md`、`Mochi-总体方案.md` §45、`第二阶段/README.md`。
+- **⚠️ 本轮未改动任何代码**（用户明确：不准动代码，只写文档）。下列阻断现状留给实现方接手：
+  1. 打包白名单实为 **12**，runtime-profile 已声明 **16** → 缺 grades / presentations / modeling / memory（URGENT-01）
+  2. `electron/dsh/web-host.ts` 的 cwd 与 `MOCHI_*` env 注入待复核（URGENT-02）
+  3. `dist/mac-arm64/Mochi.app` 为 9/5 22:11 旧产物，无 dmg，**双击验收零记录**（URGENT-03）
+- 下一步（实现方按紧急表 §3 推进）：9/9 清阻断出包 → 9/10 全新机验收 + 五项演示场景跑通 → 9/11 稳定化 + zip 备胎包。
+
+## 2026-09-08 22:1x · 🔴 时间表紧急重排：外部截止提前至 2026-09-11（周五）
+
+**用户裁定**：「紧急事件在工程项目中明确标注，我们要在这周五之内完成。之前那个时间表有问题，他们把时间提前了。」
+外部截止 = **2026-09-11（周五）**（原按 2026-09-30 倒排，全部作废）。剩余工期 3 天（9/9 周三 – 9/11 周五）。
+
+**新建唯一事实源**：`docs/tasks/MOCHI-URGENT-REPLAN-2026-09-11.md`
+- §1 紧急标注约定（🔴URGENT / 🟠HIGH / 🟡NICE / ⚫CUT），规则：**没有 URGENT-xx 编号的"紧急"不算数**
+- §2 紧急事件清单 **URGENT-01 ~ 08**（含判据与现状实测）
+- §3 三天倒排（9/9 清阻断出包 → 9/10 验收+彩排+录屏 → 9/11 演练+交付），每步带止损线
+- §4 明确砍项（零依赖四改/首启向导/Eval 150 条/教室端/LAN/记忆 UI 等），防临时回捡
+- §5 待拍板（9/11 交什么、"他们"是谁、用户可投入时间）
+
+**已同步打标"已提前"的旧时间表**（不再据此排期）：
+`Mochi-方案总纲.md` §九里程碑 ｜ `plan/03_RUNTIME_AND_PLAN.md` §9.2（26 人日作废）｜
+`1.5阶段任务/README.md`（E3 截止 9/30→9/11，执行顺序加时间盒与 URGENT 映射）｜
+`1.5阶段任务/Mochi-桌面端原生化方案.md` ｜ `Mochi-总体方案.md` §45 ｜ `第二阶段/README.md`
+
+**实测硬事实（本次盘点，不是汇报）**：
+- 打包白名单 `prepare-mochi-resources.cjs` 实为 **12** 个插件；`runtime-profile.json` 已 **16** 个
+  → 差 `mochi-grades` / `mochi-presentations` / `mochi-modeling` / `mochi-memory`（= URGENT-01）
+- `apps/desktop/dist/mac-arm64/Mochi.app` 为 **9/5 22:11 旧产物**，无 dmg；**双击验收零记录**（= URGENT-03）
+- 记忆系统代码层已兑现（6 工具 + 已挂载），本轮不再占工期，仅提醒进白名单
+
+**给主控/打包线的硬要求**：URGENT-01/02/03 是 9/9 当天的活，9/10 必须能双击演示；9/10 24:00 前必须有演示录片兜底（URGENT-06）。
+
+## 2026-09-08 22:4x · ⚠️ 即将重启 3090（工具线：「+」菜单命令描述中文化）
+
+改动内容：`apps/desktop/node_modules/@deepseek-ai/` 下 6 个服务端命令包的
+`description` 中文化（plan/goal/compact/feedback/permission/export，均标 `[Mochi patch 2026-09-08]`）。
+命令在启动时注册，**需重启 3090 才生效**。马上 kill 3090 → `./mochi-dev-up.sh` → 回写新 token。
+
+## 2026-09-08 22:5x · ✅ 3090 重启完成（同上工单回执）
+
+- **新 token URL**：`http://127.0.0.1:3090/?token=<已脱敏-本机开发令牌>`
+- 插件全部挂载 ✓（dispatch/presentations/modeling/grades/hello）；浏览器实测「+」菜单
+  6 条命令描述全中文（compact/feedback/goal/permission/plan/model），截图
+  `artifacts/plus-menu-chinese-2026-09-08.png`
+- ⚠️ 顺带事实（非本工单引入）：campus API 就绪检查 000——8787 本来就没跑，
+  云端 pages.dev 直连当前网络不通；用户 Chrome App「Mochi」快捷方式是无 token URL，
+  走 cookie 匿名身份，重启不受影响。
+
+## 2026-09-09 22:5x · 🔍 root 框架审核 + GLM 工单 MOCHI-WIN-PACK-01（root，不写码）
+
+**用户裁定**：key 可直接内嵌安装包（测试期，教师不可见即可）；Chat×Work = 对话/工作两模式（不是"另一个模式"），先修 Windows；root 只做架构审核，GLM 5.3 flash 干活。
+
+**审核实测（非汇报）**：
+- 已安装 `/Applications/Mochi.app` = 20 插件、dsh **0.1.3-alpha.1**，但**全部 node_modules 补丁丢失**（中文菜单 6 条 + dsh-llm-deepseek 9 处功能修复）；本地 node_modules 仍 0.1.2-rc.1 + 7 文件 15 处补丁 → CI/打包与本地不同源，WO-1 重打包 vendor tgz 修复
+- Windows CI 快照清单与当前工作区 **451/451 sha256 全对**（含 lan/教师预设/classroom preset），A 主路随时可跑
+- LAN 与四教师预设 + classroom 预设审核通过（细节见工单附录 A）
+- 打包态 `~/.mochi-home` 缺 MIMO_API_KEY（只有 ZHIPU + MOCHI_AIAAA）→ 「找不到 API key」根因；WO-3 构建时注入 + 首启种子修复
+- Chat×Work 病根实锤：workbench 把 trajectory 当 work + 侧边栏重复入口；WO-4 注册原生 work 视图修复
+- Whisky 判定：Wine 前端非 VM，只能 exe 冒烟，不能构建不能验收
+
+**工单**：`docs/tasks/MOCHI-WIN-PACK-01.md`（WO-1 补丁持久化 / WO-2 Windows 出包 / WO-3 零配置 key / WO-4 Chat×Work / WO-5 纪律）
+
+## 2026-09-10 · ⚠️ 即将重启 3090（GLM 工单 MOCHI-WIN-PACK-01 · WO-4 Chat×Work 架构修正）
+
+改动：client-plugins/mochi-workbench/client.js —— 注册原生 work 视图（conversation.view slot）、
+去 trajectory 劫持、下线 better-sidebar 工作台入口、胶囊双模式（对话/工作）。client.js 为启动时
+缓存，需重启 3090 生效。马上 ./mochi-dev-up.sh，完成后回写 token。
+
+## 2026-09-10 · ✅ 3090 重启完成（WO-4 回执）
+
+- **新 token URL**：`http://127.0.0.1:3090/?token=<已脱敏-本机开发令牌>`
+- ⚠️ 环境修复（WO-4 红线外，SYMLINK-only 不动代码）：WO-1 重装后 4 个插件的
+  `@deepseek-ai/dsh-tools` 链接丢失导致整树 boot 失败——mochi-documents（dsh-tools +
+  @mochi/pdf-layout→packages/mochi-pdf-layout）、mochi-grades、mochi-presentations、
+  mochi-knowledge（新建 node_modules，仅 dsh-tools；其 canvas/pdfjs 为惰性动态 import，
+  本仓库未安装，调用时才触发，属于该插件自身边界）。修复模式=坑 32 四级相对 symlink。
+
+## 2026-09-10 · ⚠️ 再次重启 3090（WO-4 续：切换信号改回合级）
+
+实测发现 legacy.runningCalls 只覆盖工具调用、纯文本回合恒空，切换信号改为
+timeline open turn（回合开=进工作，回合合=回对话）。client.js 重启生效，回写新 token。
+
+## 2026-09-10 · ✅ WO-4 Chat×Work 完工回执（GLM）
+
+- **最新 token URL**：`http://127.0.0.1:3090/?token=<已脱敏-本机开发令牌>`
+- 实测全过：回合开→自动切工作（工作台内嵌视图挂载，截图 artifacts/wo4-work-mode.png）、
+  回合合→自动回对话、手动胶囊双向切换、composer 草稿与消息流切换间保持、
+  原生 tablist（对话/查看工作过程/工作）已视觉隐藏=trajectory 不进教师胶囊、console 零报错。
+- 切换信号=timeline open turn（回合级），runningCalls 只覆盖工具调用不作依据（本次实测修正）。
+
+## 2026-09-10 · ✅ WO-2 Windows 出包成功（Mochi-Setup-0.1.0-win-x64.exe）
+
+- **构建分支**：`codex/mochi-windows-20260909`（私有仓 linkimi2026-cmd/jyl-campus-health）
+- **成功 run**：https://github.com/linkimi2026-cmd/jyl-campus-health/actions/runs/34499038039
+  （windows-2022 原生 runner，14m36s，全步骤绿）
+- **artifact**：`Mochi-Setup-0.1.0-win-x64.exe`
+  - SHA256 `bb8cf012116e79ae4a94639bbd8777236cc0be800a3a79796250437607953c1c`
+  - 508,762,732 字节（约 485.2 MiB），CI 记录哈希与本地实测一致
+- **归档**：`release/2026-09-09/Mochi-Setup-0.1.0-win-x64.exe` + `Windows试用说明.md`
+- **本轮修掉的平台层缺陷**（均在快照/构建脚本层，未动内核 node_modules）：
+  1. `prepare-mochi-resources.cjs` / `prepare-release-input.cjs` / `runtime-profile.cjs` 的
+     `isWithin` 跨盘符守卫（`relative` 跨盘返回绝对路径）；
+  2. `jxl-campus` / `jxl-theme` 静态路由：先在 URL pathname 剥前缀再 normalize，
+     Windows 上先 normalize 会变反斜杠导致前缀正则失配（404 实锤）；
+  3. `test-package-resources.mjs`：`campus.nosync` 存在性守卫（CI 快照不含该目录）；
+  4. workflow：campus-source 与 mochi-source 嵌套导致 release 输出落在输入根内，
+     改为把 staged input 放在 Node 临时目录并用 `--release-input-root` 传入；
+  5. `package-desktop.cjs`：直接 spawn `npm.cmd` 触发 EINVAL（CVE-2024-27980 修复后
+     Node ≥18.20 拒绝直接执行 `.cmd`），改为走 npm 的 JS 入口 + 补 `dirname` 导入。
+- **已知限制**：未在真实 Windows 实机人工验证；未代码签名（SmartScreen 提示未知发布者）；
+  教室端局域网发现/配对/回执未做现场验收；默认中转密钥未加入本包。
+
+## 2026-09-11 · WO-7 角色可选/可改/可并存（GLM 实现，工单 MOCHI-WIN-PACK-01）
+
+**病根**：`mochi-launch.json` 全机单例 + 已存在即 return，装完直接进教室端且永不询问。
+
+**改动**
+- 新增 `apps/desktop/electron/dsh/launch-role.ts`：角色按文件拆分
+  （`mochi-launch-teacher.json` / `mochi-launch-classroom.json`）、
+  解析优先级 `--role=` > `MOCHI_RUNTIME_ROLE` > 已记录文件 > 首启询问、
+  旧 `mochi-launch.json` 只读识别 + 迁移 + 清理。
+- `main.ts`：userData 按角色隔离（教师端沿用 `Mochi`，教室端 `Mochi-classroom`），
+  单实例锁因此按角色各自独立；首启对话框改为两选项 + 退出、中文、默认高亮教师端、
+  detail 写明可切换与数据隔离；新增托盘「切换本机角色」流程（中文确认 → 写声明 →
+  `app.relaunch` 带 `--role=`），切换不删数据。
+- `tray.ts`：菜单加「当前角色：X」「切换本机角色：教师办公电脑 / 教室一体机」，
+  当前角色置灰。
+
+**自验**（`npm run test:wo7`）：`test-launch-role.mjs` 9 组用例、`test-tray-runtime.mjs`、
+`test-startup-runtime.mjs`、`wo7-switch-e2e.mjs` 全过；`wo7-e2e.mjs` 实测
+「首启弹框 → 选教师 → 重启 → 切教室 → 重启」四阶段通过，证据图 `artifacts/wo7/0*.png`。
+
+**已知限制（WO-7 之外）**：本机缺 `.mochi-package-resources-v1.nosync/playwright/browsers`，
+Web Host 起不来（`WEB_HOST_START_FAILED`），故未能截到真实 SPA 界面；已用
+真实运行日志 + 代码文案渲染证据图并明确标注来源。`test-tray-integration-runtime.mjs`
+在该环境下无法完成（同一根因，已用禁用 WO-7 隔离的对照实验确认与本次改动无关）。
+
+## 2026-09-11 · Windows「无法选择工作区」根因与修复（工具线，工单 MOCHI-WIN-PICKER-FIX-01）
+
+**现象**：Windows 安装包安装正常，点「选择工作区」报
+`directory picker failed: directory picker failed: win32 folder dialog worker exited before reporting a result`。
+
+**病根（精确到行）**：win32 目录选择器走 koffi + COM 子进程
+（`@deepseek-ai/dsh-host-directory-picker-native/lib/worker.cjs`），宿主在
+`win32-dialog.ts:153-157` 的 `worker.on('exit')` 里抛出这句 —— 子进程**未发任何 IPC 消息就退出**，
+即宿主连对话框都没打开。已核实并排除：安装包内有 `worker.cjs`（9488 B）与
+`@koromix/koffi-win32-x64/win32_x64/koffi.node`（1,036,800 B）；本机用打包态二进制复现
+两级 spawn 链（Electron-as-node 宿主 → 子进程）证链路本身通；asar 内路径同样可被 run-as-node 执行。
+关键事实：上游 `built-worker.e2e.ts` **显式跳过 win32**，且注记
+`2026-08-04-drop-windows-powershell-picker-fallback.md` 已删除 PowerShell 兜底 → 这条路径
+上游从未在真 Windows 验证过且无第二档。
+
+**改动（源码修复，下次出包生效）**
+- `apps/desktop/resources/mochi-web/runtime-profile.cjs`：新增 `resolveDirectoryPickerPin()`，
+  win32 时在受管 patch 末尾追加「`- id: directory-picker` / `disabled: true`」+
+  insert `dsh-host-directory-picker-browse` 与 `dsh-client-ui-directory-picker-browse`；
+  开关 `MOCHI_DIRECTORY_PICKER=auto|browse|native`（auto/未设 = win32 钉 browse，
+  其余平台保持上游自适应；非法值启动即报错）。依据 = 上游在 `dsh-web-app/cordis.patch.yml`
+  该行上方原文 "Mount -native or -browse directly in an overlay to pin the interaction."
+- **已装应用热修（不用重出包）**：往
+  `%LOCALAPPDATA%\Programs\Mochi\resources\mochi\profile\patches\web.patch.yml` 末尾追加同一段
+  YAML，完全退出（含托盘）后重启即生效（宿主每次启动都会重算受管区块）。
+  一键脚本 `scripts/fix-windows-directory-picker.ps1`（幂等 + 备份 + 回滚）。
+- CI 快照清单同步：`.github/windows-native-package-inputs.json` 重算两个被改文件 sha256，
+  `expectedFileBytes` 91,222,898 → 91,228,625（不同步会让 Windows CI 在快照校验直接失败）。
+
+**自验**
+- `node scripts/test-runtime-profile.mjs` **PASS**（新增断言：默认不钉 / `=browse` 钉死 /
+  `=native` 交回 / 非法值报错 / headless·mochi 不生成）；**负向对照**（临时让钉死条件恒假）
+  实测 FAIL 且命中新断言 → 已还原复跑 PASS。
+- 热修路径端到端（本机模拟）：用安装包内**逐字节一致**的模板 + 热修块跑生成器 →
+  `--dump-config` 组合树显示 auto 行 `disabled: true` + 两个 browse 行；`mochi` profile 无该行。
+- 安装包比对：`release/2026-09-10/Mochi-Setup-0.1.0-win-x64.exe` 内
+  `resources/mochi/profile/patches/web.patch.yml` 与工作区模板一致（653 B）。
+
+**已知限制 / 后续**：钉 browse 后 Windows 上「选择工作区」变成应用内目录浏览器（上游在
+Linux/远程场景的默认交互，功能等价、观感不同）；**原生 tier 真实根因仍未定性**（候选：
+子进程未继承 `ELECTRON_RUN_AS_NODE` → GUI Electron 撞单实例锁静默退出 / koffi·COM 硬崩 /
+IPC 消息与 exit 竞态），要真修需在 Windows 上抓子进程 stderr（当前 driver 丢弃 stderr，
+GUI 进程无控制台）。Windows 真机复测待用户执行热修后回报。
+另：本机 `apps/desktop/node_modules/fs-ext` 是 x86_64，arm64 上 dlopen 失败 → dev 宿主起不来，
+挡住本机端到端 UI 验证（与本次改动无关）。
+
+---
+
+## 2026-09-11 22:15 · 工具线 · Windows 工作区选择器热修交付包（用户反馈后重做为「双击即修」）
+
+**背景**：用户反馈 Windows 真机「安装包能装，但无法选择工作区」，报错
+`directory picker failed: win32 folder dialog worker exited before reporting a result`；
+随后明确要求把方案缩到能照着做，并给出可双击的成品。
+
+**已定性**：报错来自上游 native 档 `win32-dialog.ts:153-157` 的 `worker.on('exit')` ——
+koffi/COM 子进程未发任何 IPC 消息就退出，宿主连对话框都没打开。已排除：worker.cjs 缺失
+（9488 B 在包内）、koffi 原生二进制缺失（`@koromix/koffi-win32-x64` 1,036,800 B 在包内）、
+spawn/IPC/run-as-node 机制坏（本机用打包态二进制复现两级链成功）、asar 内路径不可执行。
+
+**交付物** `release/2026-09-11-win-hotfix/`（4 文件）：
+- `一键修复.cmd` —— 纯 ASCII 批处理、无 BOM、CRLF、自包含、**无需管理员**；幂等 + 备份 + 回读校验。
+- `fix-windows-directory-picker.ps1` —— 等价变体（中文输出、时间戳备份 + 自动回滚），同步进 `scripts/`。
+- `web.patch.yml` —— 手动覆盖用（安装包模板 + 末尾 10 行，`diff` 已验）。
+- `怎么用-必读.md` —— 3 步说明 + 2 个备用办法 + 回滚 + 自查方法。
+
+**关键机制（本次新查实）**：`cordis.patch.yml` 结构 = 用户区(before) + 受管区块 + 用户区(after)；
+`composeManagedPatch` 完整保留 after → **追加到文件末尾在其重启重算后仍存活**，且该文件在
+`%USERPROFILE%\.mochi-home` 下，不需要管理员权限。已用临时 home 跑 split→compose 实测通过。
+`dsh-web-app` 直接依赖两个 browse 包 → 安装包 node_modules 必有，`- insert:` 不会解析失败。
+
+**验证**：`test-runtime-profile.mjs` 复跑 PASS；热修块在重算后仍位于受管区块之后（PASS）；
+CI 快照清单 sha256/`expectedFileBytes` 已同步（91,222,898 → 91,228,625）。
+
+**待交接**：用户需在 Windows 上双击 `一键修复.cmd` → 完全退出（含托盘）→ 重启 → 回报；
+原生 tier 真实根因仍未定性（需在 Windows 抓子进程 stderr），列二期，不作为演示依赖。
+
+---
+
+## 2026-09-12 00:35 · 工具线 · 🔴 P0 修复：工具名带点导致模型网关 400 整轮拒收
+
+**背景**：用户贴出桌面端报错
+`400: Invalid 'tools[6].***.name': string does not match pattern '^[a-zA-Z0-9_-]+$' → INVALID_REQUEST`。
+整轮对话发不出去，端不可用。
+
+**根因**：网关只收 `[a-zA-Z0-9_-]`；Mochi 插件工具沿用 `mochi.ppt_create` / `jxl.campus_status`
+的 `命名空间.动作` 形态，点号非法 → **一个工具名不合规即整轮 400**。底座自带 31 个工具全是下划线。
+全链路无归一化（`dsh-llm-deepseek/lib/index.js:251` 直通 `name: tool.name`），只能从源头改名。
+
+**已做**：
+- 改名 **48 + 1 = 49 个工具名**（`.`→`_`），**388 处 / 45 文件**。第 49 个是动态别名
+  `jxl.student_query`（循环注册，静态扫描会漏，靠 campus 注册面断言兜出）。
+  严格边界 `(?<![\w.$])…(?![\w$])`（`.` 排除必须有，否则 `message.send` 误伤 `message.senderName`）。
+  `artifacts/**`(97 处)/`foundation/**`/`plan/**`/`campus.nosync/**` 按豁免区**不动**；复扫残留 **0**。
+- **新增两道防回归守卫**（`apps/desktop/scripts/test-package-resources.mjs`，CI 会跑）：
+  `assertModelFacingToolNames()` + `assertNoDottedToolNameLiterals()`；**负向对照已做**
+  （注入 `'mochi.grade_analyze_legacy'` → EXIT=1 且定位到具体文件；还原后 PASS）。
+- `docs/mochi-naming-convention.md` 新增 §5「工具名硬约束」；修掉
+  `skills/student-follow-up`、`skills/weekly-class-report` 里的悬挂引用 `message.draft`（该工具从未注册）。
+- CI 快照同步：25 个文件重算，`expectedFileBytes` 91,228,625 → **91,231,196**（逐字节+sha256 全一致）。
+- 交付热修包 `release/2026-09-12-toolname-hotfix/`（`run-fix.cmd` + `fix-tool-names.mjs` + `怎么用-必读.md`），
+  仿真安装目录真跑通：83 文件 / 26 修补 / 351 处；幂等复跑「无需修改」。
+
+**验证**：plugins 侧 **13/13 test.mjs PASS**；desktop `test:runtime-profile` / `test:package-resources` /
+`test:dsh-host-peers` / `test:installer-config` / `test:release-input` ✅。
+`test:profile-skills` ❌ 系本机 `fs-ext` 为 x86_64（arm64 dlopen 失败），**与本改动无关**，
+已用静态扫描替代覆盖（技能/预设无反引号悬挂的 `jxl_*`/`mochi_*`/`message_*` 引用 ✅）。
+
+**⚠️ 待用户拍板**：`skills/teaching-material-find`（`file.*` / `doc.read` / `pdf.read` / `ppt.inspect`）
+与 `skills/weekly-class-report`（`doc.*` / `spreadsheet.*`）引用的工具族**从未实现**，是改措辞、真实现、
+还是暂不动？`skills/student-movement-request` 的 `approval.request` 是 harness 原生确认卡 API，**合法勿动**。
+
+**待交接**：用户在 Windows 双击 `run-fix.cmd` → 完全退出（含托盘）→ 重启 → 验证；或等下次 CI 包。
+CI 快照仍有 5 个**别人的**未提交改动（托盘相关）导致哈希不符，属既有漂移，未擅改。
+
+---
+
+## 2026-09-12 09:2x · 工具线 · V1.3 提示词 + 预设清理 + 对话/工作模式 + 教育检索 + 定时任务 + 打包标准化
+
+**用户一轮 8 件事，四块全要。** 裁定：模型适配走「模型无关通用版」；预设**只保留创造模式**；
+打包标准化 = 文档 + CI 门禁；追加硬要求「**所有修复必须进安装包，不允许再手工热修**」。
+
+### 🔴 关键发现：V1.2 提示词从未接进运行时
+
+`Mochi_系统提示词_V1.2_完整阅读版.md` 只是聚合阅读版文档，**仓库里没有任何 `prompts/*.system.md`**。
+真正生效的是 `core.patch.yml` 里那段**英文 persona**。→ 改提示词不接运行时等于白改。
+
+### 交付
+
+- **提示词 V1.3**（`Mochi_系统提示词_V1.3_完整阅读版.md`，2766 行 → 约 700 行）：去文绉（删公文体、
+  双重否定、嵌套条件）、去冷漠（点名禁掉客套话）、**模型无关**（短句 + 正向指令优先 + 一条一事，
+  适配 GLM/Kimi/Qwen/豆包/文心/混元）；删掉 70 项 `not_run` 无用人例；新增 modes/task-scheduler/
+  education-search 三份准则；修正与运行时冲突的单一口径表述。
+- **persona 真接入**：`core.patch.yml` 英文 → **中文**（2763 字符），`includeHarnessIdentity: false` 不变。
+  `test:runtime-profile` PASS；已核测试对 persona 文本无耦合。
+- **预设清理**：上游 `roots` 无逐条排除能力 → `runtime-profile.cjs` 新增 `materializeVisiblePresetRoot()`，
+  把只含 `cordis` 的树落到 `<profileHome>/presets-visible/`。教师端只见 4 个教学预设 + 创造模式。
+- **对话/工作模式**：`ui-trajectory` 置 `disabled: true` 关掉「AI 轨迹界面」；`mochi-workbench` 原来把
+  「工作」注册成第二个 `conversation.view` 且**不渲染对话** → 取消该注册，会话始终是官方 `chat`，
+  工作台面板改挂 `conversation.session.header.actions` 开关；切换改走官方 `selectView` 缝，
+  **DOM relay 整体删除**。官方无「自定义 view 嵌入 chat」接口（三条独立证据）。
+- **教育检索**：`mochi-web-search` 分层权威目录 + `site:` 定向扇出。域名**逐个核实**：
+  学科网/组卷网/菁优网/国家智慧教育平台/四川省教育厅/四川省教育考试院/成都市教育局。
+  **「金优网」查无官网 → 未造域名**。下载边界如实（商业题库多需登录付费，只给链接，**不伪造路径**）。
+- **定时任务**：新插件 `plugins/mochi-task-scheduler/`，3 个工具、SQLite 持久化 + 进程内定时器、
+  `Asia/Shanghai`。诚实边界：应用没开不执行、`notify` 非系统弹窗、每月/每小时不支持。
+- **打包标准化**：新增 `.github/workflows/mochi-ci.yml`（快照漂移报告 + 20 个零依赖回归入口）、
+  `docs/build-standard.md`、`scripts/check-snapshot-manifest.mjs`。
+
+### 注册与清单
+
+- `prepare-mochi-resources.cjs` 白名单加调度器 6 个源文件；`runtime-profile.json` 三 profile + 顶层映射。
+- 期望值同步：插件数 **20 → 21**；`CRITICAL_PLUGIN_ENTRYPOINTS` 加调度器。
+- **CI 快照清单 455 → 461**，`expectedFileBytes` 91,231,196 → **91,311,887**；
+  `check-snapshot-manifest.mjs` → **不一致 0，字节差 ±0**。
+  顺带重算了 **5 个他人未提交改动**（否则 CI 首步即挂、整包出不来），已在汇报点名。
+
+### 验证
+
+16 套插件/客户端测试 **16/16 PASS**（web-search 19、task-scheduler 23、workbench 11、campus 4、
+knowledge 8、presentations 9、office 6、grades 5、model-presets 6、lan 1+11 …）；
+`test:runtime-profile`/`package-resources`/`installer-config`/`release-input`/`dsh-host-peers` **全 PASS**；
+快照一致性 **0 不一致**。
+**未做真机视觉验收**（本机 `fs-ext` x86_64，arm64 dlopen 失败，宿主起不来）——工作台面板覆盖几何只有静态证据。
+
+### 待决
+
+① 公开 CI 只覆盖 20/33 个测试入口（内部包 + 原生依赖装不上），补齐方式待定；
+② 他人 5 个文件的重算是否认可；③ 建议真机跑一轮工作台视觉验收。
+遗留：`skills/teaching-material-find` / `weekly-class-report` 引用的 `file.*`/`doc.*`/`spreadsheet.*`
+工具族**从未实现**，处理方式上一轮已上报、**用户仍未拍板**。
+
+---
+
+## 2026-09-12（夜）· URGENT-09 ~ URGENT-13：工具补齐 + 双界面 + 出包标准化
+
+用户在一条消息里下了 8 条要求，收敛成五项（编号见
+`docs/tasks/MOCHI-URGENT-REPLAN-2026-09-11.md` §「本轮追加」）。
+**本线只审核监制，实现全部并行派给子代理，文件面互不相交。**
+
+### 实现（六路并行，全部返回）
+
+| 子代理 | 插件 | 结果 |
+| --- | --- | --- |
+| tools-files | `plugins/mochi-files/`（新） | 6 个 `file_*` 工具，**22/22** |
+| tools-docpdf | `plugins/mochi-documents/` | 自研零依赖 ZIP + DOCX 解析 + PDF 逐页文本；5 个工具，**30/30** |
+| tools-sheets | `plugins/mochi-sheets/`（新） | 4 个 `spreadsheet_*`；LibreOffice 真算 + 自研 55 函数引擎，**22/22** |
+| tools-ppt | `plugins/mochi-presentations/` | `ppt_inspect`（页数/尺寸/表格/图表/备注），**17/17** |
+| chat-work-modes | `plugins/mochi-modes/` + `client-plugins/mochi-modes/` | 对话/工作双界面，**16/16 + 8/8 + workbench 13/13** |
+| tools-visuals | `plugins/mochi-visuals/`（新） | `image_find`/`image_edit`/`diagram_draw`/`teaching_image_match`，**34/34** |
+| prompt-aesthetics | V1.3 提示词 + `core.patch.yml` + 两个 skill | persona 2763 → 3238 字符，YAML 通过 |
+
+**关键技术点**：省 token 靠官方 `ctx.tools.restrict()` 收窄工具面（README 明说会省掉整份
+schema 开销），必须用 `agent.ctx` 作用域上下文；审批走原生确认卡；官方只有一个 chat 渲染器，
+所以两个「界面」的差别落在**工具面 + 工作台显隐 + 模式条文案**，不再注册第二个 conversation view。
+`mochi-visuals` 零新增运行时依赖（复用闭包内 `@napi-rs/canvas`）。
+
+### 本线亲自收口（子代理被禁改的文件）
+
+- `prepare-mochi-resources.cjs`：白名单 **21 → 26** 插件，新增 5 条 + `document-io.mjs`。
+- `runtime-profile.json`：三个 profile + 顶层 `plugins` 映射同步（headless **不加** `mochi-modes`，
+  它没有审批通道）。
+- `test-runtime-profile.mjs` / `test-package-resources.mjs`：期望值同步（21 → 26），
+  打包期钉死 10 个插件**精确工具名**，新增 `mochi-modes-client` 可加载断言。
+- **防呆补丁**：`mochi-modes` 在没有确认通道时**不收窄**工具面 —— 否则会话会被永久锁死在
+  「只有一个工具、而那个工具又要审批才能用」的状态。用假宿主做了负向对照。
+- **快照清单**：新写 `scripts/reconcile-snapshot-manifest.mjs`，从 `PLUGINS` 反解白名单并
+  **自动登记新插件文件**，一次收敛哈希 + 字节总数。结果 **461 → 491 文件 / 91,831,695 B，
+  不一致 0、缺失 0、字节差 ±0**（`--fail` 下 OK）。
+- `docs/build-standard.md`：§2 换成 reconcile 脚本口径，新增 §4.6「CI 覆盖不到的测试」，
+  写清「为什么这次连别人未提交的改动一起重算了」。
+- `skills/teaching-material-find` / `weekly-class-report`：工具名残留 `doc.read`/`pdf.read`/
+  `ppt.inspect` → `doc_read`/`pdf_read`/`ppt_inspect`（带点的名字会被网关 400 拒收整轮）。
+- CI：加了两条真正零依赖的入口（`plugins/mochi-files/test/paths.test.mjs`、
+  `client-plugins/mochi-modes/test/client.test.mjs`），并写明 dsh-tools 覆盖缺口**没有**补上。
+
+### 验证
+
+| 项 | 结果 |
+| --- | --- |
+| plugins/mochi-modes | 16/16（含负向对照：关 restrict → 4/16） |
+| client-plugins/mochi-modes | 8/8 |
+| client-plugins/mochi-workbench | 13/13（负向对照：总渲染 → 12/13） |
+| plugins/mochi-files | 22/22 |
+| plugins/mochi-documents | 30/30 |
+| plugins/mochi-sheets | 22/22 |
+| plugins/mochi-presentations | 17/17 |
+| plugins/mochi-visuals | 34/34 |
+| test:runtime-profile / test:package-resources | PASS（26 插件暂存成功） |
+| test:installer-config / test:release-input | PASS |
+| 快照一致性（`--fail`） | OK，491 条，字节差 ±0 |
+
+### 未闭环（不许当已完成）
+
+① 真机视觉验收未做（本机 `fs-ext` x86_64，arm64 dlopen 失败，宿主起不来）；
+② CI 装不了依赖 → 大多数插件测试只能在跑本机，缺口已写进 `build-standard.md` §4.6；
+③ `mochi-visuals` 只在 macOS arm64 验过，Windows 字体路径待复验；
+④ `teaching_image_match` → 取图 的端到端没跑过；
+⑤ 待用户拍板：V1.3 英文版里「高中试题默认新高考Ⅱ卷」这条默认值**没有**写进去。
+
+---
+
+## 2026-09-12 · 工具线 · 文档治理收口 + 外部 Agent 对接手册
+
+**用户要求**：「把所有的文档都更新了……把矛盾的地方全部给修改掉。编写手册，方便后续对接其他的 Agent。」
+
+### 新建
+
+| 文件 | 作用 |
+|---|---|
+| `docs/DOC-AUTHORITY.md` | 文档治理唯一裁决书：L0–L5 权威分层 / 技术语境豁免清单 / 两条截止日期 / 元数据规范 / 版本号唯一真值 / 漂移自查 |
+| `docs/agent-integration-handbook.md` | 外部 Agent 对接技术手册（17 章）：架构 / 版本矩阵 / 装载三件套 / **26 插件工具全表（含参数与边界）** / slot 表 / 审批契约 / 双模式 restrict / A2A 七态机 / 数据根 / 环境变量 / 打包 / 错误语义 / 接入 12 步 checklist / 硬约束 Do&Don't |
+| `scripts/check-skill-tools.mjs` | 技能/文档层工具名守卫（R1 点号 / R2 不存在名），**已接 CI 硬门禁** |
+
+### 权威裁决（口径变更）
+
+「唯一事实源」**分语境**：L0-A 排期 = `docs/tasks/MOCHI-URGENT-REPLAN-2026-09-11.md`；
+L0-B 出包 = `docs/build-standard.md`；L1 产品 = `Mochi-总体方案.md` v2.0（**不管排期**）；
+**L2 = 源码（冲突时源码赢）**；L3 工单 / L4 历史档案 / L5 审计取证。
+技术语境的「唯一权威」（artifact store / 会话日志 / P0 清单 / `package.json` / 资产溯源 / token 表）**标注为不参与清理**。
+
+### 加横幅（正文一字未删）
+
+`Mochi-方案总纲.md`、`plan/03`、`plan/12`、`Mochi-总体方案.md`、`foundation/00/06/11/12/21`、
+`docs/reuse-audit.md`、`docs/p0-alpha-runtime-profile-closure.md`、
+`ARCHITECT_STATE.md`（stale，逐条列被推翻的结论）、
+`release/2026-09-11-win-hotfix/` 与 `release/2026-09-12-toolname-hotfix/`（加 `_已作废-请勿分发.md`，**未删除**）。
+
+### 具体修正
+
+- 内核版本 `0.1.2-rc.1` → **`0.1.3-alpha.1`**
+- 字体行改为证据版：`mochi-documents` **硬要求 `Songti SC`**（缺则 `EXAM_FONT_UNAVAILABLE`，无静默替换）；
+  xlsx 版式用 `Hiragino Sans GB`（软降级）
+- `test-package-resources.mjs` 断言消息硬编码数字 → 模板字面量
+- `docs/AUDIT-2026-09-12.md` 加 §〇bis 收口状态表（P0 已修；实际 26 插件非建议的 24；两条未闭环如实标 ⬜）
+
+### 守卫查出的真实缺陷（此前一直漏网）
+
+`jxl_student_query` —— **不存在的工具名**，被 3 份 SKILL.md 引用；
+`skills/class-meeting-prep` 的 `jxl.*`。根因：现有两层守卫都不扫 `skills/`。**已全部改正。**
+
+### 验证（全绿）
+
+`test-package-resources` PASS（26/29/106）· `test-runtime-profile` PASS · `test-installer-config` PASS ·
+mochi-modes 16/16 · mochi-files 22/22 · mochi-sheets 23/23 · mochi-documents 30/30 ·
+mochi-presentations 17/17 · mochi-visuals 35/35 · client mochi-modes 8/8 · mochi-workbench 13/13 ·
+`check-skill-tools` ✅ · 快照 **491 条 / 91,832,006 B / 字节差 ±0**（改测试文件后重算过）
+
+### 未闭环
+
+A9 双击验收无仓库内记录 · `release/` 产物无 commit/CI 追溯链 ·
+`check-plugin-import-closure.mjs` 与 `mochi-plugins.manifest.json` 未建 ·
+两个 hotfix 目录只加横幅未删（待用户确认）· 历史档案未逐份补元数据（142 份，按增量规范执行）
+
+---
+
+## 2026-09-12 19:5x · 更正行（对上方 09-12 各条的时点修正，不改历史正文）
+
+上方 09-12 各条是**当时的真实记录**，以下为 2026-09-12 19:4x 独立复验后的修正：
+
+| 上文原话 | 复验事实 |
+|---|---|
+| `test-package-resources` PASS（26/29/106） | 🔴 **现为 FAIL**：`plugins/mochi-presentations/index.mjs` 从 `@mochi/pdf-layout` 导入 `drawTextLine`，而 `apps/desktop/package.json:294` 钉的 `vendor/local-plugins/mochi-pdf-layout-0.1.0-a3f9ed33.tgz` 与该 node_modules 副本**都没有这个导出** → SyntaxError。**按当前源码出包，PPT 工具族不可用** |
+| `test-runtime-profile` PASS | 🔴 **现为 FAIL**：模型清单 `deepStrictEqual` 不符（与手工给 mimo 加 `inputModalities` 有关） |
+| 快照 491 条 / 91,832,006 B / 字节差 ±0 | 🟠 **现为 11 个文件不一致**；磁盘实际 91,866,620 B，**字节差 +34,614**（`node scripts/check-snapshot-manifest.mjs` 复现） |
+| A9 双击验收无仓库内记录 | 🟡 **不准确**：`artifacts/architect-audit/final-mac-full-startup-20260909/` **有**真实打包版启动记录（真实截图 + ROOT-REVIEW + result.json），但为**程序化启动、隔离 HOME、仅 macOS、非全新机**。真正缺的是**人工全新机双击**与 **Windows 实机** |
+| plugins 侧 13/13、16 套测试全绿 | 🟡 复跑 55 个测试入口：**51 PASS / 4 FAIL**。其中 `plugins/mochi-memory/test-active-context.mjs` 是**真红**——它仍断言点号工具名 `mochi.memory_note`，实现已按 9/12 的工具名禁令改成 `mochi_memory_note`，测试没跟上 |
+
+取证与台账：`docs/AUDIT-CODE-2026-09-12.md`（代码）、`docs/DELIVERY-LEDGER.md`（交付与验收）、`评审导向再评估_2026-09-12.md`（赛事）。
+
+---
+
+## 2026-09-12 20:0x · 上传件读取链路 + 出包链恢复（工具线）
+
+### 用户报的问题
+
+「在上传备课与课件的时候，识别不到 Word 文档。」
+
+### 根因（两道闸互相咬死，模型手里没有一把能开门的钥匙）
+
+1. `mochi-documents` 的输入路径闸**只允许会话工作区**；上传件在
+   `<DSH_HOME>/attachments/v1/files/<digest 前缀>/<digest>/<原文件名>`，不在工作区里 → `INPUT_OUTSIDE_WORKSPACE`。
+2. `mochi-files/file_read` 只读纯文本，二进制一律拒；拒绝消息原先只说
+   「请用对应的文档工具」，**没说工具叫什么名字** → 模型不知道 `doc_read` 存在，
+   常见结局是改去 `web_search`、或者直接告诉老师「读不了」。
+3. 宿主给的提示只有一句「Read that path with your file tools」（底座
+   `packages/llm/llm/src/content.ts:156`），把模型指向了 `file_read` 这条死路。
+
+### 改了什么
+
+| # | 改动 | 文件 |
+|---|---|---|
+| 1 | 附件盘加成**只读**输入根（Word/PDF） | `plugins/mochi-documents/plugin.mjs` |
+| 2 | 同上，且**写入口不放大**（`mustExist` 分流） | `plugins/mochi-sheets/paths.mjs`、`tools.mjs` |
+| 3 | 同上，作为**追加**根（无主根时仍拒绝运行） | `plugins/mochi-presentations/index.mjs` |
+| 4 | 二进制拒绝消息**按后缀点名工具**（把错误消息变成路由器） | `plugins/mochi-files/handlers.mjs`、`index.mjs` |
+| 5 | 四个教师预设写明上传件读法 | `client-plugins/teacher-agent-presets/*/agent.cordis.yml` |
+| 6 | 深底页**对比度下限 4.5:1**（PPTX 与 PDF 同口径，只推明度不换色调） | `plugins/mochi-presentations/index.mjs` |
+| 7 | 渲染自查链路**转正为工具** | `tools/verify-deck-render.mjs` |
+| 8 | `@mochi/pdf-layout` tarball 重打包（`a3f9ed33` → `c4a3d2c2`） | `vendor/local-plugins/` + `apps/desktop/package.json` + lockfile |
+| 9 | 收敛工具支持 **tarball 改名**（按 package.json 的 `file:` 依赖判定消费集合） | `scripts/reconcile-snapshot-manifest.mjs` |
+| 10 | 删临时探查脚本 **17 个** | `plugins/mochi-presentations/.probe-*.mjs` 等 |
+
+### 出包链恢复（本轮最大收获）
+
+`apps/desktop/package.json:294` 用 `file:` 钉着一个**打好的 tarball**。
+源码加了 `drawTextLine` 导出但 tarball 还是 9/8 的旧包 → 暂存树 `import` 直接 SyntaxError
+→ **按当前源码出包，PPT 工具族整个不可用**。`docs/AUDIT-CODE-2026-09-12.md` 已诊断出这条，
+本轮把它修掉了，并顺手补齐了收敛工具（原先完全不管 tarball 改名换新）。
+
+哈希算法实测确认：文件名 8 位十六进制 = `sha256(tgz)` 前 8 位；lockfile `integrity` = `sha512-<base64 原始字节>`。
+
+### 验证
+
+| 项 | 结果 |
+|---|---|
+| `test-package-resources` | **PASS（26 plugins / 29 DSH modules / 106 additional）** |
+| `check-snapshot-manifest --fail` | **OK，492 条，清单与磁盘 ±0** |
+| `verify-presets` | PASS（4 教师预设先于 4 兼容预设） |
+| `check-skill-tools` | ✅ 无点号工具名、无未知工具名 |
+| pdf-layout / presentations / documents / files / sheets | 3 / 19 / 31 / 23 / 23，**全绿** |
+| 全量入口复跑 | **47 个真入口全绿**；7 个环境门控校验脚本需 alpha 产物，非回归 |
+| 渲染自查（人工看图） | 7 页中文全部正常；深底页对比度 2.51 → 4.57 已确认写进 PPTX 字节 |
+
+### 顺带修掉两个「真红」
+
+- `plugins/mochi-memory/test-active-context.mjs`：仍在断言**点号工具名** `mochi.memory_note`
+  ——那正是 9/12 定为会让整轮请求 400 的非法形态。改为 `mochi_memory_note` + 负向断言。
+- `apps/desktop/scripts/test-runtime-profile.mjs`：期望值缺 `inputModalities: ["text","image"]`。
+  这一行是**看图能力的前提**（底座只在该路由声明图像输入时才注册 `read_image`）→ PASS。
+
+### 未闭环（本轮明确没做）
+
+重新出包与实机装 · **安装包下载速度**（一体机快／老师电脑慢至 15 分钟）·
+DeepSeek v4.1 flash 全链路测试与缓存命中率 · `festive` 主题配色本身 ·
+`title-body` 版式纵向留白 · 7 个环境门控脚本进 CI。
+
+详见 `docs/attachment-and-render-pipeline.md`（新增，本文是这条链路的唯一说明）。
+
+---
+
+## 2026-09-12 20:1x–20:4x ｜ 安装慢的真因：不是下载慢，是安装要写 41,150 个文件
+
+### 纠错先行：我一开始判断错了方向
+
+用户先说「安装包的下载速度……老师电脑慢至 15 分钟」，我去查了分发通道；
+用户随即纠正：**「安装到电脑上，点击安装向导之后，它会更新得很慢很慢」**。
+**是安装阶段，不是传输阶段。** 两者修法完全不同，这次靠用户一句话救回。
+
+### 取证（本机，不需要 Windows）
+
+用 electron-builder 自带的 `7za` 把已出的 Windows 包**逐文件称重**（41,150 条）：
+
+```
+解包后 1,706.7MB / 41,150 个文件；7z 压缩后 484.1MB
+  resources/app.asar.unpacked/node_modules  144.3MB(7z)  34,503 个文件  ← 84% 的文件数在这
+  resources/mochi/playwright                177.0MB(7z)  （其中可见版 chromium 110MB）
+  Mochi.exe                                  59.3MB
+  resources/mochi/node_modules               36.0MB(7z)   6,046 个文件
+```
+
+**真解一次计时：41,150 个文件 / 1.79GB → `real 28.5` 秒（M 系列芯片）。**
+老师笔记本 CPU 更弱，且 Windows Defender 要逐个扫描新建文件（每个 10~50ms）
+→ 累计十几分钟。**根因是文件数，不是体积。**
+
+### 修复：打包时按规则排除（磁盘上一个文件都不删 —— 用户明确要求）
+
+一处正则，覆盖三条打包路径：
+
+```js
+const PACKAGED_RUNTIME_PAYLOAD_EXCLUDED_FILE = /(?:\.map|\.d\.ts|\.d\.mts|\.d\.cts)$/i;
+```
+
+| 路径 | 执行者 |
+|---|---|
+| `resources/mochi/node_modules` | `packagedRuntimePayloadFilter()` |
+| 插件整目录拷贝（`dsh-better-sidebar/lib` 等） | 同上 |
+| `app.asar.unpacked/node_modules` | `package.json` 的 `build.files` 四条负向模式 |
+
+实测收益：**12,775 个文件 / 235.5MB 原始 / 41.9MB 压缩 = 全包文件数 31.0%**
+→ 文件数 **41,150 → 28,375**；本机暂存树 node_modules **6,033 → 3,662** 个文件、158MB → 111MB。
+
+### 查过源码，不是推测
+
+- `getMainFileMatchers()` 追加的是 `!**/node_modules` —— 实测它对 `node_modules/**` 下
+  **所有**文件返回 `false`，**不能用它验证**这条规则（差点据此得出错误结论）。
+- 真正判定 node_modules 的是 `getNodeModuleFileMatcher()`（`platformPackager.js:302`）：
+  只抽 `config.files` 里 `!` 开头的模式，再自动前置 `**/*`。`appFileCopier.js` 注释写得很直白：
+  `// ... so user can exclude some files !node_modules/xxxx`
+- 另发现：`d.ts` 本来就在 electron-builder 默认排除扩展名里 → `app.asar.unpacked` 那棵树的
+  `.d.ts` 一直是 0；那 1,445 个 `.d.ts` **全在 `resources/mochi/node_modules`**（我们自己的
+  复制脚本，改动前一个过滤都没做）。
+
+### 验证（三条）
+
+1. `test-installer-config.mjs` 用**真实** `getNodeModuleFileMatcher` 逐文件断言
+   「该留的留（`.js/.mjs/.json/.node/.exe/.bcmap/LICENSE/NOTICE`）、该排的排（`.map/.d.ts/.d.mts/.d.cts`）」，
+   并断言 `package.json` 的 glob 与脚本的正则**覆盖同一组扩展名**（防两边漂移）。**PASS**
+2. **负向对照**：去掉负向模式 → `mermaid.js.map=false`（matcher 为空 → 生产走 `filter=null` 不过滤，
+   即静默涨回 4 万文件且不报错）；加回 → `mermaid.js=true` / `mermaid.js.map=false`。✓
+3. 本机真跑 `prepare-mochi-resources.cjs`：暂存树 3,946 个文件、排除类残留 **0**。
+   脚本自带 `assertNoExcludedRuntimePayloadFiles(working)` 扫整棵树（不只 node_modules）。
+4. `test-package-resources` PASS（26/29/106）；`check-snapshot-manifest --fail` → **OK 492 条 / ±0**。
+
+### 明确**不改**的（写下来免得下次又想去动）
+
+- `test`/`demo`/`docs` 目录：全包才 ~900 个文件，且很多不是测试目录（是 `zod/src/v4/classic/tests`
+  这种库自身结构）。为 900 个文件冒误伤风险不划算 —— **量出来的**。
+- `LICENSE` / `NOTICE`：合规文件。
+- **可见版 chromium（110MB 压缩）**：用户明确要求保留。
+
+### 未闭环
+
+- **`asarUnpack: ["node_modules/**/*"]` 是最粗的一刀**：它让 84% 的文件以散文件落盘。
+  收窄到只解包原生模块可把文件数再降到约 7,000（−83%），但要改 `web-host.ts` 两处
+  （`NODE_PATH` / `resolveDshBin` 指向 asar 内部）+ 两个测试，且**必须实机装一次确认**
+  （macOS 验不了 Windows 的 Electron 行为）。**动之前先问用户。**
+- 重新出包 + 实机装（新数字需重出包后复称）。
+- DeepSeek v4.1 flash 全链路测试与缓存命中率。
+
+详见 `docs/installer-install-speed.md`（新增；出包标准 §1.5 有摘要）。
+
+---
+
+## 2026-09-12 21:0x–21:3x · DeepSeek v4.1 flash 端到端 + 缓存命中率（工具线）
+
+**任务**：用户要求「都用 DeepSeek v4.1 flash 进行测试，确保缓存命中率达到 99%」，
+并把结论写进技术门路。
+
+### 先纠正两件我原本会搞错的事
+
+1. **「缓存命中率」不是性能指标，是成本指标。** 它衡量的是「同一段前缀有没有按缓存价计费」。
+   而且它**只在多轮语境下有定义** —— 第一轮必然是 0%（缓存要建）。任何把单轮数字
+   当结论的说法都是错的。
+2. **口径在 dsh 侧是"互斥两半"**：`llm-deepseek` 的 `mapUsage` 把网关的 `prompt_tokens`
+   **减掉**命中数再存成 `inputTokens`。所以
+   `本轮 prompt 总量 = inputTokens + cacheReadTokens`。
+   拿 `inputTokens` 当分母算，数字会严重偏高 —— 这是最容易犯的错。
+
+### 端点事实（先问端点，别信自己声明的）
+
+`node tools/probe-endpoint-models.mjs`（新增）：
+
+| 网关 | 实际提供的模型 |
+|---|---|
+| `mimo.ezlook.top/v1` | `mimo-v2.5`、`mimo-v2.5-pro`、`mimo-v2.5-asr` |
+| `aiaaa.cc/v1` | `deepseek-v4-flash-0731`、`deepseek-v4-flash-vision-exp`、`deepseek-v4-pro-0813`、**`deepseek-v4.1-flash`** |
+
+`deepseek-v4.1-flash` 确实存在（名字里没有 `expires-on-`，不触发禁用规则）。
+`secrets/packaging-keys.local.yaml` 里 `mochi-aiaaa` 的 `defaultModel` 目前是
+`deepseek-v4-flash-vision-exp`（视觉档），**不是** v4.1-flash。
+
+### 新增工具（4 个，全部零依赖、只读）
+
+| 工具 | 作用 |
+|---|---|
+| `tools/probe-endpoint-models.mjs` | 问端点要真实模型清单 |
+| `tools/model-compat-probe.mjs` | 换模型前 6 项体检 |
+| `tools/cache-hit-probe.mjs` | 按 dsh 的请求形状量命中率（`--repeat` / `--turns` / `--switch-at` / `--nonce`） |
+| `tools/verify-cache-hit.mjs` | **从 dsh 自己的会话日志验收**（最硬的一份证据） |
+
+### 端到端真跑（不是探针，是真的 dsh）
+
+隔离临时 home（`/tmp/mochi-e2e-home`，**没碰用户的活动 home**）+
+`llm-probe.mjs` 挂在 8899 抓包，把 `llm-deepseek` 指向 aiaaa：
+
+- 会话事实：`provider=deepseek-official  model=deepseek-v4.1-flash  reasoningEffort=off`
+- 3 步真实工具链（列目录 → 读 `package.json` → 汇报），3 次模型请求
+- 抓包：`model=deepseek-v4.1-flash  msgs=4  tools=89  sysChars=6597`
+  **89 个工具名全部合法，零点号** —— 2026-09-12 的 P0 修复在**线上真实请求体**里得到确认
+
+会话日志（`verify-cache-hit.mjs`）：
+
+| 轮次 | prompt | 命中 | 未命中 | 命中率 |
+|---|---|---|---|---|
+| 1 | 25,655 | 0 | 25,655 | 0.00%（首轮） |
+| 2 | 28,718 | 24,832 | 3,886 | 86.47% |
+| 3 | 29,037 | 28,672 | 365 | 98.74% |
+
+### 冷前缀对照（真实 24.3k 前缀 = 当前 persona + 89 个工具 schema）
+
+| 网关 / 模型 | 稳态命中率 |
+|---|---|
+| `aiaaa.cc` / `deepseek-v4.1-flash` | **99.22 – 99.42%** |
+| `mimo.ezlook.top` / `mimo-v2.5` | **99.63%**（累计 99.68%） |
+
+两个网关都达标。未命中那段是**固定尾巴**（142–199 tokens），不随会话增长 ——
+所以前缀越长命中率越高。
+
+### 本次最有产品含义的一条：换工具面 = 那一轮整段前缀作废
+
+`mochi-modes` 的「对话界面收窄工具面 → 工作界面放开」正好是这个形状。
+冷前缀下实测（`--switch-at 3`）：
+
+| | 轮4 换面 | 轮5 | 轮6 |
+|---|---|---|---|
+| aiaaa / v4.1-flash | **0.00%** | 73.59% | 99.29% |
+| mimo / v2.5 | **70.60%** | 99.88% | 99.81% |
+
+结论：**一次切换的代价是 1–2 轮全价，可接受；但"每轮都变"等于永远不命中。**
+
+### 三个取数坑（都踩了，都写进文档了）
+
+1. **会话日志是多帧 zstd**：同一份 46,362 B 的日志，`zstd -dc` 解出 94,515 字符／31 行，
+   而 Node 的 `zlib.zstdDecompressSync` **只解出 183 字符／1 行**（只读第一帧）。
+   用它会把"看不到用量"当成"网关没回传"，报一个看着合理但完全错的结论。
+   验收脚本优先走命令行 `zstd`；只能用 Node 时若输出不以换行结尾就**拒绝出数**。
+2. **一个会话目录里躺着两份日志**（`session.jsonl.zstd` / `session.v2.jsonl.zstd`）：
+   按 mtime 取"最新"会随机挑到旧格式，必须显式优先 `.v2.`。
+3. **网关的前缀缓存是服务端持久的、跨进程的**：不加 `--nonce` 冷标记时，
+   "换面"那一轮实测 99.44%，看着像"换面不要钱"；加了冷标记同一实验变成 0.00%。
+   **做对比实验必须打冷标记。**
+
+### 新守卫（已进 CI）
+
+`apps/desktop/scripts/test-llm-cache-observability.mjs`，接在 `mochi-ci.yml` 里，
+断言 4 件事：`stream:true` / `stream_options:{include_usage:true}` /
+缓存字段解析（`prompt_cache_hit_tokens` 或 `prompt_tokens_details`）/ `cacheReadTokens` 映射。
+
+为什么值得单开一步：`include_usage` 一旦丢失，**请求照常成功、界面照常回话**，
+只有 usage 里的 `cacheReadTokens` 悄悄消失 —— 我们承诺的「命中率 ≥99%」
+会瞬间变成不可观测。这类没有症状的失效必须由断言兜住。
+产物不存在时它**大声打印跳过原因**并退 0（静默跳过会让"没检查"像"检查通过"）。
+
+**负向对照已做**（仓库纪律）：删掉 `include_usage` → 断言红；删掉 `cacheReadTokens`/ 
+`prompt_cache_hit_tokens` → 断言红。两条都报了正确的错。
+
+顺带修掉自己的两个 bug：`node:assert/strict` 只有 default 导出（`import { assert }` 直接
+SyntaxError）；流式模式里"非 SSE 响应"必须显式判 `dataLines === 0`，否则 HTTP 200 +
+单行错误体（技能坑 31）会被误判成"成功但没 usage"。
+
+### 独立复现了 P0 工具名约束（第三方网关的证明）
+
+把 2026-09-06 的旧抓包（含 `jxl.analytics` 等 32 个点号名）原样重放，aiaaa 直接 400：
+
+```
+Invalid 'tools[5].***.name': string does not match pattern.
+Expected a string that matches the pattern '^[a-zA-Z0-9_-]+$'.
+```
+
+这不是我们的判断，是**网关自己的模式校验**。`cache-hit-probe.mjs` 现在会主动剔除非法名
+并点名，避免把"请求被拒"误读成"网关不支持缓存"。
+
+### 文档
+
+- 新增 `docs/cache-hit-rate.md`（口径 / 取数坑 / 全部实测表 / 保证 ≥99% 的可执行清单 /
+  换模型复现步骤 / 两网关能力对照）。`docs/DOC-AUTHORITY.md` 的元数据规范已遵守。
+- `docs/DOC-AUTHORITY.md` §6 与 `docs/build-standard.md` §0 的两处**陈旧数字**顺手改正
+  （快照 492 条 / 91,919,236 B / ±0；手工热修目录已移入 `release/_voided-manual-hotfixes/`）。
+- `docs/DELIVERY-LEDGER.md`：§二 新增缓存验收行；§四 第 9 项从「无记录」改为已测。
+
+### 回归
+
+`test-installer-config` / `test-package-resources` / `test-runtime-profile` /
+`test-llm-cache-observability` / `check-skill-tools` / `check-snapshot-manifest --fail` **全 PASS**。
+（`check-skill-tools` 一度被我新文档里的 `jxl.analytics` 例子判红 —— 那是**故意展示错误写法**的
+对照行，按守卫规定加了行尾豁免标记；另外 4 处 R2 误报是 usage 字段名，改成中文描述消掉了。）
+
+### 未闭环
+
+- **`deepseek-v4.1-flash` 未进默认模型链**：出厂默认仍是 `mochi-mimo / mimo-v2.5-pro`。
+  是否切默认、以及是否把 v4.1-flash 加进模型目录，**待用户拍板**（会改变成本与观感）。
+- 命中率在**隔离临时 home + 本机**测得，未在教师实机复称。
+- `verify-cache-hit.mjs` 需要真实会话日志，**未进门禁**（门禁是那 4 条断言）。
+
+---
+
+## 2026-09-12 21:4x–22:0x ｜ 安装包验证轮：真产物称重 + 资源根许可文件纠错
+
+### 起点：先核实现场，不接着上一条结论干
+
+交接后的第一件事是重新取数：暂存树 **3,946** 文件 / `node_modules` **3,662** / 排除类残留 **0**
+—— 与文档记录吻合，说明 `.map` / `.d.ts` 裁剪规则确实在生效。这一步不做，后面全是空转。
+
+### 推翻了两处旧口径
+
+1. **文档里的快照基数是旧的。** `installer-install-speed.md` §5.4 写 `91,913,750 B`；
+   实测 `check-snapshot-manifest --fail` → `492 条 / 91,919,236 B / 字节差 ±0`。
+   已改，并加了口径提醒：**永远以脚本输出为准，不要照抄文档里的数字。**
+2. **本机 Playwright 资源根的 credits 文件是贴错标签的**（详见下）。
+
+### 真产物称重：第一次把裁剪从「推算」推进到「实测」
+
+`node scripts/package-desktop.cjs --target mac --arch arm64 --dir --release-input-root .mochi-release-staging.nosync`
+（整轮 **39 秒**，含 `tsc` + `@electron/rebuild`）：
+
+| 组件 | 改造前 | 改造后 |
+|---|---|---|
+| `app.asar.unpacked` | 34,338 / 649 MB | **23,940 / 513 MB** |
+| `Resources/mochi`（不含 playwright） | ~6,100 | **3,946** |
+| `Mochi.app` 合计 | — | **29,018 / 2.0 GB** |
+| 全包排除类残留 | 2,371 | **0** |
+
+**离线推演 = 真构建**：改造前把排除规则套在真实产物的 34,338 条清单上算出 23,940，
+真出包实测**正好 23,940**。静态推演与 electron-builder 实际行为逐数吻合 ——
+这才叫"规则生效了"，而不是"规则写了"。
+
+> ⚠️ 这份 `--dir` 构建**覆盖了 `release/mac-arm64/`**（原为 2026-09-11 07:50 那份）。
+> 原件未留，其逐文件清单已另存 `artifacts/install-speed-forensics/2026-09-12-prefix-mac-asar-unpacked-listing.txt.zst`。
+> 已在台账 §一 如实记录，免得后来者以为那还是 9/11 的产物。
+
+### 剩下那 82.5%：查清了**为什么不能靠改配置砍**
+
+改造后 `Mochi.app` 里 23,940 / 29,018 = **82.5%** 仍是 `app.asar.unpacked`，前排全是纯 JS 库
+（`es-toolkit` 2,109、`rxjs` 1,022、`openai` 848、`d3` 786…）。看着像随手能塞回 asar，实际不行：
+
+1. `web-host.ts` 把 Harness 当**子进程**拉起（`app.asar.unpacked/.../@deepseek-ai/dsh/lib/bin.js`），
+   并把 `NODE_PATH` 指向 `app.asar.unpacked/node_modules`。
+2. **dsh 的 profile 依赖回退用真实文件系统链接。** `web-host.ts` 注释原话：解析到 `app.asar`
+   内部会让链接指向虚拟归档。`app.asar` 在 OS 层是**文件不是目录**，符号链接指向其内部
+   **不可穿越** —— 这是 OS 行为，Node 再 patch `fs` 也救不了。
+3. **ESM 不认 `NODE_PATH`。** 插件是 `.mjs`，裸标识符只沿真实路径向上找 `node_modules`。
+
+顺手做了一个反直觉的实测：**Electron 以 Node 模式运行时其实能读 asar 内部**
+（`ELECTRON_RUN_AS_NODE=1 Mochi -e "fs.readFileSync('<...>/app.asar/package.json')"` → 成功）。
+所以"asar 读不到"**不是**原因，别把它当理由 —— 真正的阻塞是上面第 2、3 条。
+
+**结论：要砍这 82.5% 得改运行时依赖布局（把闭包搬成真实文件，或 bundle 成少数几个文件），
+属独立工程，且必须在真 Windows 上装一次才算验证。**
+
+### 资源根许可文件：本机与 CI 有 3 处不一致
+
+sha256 逐字节确证（不是推测）：
+
+| 本机文件 | 实为 | CI 放的是 |
+|---|---|---|
+| `LICENSE`（11,601 B） | `playwright-core/LICENSE` | `chromium-140.0.7339.16-LICENSE`（1,536 B）→ **已对齐** |
+| `credits.txt`（70,260 B） | `playwright-core/ThirdPartyNotices.txt` | runner 现取 `chrome://credits` → **逐字保留** |
+| `credits.html` | 上面那份套了 `<title>Chromium credits</title>` | 同上 → **标题已改诚实**，文件头写明它不是 `chrome://credits` |
+
+本机生不成真的 `chrome://credits`：实测 Chromium **能**起、CDP **能**连，但该页返回**空文档**；
+另一条路 `--dump-dom` 会静默 dump **新标签页**。`metadata.json` 新增 `creditsProvenance` 如实记录。
+**不影响 Windows 交付物**（CI 每次现取）。
+
+### 修掉的一个真 CI 缺陷
+
+CI 对 credits 的校验原来只断言 `$creditsHtml -notmatch "<html"`。
+**新标签页同样含 `<html`，这条校验抓不住"导错了页"** —— 会把假许可清单静默打进安装包。
+已改为同时卡**体量 ≥200,000 字符**与 **`Copyright` 指纹**。
+⚠️ 该工作流是**复制到私有构建分支**用的模板，**加固要跟着复制过去才生效**。
+
+### 顺手修的自己写的 bug
+
+`tools/fetch-chromium-credits.mjs` 的 `socket.onopen` **没有超时** → 连不上 CDP 时永久挂住，
+看起来像"还在跑"（第一次就是这样挂了 3 分 35 秒被我手动杀掉）。已加总看门狗 `--watchdog`
+（默认 120s）+ 每步超时，现在 **29 秒内明确失败**。脚本**拒绝写占位内容**的行为保留不变。
+
+### 自查：本轮踩到的环境坑
+
+- **`grep` 的 `\|` 交替在这个 zsh 里静默返回空。** 我用 `grep -rn -i "playwright\|credits" .github/workflows/`
+  得到"无匹配"，据此差点写下"CI 里没有 Playwright 步骤"的错误结论 —— 后来**读整个文件**才发现有大段 Playwright 代码。
+  **教训：多模式搜索一律用 Grep 工具（ripgrep），不要用裸 `grep 'a\|b'`。**
+- `zstd` 在 `/opt/homebrew/bin/zstd`，**没有** `/usr/bin/zstd`（我第一次写绝对路径踩了）。
+- 未用 `/tmp` 之外的地方做实验；`联动计划` 全程**只读**（复用既有 `--release-input-root`，连 `git status` 都不触发）。
+
+### 全绿
+
+`test-package-resources`（26 插件 / 29 DSH 模块 / 106 附加模块）/ `test-installer-config` /
+`test-runtime-profile` / `check-skill-tools`（26 份 md，无点号、无未知工具名）/
+`check-snapshot-manifest --fail`（**492 条 / 91,919,236 B / ±0**）**全 PASS**。
+
+### 未闭环
+
+- **Windows 安装包仍未重出**：需要 `windows-2022` runner，本机 `gh` **未登录**（只能由作者触发）。
+  CI 触发路径：把 `mochi-source` 快照 + 加固后的 `windows-native-package.yml` 复制到私有分支，
+  push 到 `codex/mochi-windows-*` 或 `workflow_dispatch`。
+- **`asarUnpack` 未动**：已查清不是配置级改动（三条原因见上）。
+- **`release/` 7.1 GB 历史构建未删**：`failed-bundle-01..04`（2.1 GB）与 `alpha-mac-arm64` 被
+  `docs/tasks/MOCHI-P0-BUNDLE-*`、`artifacts/architect-audit/` 的历史取证**引用为输入**，
+  删了会破坏可追溯性，待作者拍板。

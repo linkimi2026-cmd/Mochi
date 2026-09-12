@@ -1,0 +1,70 @@
+<Slide style={{ width: 1280, height: 720, background: '#16211d', position: 'relative', overflow: 'hidden' }}>
+
+    {/* 背景装饰：左侧柔光 */}
+    <Box style={{
+        position: 'absolute', left: -160, top: 120, width: 560, height: 560,
+        background: 'radial-gradient(circle, rgba(232,179,75,0.10) 0%, rgba(232,179,75,0) 70%)',
+    }} />
+
+    {/* A 区 · 标题块 */}
+    <Box style={{ height: 120, paddingLeft: 96, paddingRight: 96, paddingTop: 20, justifyContent: 'center' }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Text style={{ fontSize: 15, color: '#e8b34b', letterSpacing: 3 }}>03</Text>
+            <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#f5f2e9' }}>每一步都有人把关</Text>
+        </Box>
+    </Box>
+
+    {/* B 区 · 内容区 */}
+    <Box style={{
+        position: 'relative', zIndex: 1,
+        height: 540, paddingLeft: 96, paddingRight: 96,
+        flexDirection: 'row', gap: 48, alignItems: 'center',
+    }}>
+
+        {/* 左 60%：审批卡真实截图，焦糖描边聚焦 */}
+        <Box style={{
+            width: 616, height: 396,
+            borderRadius: 12, overflow: 'hidden',
+            border: '3px solid #e8b34b',
+            boxShadow: '0 0 0 10px rgba(232,179,75,0.16), 0 16px 48px rgba(0,0,0,0.45)',
+        }}>
+            <Image src="assets/ui-approval.png" style={{ width: 616, height: 396, objectFit: 'cover' }} />
+        </Box>
+
+        {/* 右侧：主张 */}
+        <Box style={{ flex: 1, flexDirection: 'column', gap: 22 }}>
+
+            <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#f5f2e9', lineHeight: 1.25, letterSpacing: -1 }}>
+                AI 可以提议，
+                <br />
+                <span style={{ color: '#e8b34b' }}>但只有老师能拍板</span>
+            </Text>
+
+            <Box style={{ height: 1, background: 'rgba(245,242,233,0.14)' }} />
+
+            <Text style={{ fontSize: 16, color: 'rgba(245,242,233,0.6)', lineHeight: 1.85 }}>
+                凡是会改变真实世界的动作——发通知、开流动单、改数据——
+                Mochi 都会先停下来，把"要做什么、发给谁、发什么"摆清楚，
+                等老师点「允许一次」才执行。
+            </Text>
+
+            <Text style={{ fontSize: 16, color: '#e8b34b', lineHeight: 1.8 }}>
+                这不是一个功能，是信任设计：校园里 AI 越权一次的代价，远大于它少做十件事。
+            </Text>
+
+        </Box>
+    </Box>
+
+    {/* C 区 · 页脚条 */}
+    <Box style={{
+        position: 'absolute', bottom: 0, left: 0, width: 1280, height: 60,
+        paddingLeft: 96, paddingRight: 96,
+        flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <Box style={{ width: 10, height: 10, borderRadius: 5, background: '#e8b34b' }} />
+            <Text style={{ fontSize: 14, color: 'rgba(245,242,233,0.45)' }}>Mochi · 嘉祥教育集团 AI 创意实践大赛</Text>
+        </Box>
+        <Text style={{ fontSize: 14, color: 'rgba(245,242,233,0.45)' }}>10 / 17</Text>
+    </Box>
+</Slide>

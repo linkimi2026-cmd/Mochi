@@ -1,0 +1,29 @@
+{
+  "name": "mochi-lan-client",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Same-origin teacher and classroom LAN pairing, inbox, and receipt UI for Mochi.",
+  "main": "index.mjs",
+  "type": "module",
+  "dsh": {
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-renderer",
+        "@deepseek-ai/dsh-client-ui-sidebar"
+      ]
+    }
+  },
+  "exports": {
+    ".": "./index.mjs",
+    "./client": "./client.js"
+  },
+  "files": [
+    "index.mjs",
+    "client.js",
+    "package.json"
+  ],
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  }
+}
