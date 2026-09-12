@@ -544,7 +544,7 @@ credits stdout bytes: 41
 
 | 事情 | 做法 |
 | --- | --- |
-| 物化快照 | 按清单逐文件拷贝 + 逐字节校验 + 反向核对无多余文件（2026-09-12 实施记录见 WORKLOG） |
+| 物化快照 | `node tools/materialize-snapshot.mjs <目标目录>` —— 逐文件拷贝 + **立刻回算** sha256/字节 + **反向核对无多余文件** + 全树扫符号链接；三条任一条不过就退出码 1 |
 | 触发 | 推送到 `codex/mochi-windows-*` 分支，或在 Actions 页 `workflow_dispatch` |
 | 看进度 | 取令牌后打 Actions API；`git credential fill` 可从 macOS 钥匙串取出 `github.com` 凭据 |
 | ⚠️ 沙箱 | 沙箱内 `github.com` 被 `502 CONNECT tunnel failed` 挡住（`api.github.com` 正常）→ `git push` 要非沙箱执行 |
