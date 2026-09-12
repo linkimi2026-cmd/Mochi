@@ -1,6 +1,6 @@
 # Mochi 交付与验收台账（DELIVERY LEDGER）
 
-> **status**: active　**last_verified**: 2026-09-12 22:0x　**verified_by**: 工具线（逐条 file/ls 取证 + 修复轮复跑 + 真产物称重）
+> **status**: active　**last_verified**: 2026-09-12 23:1x　**verified_by**: 工具线（逐条 file/ls 取证 + 修复轮复跑 + 真产物称重 + **CI 出包全绿并落盘产物**）
 > **性质**：本项目**唯一**的「交付物 + 验收证据 + 使用记录」总账。此前这些散落在 WORKLOG、artifacts/、release/ 与各工单里，**没有任何一处能回答「到底交付了什么、验收到哪一步」**——本文件填这个洞。
 > **维护规则**：每次交付或验收完成后**当天回写本表**，写明证据路径与**范围限制**。只有能指到文件的一行才算数。
 
@@ -14,6 +14,7 @@
 | Mac 安装包 | `release/2026-09-09/Mochi-0.1.0-mac-arm64.dmg` | 2026-09-11 | 870,189,056 B（830 MiB） | arm64；含 WO-7 角色选择 + 内置 key 种子 + Chromium |
 | Windows 安装包 | `release/2026-09-09/Mochi-Setup-0.1.0-win-x64.exe` | 2026-09-11 | 508,762,732 B | CI run 34499038039 全 27 步绿 |
 | Windows 安装包（更新） | `release/2026-09-10/Mochi-Setup-0.1.0-win-x64.exe` | 2026-09-11 | 508,762,732 B | 带 sha256 |
+| **Windows 安装包（26 插件版，CI 重出）** | `release/2026-09-12-windows/`（artifact `mochi-windows-x64-34700819338.zip`） | **2026-09-12 23:11** | zip **462,320,596 B**（440.9 MB），内含 `Mochi-Setup-0.1.0-win-x64.exe` + `.sha256` | **run #32 全 13 步绿**；含 26 插件 / 新工具 / 双界面 / 视觉 / `render.mjs`。**未签名**（SmartScreen 会拦）。**工件保留 14 天**，过期需重跑 |
 | 试用说明 | `release/2026-09-09/Mac试用说明.md`、`Windows试用说明.md` | 2026-09-11 | — | 含未实机验证／未签名／教室端现场验收待做三项限制声明 |
 | **参赛材料·作品说明** | `参赛材料/作品说明.md` | 2026-09-12 | 约 235 行 | 面向评委的作品总览；作者信息留「待作者填写」；5 处 ⚠️ 待核已注明核法 |
 | **参赛材料·伦理与社会影响** | `参赛材料/伦理与社会影响.md` | 2026-09-12 | 约 196 行 | 高中组明写评分项；按"做过的伦理"组织，每条指到文件行号（审批 14 处调用点、`mochi-approval`、`restrict` + fail-open 纪律、记忆护栏的真实边界、校园侧 `[S1]` 脱敏） |
@@ -21,9 +22,10 @@
 | **参赛材料·教师使用手册** | `参赛材料/教师使用手册.md` | 2026-09-12 | 约 235 行 | 面向非技术老师：安装（Gatekeeper/SmartScreen）、选角色、连教室、8 个技能怎么用、文件与数据在哪、怎么删、出问题怎么办 |
 | **参赛材料·真机验收记录** | `参赛材料/真机验收记录.md` | 2026-09-12 | 约 248 行 | **四张空表**（人工全新机双击 / Windows 实机 / 校园网实测 / 教室一体机现场）+ 判据 + 取证方法。开头明写「没有记录 = 没做过」，**没有把任何一类填成已完成** |
 
-> ⚠️ **两个安装包都是 20 插件版**，不含 2026-09-12 的 16 个新工具／双界面／视觉／`render.mjs`。~~当前源码重出包会坏~~ —— **出包链已于 2026-09-12 晚修复**（`test-package-resources` PASS）。
-快照清单：**已收敛到 ±0**（2026-09-12 21:2x 复跑：492 条 / 不一致 0 / 字节差 ±0，`check-snapshot-manifest --fail` exit 0）——修复轮改动的 5 个白名单文件（`lan-service.mjs`、`sheets/paths.mjs`、`sheets/formula.mjs`、`sheets/tools.mjs`、`presentations/render.mjs`）已重算。
-**两个安装包本身仍未重出**（仍为 20 插件版）。
+> ✅ **Windows 侧已于 2026-09-12 23:11 重出成功**（run #32，26 插件版，见上表与 §九）；上面两行的 9/09、9/10 两个 20 插件包**已被取代**，只留作历史。
+> ⚠️ **Mac 安装包仍是 20 插件版**，未重出（Mac 只能出 `--dir`，签 dmg 另说）。
+~~当前源码重出包会坏~~ —— **出包链已于 2026-09-12 晚修复**（`test-package-resources` PASS）。
+快照清单：**已收敛到 ±0**（2026-09-12 23:0x 复跑：**496 条 / 不一致 0 / 字节差 ±0**，`check-snapshot-manifest --fail` exit 0）——修复轮改动 + 新增的 `mochi-presentations/references/`（4 文件）均已登记。
 
 > 📌 **2026-09-12 21:46 本机产出过一份 `--dir` 构建，覆盖了 `apps/desktop/release/mac-arm64/`。**
 > 它是**未签名的未打包目录**（`--dir`，不出 dmg），用途是**称重验证文件数裁剪是否真的生效**，
@@ -51,7 +53,7 @@
 | 出包链恢复 | `test-package-resources` PASS（26/29/106）✅；`check-snapshot-manifest --fail` → **✅ 2026-09-12 21:0x 复验：OK，492 条 / 91,919,236 B / 字节差 ±0 / 不一致 0** | 🟡 断链根因已修（`@mochi/pdf-layout` tarball 重打为 `c4a3d2c2` + 清单收敛工具支持 tarball 改名）；快照已回到 0 漂移 | 仅证明「源码与快照一致」；**未重新出包、未实机装** |
 | 安装包文件数取证与裁剪 | `docs/installer-install-speed.md`（完整取证方法 + 实测数字）；取证清单 `artifacts/install-speed-forensics/2026-09-11-win-package-listing.txt.zst`（41,150 条，364 KB，zstd）与 `2026-09-12-prefix-mac-asar-unpacked-listing.txt.zst`（34,338 条，155 KB）；测试：`test-installer-config.mjs` PASS、`test-package-resources.mjs` PASS（26/29/106） | ✅ 根因定性为「安装要写 41,150 个文件」（本机纯解压 28.5 s）；已排除 12,775 个运行时永不加载文件 → **41,150 → 28,375（−31.0%）**；暂存树实测 6,033 → 3,662 且残留 0；**2026-09-12 21:4x 真出一次 `--dir` 全量构建复称**：`app.asar.unpacked` 34,338 → **23,940**（与离线推演逐数吻合），`Resources/mochi` **3,946**，`Mochi.app` 合计 **29,018 / 2.0 GB**，全包排除类残留 **0** | 该构建是**本机 `--dir` 未签名产物**（非可交付安装器）；**Windows 安装包仍未重出**，其文件数按同一规则推算为 28,375，需重出后复称；`asarUnpack` 那 82.5% 未动（原因见 §四#8） |
 | 缓存命中率与 v4.1 flash 端到端 | `docs/cache-hit-rate.md`（口径 + 全部实测表）；`tools/verify-cache-hit.mjs`（从会话日志验收）、`tools/cache-hit-probe.mjs`、`tools/model-compat-probe.mjs`、`tools/probe-endpoint-models.mjs`；新守卫 `apps/desktop/scripts/test-llm-cache-observability.mjs`（已进 `mochi-ci.yml`） | ✅ 两个网关稳态均 ≥99%（aiaaa/v4.1-flash 99.22–99.42%，mimo/v2.5 99.63%）；换工具面代价为 1 轮全价（aiaaa 归零 / mimo 70.6%）；v4.1-flash 体检 6/6 | 在**隔离临时 home + 本机**测得；未在教师实机复称。验收脚本需真实会话日志，**未进门禁**（门禁是那 4 条断言） |
-| **Windows 出包链路 CI 实跑** | 私有仓分支 `codex/mochi-windows-20260912`；run #29（`34699062522`）与 run #30（`34699801504`）。做法与坑见 `docs/build-standard.md` §5 | 🟡 **两道硬门已实测通过**：`Verify approved Mochi source snapshot`（493 文件逐字节哈希）✅、`Install and verify desktop runtime closure`（**109 条依赖联接**，196s）✅；credits 块两处缺陷已修并重推（§九） | 这是**私有仓的构建产物**，**未签名、未在 Windows 实机安装**；run #29 的结论是"倒在第 8 步"，不能算交付 |
+| **Windows 出包链路 CI 实跑并产出安装器** | 私有仓分支 `codex/mochi-windows-20260912`；run #29 `34699062522` → #30 `34699801504` → #31 `34700291706` → **#32 `34700819338`（全 13 步绿）**；产物 `release/2026-09-12-windows/`。做法与坑见 `docs/build-standard.md` §5 | ✅ **链路打通**：快照 496 条逐字节 ✅ / 依赖闭包 109 条联接 ✅ / credits 70249 字符 49 命中 ✅ / 暂存资源 ✅ / **NSIS 安装器生成 + 上传 ✅**（440.9 MB） | **包能生出来 ≠ 包能用**：**未签名**（SmartScreen 会拦）、**未在 Windows 实机装**、安装时长**未实测**；工件**只保留 14 天** |
 
 ---
 
@@ -85,19 +87,19 @@
 | 3 | **人工全新机双击验收** | 只有程序化启动记录（§二第 1 行） | A9 的真判据未达成 |
 | 4 | **Windows 实机验收** | 无（`Windows试用说明.md` 自述未实机验证） | 双平台交付只兑现了一半 |
 | 5 | **外部真实用户试用记录** | §三 | 真实问题这条标准的唯一软肋 |
-| 6 | **参赛 PPT 内页数字过时** | `slides/14.slide` 原写 21 插件／461 文件，源码**已于 2026-09-12 改为 26 插件 / 492 条快照**，但 `.pptx` 生成于 16:04，**尚未重新导出** | 现场展示的数字是旧的 |
-| 7 | ~~出包链当前是断的~~ **→ 已修（2026-09-12 晚）** | `test-package-resources` 现为 **PASS（26/29/106）**；`check-snapshot-manifest --fail` → **OK，492 条，字节差 ±0**。根因是 `vendor/local-plugins/mochi-pdf-layout-*.tgz` 未随源码重打，已重打为 `c4a3d2c2` 并让收敛工具支持 tarball 改名。详见 `docs/attachment-and-render-pipeline.md` §2.4 | **仍未重新出包、未实机装** |
+| 6 | **参赛 PPT 内页数字过时** | `slides/14.slide` 原写 21 插件／461 文件，源码**已于 2026-09-12 改为 26 插件 / 496 条快照**，但 `.pptx` 生成于 16:04，**尚未重新导出** | 现场展示的数字是旧的 |
+| 7 | ~~出包链当前是断的~~ **→ 已修（2026-09-12 晚）** | `test-package-resources` 现为 **PASS（26/29/106）**；`check-snapshot-manifest --fail` → **OK，496 条，字节差 ±0**。根因是 `vendor/local-plugins/mochi-pdf-layout-*.tgz` 未随源码重打，已重打为 `c4a3d2c2` 并让收敛工具支持 tarball 改名。详见 `docs/attachment-and-render-pipeline.md` §2.4 | **仍未重新出包、未实机装** |
 | 8 | **安装慢（原记为"下载慢"，已纠正）** | **根因已定性 + 已修一半，且已真产物复称**：实测安装要往磁盘上新建 **41,150 个文件**，Defender 逐个扫描 → 十几分钟；本机纯解压 28.5 秒。已排除 12,775 个运行时永不加载的文件（`*.map`/`*.d.ts`/`*.d.mts`/`*.d.cts`）→ **41,150 → 28,375（−31.0%）**；2026-09-12 真出 `--dir` 构建实测 `app.asar.unpacked` **34,338 → 23,940**、全包 **29,018 文件 / 2.0 GB**、排除类残留 **0**；三处守卫已进测试 | **剩余 82.5% 文件数在 `asarUnpack` 上，且已查清"不能靠改配置砍掉"**：① `web-host.ts` 把 Harness 当**子进程**拉起、`NODE_PATH` 指向 `app.asar.unpacked/node_modules`；② dsh 的 profile 依赖回退用**真实文件系统链接**，而 `app.asar` 在 OS 层是**文件不是目录**，符号链接指向其内部**不可穿越**（Node patch `fs` 也救不了）；③ **ESM 不认 `NODE_PATH`**（已实测 Electron-as-node **能**读 asar 内部，所以"读不到"不是原因）。要砍必须改运行时依赖布局（搬出闭包或 bundle 成少数文件），属独立工程，且**必须在真 Windows 装一次才算验证** |
 | 9 | ~~DeepSeek v4.1 flash 全链路测试 + 缓存命中率~~ **→ 已测（2026-09-12 21:0x）** | 端到端真跑：`DSH_HOME=<隔离 home> ./mochi.sh` 以 `deepseek-official / deepseek-v4.1-flash` 完成 3 步工具链（真实工具调用 + 真实会话日志）。缓存：稳态 **99.22–99.42%**（真实 24.3k 前缀，冷标记）；对照 `mimo-v2.5` 稳态 **99.63%**。体检 6/6 通过。全部口径与数据见 `docs/cache-hit-rate.md`；验收脚本 `tools/verify-cache-hit.mjs` | **仍未进默认模型链**（当前出厂默认 `mochi-mimo / mimo-v2.5-pro`）；命中率取自隔离临时 home，未在教师实机复称 |
 | 10 | **7 个环境门控校验脚本默认静默跳过** | `verify-alpha-*`、`test-active-prompt-assembly.mjs`、`test-plugin.mjs`、`lan/test/node.mjs` 需要 `MOCHI_*_CONSUMER` / `MOCHI_*_PLUGIN_URL` | 常规开发机上这些校验等于没跑 |
 | 11 | **`festive` 主题 accent 与 deep 近乎同亮度** | 对比度仅 1.08:1，靠算法校正到 4.79 但色调被冲淡 | 要好看需换配色，不是算法能救 |
 | 12 | **内容页版式纵向留白**（`title-body`） | `tools/verify-deck-render.mjs` 渲出的长图：正文块整体偏上、下半页空得多 | 属专门版式设计，非顺手调数 |
 | 13 | 🔴 **教材库在本机是空的（演示前置条件不成立）** | 2026-09-12 21:2x 实测：`~/.mochi-home/knowledge/textbook.sqlite` 与 `<workspace>/.mochi-home.nosync/...` **都是 0 册 / 0 页**，`knowledge/library/` 为空；`ARCHITECT_STATE` 记的私有交付目录（`/private/tmp/mochi-textbook-import-delivery-*`）**已不存在** | 演示里"33 册教材按页检索"（PPT 第 9 页、技能 `teaching-material-find`）**现在跑不出来**；要么重新导入一次，要么现场换掉这个场景 |
-| 14 | **本机两个安装包不含 9/12 的能力** | 包内 20 插件 / 7 技能 vs 源码 26 插件 / 8 技能 | 现场用旧包演示"PPT 二次编辑"等场景会当场失效（见 `参赛材料/演示脚本与降级路径.md` 的降级路径） |
+| 14 | ~~本机两个安装包不含 9/12 的能力~~ **→ Windows 侧已解决（2026-09-12 23:11）** | **Windows 包已重出**（run #32，26 插件版，`release/2026-09-12-windows/`）；**Mac 包仍是 9/09 的 20 插件版** | 现场若用 **Windows** 演示，新能力可用；若用 Mac，仍需走 `演示脚本与降级路径.md` 的降级路径 |
 | 15 | **开放决策：`campusApiUrl` 仍为 null** | `runtime-profile.json` 的 `campusApiUrl: null` → 打包版校园功能兜回 `127.0.0.1:8787`；而已部署的公网后端是 `jyl-campus-health-entry.pages.dev` | 连不连公网后端是**产品决策**（数据边界），未由本轮回合擅自改；演示机上必须先起 wrangler dev 或显式配置 |
 | 16 | **开放决策：敏感记忆护栏边界** | `mem-store.mjs` 的关键词正则只能挡一部分（"张三是全班第 3 名"这类放行） | 属有意取舍，需产品决策；边界已在伦理材料里如实写明 |
-| 17 | 🔴 **已交付的安装包里，Chromium credits 是空文件** | 2026-09-12 run #30 实测证据：`--dump-dom chrome://credits` 在该环境只回来 **41 字节空骨架**（6/6 失败）。旧断言只有 `-notmatch "<html"`，而空骨架同样含 `<html` ⇒ **一路绿灯放行**。断言加严后立刻暴露（§九） | 两个已交付包（macOS dmg / Windows exe）的 `resources/mochi/playwright/credits.html` 内容为空骨架。**属许可合规问题**，不是功能问题；修法已定（改用 `playwright-core/ThirdPartyNotices.txt`），**随下一轮重出包自动带修复** |
-| 18 | **本机 Playwright 资源根里那句注释已过时** | `apps/desktop/.mochi-package-resources-v1.nosync/playwright/credits.html` 的注释仍写「那份清单由 CI 在 runner 上 `chrome://credits` 现取后覆盖本槽位」 | 与 §九 定案矛盾；影响的是**开发机资源根**，不影响 CI 与交付物。待改（改后需同步重算 `metadata.json` 的 `creditsHtmlSha256`） |
+| 17 | 🔴 ~~已交付的安装包里，Chromium credits 是空文件~~ **→ 新包已带修复（2026-09-12 23:11）** | 2026-09-12 run #30 实测证据：`--dump-dom chrome://credits` 在该环境只回来 **41 字节空骨架**（6/6 失败）。旧断言只有 `-notmatch "<html"`，而空骨架同样含 `<html` ⇒ **一路绿灯放行**。断言加严后立刻暴露（§九） | 两个已交付包（macOS dmg / Windows exe）的 `resources/mochi/playwright/credits.html` 内容为空骨架。**属许可合规问题**，不是功能问题；修法已定并已落地（改用 `playwright-core/ThirdPartyNotices.txt`）。**run #32 的 Windows 包已按新判据产出**（第 9 步 `credits source: playwright-core/ThirdPartyNotices.txt (70249 chars, 49 Copyright hits)`）；**Mac 包与 9/09、9/10 那两份旧包仍带空文件** |
+| 18 | ~~本机 Playwright 资源根里那句注释已过时~~ **→ 已闭环（2026-09-12 23:1x）** | `credits.html` 注释已重写为如实描述「两边都不再尝试 `chrome://credits`」；`metadata.json` 的 `creditsHtmlSha256` 已重算（`c634f96c…` → `4f28321e…`）、`creditsProvenance` 同步改写；三个哈希自洽性复验 **PASS**。`docs/installer-install-speed.md` §8 整节重写（见 §9.10） | — 已闭环 |
 
 ---
 
@@ -386,12 +388,57 @@ plugins/mochi-presentations/references/designs/design-principle.document.md  ( 5
 plugins/mochi-presentations/references/story-principle.md                    ( 5,628 B)
 ```
 
-### 9.8 run #32 结果
+### 9.8 run #32 结果：**全绿，安装包真的出来了**（2026-09-12 23:11）
 
-_（跑完回写）_
+`completed success` —— 13 步全绿，总耗时 **13 分 22 秒**（14:58:25 → 15:11:47）。
+
+| 步 | 内容 | 日志证据 |
+|---|---|---|
+| 4 | 快照逐字节校验 | 496 条清单 / 497 文件，全绿 |
+| 8 | 运行时依赖闭包 | `plugin dependency links: created 109, pre-existing 0, skipped 0` |
+| 9 | Playwright Chromium 准备 | `credits source: playwright-core/ThirdPartyNotices.txt (70249 chars, 49 Copyright hits)` |
+| 10 | 暂存资源校验 | run #31 就是死在这一步的 `references` 上 |
+| 11 | release input | `{"retainedAssetCount":51,"excludedAuthoringAssetCount":329,"verified":true}` |
+| 12 | **electron-builder 打包** | `electron=39.8.10`；`target=nsis file=release\Mochi-Setup-0.1.0-win-x64.exe oneClick=false perMachine=false` |
+| 13 | 上传产物 | `462,320,596 B`（440.9 MB） |
+
+另有一步给出依赖闭包判据：
+`[dsh-host-peers] PASS: 924 target package entries (924 manifests), 924 asar-unpacked manifests,
+1886 required ordinary dependency edges, 81 optional …, 892 required DeepSeek peer edges`。
+
+**产物**
+
+| 项 | 值 |
+|---|---|
+| artifact | `mochi-windows-x64-34700819338.zip`（id `10300393044`） |
+| 包内文件 | `Mochi-Setup-0.1.0-win-x64.exe` + `Mochi-Setup-win-x64.sha256` |
+| zip sha256 | `cb2c288b90ad7c7c3842a723e43aa8a9553df556babe52c065492991adb8919f` |
+| releaseInputManifestSha256 | `5e0e12151260d6d6ea0c2fd5f6003d8dc4154ab3787d067002275dbae924ae9a` |
+| 保留期 | **14 天**（过期即删，要留就下载） |
+| 本机副本 | `release/2026-09-12-windows/`（已下载） |
+
+**NSIS 编译本身 4 分 26 秒**（15:07:01 `building target=nsis` → 15:11:27 拿到 `.exe`）。
+这个数字是"包做好了"的耗时，**不是"老师装多久"** —— 安装时长必须真机测（§四#1）。
+
+**⚠️ 未签名**：日志里三次出现 `no signing info identified, signing is skipped`
+（`elevate.exe` / `__uninstaller-nsis-mochi-desktop.exe` / `Mochi-Setup-0.1.0-win-x64.exe`）。
+Windows 上首次安装必然触发 SmartScreen 警告 —— `参赛材料/教师使用手册.md` 已写到这一条。
+
+**本轮证明的是「包能生出来」，不是「包能用」。** 仍未在 Windows 实机装过（§四#1）。
 
 ### 9.9 本轮**没做**的事
 
 - **没动 `asarUnpack`** —— 已查清不是配置级改动（§四#8）。
 - **没删 `release/` 里 7.1 GB 历史构建** —— 待作者拍板（§8.4）。
 - **没改 PPT、没动 `campusApiUrl`、没动密钥注入逻辑** —— 均为作者决策项。
+- **没做代码签名** —— 无证书；SmartScreen 警告照旧。
+- **没在 Windows 实机装** —— 本机是 macOS，装不了；§四#1 的四张空表仍空。
+- **没重出 Mac 包** —— Mac 侧仍停在 9/09 的 20 插件版。
+
+### 9.10 顺带闭环：缺口 #18
+
+本机 Playwright 资源根 `credits.html` 的过时注释已改正，`metadata.json` 的
+`creditsHtmlSha256` 同步重算（`c634f96c…` → `4f28321e…`）、`creditsProvenance` 改为如实描述
+"两边都不再尝试 `chrome://credits`"。资源根三个哈希自洽性复验 **PASS**。
+`docs/installer-install-speed.md` §8 整节重写，把"去拿真的 `chrome://credits`"这条弯路
+连同 41 字节空骨架的证据一起记下来，免得后来者再走一遍。

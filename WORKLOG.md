@@ -2040,3 +2040,62 @@ Error: Mochi 打包目录不存在：
 - run #32 结果（`34700819338`）。
 - 本机资源根 `credits.html` 的过时注释（缺口 #18）。
 - `asarUnpack` 82.5%、`release/` 7.1 GB 未动。
+
+---
+
+## 出包触发轮（五）：**run #32 全绿，Windows 安装包真的出来了**（2026-09-12 23:11）
+
+### 一句话
+
+`completed success` —— 13 步全绿，**NSIS 安装器生成并上传成功**。
+这是 Mochi 出包链第一次真正走通到落盘产物。
+
+### 四次 run 的完整阶梯
+
+| run | id | 结果 | 死在哪 / 收获 |
+|---|---|---|---|
+| #29 | `34699062522` | 第 9 步 FAIL | 快照 ✅、依赖闭包 ✅（109 联接 / 196s）；credits 撞上 `$null` 不对称 |
+| #30 | `34699801504` | 第 9 步 FAIL | **决定性证据**：`credits stdout bytes: 41` —— `chrome://credits` 在该 runner 上系统性拿不到（6/6），并揭穿 run #28 的"绿"是假绿（空骨架也含 `<html`） |
+| #31 | `34700291706` | 第 10 步 FAIL | **credits 修好了**（`playwright-core/ThirdPartyNotices.txt`，70249 字符 / 49 命中）；撞上 `reconcile` 只解析 `files:`、漏 `directories:` |
+| **#32** | `34700819338` | ✅ **全绿** | 496 条快照 → NSIS 安装器 → 上传 440.9 MB |
+
+### run #32 关键证据
+
+```
+credits source: playwright-core/ThirdPartyNotices.txt (70249 chars, 49 Copyright hits)
+plugin dependency links: created 109, pre-existing 0, skipped 0
+{"retainedAssetCount":51,"excludedAuthoringAssetCount":329,"verified":true}
+[dsh-host-peers] PASS: 924 target package entries (924 manifests), 924 asar-unpacked manifests,
+                  1886 required ordinary dependency edges, 81 optional …, 892 required peer edges
+packaging       platform=win32 arch=x64 electron=39.8.10
+building        target=nsis file=release\Mochi-Setup-0.1.0-win-x64.exe oneClick=false perMachine=false
+```
+
+总耗时 **13 分 22 秒**（14:58:25 → 15:11:47），其中 **NSIS 编译 4 分 26 秒**。
+
+### 产物
+
+| 项 | 值 |
+|---|---|
+| artifact | `mochi-windows-x64-34700819338.zip`（id `10300393044`），**440.9 MB** |
+| 包内 | `Mochi-Setup-0.1.0-win-x64.exe` + `Mochi-Setup-win-x64.sha256` |
+| zip sha256 | `cb2c288b…adb8919f` |
+| 保留期 | **14 天** |
+| 本机副本 | `release/2026-09-12-windows/` |
+
+⚠️ **未签名**（`no signing info identified, signing is skipped` ×3）→ SmartScreen 会拦。
+
+### 本轮同时闭环的
+
+- **缺口 #18**：本机资源根 `credits.html` 注释重写 + `creditsHtmlSha256` 重算
+  （`c634f96c…` → `4f28321e…`）+ `creditsProvenance` 改写；三哈希自洽复验 **PASS**。
+- **`docs/installer-install-speed.md` §8 整节重写**：把"去拿真的 `chrome://credits`"这条弯路
+  连同 41 字节空骨架的证据一起记下，免得后来者重走。
+- **`tools/materialize-snapshot.mjs` 入库**（原为 `/tmp` 一次性脚本）。
+
+### 仍未做
+
+- **Windows 实机装**（缺口 #4 的四张空表仍空）—— 本机是 macOS，装不了。
+- **代码签名** —— 无证书。
+- **Mac 包重出** —— Mac 侧仍停在 9/09 的 20 插件版。
+- `asarUnpack` 82.5%、`release/` 7.1 GB 历史构建 —— 未动。
