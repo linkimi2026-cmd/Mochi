@@ -26,13 +26,20 @@ const workspaceRoot = resolve(desktopRoot, "..", "..");
 const SECRETS_FILENAME = "secrets/packaging-keys.local.yaml";
 const SEEDS_DIRNAME = "apps/desktop/resources/mochi-web/seeds";
 
+// 2026-09-12 用户拍板：出厂默认对话模型 = mochi-aiaaa / deepseek-v4.1-flash。
+// 依据（同日实测）：aiaaa 端点多轮探针稳态缓存命中 99.22%、89 个工具 schema 全量下发工具调用正常；
+// 图片输入两次实测（1x1 红/蓝 PNG）均被接受且能区分颜色系——所以默认模型直接声明 image 模态，
+// 看图不回退。内核对带图消息只校验「当前模型」的 inputModalities（dsh-api-session-controller
+// prompt()，无自动切模型兜底），默认模型必须自己带 image。MiMo 降为备选（教室端仍用 MiMo）。
+// 下面的 AUTHORITATIVE_PROVIDERS.aiaaa.defaultModel 即出厂默认；切换默认只改这张表，seeds 构建期重渲染。
+
 // MOCHI-WIN-PACK-01 WO-3 Provider 实参表（权威）。key 值来自密钥源，本表只持有引用名与端点。
 const AUTHORITATIVE_PROVIDERS = Object.freeze([
   {
     providerId: "mochi-mimo",
     baseURL: "https://mimo.ezlook.top/v1",
     apiKeyEnv: "MIMO_API_KEY",
-    role: "主力对话模型",
+    role: "备选对话模型（教室端主力）",
     defaultModel: { id: "mimo-v2.5", name: "MiMo v2.5" },
     seedEnvVar: "MOCHI_SEED_MIMO_API_KEY",
   },
@@ -40,8 +47,9 @@ const AUTHORITATIVE_PROVIDERS = Object.freeze([
     providerId: "mochi-aiaaa",
     baseURL: "https://aiaaa.cc/v1",
     apiKeyEnv: "MOCHI_AIAAA_API_KEY",
-    role: "多模态视觉模型",
-    defaultModel: { id: "deepseek-v4-flash-vision-exp", name: "DeepSeek Expert Visual" },
+    role: "出厂默认对话 + 视觉模型",
+    defaultModel: { id: "deepseek-v4.1-flash", name: "DeepSeek V4.1 Flash" },
+    visionModel: { id: "deepseek-v4-flash-vision-exp", name: "DeepSeek Expert Visual" },
     seedEnvVar: "MOCHI_SEED_MOCHI_AIAAA_API_KEY",
   },
 ]);
@@ -138,28 +146,37 @@ function assertNoForbiddenModel(models) {
 
 function renderSettingsDefaults() {
   const [mimo, aiaaa] = AUTHORITATIVE_PROVIDERS;
-  const visionModels = [
+  // aiaaa 的 provider 目录 = 对话默认（deepseek-v4.1-flash，图片输入 2026-09-12 实测通过）
+  // + 专用视觉模型（deepseek-v4-flash-vision-exp）。两个都声明 image 模态。
+  // settings-defaults.json 的 visionProvider 键名沿用历史（内部生成物，seed.ts 原样渲染），
+  // 语义已扩展为「aiaaa provider 完整目录：默认对话 + 视觉」。
+  const providerModels = [
     {
       id: aiaaa.defaultModel.id,
       name: aiaaa.defaultModel.name,
       input: ["text", "image"],
     },
+    {
+      id: aiaaa.visionModel.id,
+      name: aiaaa.visionModel.name,
+      input: ["text", "image"],
+    },
   ];
-  assertNoForbiddenModel([mimo.defaultModel, ...visionModels]);
+  assertNoForbiddenModel([mimo.defaultModel, ...providerModels]);
   return {
     schemaVersion: 1,
     agentDefaultModel: {
-      provider: mimo.providerId,
-      model: mimo.defaultModel.id,
+      provider: aiaaa.providerId,
+      model: aiaaa.defaultModel.id,
     },
     visionProvider: {
       settingsNamespace: "llm-pi-ai",
       providerId: aiaaa.providerId,
-      displayName: "DeepSeek 视觉（内置）",
+      displayName: "DeepSeek（内置）",
       apiKeyEnv: aiaaa.apiKeyEnv,
       api: "openai-completions",
       baseURL: aiaaa.baseURL,
-      models: visionModels,
+      models: providerModels,
     },
   };
 }

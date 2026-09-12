@@ -6,7 +6,7 @@
     "manifestPath": ".github/windows-native-package-inputs.json",
     "manifestIsTheOnlyUnhashedSnapshotFile": true,
     "expectedFileCount": 496,
-    "expectedFileBytes": 91962273
+    "expectedFileBytes": 91963639
   },
   "externalBuildInputs": [
     {
@@ -597,8 +597,8 @@
     },
     {
       "path": "apps/desktop/scripts/seed-packaging-keys.cjs",
-      "sha256": "9d2efa8bdf68117748069c92520a384e0a787f2249c90ab221b4080b16a4975d",
-      "bytes": 8854,
+      "sha256": "3b97ca91be3e5abf66f68625e76ecbbf586ae753293528311d14772332fbade1",
+      "bytes": 10220,
       "categories": [
         "desktop-source"
       ]
