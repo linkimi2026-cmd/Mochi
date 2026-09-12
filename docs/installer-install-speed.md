@@ -204,7 +204,7 @@ node scripts/reconcile-snapshot-manifest.mjs --write
 node scripts/check-snapshot-manifest.mjs --fail     # 必须 OK / 字节差 ±0
 ```
 
-本次基线：**492 条 / 91,919,236 B / 0 漂移**。
+本次基线：**496 条 / 91,962,273 B / 0 漂移**（2026-09-12 23:0x）。
 
 > ⚠️ 复验口径：**必须看 `check-snapshot-manifest.mjs --fail` 的实时输出**。
 > 本文档 2026-09-12 白天写的 `91,913,750` 是当时的中间态（当天又有一轮快照收敛），

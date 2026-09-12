@@ -13,7 +13,7 @@
  */
 
 import { createHash } from "node:crypto";
-import { existsSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -73,9 +73,29 @@ function readPluginWhitelist() {
     const source_ = /source:\s*"([^"]+)"/.exec(chunk)?.[1];
     const filesBlock = /files:\s*\[([^\]]*)\]/.exec(chunk)?.[1] ?? "";
     const files = [...filesBlock.matchAll(/"([^"]+)"/g)].map((match) => match[1]);
+    // directories：整目录拷贝（对应 prepare-mochi-resources.cjs 里的 copyDirectory）。
+    // ⚠️ 2026-09-12 补：此前**没有解析**这一项，于是 `mochi-presentations/references/`
+    // 这类目录里的文件既进不了清单、也进不了快照 —— 本机测试全绿，CI 上
+    // `prepare-mochi-resources.cjs` 直接抛「Mochi 打包目录不存在」，整轮出包白跑。
+    const directoriesBlock = /directories:\s*\[([^\]]*)\]/.exec(chunk)?.[1] ?? "";
+    const directories = [...directoriesBlock.matchAll(/"([^"]+)"/g)].map((match) => match[1]);
     if (!id || !source_ || files.length === 0) throw new Error(`PLUGINS 条目解析失败：${chunk.slice(0, 120)}`);
-    return { id, source: source_, files };
+    return { id, source: source_, files, directories };
   });
+}
+
+/** 递归列出目录下的普通文件（相对路径，正斜杠分隔）。跳过符号链接与系统垃圾文件。 */
+const SKIP_FILE_NAMES = new Set([".DS_Store", "Thumbs.db", "desktop.ini"]);
+function walkFiles(root, prefix = "") {
+  const out = [];
+  for (const entry of readdirSync(root, { withFileTypes: true })) {
+    if (SKIP_FILE_NAMES.has(entry.name)) continue;
+    const relative = prefix ? `${prefix}/${entry.name}` : entry.name;
+    if (entry.isSymbolicLink()) continue; // 快照不收符号链接，CI 也会拒绝 reparse point
+    if (entry.isDirectory()) out.push(...walkFiles(join(root, entry.name), relative));
+    else if (entry.isFile()) out.push(relative);
+  }
+  return out;
 }
 
 function hashFile(absolute) {
@@ -95,6 +115,13 @@ function main() {
     for (const file of plugin.files) {
       const relative = `${plugin.source}/${file}`;
       expected.set(relative, `staged-plugin:${plugin.id}`);
+    }
+    for (const directory of plugin.directories ?? []) {
+      const absolute = join(repoRoot, plugin.source, directory);
+      if (!existsSync(absolute)) continue;
+      for (const relative of walkFiles(absolute)) {
+        expected.set(`${plugin.source}/${directory}/${relative}`, `staged-plugin:${plugin.id}`);
+      }
     }
   }
 

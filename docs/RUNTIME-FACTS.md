@@ -128,7 +128,7 @@ npm run dist:mac:arm64  (apps/desktop)
       ⑦ 断言安装器存在且 mtime ≥ 开建时间
 ```
 
-快照清单：`.github/windows-native-package-inputs.json`（492 条）由 `scripts/reconcile-snapshot-manifest.mjs --write` 收敛，
+快照清单：`.github/windows-native-package-inputs.json`（496 条）由 `scripts/reconcile-snapshot-manifest.mjs --write` 收敛，
 `scripts/check-snapshot-manifest.mjs [--fail]` 校验（**不带 `--fail` 永远 exit 0**，CI 里目前是报告模式）。
 
 ⚠️ **密钥是设计上随包分发的**（作者 2026-09-12 决策，见 `docs/DECISIONS.md`）：`seeds/credentials-seed.json`
