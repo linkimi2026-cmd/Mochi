@@ -51,6 +51,7 @@
 | 出包链恢复 | `test-package-resources` PASS（26/29/106）✅；`check-snapshot-manifest --fail` → **✅ 2026-09-12 21:0x 复验：OK，492 条 / 91,919,236 B / 字节差 ±0 / 不一致 0** | 🟡 断链根因已修（`@mochi/pdf-layout` tarball 重打为 `c4a3d2c2` + 清单收敛工具支持 tarball 改名）；快照已回到 0 漂移 | 仅证明「源码与快照一致」；**未重新出包、未实机装** |
 | 安装包文件数取证与裁剪 | `docs/installer-install-speed.md`（完整取证方法 + 实测数字）；取证清单 `artifacts/install-speed-forensics/2026-09-11-win-package-listing.txt.zst`（41,150 条，364 KB，zstd）与 `2026-09-12-prefix-mac-asar-unpacked-listing.txt.zst`（34,338 条，155 KB）；测试：`test-installer-config.mjs` PASS、`test-package-resources.mjs` PASS（26/29/106） | ✅ 根因定性为「安装要写 41,150 个文件」（本机纯解压 28.5 s）；已排除 12,775 个运行时永不加载文件 → **41,150 → 28,375（−31.0%）**；暂存树实测 6,033 → 3,662 且残留 0；**2026-09-12 21:4x 真出一次 `--dir` 全量构建复称**：`app.asar.unpacked` 34,338 → **23,940**（与离线推演逐数吻合），`Resources/mochi` **3,946**，`Mochi.app` 合计 **29,018 / 2.0 GB**，全包排除类残留 **0** | 该构建是**本机 `--dir` 未签名产物**（非可交付安装器）；**Windows 安装包仍未重出**，其文件数按同一规则推算为 28,375，需重出后复称；`asarUnpack` 那 82.5% 未动（原因见 §四#8） |
 | 缓存命中率与 v4.1 flash 端到端 | `docs/cache-hit-rate.md`（口径 + 全部实测表）；`tools/verify-cache-hit.mjs`（从会话日志验收）、`tools/cache-hit-probe.mjs`、`tools/model-compat-probe.mjs`、`tools/probe-endpoint-models.mjs`；新守卫 `apps/desktop/scripts/test-llm-cache-observability.mjs`（已进 `mochi-ci.yml`） | ✅ 两个网关稳态均 ≥99%（aiaaa/v4.1-flash 99.22–99.42%，mimo/v2.5 99.63%）；换工具面代价为 1 轮全价（aiaaa 归零 / mimo 70.6%）；v4.1-flash 体检 6/6 | 在**隔离临时 home + 本机**测得；未在教师实机复称。验收脚本需真实会话日志，**未进门禁**（门禁是那 4 条断言） |
+| **Windows 出包链路 CI 实跑** | 私有仓分支 `codex/mochi-windows-20260912`；run #29（`34699062522`）与 run #30（`34699801504`）。做法与坑见 `docs/build-standard.md` §5 | 🟡 **两道硬门已实测通过**：`Verify approved Mochi source snapshot`（493 文件逐字节哈希）✅、`Install and verify desktop runtime closure`（**109 条依赖联接**，196s）✅；credits 块两处缺陷已修并重推（§九） | 这是**私有仓的构建产物**，**未签名、未在 Windows 实机安装**；run #29 的结论是"倒在第 8 步"，不能算交付 |
 
 ---
 
@@ -227,3 +228,89 @@ CI 的 credits 校验原来只断言 `$creditsHtml -notmatch "<html"`。
 - **没有删 `release/` 里 7.1 GB 历史构建** —— `failed-bundle-01..04`（2.1 GB）与 `alpha-mac-arm64`
   被 `docs/tasks/MOCHI-P0-BUNDLE-*`、`artifacts/architect-audit/` 的历史取证记录**引用为输入**，
   删除会破坏那些记录的可追溯性。**待作者拍板。**
+
+---
+
+## 九、出包触发轮记录（2026-09-12 22:0x–22:5x）
+
+> 目标：把「出包链已修」从**本机测试通过**推进到 **CI 真跑一遍**，并产出新的 Windows 安装包。
+> 这是自 2026-09-09 / 09-10 之后**第一次真正触发 Windows 出包**。
+
+### 9.1 触发链路（为什么不是「推 Mochi 仓库」）
+
+| 问 | 答 |
+|---|---|
+| 为什么要推私有仓？ | 出包 workflow 的**第一步就硬拒**：`GITHUB_REPOSITORY` 必须是 `linkimi2026-cmd/jyl-campus-health` 且仓库为 private。这是设计上的护栏（防误在公开仓跑打包），不是配置遗漏。 |
+| Mochi 仓库同步了吗？ | **同步了。** 457 个文件 / `f717ed4` / +88,020 −1,615，推到 `main`；远程与本地一致，工作树干净。 |
+| 私有仓推的是什么？ | 一条 `codex/mochi-windows-20260912` 分支，内容 = 私有仓自身源码 + `mochi-source/` 快照 + 更新后的 workflow。 |
+
+### 9.2 快照物化（本机，逐字节）
+
+清单 492 条 → 快照 **493 个文件**（`+1` 是清单自身，CI 唯一豁免哈希的文件）。
+物化时做了三重校验：逐文件 sha256 + 字节数、**反向遍历核对无多余文件**、拒绝任何符号链接。
+
+| 项 | 值 |
+|---|---|
+| 清单条目 | 492 |
+| 快照实际文件 | **493** |
+| 清单声明字节 | 91,919,236 |
+| 快照实际字节 | **91,919,236** |
+| 多余 / 缺失 / 符号链接 | **0 / 0 / 0** |
+
+### 9.3 run #29：走得比拼包更深，倒在 credits 上
+
+推到私有分支后自动触发 run #29（`34699062522`）。**前七步全绿**，其中两步是这轮的真验证：
+
+| 步骤 | 结果 | 意义 |
+|---|---|---|
+| `Refuse non-private build hosts` | ✅ | 私有性护栏生效 |
+| `Verify approved Mochi source snapshot` | ✅ | **493 文件快照逐字节过哈希门** |
+| `Build reviewed campus static client` | ✅ 51s | 校园端前端现场构建 |
+| `Install and verify desktop runtime closure` | ✅ **196s** | **109 条依赖联接全部建成**（此前只有 11 条） |
+| `Prepare and probe fixed Playwright Chromium` | ❌ 20s | 见下 |
+
+失败原文：
+
+```
+$copyrightHits = ([regex]::Matches($creditsHtml, "Copyright")).Count
+Exception calling "Matches" with "2" argument(s): "Value cannot be null. (Parameter 'input')"
+```
+
+**两个缺陷叠在一起**：
+
+1. **新引入的 bug**：空文件时 `Get-Content -Raw` 返回 `$null`，而 `[regex]::Matches($null, …)` **直接抛异常**。
+2. **真缺陷（更值钱的那个）**：`chrome://credits` 是**异步渲染**页，`--dump-dom` 会在数据源就绪前序列化。
+   证据：run #28 与 #29 用**同一条命令、同一个 runner 镜像**，前者拿到真页面、后者拿到**空文件** —— 这是竞态，不是配置错。
+
+### 9.4 修复、重推与绕过 502
+
+修复内容（**私有副本与模板两边都改了**，见 `docs/build-standard.md` §5.4）：
+
+| 手段 | 解决什么 |
+|---|---|
+| `--virtual-time-budget=8000` | 给异步数据源留渲染时间 |
+| 同一二进制最多重试 3 轮，失败后换 `headless_shell.exe` 再来 | 竞态是概率性的 |
+| 成功判据 `-match "<html" -and .Length -ge 100000` 提前结束 | 拿到合格文档就不再多跑 |
+| `$creditsHtml = [string](…)` 强制转型 | 挡住 `$null` 抛异常 |
+| 体量阈值 **200000 → 100000** | 新标签页约 26 KB 已被稳稳卡住；200000 对"渲染到一半"有误杀风险 |
+
+顺手修掉一个**模板自身的历史缺陷**：模板里探针用的是**顶格 `@'…'@` here-string**，
+这让整个文件**根本不是合法 YAML**（PyYAML 在 295 行报 `could not find expected ':'`）。
+已换成私有副本那套"行数组拼接"写法，模板现在能正常解析（12 个 step）。
+
+**重推时撞上第二堵墙**：`git push` 对本机代理**持续**报
+`CONNECT tunnel failed, response 502`（重试 4 次、非沙箱也一样，而 `api.github.com` 正常）。
+改用 **Git Data API** 手工搭提交绕开：建 blob（base64）→ 建 tree（`base_tree`）→ 建 commit → PATCH ref。
+**关键校验**：API 返回的 blob sha 与本地 `git hash-object` **完全一致**（`e23a264b…`），
+证明送上去的字节就是本地那份。提交 `5f25be3`，分支指针快进更新，**PATCH 即触发 run #30**。
+（做法已写进 `docs/build-standard.md` §5.6。）
+
+### 9.5 run #30 结果
+
+_（本轮跑完后回写）_
+
+### 9.6 本轮**没做**的事
+
+- **没动 `asarUnpack`** —— 已查清不是配置级改动（§四#8）。
+- **没删 `release/` 里 7.1 GB 历史构建** —— 待作者拍板（§8.4）。
+- **没改 PPT、没动 `campusApiUrl`、没动密钥注入逻辑** —— 均为作者决策项。
