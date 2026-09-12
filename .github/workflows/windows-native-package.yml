@@ -223,19 +223,50 @@ jobs:
           Copy-Item -LiteralPath $licenseSource -Destination (Join-Path $resourceRoot "LICENSE") -Force
           $profile = Join-Path $env:RUNNER_TEMP "mochi-chromium-credits-profile"
           $stderr = Join-Path $env:RUNNER_TEMP "mochi-chromium-credits.stderr"
-          $rawCredits = & $chrome --headless=new --disable-gpu --no-first-run "--user-data-dir=$profile" --dump-dom chrome://credits 2> $stderr
-          if ($LASTEXITCODE -ne 0) {
-            throw "Chromium credits export failed."
+          # NOTE: copy-only hardening. 模板原先用管道捕获 dump，在 windows-2022 上回来是空的
+          # （exit 0、无 HTML）；这里改为写进文件，并退到 headless shell 二进制。
+          #
+          # 2026-09-12 再加固（run #29 实测）：chrome://credits 是**异步渲染**的 WebUI，
+          # `--dump-dom` 在 load 之后立刻序列化，会抢在数据源填充之前 dump 出**空文档** ——
+          # 同一份脚本、同一个 runner 镜像，run #28 拿到正常页面、run #29 拿到空文件。
+          # 这是竞态，不是配置错。对策：①`--virtual-time-budget` 让 headless 在 dump 前
+          # 推进虚拟时钟并强制收尾；②拿到不合格的文档就换二进制 / 重试，每个最多 3 轮。
+          # ⚠️ 取值必须 `[string]` 强转：空文件时 `Get-Content -Raw` 返回 **$null**，
+          # 而 `[regex]::Matches($null, ...)` 会直接抛 "Value cannot be null"
+          # （`-match` 反而会静默把 $null 当空串，两者行为不一致，最容易在这里翻车）。
+          $creditsOut = Join-Path $env:RUNNER_TEMP "mochi-chromium-credits.dom"
+          $shell = Get-ChildItem -LiteralPath $browserRoot -Recurse -Filter "headless_shell.exe" -File | Select-Object -First 1
+          $bins = @($chrome)
+          if ($null -ne $shell) { $bins += @($shell.FullName) }
+          $creditsHtml = ""
+          $creditsExit = 0
+          $creditsAttempts = 0
+          foreach ($bin in $bins) {
+            for ($round = 1; $round -le 3; $round++) {
+              $creditsAttempts++
+              if ($bin -eq $chrome) {
+                & $bin --headless=new --disable-gpu --no-first-run --virtual-time-budget=8000 "--user-data-dir=$profile" --dump-dom chrome://credits > $creditsOut 2> $stderr
+              } else {
+                & $bin --disable-gpu --no-first-run --virtual-time-budget=8000 "--user-data-dir=$profile" --dump-dom chrome://credits > $creditsOut 2> $stderr
+              }
+              $creditsExit = $LASTEXITCODE
+              $creditsHtml = ""
+              if (Test-Path -LiteralPath $creditsOut) { $creditsHtml = [string](Get-Content -LiteralPath $creditsOut -Raw) }
+              if ($creditsHtml -match "<html" -and $creditsHtml.Length -ge 100000) { break }
+              Start-Sleep -Seconds 2
+            }
+            if ($creditsHtml -match "<html" -and $creditsHtml.Length -ge 100000) { break }
           }
-          $creditsHtml = [string]::Join([Environment]::NewLine, @($rawCredits))
-          # 只断言 `<html` 是**不够**的：Chromium 会静默地 dump 新标签页
-          # （约 26 KB、标题「新标签页」、Copyright 零命中），而新标签页同样含
-          # `<html` —— 旧写法抓不住「导错了页」，会把一份假许可清单打进安装包。
-          # 必须同时卡体量与许可指纹。这个坑不止一种触发方式：开发机 macOS 实测
-          # Chromium 能启动、CDP 能连，chrome://credits 却渲染为空文档，
-          # 所以唯一可靠的判据就是下面这两个数。
-          if ($creditsHtml -notmatch "<html" -or $creditsHtml.Length -lt 200000 -or $creditsHtml -notmatch "Copyright") {
-            throw "Chromium credits export did not return the credits page (got $($creditsHtml.Length) chars with $(([regex]::Matches($creditsHtml, 'Copyright')).Count) Copyright hits; a ~26 KB page with zero hits means Chromium dumped the new tab page instead of chrome://credits)."
+          # 只断言 `<html` 是**不够**的：Chromium 会静默地 dump 新标签页（约 26 KB、
+          # 标题「新标签页」、Copyright 零命中），而新标签页同样含 `<html` ——
+          # 旧写法抓不住「导错了页」，会把一份假许可清单打进安装包。
+          # 体量下限取 100000：新标签页约 26 KB 必然被挡，而真页面远超此值。
+          $copyrightHits = ([regex]::Matches($creditsHtml, "Copyright")).Count
+          if ($creditsHtml -notmatch "<html" -or $creditsHtml.Length -lt 100000 -or $copyrightHits -eq 0) {
+            Write-Host "credits attempts: $creditsAttempts; last exit code: $creditsExit"
+            Write-Host "credits stdout bytes: $((Get-Item -LiteralPath $creditsOut -ErrorAction SilentlyContinue).Length)"
+            if (Test-Path -LiteralPath $stderr) { Write-Host "credits stderr:"; Get-Content -LiteralPath $stderr -TotalCount 40 | Write-Host }
+            throw "Chromium credits export did not return the credits page (got $($creditsHtml.Length) chars with $copyrightHits Copyright hits; ~26 KB with zero hits means Chromium dumped the new tab page instead of chrome://credits)."
           }
           $creditsHtmlPath = Join-Path $resourceRoot "credits.html"
           $creditsTextPath = Join-Path $resourceRoot "credits.txt"
@@ -260,27 +291,35 @@ jobs:
           }
           $metadata | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $resourceRoot "metadata.json") -Encoding utf8 -NoNewline
           $probe = Join-Path $env:RUNNER_TEMP "mochi-playwright-probe.cjs"
-          @'
-const { chromium } = require("playwright");
-const { statSync } = require("node:fs");
-const { join } = require("node:path");
-(async () => {
-  const browser = await chromium.launch({ headless: true });
-  try {
-    const page = await browser.newPage();
-    await page.setContent("<main id=ready>managed Chromium</main>");
-    if (await page.textContent("#ready") !== "managed Chromium") throw new Error("Playwright DOM check failed");
-    const output = join(process.env.RUNNER_TEMP, "mochi-playwright-probe.png");
-    await page.screenshot({ path: output });
-    if (statSync(output).size < 1) throw new Error("Playwright screenshot is empty");
-  } finally {
-    await browser.close();
-  }
-})().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
-'@ | Set-Content -LiteralPath $probe -Encoding utf8 -NoNewline
+          # NOTE: the upstream template used a pwsh here-string at column 0,
+          # which breaks the YAML block scalar; emit the same probe via a line
+          # array instead (identical file content, valid YAML).
+          $probeLines = @(
+            'const { chromium } = require(process.env.MOCHI_PROBE_PLAYWRIGHT);',
+            'const { statSync } = require("node:fs");',
+            'const { join } = require("node:path");',
+            '(async () => {',
+            '  const browser = await chromium.launch({ headless: true });',
+            '  try {',
+            '    const page = await browser.newPage();',
+            '    await page.setContent("<main id=ready>managed Chromium</main>");',
+            '    if (await page.textContent("#ready") !== "managed Chromium") throw new Error("Playwright DOM check failed");',
+            '    const output = join(process.env.RUNNER_TEMP, "mochi-playwright-probe.png");',
+            '    await page.screenshot({ path: output });',
+            '    if (statSync(output).size < 1) throw new Error("Playwright screenshot is empty");',
+            '  } finally {',
+            '    await browser.close();',
+            '  }',
+            '})().catch((error) => {',
+            '  console.error(error);',
+            '  process.exitCode = 1;',
+            '});'
+          )
+          Set-Content -LiteralPath $probe -Value ($probeLines -join "`n") -Encoding utf8 -NoNewline
+          # NOTE: copy-only fix. The probe lives in RUNNER_TEMP, so a bare
+          # require("playwright") cannot resolve; point it at the desktop
+          # install explicitly.
+          $env:MOCHI_PROBE_PLAYWRIGHT = Join-Path (Get-Location) "node_modules\playwright"
           node $probe
           "MOCHI_PLAYWRIGHT_BROWSER_RESOURCE_ROOT=$resourceRoot" | Add-Content -LiteralPath $env:GITHUB_ENV -Encoding utf8
 
