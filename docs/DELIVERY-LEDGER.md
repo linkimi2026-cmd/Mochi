@@ -14,7 +14,8 @@
 | Mac 安装包 | `release/2026-09-09/Mochi-0.1.0-mac-arm64.dmg` | 2026-09-11 | 870,189,056 B（830 MiB） | arm64；含 WO-7 角色选择 + 内置 key 种子 + Chromium |
 | Windows 安装包 | `release/2026-09-09/Mochi-Setup-0.1.0-win-x64.exe` | 2026-09-11 | 508,762,732 B | CI run 34499038039 全 27 步绿 |
 | Windows 安装包（更新） | `release/2026-09-10/Mochi-Setup-0.1.0-win-x64.exe` | 2026-09-11 | 508,762,732 B | 带 sha256 |
-| **Windows 安装包（26 插件版，CI 重出）** | `release/2026-09-12-windows/`（artifact `mochi-windows-x64-34700819338.zip`） | **2026-09-12 23:11** | zip **462,320,596 B**（440.9 MB），内含 `Mochi-Setup-0.1.0-win-x64.exe` + `.sha256` | **run #32 全 13 步绿**；含 26 插件 / 新工具 / 双界面 / 视觉 / `render.mjs`。**未签名**（SmartScreen 会拦）。**工件保留 14 天**，过期需重跑。⚠️ **本机副本是截断件**（70,516,736 B，下载中断，勿当交付物）；**run #33 已带 DeepSeek 默认重出，取代本包** |
+| **Windows 安装包（26 插件版，CI 重出）** | `release/2026-09-12-windows/`（artifact `mochi-windows-x64-34700819338.zip`） | **2026-09-12 23:11** | zip **462,320,596 B**（440.9 MB），内含 `Mochi-Setup-0.1.0-win-x64.exe` + `.sha256` | **run #32 全 13 步绿**；含 26 插件 / 新工具 / 双界面 / 视觉 / `render.mjs`。**未签名**（SmartScreen 会拦）。**工件保留 14 天**，过期需重跑。⚠️ **本机副本是截断件**（70,516,736 B，下载中断，勿当交付物）。**已被 run #33 取代**（见下行） |
+| **Windows 安装包（DeepSeek 默认版，run #33）** | `release/2026-09-13-windows/mochi-windows-x64-34728914066.zip` | **2026-09-13 09:01** | zip **462,320,016 B**；exe 464,668,417 B（sha256 头 `23cb5ad897e7cbda`） | **run #33 全绿**。**实机五项清单全过**（§10.6）：app-64.7z 实测 **28,416 文件**（预测 28,375 + 新内容），排除类残留 **0**。**未签名**。**工件保留 14 天** |
 | **Mac 安装包（26 插件版 + DeepSeek 默认，本机重出）** | `apps/desktop/release/Mochi-0.1.0-mac-arm64.dmg`（另有 `Mochi-0.1.0-mac-x64.dmg`） | **2026-09-13 08:41** | arm64 **733,752,961 B**（699.8 MB）；x64 737,227,186 B；arm64 sha256 头 `ce5d31442bdc7679` | 挂载实测四项全过：①默认模型种子 = `mochi-aiaaa/deepseek-v4.1-flash`（带 image 模态）②`mochi-presentations` + `references/` 审美参考在包内 ③`mochi-modes`+`mochi-approval` 注册于 mochi(17)/mochi-web(25)（headless 刻意不含）④点号工具名**零残留**。**未签名**（`identity: null`，Gatekeeper 会提示）。`releaseInputManifestSha256: fddc6511…` |
 | 试用说明 | `release/2026-09-09/Mac试用说明.md`、`Windows试用说明.md` | 2026-09-11 | — | 含未实机验证／未签名／教室端现场验收待做三项限制声明 |
 | **参赛材料·作品说明** | `参赛材料/作品说明.md` | 2026-09-12 | 约 235 行 | 面向评委的作品总览；作者信息留「待作者填写」；5 处 ⚠️ 待核已注明核法 |
@@ -476,7 +477,7 @@ Windows 上首次安装必然触发 SmartScreen 警告 —— `参赛材料/教�
 - **布局实况修正**：快照在私有仓**顶层 `mochi-source/`**（技能 §2.5 图里的 `campus-source/` 包装层是旧图）——第一次推送被中止闸②正确拦下（前缀错→blob 找不到→MISMATCH），改对后过闸。
 - 推送内容：仅 2 文件（`seed-packaging-keys.cjs` + 快照清单），blob sha 与本地一致，提交 `bd83fc9fb655`。
 - **全树事后校验**：mochi-source **497 blob 逐字节 PASS**（⚠️ 校验方法：gitignore 的快照文件不在 git 对象库，必须 `git hash-object <磁盘文件>` 对比，用 `rev-parse HEAD:<path>` 会假阳性 18 处——都是 `dsh-better-sidebar/lib` 的未跟踪产物）。
-- run #33 `in_progress`（00:48Z 起，参照 #32 约 13–14 分钟）。
+- run #33 **全绿**（00:48Z 起，artifacts id 10309067435；下载重启两次——**GitHub artifact 下载会 TCP 挂死**，需 `--speed-time` 看门狗 + `-C -` 断点续传循环）。
 
 ### 10.4 400 报错定位（用户实机）+ 工作区选择器验证
 
@@ -491,3 +492,19 @@ Windows 上首次安装必然触发 SmartScreen 警告 —— `参赛材料/教�
 3. **模式切换**：`mochi-modes`+`mochi-approval` 在 mochi/mochi-web profile（headless 刻意不含）；
 4. **点号工具名**：模型可见名零残留（守卫 + 工件抽查双保险）；
 5. **工作区可选择性**：win32 钉 browse（`directory-picker-browse` 两行 + 两个 vendored 包在场）。
+
+### 10.6 run #33 工件实证（2026-09-13 10:0x，全过 ✅）
+
+下载完整性：zip 462,320,016 B（分毫不差）+ EOCD 在位；exe 464,668,417 B，sha256 与随包 `.sha256` 一致（`23cb5ad897e7cbda…`）。
+解包链：artifact zip →（7zz 26.03 官方静态二进制，`$PLUGINSDIR/app-64.7z`）→ 应用树 **28,416 文件**。
+
+| # | 检查项 | 结果 |
+|---|---|---|
+| 1 | 默认模型 | ✅ `agentDefaultModel = mochi-aiaaa/deepseek-v4.1-flash`，**CI 现场从 Secrets+新种子表渲染**，v4.1-flash 与 vision-exp 双模型都带 `["text","image"]` |
+| 2 | PPT 审美 | ✅ `mochi-presentations/references/` 4 文件在包内 |
+| 3 | 模式切换 | ✅ `mochi-modes` 注册出现 9 次 + 插件在包；`mochi-approval` 在包 |
+| 4 | 点号工具名 | ✅ 排除类残留 **0**（28,416 文件），插件入口零点号工具名 |
+| 5 | 工作区选择器 | ✅ `resolveDirectoryPickerPin` 在 `runtime-profile.cjs`，两个 browse 包在 node_modules |
+
+**结论：Mac dmg（挂载四项）+ Windows exe（解包五项）双实证通过——DeepSeek 出厂默认、PPT 审美、模式切换、
+点号修复、工作区选择器五个用户关切点全部在包内。** 剩余未做：真 Windows 实机安装（§四#1，四张空表）。
