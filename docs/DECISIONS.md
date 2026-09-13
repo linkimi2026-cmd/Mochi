@@ -70,3 +70,11 @@
 - 打包白名单内的任何文件一改，`.github/windows-native-package-inputs.json` 的 `sha256/bytes` 就对不上，私有 CI 的第一步会直接拒绝出包。
 - 收敛命令：`node scripts/reconcile-snapshot-manifest.mjs --write`；校验：`node scripts/check-snapshot-manifest.mjs --fail`。
 - ⚠️ 不带 `--fail` 时**永远 exit 0**，所以"报告模式跑绿了"不等于清单一致。
+
+## D-008 · 出厂默认对话模型 = DeepSeek V4.1 Flash（aiaaa 端点）
+
+- 2026-09-13 用户拍板：`agentDefaultModel` 从 `mochi-mimo/mimo-v2.5` 切到 `mochi-aiaaa/deepseek-v4.1-flash`；MiMo 降为备选（教室端不变）。
+- **切之前必须实测图片输入**（已做，两次 1×1 PNG 均被接受且能区分颜色系）：内核对带图消息只校验当前模型的 `inputModalities`（`dsh-api-session-controller.prompt()`），**没有自动切视觉模型的兜底**——默认模型不带 image 就是看图直接坏。禁止凭"应该支持"声明模态。
+- 改动收口在 `apps/desktop/scripts/seed-packaging-keys.cjs` 的 `AUTHORITATIVE_PROVIDERS`（唯一权威表）；seeds 构建期生成 + gitignored，本机/CI 各自渲染。
+- 已知代价：换默认模型 = 换工具面前缀，**首轮缓存全价**（实测 v4.1-flash 稳态 99.22%，2–3 轮恢复）。
+- 回归：`test-package-resources`（含注册面工具名断言）、`test-runtime-profile`、快照清单 `check --fail`。
