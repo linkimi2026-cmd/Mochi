@@ -3,7 +3,7 @@
 
 - id: system-prompt
   # persona 已改为中文（2026-09-12）。原因：教师端主要跑国产模型，中文短句比
-  # 英文长句稳定得多。完整设计见 Mochi_系统提示词_V1.3_完整阅读版.md，
+  # 英文长句稳定得多。完整设计存档见 docs/reference/prompt-archives/Mochi_系统提示词_V1.3_完整阅读版.md，
   # 改核心时两边都要改。（V1.3.1 增补：成品格式、引用与审美、找教材和配图）
   config:
     includeHarnessIdentity: false

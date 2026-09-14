@@ -1,0 +1,1 @@
+{"name":"mochi-promo","private":true,"type":"module","scripts":{"check":"hyperframes check","preview":"hyperframes preview --background","render":"hyperframes render --quality high --fps 30 --workers 2 --output output/Mochi_120s.mp4"},"devDependencies":{"hyperframes":"0.8.36","gsap":"3.15.0"}}

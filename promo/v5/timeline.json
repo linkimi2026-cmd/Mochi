@@ -1,0 +1,117 @@
+[
+  {
+    "id": "intro",
+    "start": 0.0,
+    "duration": 2.5,
+    "title": "",
+    "subtitle": ""
+  },
+  {
+    "id": "home",
+    "start": 2.5,
+    "duration": 2.143,
+    "title": "先选择工作区",
+    "subtitle": "文件、任务与上下文，在一起"
+  },
+  {
+    "id": "setup",
+    "start": 4.643,
+    "duration": 2.857,
+    "title": "切换「工作」，开放执行权限",
+    "subtitle": "选择完全权限 → 全部允许；工作台及时收起"
+  },
+  {
+    "id": "compose",
+    "start": 7.5,
+    "duration": 6.0,
+    "title": "",
+    "subtitle": ""
+  },
+  {
+    "id": "outputs",
+    "start": 13.5,
+    "duration": 4.0,
+    "title": "",
+    "subtitle": ""
+  },
+  {
+    "id": "model-request",
+    "start": 17.5,
+    "duration": 5
+  },
+  {
+    "id": "model",
+    "start": 22.5,
+    "duration": 5.0,
+    "title": "",
+    "subtitle": ""
+  },
+  {
+    "id": "quiz-story",
+    "start": 27.5,
+    "duration": 6
+  },
+  {
+    "id": "campus",
+    "start": 33.5,
+    "duration": 3.0,
+    "title": "校园网页，让事务一眼可见",
+    "subtitle": "待办 → 学生 → 事件 · 继续交给 Mochi 办理"
+  },
+  {
+    "id": "campus-flow",
+    "start": 36.5,
+    "duration": 13.0,
+    "title": "",
+    "subtitle": ""
+  },
+  {
+    "id": "teacher-talk",
+    "start": 49.5,
+    "duration": 8.0,
+    "title": "",
+    "subtitle": ""
+  },
+  {
+    "id": "findpeer",
+    "start": 57.5,
+    "duration": 2.667,
+    "title": "",
+    "subtitle": "管理员端 · 真实协作找资料"
+  },
+  {
+    "id": "findreturn",
+    "start": 60.167,
+    "duration": 3.333,
+    "title": "",
+    "subtitle": "教师端 · 已完成回执"
+  },
+  {
+    "id": "received",
+    "start": 63.5,
+    "duration": 3.111,
+    "title": "",
+    "subtitle": "局域网文件接收"
+  },
+  {
+    "id": "classroom",
+    "start": 66.611,
+    "duration": 3.889,
+    "title": "",
+    "subtitle": ""
+  },
+  {
+    "id": "presets",
+    "start": 70.5,
+    "duration": 6.0,
+    "title": "为不同工作，选择不同能力",
+    "subtitle": "工作预设 · 插件 · 自定义 Agent"
+  },
+  {
+    "id": "end",
+    "start": 76.5,
+    "duration": 3.5,
+    "title": "",
+    "subtitle": ""
+  }
+]

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>三角形，动手认识</title>
+<style>
+  :root{
+    --ink:#2c2c2c;
+    --ink-2:#6b6b6b;
+    --accent:#3F5B99;
+    --fill:#e9eef7;
+    --line:#dcdcd8;
+    --bg:#fbfbf9;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:40px 20px;
+  }
+  main{width:100%;max-width:440px}
+  h1{
+    margin:0 0 6px;
+    font-size:22px;
+    font-weight:600;
+    letter-spacing:.02em;
+  }
+  .lede{margin:0 0 22px;font-size:13px;color:var(--ink-2)}
+
+  .stage{position:relative;height:300px;margin-bottom:20px}
+  .figure{
+    position:absolute;inset:0;
+    margin:0;
+    display:flex;align-items:center;justify-content:center;
+    opacity:0;visibility:hidden;
+    transition:opacity .22s ease;
+  }
+  .figure.is-on{opacity:1;visibility:visible}
+  .figure svg{width:100%;height:auto;max-width:360px}
+  .tri{fill:var(--fill);stroke:var(--accent);stroke-width:2.4;stroke-linejoin:round}
+  .arc{fill:none;stroke:var(--accent);stroke-width:2.2;stroke-linecap:round}
+  .arc-key{stroke-width:3.4}
+
+  .tabs{display:flex;gap:8px;margin-bottom:18px}
+  .tabs button{
+    flex:1;
+    padding:9px 4px;
+    font:inherit;font-size:13px;
+    color:var(--ink);
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:8px;
+    cursor:pointer;
+    transition:background .18s ease,color .18s ease,border-color .18s ease;
+  }
+  .tabs button:hover{border-color:#b9b9b4}
+  .tabs button[aria-pressed="true"]{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:#fff;
+  }
+  .tabs button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  .note{
+    margin:0;
+    padding-top:16px;
+    border-top:1px solid var(--line);
+    font-size:14px;
+    line-height:1.7;
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>三角形，动手认识</h1>
+  <p class="lede">三角形按角的大小，分成三类。</p>
+
+  <div class="stage">
+    <!-- 锐角三角形：三顶点 A(180,50) B(50,250) C(310,250)，三角分别约 66°、57°、57° -->
+    <figure class="figure is-on" data-key="acute">
+      <svg viewBox="0 0 360 300" role="img" aria-label="锐角三角形，三个角都是锐角">
+        <polygon class="tri" points="180,50 50,250 310,250"/>
+        <path class="arc" d="M161.47,78.5 A34,34 0 0 0 198.53,78.5"/>
+        <path class="arc" d="M66.35,224.85 A30,30 0 0 1 80,250"/>
+        <path class="arc" d="M280,250 A30,30 0 0 1 293.65,224.85"/>
+      </svg>
+    </figure>
+
+    <!-- 直角三角形：直角在 B(70,250)，用方角标记 -->
+    <figure class="figure" data-key="right">
+      <svg viewBox="0 0 360 300" role="img" aria-label="直角三角形，在直角处用方角标记">
+        <polygon class="tri" points="70,60 70,250 300,250"/>
+        <path class="arc" d="M70,92 A32,32 0 0 0 94.67,80.38"/>
+        <path class="arc" d="M272,250 A28,28 0 0 1 278.41,232.17"/>
+        <path class="arc arc-key" d="M70,224 L96,224 L96,250"/>
+      </svg>
+    </figure>
+
+    <!-- 钝角三角形：钝角在 B(130,250)，约 114° -->
+    <figure class="figure" data-key="obtuse">
+      <svg viewBox="0 0 360 300" role="img" aria-label="钝角三角形，有一个大于 90 度的钝角">
+        <polygon class="tri" points="50,70 130,250 320,250"/>
+        <path class="arc" d="M61.37,95.59 A28,28 0 0 0 73.3,85.53"/>
+        <path class="arc" d="M300.03,236.69 A24,24 0 0 0 296,250"/>
+        <path class="arc arc-key" d="M114.57,215.28 A38,38 0 0 1 168,250"/>
+      </svg>
+    </figure>
+  </div>
+
+  <div class="tabs">
+    <button type="button" data-key="acute" aria-pressed="true">锐角三角形</button>
+    <button type="button" data-key="right" aria-pressed="false">直角三角形</button>
+    <button type="button" data-key="obtuse" aria-pressed="false">钝角三角形</button>
+  </div>
+
+  <p class="note" id="note">三个角都是锐角，都小于 90°。</p>
+</main>
+
+<script>
+  const notes = {
+    acute:  '三个角都是锐角，都小于 90°。',
+    right:  '有一个角是直角，正好 90°，图上用「方角」标出来。',
+    obtuse: '有一个角是钝角，大于 90°，图上张得最大的那个角就是它。'
+  };
+  const figures = document.querySelectorAll('.figure');
+  const buttons = document.querySelectorAll('.tabs button');
+  const note = document.getElementById('note');
+
+  buttons.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      const key = btn.dataset.key;
+      figures.forEach(function (fig) {
+        fig.classList.toggle('is-on', fig.dataset.key === key);
+      });
+      buttons.forEach(function (b) {
+        b.setAttribute('aria-pressed', String(b.dataset.key === key));
+      });
+      note.textContent = notes[key];
+    });
+  });
+</script>
+</body>
+</html>

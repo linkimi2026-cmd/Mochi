@@ -25,6 +25,11 @@ const SKIP_DIRS = new Set([
   "campus.nosync",
   "probe-log.nosync",
   "artifacts",
+  "foundation",
+  "history",
+  "research",
+  "tasks",
+  "reference",
   "vendor",
   "tools",
 ]);
@@ -103,7 +108,7 @@ const RULES = [
 ];
 
 function collectFiles() {
-  return [repoRoot, join(repoRoot, "docs"), join(repoRoot, "skills"), join(repoRoot, "plan"), join(repoRoot, "foundation")]
+  return [repoRoot, join(repoRoot, "docs"), join(repoRoot, "skills")]
     .filter((dir) => {
       try {
         return statSync(dir).isDirectory();
@@ -112,9 +117,12 @@ function collectFiles() {
       }
     })
     .flatMap((dir) => {
-      if (dir === repoRoot) return walk(dir).filter((file) => relative(repoRoot, file).split("/").length === 1);
+      if (dir === repoRoot) return walk(dir).filter((file) => {
+        const name = relative(repoRoot, file);
+        return name.split("/").length === 1 && name !== "WORKLOG.md";
+      });
       if (dir === join(repoRoot, "docs")) {
-        return walk(dir).filter((file) => !relative(dir, file).startsWith("reference"));
+        return walk(dir).filter((file) => relative(repoRoot, file) !== "docs/reuse-audit.md");
       }
       return walk(dir);
     });

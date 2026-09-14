@@ -6,6 +6,7 @@ node_modules/
 
 # iCloud 不外同步的大件（.nosync 后缀本身就是为了这个，但仍显式排除）
 *.nosync/
+apps/desktop/.mochi-package-resources-staging-*/
 dsh-src.nosync/
 .dsh-home.nosync/
 probe-log.nosync/
@@ -15,6 +16,34 @@ dist/
 dist-electron/
 release/
 out/
+**/__pycache__/
+*.py[cod]
+
+# 宣传片大件与派生结果保留在本机；Git 只保存脚本、时间轴、说明和许可
+/promo/assets/
+/promo/captures/
+/promo/evidence/
+/promo/output/
+/promo/recordings/
+/promo/research/
+/promo/sample/
+/promo/v*/assets/
+/promo/v*/beats/
+/promo/v*/qa*/
+/promo/v*/**/*.png
+/promo/v*/**/*.jpg
+/promo/v*/**/*.jpeg
+/promo/v*/check*.json
+/promo/v*/export-validation.json
+/promo/v*/font-check.jsonl
+/promo/v*/sound-check.json
+/promo/v*/motion-*.md5
+/promo/v4/mo-render.cjs
+/promo/v4/mo-render.mjs
+
+# 答辩工程只提交可编辑素材和制作脚本，中间包与最终 PPT 由交付目录承载
+/参赛PPT/Mochi四分钟答辩/.build/
+/参赛PPT/Mochi四分钟答辩/output/
 
 # 本地数据与凭据（校园数据不出校、不出仓库）
 **/.credentials.yaml
@@ -31,6 +60,8 @@ out/
 # 本机协作元数据与可重取的源码快照
 /.workbuddy/
 /mochi-harness-source.zip
+/release/source-snapshots/*.zip
+/01-Mochi-参赛交付包-*/
 
 # 审计与验证产物（体积大、过程性，留在本地不入仓；关键结论已沉淀进 docs/ 与 WORKLOG）
 artifacts/

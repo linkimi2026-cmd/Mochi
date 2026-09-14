@@ -1,4 +1,4 @@
-// Mochi Dispatch 本地存储（foundation/14 §3：mochi_tasks 建在本地 sqlite）。
+// Mochi Dispatch 本地存储（docs/history/foundation/14_MOCHI_DISPATCH_V1.md §3）。
 // 一个 correlation_id 表示一件逻辑任务；同一任务的每次实际 relay 投递各有一行。
 // 未确认投递结果永远不复用或重发，FAILED 也从不回退到非终态。
 import { randomUUID } from 'node:crypto';

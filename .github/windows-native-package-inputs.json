@@ -6,7 +6,7 @@
     "manifestPath": ".github/windows-native-package-inputs.json",
     "manifestIsTheOnlyUnhashedSnapshotFile": true,
     "expectedFileCount": 496,
-    "expectedFileBytes": 91963639
+    "expectedFileBytes": 91963689
   },
   "externalBuildInputs": [
     {
@@ -517,8 +517,8 @@
     },
     {
       "path": "apps/desktop/resources/mochi-web/patches/core.patch.yml",
-      "sha256": "82e57649620c4b3846cc9059a1c547258f46cab1934a7479f744d6dffa743ca5",
-      "bytes": 11404,
+      "sha256": "34440a5f2d4edccf4c50a27719fdbe47920912e0b1970e443bc69e6851a6e52e",
+      "bytes": 11441,
       "categories": [
         "desktop-source"
       ]
@@ -1253,15 +1253,15 @@
     },
     {
       "path": "plugins/mochi-dispatch/state-machine.mjs",
-      "sha256": "838c6a62ae53228f5a7059e73d4afba97a575316c0268fdd1302c9dcd9ed5915",
-      "bytes": 6083,
+      "sha256": "05599e1469e493fd6f98f41c04dbe25f9b18fe89d4c3c77d11c1da36825e2ae9",
+      "bytes": 6096,
       "categories": [
         "staged-plugin:mochi-dispatch"
       ]
     },
     {
       "path": "plugins/mochi-dispatch/store.mjs",
-      "sha256": "e7d67f0c06dd74b7aec05cfc655c2166b8493723a0278c084a03c78091e2f6b8",
+      "sha256": "79995a6b5f751310e20adf3c66f77d0e18ef6898485a0b5f943f9329e92cd8a9",
       "bytes": 27949,
       "categories": [
         "staged-plugin:mochi-dispatch"

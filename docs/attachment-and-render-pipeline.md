@@ -109,8 +109,8 @@
 ```
 
 `@mochi/pdf-layout` 源码改了（新增 `splitScriptRuns` / `measureText` / `drawTextLine` 导出），
-但 tarball 还是 9/8 打的旧包 → 暂存树里 `import { drawTextLine }` 直接 SyntaxError
-→ **按当前源码出包，PPT 工具族整个不可用**（`docs/AUDIT-CODE-2026-09-12.md` 已诊断出这一条）。
+历史上 tarball 曾仍是 9/8 的旧包，导致暂存树里 `import { drawTextLine }` 直接 SyntaxError，
+PPT 工具族无法进入安装包。当前是否闭环应以 `test:package-resources`、快照检查和最终包实测为准，不能继续引用旧审计当作现状。
 
 **重打包配方**（哈希算法已实测确认 = `sha256(tgz)` 前 8 位）：
 

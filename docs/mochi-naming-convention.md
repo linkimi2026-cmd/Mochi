@@ -27,7 +27,7 @@
 | 1 | `@deepseek-ai/*` npm 包名 | 257 个 tarball + 230 family 闭包，依赖解析/lock/peer 校验全绑定 | `plugins/*/package.json`、runtime closure |
 | 2 | SDK 类名 `DeepSeekHarness` | 官方 SDK 导出名 | vendor SDK（`*.nosync/`，豁免区） |
 | 3 | Python 包 `deepseek_harness`（含 `_runtime`） | 官方 python SDK 包名 | `mochi-harness-src.nosync/.../python/sdk/` |
-| 4 | CSS 变量 `--dsw-static-deepseek-*` | **皮肤覆盖依赖**，改名即主题失效 | `foundation/ui/jxl-theme-bridge.css`、`client-plugins/jxl-theme/client.js` |
+| 4 | CSS 变量 `--dsw-static-deepseek-*` | **皮肤覆盖依赖**，改名即主题失效 | `client-plugins/jxl-theme/styles/jxl-theme-bridge.css`、`client-plugins/jxl-theme/client.js` |
 | 5 | launchd label `com.deepseekharness.*` | 常驻服务标识，改名需重装服务 | Electron 宿主 |
 | 6 | 官方 LLM 通道键 `llm-deepseek` / `dsh-llm-deepseek` | 配置键名，指向官方通道 | `plugins/mochi-llm-mimo/` |
 
@@ -37,13 +37,14 @@
 **/*.nosync/**          vendor 源码树与运行时根（mochi-harness-src / campus / .mochi-home）
 apps/desktop/release/** 已打包产物（Mochi.app）
 artifacts/**            审计证据（SHA-256 冻结，改动即证据作废）
-foundation/**           历史 foundation pack
-plan/**                 历史规划
+docs/history/foundation/**  历史 foundation pack
+docs/tasks/**           历史实施工单
+docs/history/**         历史报告
 **/node_modules*/**     依赖
 **/pnpm-lock.yaml, package-lock.json, *.lock
 ```
 
-历史文档（`MIGRATION_AUDIT_REPORT.md`、`WORKLOG.md`）保留原文不改——它们是当时的事实记录，
+历史文档（`docs/history/`、`docs/tasks/`、`WORKLOG.md`）保留原文不改——它们是当时的事实记录，
 改了反而失真，其中出现的字样不计违规。
 
 ## 3. 怎么执行

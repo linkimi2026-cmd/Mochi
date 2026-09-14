@@ -10,6 +10,6 @@
   [`contact-round`](https://github.com/lucide-icons/lucide/blob/main/icons/contact-round.svg), and
   [`chart-no-axes-combined`](https://github.com/lucide-icons/lucide/blob/main/icons/chart-no-axes-combined.svg).
 - The group material and motion reuse existing project tokens from
-  `foundation/ui/jxl-theme-bridge.css`. Press feedback is limited to a small
+  `client-plugins/jxl-theme/styles/jxl-theme-bridge.css`. Press feedback is limited to a small
   scale change and is removed under `prefers-reduced-motion`; reduced
   transparency uses an opaque project surface.

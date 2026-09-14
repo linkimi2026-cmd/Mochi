@@ -1,5 +1,15 @@
 # Mochi 工程日志（WORKLOG）
 
+## 2026-09-14 根目录工程治理
+
+- 将完整参赛交付包提升到项目根目录，并增加 `00-参赛入口.md`。
+- 将用户参考 DOCX、提示词完整阅读稿、上游源码快照归入 reference / source-snapshots。
+- 将旧 17 页 PPT 与历史录屏材料归入 `参赛PPT/history` 和 `参赛PPT/evidence`。
+- 将旧评审报告标记为 archived，修正发布索引、交付台账和源码包状态矛盾。
+- 删除没有对应根 `package.json` 的空 `package-lock.json`；它不承担依赖锁定作用，可从 Git 历史恢复。
+- 完整交付目录作为生成物加入 `.gitignore`，源码、PPT、安装器和宣传片仍由各自源目录维护。
+- 为根目录排序，完整交付包增加 `01-` 前缀；早期 `foundation` 设计包移入 `docs/history/foundation/`。
+
 > 制度（用户 2026-09-04 指定）：**每完成一个任务，必须在这里记一笔"干了些什么"。**
 > 谁干活谁记录：主理 Agent、并行 Agent、Codex 一视同仁。追加式，不改旧条目。
 >
@@ -120,9 +130,8 @@
   拒绝运行 → 直接 ./node_modules/.bin/vite 启动；WorkBuddy safe-delete 闸会拦 vite
   依赖缓存重建 → 预先把 node_modules/.vite 挪到 /tmp。
   ② 校园应用全栈本地跑通：vite dev（@cloudflare/vite-plugin 同时跑前端+Worker+本地 D1）
-  @ http://127.0.0.1:5173/。本地演示账号（migrations/0007 + smoke-test 实证）：
-  banzhuren/Bzr#2026Demo!（林清·班主任）、xiaoyi/Xiaoyi#2026!（校医）、
-  admin/Admin#2026Demo!（管理员）、nianji/Nianji#2026!、sushe/Sushe#2026!。
+  @ http://127.0.0.1:5173/。本地演示账号由“联动计划”的迁移与受管演示配置提供；
+  本日志不再保留明文密码。
   ③ 新 client 插件 jxl-campus：官方 sidebar.footer.action slot（kind:"list"）挂
   「嘉行联校园」入口（水母 logo + 校园徽章），点击以全域 iframe 承载完整校园系统，
   顶栏「← 返回 Mochi」+ ESC 关闭。
@@ -340,7 +349,7 @@
 - **测试**：mochi-dispatch 单测 10 组全绿（状态机/存储/五工具/审批闸/幂等/到期/render 签名回归）；
   mochi-campus 20 工具 7 组全绿。**Demo C（换课）对话式全链 E2E 实证**：
   发端（mochi profile headless，DSH_PROFILE=mochi）`帮我问顾言老师换课` → mochi.ask → 审批卡
-  （占位放行）→ relay#10 pending → task#1 DELIVERED；收端（绑定切 renke/Renke#2026!）顾言的
+  （占位放行）→ relay#10 pending → task#1 DELIVERED；收端切换到任课教师演示账号后，顾言的
   Mochi 读到问询 → jxl.relay_respond 答应+回话（人决定）→ accepted；发端再问 → mochi.tasks
   同步 → task#1 COMPLETED + 回话「可以，周四第三节我等你」。DB 双库核验通过。
 - **演示数据**：relay#5/7/8/9/10 + task#1 真实闭环保留；E2E审批探针登记行已删。
@@ -1628,7 +1637,7 @@ const PACKAGED_RUNTIME_PAYLOAD_EXCLUDED_FILE = /(?:\.map|\.d\.ts|\.d\.mts|\.d\.c
 会瞬间变成不可观测。这类没有症状的失效必须由断言兜住。
 产物不存在时它**大声打印跳过原因**并退 0（静默跳过会让"没检查"像"检查通过"）。
 
-**负向对照已做**（仓库纪律）：删掉 `include_usage` → 断言红；删掉 `cacheReadTokens`/ 
+**负向对照已做**（仓库纪律）：删掉 `include_usage` → 断言红；删掉 `cacheReadTokens`/
 `prompt_cache_hit_tokens` → 断言红。两条都报了正确的错。
 
 顺带修掉自己的两个 bug：`node:assert/strict` 只有 default 导出（`import { assert }` 直接
@@ -2110,3 +2119,27 @@ building        target=nsis file=release\Mochi-Setup-0.1.0-win-x64.exe oneClick=
 - **选择器**：`MOCHI-WIN-PICKER-FIX-01` 的 win32 钉 browse 修复已在源码与 vendored 依赖 → 进 #33。
 - **Windows run #33**：API 推送（布局实况 = 私有仓**顶层 `mochi-source/`**，技能旧图 `campus-source/` 包装层已过时；闸②正确拦下第一版前缀错误）。2 blob + tree(base_tree) + commit `bd83fc9fb655` + PATCH ref；全树校验 497 blob PASS（**gitignore 快照文件必须用 `git hash-object` 对比磁盘字节，`rev-parse` 会假阳性**）。工件下载 + 五项清单验证：⏳ 进行中。
 - **台账**：`DELIVERY-LEDGER.md` §十（本轮全记录 + 出包必检五项清单）；`DECISIONS.md` D-008。
+
+## 2026-09-13 · 文档、资源与参赛源码包整理
+
+- 建立 `README.md` → `docs/README.md` → `PROJECT-STATUS.md` / `PROJECT-HISTORY.md` / `RESOURCE-MAP.md` 的当前交接路线，明确 Mochi 与“联动计划”的职责、接入层和演变过程。
+- 删除过期阶段计划、重复总体方案、旧提示词和失效审计；历史 A2A 报告与 GitHub 调研移入 `docs/history/`、`docs/research/`；两张零散 PNG 移入 `docs/assets/loose/`。
+- 重写当前总体方案、教师手册、作品说明、伦理说明、演示路径和真机验收记录；分别标记机器事实、用户确认与未验证假设。
+- 历史日志中的校园演示密码已脱敏。PPT 按用户最新要求保留原文件，等待下一版要求，本轮不修改。
+- 新增 `scripts/package-competition-source.mjs`：只收录源码、锁定依赖、当前文档和参赛文字材料；排除安装器、PPT、宣传片、运行数据、缓存、历史证据与密钥；执行敏感信息扫描、逐文件 SHA-256、ZIP 完整性和 500 MB 限制。
+- 文档整理没有改变桌面应用代码，因此不重新构建安装器；Windows 与 macOS 二进制继续沿用 `docs/DELIVERY-LEDGER.md` 登记的原生构建与验收边界。
+- 当前参赛宣传片按用户 2026-09-14 的裁定选用 `Mochi_80秒_2K120帧_V5.mp4`（80 秒、2560×1440、120 fps）；较晚导出的 100 秒 V6 仅留在宣传片工程目录，不进入本次交付集合。
+
+## 2026-09-14 参赛项目同步
+
+同步当前五页四分钟PPT与讲稿、项目状态、资源地图、台账和快速开始；交付组装脚本正式纳入PPT，修正旧的等待更新说明。源码包重新生成，安装器沿用现有实测/构建产物，不重新编译。
+
+## 2026-09-14 根目录与资源排布规范
+
+- 根目录用 `00-参赛入口.md` 和 `01-Mochi-参赛交付包-2026-09-14/` 固定评委阅读顺序；开发源码继续保留既有 `apps/`、`plugins/`、`client-plugins/`、`packages/`、`vendor/` 边界，避免为美观破坏运行路径。
+- 参考 DOCX、提示词存档、上游源码快照、旧 PPT、录屏证据和早期 foundation 设计分别归入 `docs/reference/`、`release/source-snapshots/`、`参赛PPT/history/`、`参赛PPT/evidence/`、`docs/history/foundation/`。
+- 核查发现原 `foundation/ui/` 两份 CSS 是主题插件的实际构建输入，已迁入 `client-plugins/jxl-theme/styles/`；构建脚本移除本机绝对路径，改为插件内相对路径并重新生成 `client.js`。
+- 删除根目录空的 `package-lock.json`：根目录没有 `package.json`，该锁文件不描述可安装依赖；桌面端锁文件继续由 `apps/desktop/` 维护。
+- 宣传片 Git 边界收敛为脚本、时间轴、许可和轻量输入；录屏、媒体、渲染输出与 QA 帧继续留在本机，不把数 GB 派生资产写入 Git。两个原先位于个人“测试”目录的 V4 输入已归入 `promo/inputs/`。
+- 当前答辩制作脚本从 `.build/` 移入 `参赛PPT/Mochi四分钟答辩/scripts/`，并移除源脚本中的 Mochi 项目绝对路径；`.build/` 和 `output/` 由 Git 忽略，比赛成品继续通过根目录完整交付包提供。
+- 旧录屏操作脚本归档到 `参赛PPT/evidence/` 时发现 10 份文件仍含演示密码，已统一替换为 `REDACTED_DEMO_PASSWORD` 并标记为不可直接执行；后续采集必须从本机受控凭据读取。

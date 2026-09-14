@@ -1,15 +1,10 @@
 # 开源复用审查
 
-> ⚠️ **历史记录（historical）· 2026-09-12 标注**
->
-> **status**: archived　**last_verified**: 2026-09-12　**verified_by**: 工具线
->
-> 本文是 2026-09-06 前后的复用审查留痕，**其中的数字均为该时点数字，不是现行真值**：
-> 文中出现的「插件总数 12 / 11」「只限 12 插件、29 运行模块资源闭包」，
-> 与「桌面实际 0.1.2-rc.1」等，**均已过时**。
-> **现行真值**：插件 **26** 个（`prepare-mochi-resources.cjs` 的 `PLUGINS`）、
-> 内核 **`0.1.3-alpha.1`**（同文件 `PLUGIN_RUNTIME_VERSIONS`）。
-> 正文原样保留，仅供追溯。参见 `docs/DOC-AUTHORITY.md`。
+> **status**: active
+> **last_verified**: 2026-09-13
+> **verified_by**: Codex
+
+本文按日期保存每次开发前的 GitHub 检索、许可证、版本和采用决定。旧条目中的数量与版本只代表该次审查时点，不能覆盖 [当前状态](PROJECT-STATUS.md)。当前插件打包定义为 26 项，DSH 依赖为 `0.1.3-alpha.1`。
 
 > 打包/出包的唯一路径、什么会进包、快照清单重算方法，见 [`build-standard.md`](./build-standard.md)。本文仅保留当时的复用审查记录。
 
@@ -288,3 +283,108 @@ Playwright候选root独立复验：亲读 `/private/tmp/mochi-playwright155-prob
 沿用已核完整 LocalSend/PairDrop/A2A 生态及上列固定提交/许可证。本次执行者补搜 `site:github.com/localsend/localsend multicast discovery UDP broadcast protocol`、`site:github.com/schlagmichdoch/PairDrop multicast discovery local network`、`site:github.com/nodejs/node dgram addMembership setBroadcast multicast UDP example`，读取 LocalSend 的组播仅宣告、后续 HTTP 单播说明。部分采用该职责划分，继续 Node22 现成 dgram；不引入完整传输框架、Bonjour 服务或另一个任务域，维护成本限同一信标/TTL/设备表的双通道。执行者已提供 loopback 组播收包预检；root 尚未独立验证生产双进程备用通道，已要求单独屏蔽广播测试目标再验证组播。学校交换机/Windows 防火墙效果未实测。
 
 组播集成前root实证更新：独立Node22运行真实双进程test.mjs与durable测试exit0；主信标投向无监听端口时仍通过组播收到候选，恢复双路径只保留一个endpoint。组播加入失败保留原路径、UDP端口占用保留HTTP/手动连接降级通过。仅本机网络栈和测试进程，不宣称学校网络实测完成。
+
+
+## 2026-09-13 · 120 秒 Mochi 评委与采购演示片
+
+实际搜索词：`site:github.com video editor React Remotion Motion Canvas OpenCut`，随后 `site:github.com hyperframes video gsap license` 与 `site:github.com Greensock GSAP license animation`。先覆盖完整编辑应用、框架与插件目录，再选择动画库。
+
+| 仓库 | 实读提交 | 许可证与维护 | 结论 |
+| --- | --- | --- | --- |
+| https://github.com/OpenCut-app/OpenCut | 400f097becba5db0fbc305d5a65348cb81c20356 | MIT，未归档，2026-08-10 有推送 | 不接入完整剪辑应用；本次需要可重复离线导出，避免维护额外产品栈。未安装，不声称适配。 |
+| https://github.com/remotion-dev/remotion | e4f0d6308c8e7d9ab4787b79fdd805862d692a76 | 自定义 Remotion License，2026-09-12 活跃 | 不采用；需区分主体免费条件与企业授权，现有需求有 Apache 方案可选。未安装。 |
+| https://github.com/motion-canvas/motion-canvas | 7b91435c301d530351dcf5ebb91dd139c002e405 | MIT，未归档，2026-07-02 推送 | 不采用；已有真实 UI 图像，更适合 HTML 合成。未安装。 |
+| https://github.com/heygen-com/hyperframes | fdf9ffac953d9d18329907d6956faa58c73ad489 | Apache-2.0，2026-09-13 活跃，CLI requires Node >=22 | 采用 HTML 时间轴、现成媒体寻帧与本地 MP4 渲染。已读根清单、CLI 清单、LICENSE、组合与渲染契约。npm 正式包名 hyperframes@0.8.36；尝试 @hyperframes/cli 返回 404，是包名不对，不是 GitHub 检索失败或无权限。 |
+| https://github.com/FFmpeg/FFmpeg | ca164c6b98ebf9037434b95a7e942bab9fda7363 | LGPL/GPL 按构建选项；本机 9.0.1 启用 GPL | 使用已安装 CLI 编码、音轨混合和验证，不重新实现编码器，不随工程分发二进制。 |
+
+GSAP 锁定 npm 3.15.0，复用现成 timeline/easing，不移植录屏器代码。渲染工程位于 promo，和桌面产品依赖隔离；原 UI 不重绘，原有素材保留。安装与功能验证状态随成片验收更新。
+
+事实更新：用户在本任务明确确认 Windows 一体机与全部功能已完成实测且正常可用，覆盖旧台账的未实测状态。这是用户确认，非本任务独立硬件复测。原 V5 文档中的 78 段 JSON、原始录屏包并未随 DOCX 出现在当前目录；据可用素材调整镜头，不把占位假设当真实事件。
+
+2026-09-13 宣传片实录补充：本轮实际搜索 `site:github.com heygen-com hyperframes screencast cursor video gsap`，沿用前述已核完整应用/框架选择、HyperFrames0.8.36及GSAP3.15.0。发现 https://github.com/heygen-com/hyperframes-launch-video 完整样片工程，但仅参考目录与功能说明，未核其完整许可证，不复制素材或源代码。继续采用已锁定框架，实际完成14秒1920x1080/60fps无音轨样段渲染与抽帧检查；不称120秒成片完成。鼠标动画放在同一相机坐标系，源素材为真实CDP采集帧，长期维护仅限独立promo目录。
+
+2026-09-13 纯界面成片续作：实际补搜 `site:github.com/heygen-com/hyperframes GSAP video render timeline`，复核官方主仓与 core / troubleshooting / data-attributes 文档。继续使用此前完整生态审计所选 HyperFrames0.8.36（Apache-2.0）和 GSAP3.15.0；不引入新依赖，不复制未经许可的 launch-video 工程。保留根 data-duration=120 与 paused timeline，录制改用 CUA 支持的完整 screenshot，原始 UI 不改写。只在 promo/interface_film.py 及独立合成入口维护字幕、相机、真实控件坐标与鼠标动效。
+
+成片中文字体采用 notofonts/noto-cjk 的 NotoSansCJKsc-Regular.otf（SIL OFL1.1），下载及许可证实读完成。raw.githubusercontent.com 直连超时中止，改用该官方仓库的 jsDelivr 分发成功，非未找到字体。文件 SHA256 2c76254f6fc379fddfce0a7e84fb5385bb135d3e399294f6eeb6680d0365b74b，随工程锁定本地文件；字体加载与布局检查通过。无需依赖用户机器上的中文字体或另外购买字体。
+
+
+2026-09-13 V2 连续录屏与鼠标跟随补充：实际搜索 `screen recorder auto zoom cursor`，先覆盖完整应用。网页检索连接失败，GitHub API 检索成功，不是无权限或没有结果。查看 https://github.com/omacom/omareel 提交 e32ba4e654814b0d2b930aa120c893f7c669e86e（MIT）以及 https://github.com/martian0x80/framepipe 提交 376efe4dda4993877ae9b55496889ca949c77fe2（GPL-3.0）。前者完整录屏、鼠标/键盘事件分轨与自动缩放依赖 Hyprland/gpu-screen-recorder，后者依赖 Linux Wayland/DRM/PipeWire；本机 macOS 不接入，未安装或声称适配。不复制代码，继续采用已验证 CUA screenshot、HyperFrames0.8.36、GSAP3.15.0 与 FFmpeg9.0.1。连续素材保留真实帧；鼠标与相机在同一坐标系合成，维护范围仍限 promo。
+音乐换用 Mixkit ID130 Tech House vibes，官方 mp3 下载成功；读取官方 /license/modal/musicFree/ 正文确认商业/非商业网络视频、教育、在线广告允许，TV/广播/CD/DVD/游戏不在许可内。保存许可说明，不把音乐作为独立音乐作品发布。
+
+V2最终验证：HyperFrames现成单worker low-memory流式编码成功导出140秒1080p60 MP4，8400帧完整解码通过。两worker磁盘模式因预计69.7GB临时空间超过可用57GB被框架拒绝，改用已核源码支持的单worker流式路径，不删除用户文件、不降低分辨率。最终lint/runtime/layout/contrast检查无错误或警告，抽查15帧实际输出；不声称源素材全部60fps。
+
+2026-09-13 V3 开工补搜：实际词 `site:github.com video editing framework HyperFrames Motion Canvas OpenCut`、`site:github.com Breakthrough PySceneDetect librosa beat tracking`。检索返回完整应用 OpenCut-app/OpenCut、clawnify/OpenCut 和 HyperFrames 渲染文档；仍沿用前述固定 HyperFrames0.8.36/GSAP3.15.0/FFmpeg9.0.1，不增加编辑平台或依赖。真实仓库 https://github.com/heygen-com/hyperframes、https://github.com/OpenCut-app/OpenCut；提交与许可沿用本日已核记录，当前本地140秒导出证明基础渲染可用，不能据此证明V3镜头已完成。音视频参考分析复用FFmpeg原生fps/ebur128，不手写解码/响度算法；单组件查询本轮没有返回可用PySceneDetect/librosa条目，不称其不存在。独立promo目录维护，保留旧片；本轮只新增研究和演示输入数据，尚未修改产品代码。
+
+2026-09-13 V3 90秒工程实施：补搜实际词 `site:github.com heygen-com hyperframes video framework gsap timeline`，返回完整HyperFrames框架及官方时间轴文档。沿用前述完整应用比较与固定提交 fdf9ffac953d9d18329907d6956faa58c73ad489、Apache-2.0、已安装0.8.36及GSAP3.15.0；不升级、不复制launch-video素材。新版线上文档对composition duration有冲突，采用本地0.8.36已成功渲染的data-duration+paused timeline契约并实际验证。继续复用现成媒体寻帧/编码和easing，仅新增独立90秒分镜工程，避免迁移长期维护成本。
+
+2026-09-13 V4 发布会式2K重做：实际检索 `site:github.com video motion graphics framework HyperFrames Motion Canvas GSAP`，先覆盖完整框架/设计应用（heygen-com/hyperframes、ilya-makarov-dev/Reframe），再检索 `site:github.com gsap seamless loop vertical cards`，返回pixelgridui/card-stacking-gsap与GSAP社区循环样例。继续采用已核HyperFrames提交fdf9ffac953d9d18329907d6956faa58c73ad489、Apache-2.0、固定0.8.36和GSAP3.15.0；不接入新完整应用，避免迁移已验证录屏/寻帧管线。不复制未核许可社区组件；用现有GSAP时间轴的transform和SVG属性完成三列反向运动。Mo直接复用本项目OrbCompanion/ExpressiveOrb组件（当前HEAD e3be3d13912832100070973e9d8074151d77790a），不重画吉祥物。源4K截图已核实，关键UI从源PNG重编，非放大V3成片。维护范围独立promo/v4，不改产品代码。音乐检索Kimi K2.5宣传片BGM未找到原曲署名或公开商用授权，不等于确认无授权；用户提供的本地片音轨可用于本次剪辑审片，授权状态另记。
+
+V4 HTML 与字体复核：用户明确授权使用源文件重渲染原界面，覆盖此前“原 UI 不重绘”的拍摄方式约束。复用本地 InputBar、ApprovalPanel、MessageItem 结构/样式与原 Mo SSR，只编辑独立宣传工程；校园查询、审批采用已核实记录的内容节选重演，不声明为新一次实时执行。三角形直接复用实际生成的 triangle-demo.html SVG 与状态，解决可见性穿透并将 CSS 异步切换统一到导出时间轴。
+字体补核实际读取 https://github.com/notofonts/noto-cjk/blob/main/Sans/LICENSE 与 Sans/OTF/SimplifiedChinese/NotoSansCJKsc-Bold.otf；GitHub API 成功获取 Bold blob ff4c0450e8a5bf0290fbb6013a72dc61a10e8e56（Version2.004）及 Serif SemiBold blob41668d00fa67926d143544ddba2937b7d7f6fcf6（Version2.003），读取 Serif/LICENSE 确认 OFL1.1。jsDelivr 与 raw 下载超时，改用 GitHub API blob 成功，不归因为无权限。采用原生字体字形、GSAP逐字遮罩与统一字距，不生成栅格字形。复用现有 fontkit 检查三套字体覆盖本工程401个汉字，零缺字。
+
+V4 102秒收尾：沿用已核 HyperFrames0.8.36/GSAP3.15.0，不增加依赖。鼠标、虚线揭示和光点共用原生 SVG getTotalLength/getPointAtLength 几何进度；实线引导禁用。插入已核 ASK 回应原记录的12秒源界面重演，后续媒体与鼠标时间同步后移。三套字体覆盖412个本片汉字，无缺字。修复转场脚注重叠与模型说明对比度，最终指定采样的 lint/runtime/layout/contrast 均零错误、零警告；转场离场遮挡仍有信息级提示。完整102秒MP4编码与输出抽检另见 promo/evidence/v4-final-qa。
+
+V5 60秒无引导线精剪：实际补搜 `site:github.com heygen-com hyperframes video gsap timeline`，先复核完整HyperFrames应用框架与插件文档，再沿用本地GSAP时间轴组件。真实仓库https://github.com/heygen-com/hyperframes，继续固定0.8.36/提交fdf9ffac953d9d18329907d6956faa58c73ad489、Apache-2.0及GSAP3.15.0，维护与许可证沿用本日审计，不复制宣传样片代码。使用现成时间轴寻帧和FFmpeg变速，按镜头分配60秒；原工程保留，新版独立promo/v5。用户追加2560×1440、120fps目标，实际编码验收后才认定通过。
+
+V5最终需求更新为80秒、2560×1440、120fps。沿用同一渲染生态；使用GSAP分段寻帧、新增源HTML建模请求/实际三角形源码节选、实际《三角形练习》出题与点击反馈、原AgentPresetSection卡片几何及三条实测预设内容。鼠标不再携带任何引导线。Mo原SVG眼睛ry动画实测7.2→1.076543→7.2，结尾7.2→1→7.2。字体检查、画面检查和最终MP4参数以promo/v5与输出验收为准。
+网站依据改为用户指定 /Users/a1379/Documents/联动计划：亲读README、server/node-server.mjs、server/function-entry.mjs对应部署文档；当前文档的国内路线为CloudBase HTTP函数及共享PostgreSQL HTTP适配层，而非旧报告中的CloudRun直连。README国内入口当前只读health探测返回HTTP410，因此不宣称当前公网可用；用户明确授权直接制作现有网站内容，片内不展示问题报告、不做在线状态承诺。
+声音沿用已核许可的Mixkit ID130完整原曲连续0–80秒，不循环、不拼接重复乐段；用FFmpeg原生sine/afade/adelay/amix生成轻量点击及重点落点，动作cue写入promo/v5/audio-cues.json。HyperFrames现成beats检测复用，不新增节拍引擎；自动BPM仅作参考，不作为真实音乐拍号断言。
+
+V6补足展示时间：实际搜索`site:github.com heygen-com hyperframes GSAP video timeline`，复核完整框架、插件转场和时间轴文档。继续采用已核Apache-2.0的HyperFrames0.8.36/提交fdf9ffac953d9d18329907d6956faa58c73ad489及GSAP3.15.0；不更换生态。读V5时间轴确认原91–97秒成果汇聚被压到零时长，本次恢复该源动画2秒，同时把其他18秒分配给过短展示，成片100秒。源视频从V4原媒体重编码，HTML源动效重新以120fps求值；不靠给V5成片重复帧假称恢复源动作。维护仅在promo/v6与构建脚本，音乐改为原曲连续100秒并重映射cue。
+
+## 2026-09-13 交接文档整理复用审计
+
+> **status**: active　**last_verified**: 2026-09-13　**verified_by**: Codex
+
+实际检索词：`site:github.com documentation framework mkdocs material diataxis`。先查看完整框架 https://github.com/squidfunk/mkdocs-material 及其 MkDocs 插件生态，再核对现有项目自带的文档分层和检查脚本。GitHub API 查得 master 提交 `9d65447eb4039c153edefbc378029257886737ff`（2026-08-30）、最新 release `9.7.7`（2026-07-17）。仓库标注 MIT；本轮不接入、不复制代码，因此未安装验证其 Python 依赖兼容性，不宣称已经适配。
+
+不引入文档站：任务是本地项目交接，现成 Markdown 权威分层、台账、相对链接已满足阅读；新站点会增加构建、发布与版本维护成本。实际复用 `docs/DOC-AUTHORITY.md`、`scripts/scan-doc-drift.mjs`、`scripts/check-skill-tools.mjs`、`scripts/check-snapshot-manifest.mjs`，不重写检查框架。整理结果见 `docs/DOCUMENT-INVENTORY.md`。检索成功，无权限错误；不是“未找到成熟方案”。
+
+2026-09-13 内容复核续轮：实际检索 `site:github.com/squidfunk/mkdocs-material documentation links validation`，查看完整框架及官方 creating-your-site 文档；版本/提交沿用本日已核 9.7.7 / 9d65447eb4039c153edefbc378029257886737ff，仍不安装新框架。现有 Markdown 链接检查不能证明业务描述正确，本轮直接读取 modes、campus、memory、sheets、侧边栏与打包源码逐项更正文案，复用已有门禁；未复制外部实现。
+
+## 2026-09-13 · 全量文档重组
+
+实际搜索词：`site:github.com squidfunk mkdocs material documentation versioning archive plugin`、`site:github.com Diataxis documentation framework repository`。先比较完整文档站框架，再看分类方法。
+
+| 仓库 | 本轮核对 | 采用结论 |
+|---|---|---|
+| https://github.com/evildmp/diataxis-documentation-framework | GitHub 仓库可访问，许可证为 CC-BY-SA-4.0，仓库显示 290 次提交 | **部分采用**：使用 tutorial / how-to / reference / explanation 分责思想，把当前状态、操作、技术事实和历史解释分开；不复制正文或代码 |
+| https://github.com/squidfunk/mkdocs-material | 继续沿用本日已核 master `9d65447eb4039c153edefbc378029257886737ff`、release `9.7.7`、MIT | **不接入**：当前交付是本地 Markdown 与比赛材料，引入 Python 站点构建、主题和发布链会增加维护成本；现有 Git、相对链接和检查脚本足够 |
+
+最终采用轻量目录治理：一个根入口、一个现行总体方案、一个项目现状、一个交付台账；`foundation`、工单和时点报告明确归档。检索成功，无权限或网络失败。分类方法可以降低冲突，不能代替业务事实核对，因此本轮同时读取运行配置、打包脚本、交付物元数据和参赛材料逐项修正。
+# 2026-09-14 · WPS 四分钟答辩演示复用
+
+- 搜索词：`github reveal.js embedded video presentation`、`github pptxgenjs addMedia video autoPlay`。先检查完整演示框架与导出库，再查看媒体对象实现。
+- `https://github.com/hakimel/reveal.js`：检查提交 `75dff6f515d2d08df0c32cf2b7328b89425c6f25`，MIT，最近推送 2026-09-10。支持内嵌媒体、演讲备注、转场。用户明确使用 WPS，故不采用浏览器演示框架，避免增加现场依赖。
+- `https://github.com/gitbrent/PptxGenJS`：检查提交 `3c9ec1b687c174952166f6a34b5e87ebf69fa469`，MIT，最近推送 2025-11-28；检查 `src/gen-xml.ts` 中 videoFile、p14:media、媒体点击动作和预览图关系。部分采用其标准 OOXML 媒体结构作为互操作参考，不安装整套依赖。页面使用环境已有 `@oai/artifact-tool` 生成，再封装视频与基础动画。
+- 照片与界面来源：联动计划真实历史网站截图、Mochi 真实录屏、现有 Mo 品牌画面，不使用外部图库或生成式场景。
+- 验证范围：最终检查内嵌视频哈希、五页结构、讲稿备注、动画 XML、逐页画面并在本机 WPS 打开放映；Windows WPS 的目标机行为仍需现场排练。
+
+## 2026-09-14 · Apple Design 与演示生态补查
+
+用户要求强化结尾层级后，读取本机 apple-design/SKILL.md，采用目的、信息层次、空间一致性与克制动效原则；不把 Web 弹簧动画误称为 WPS 原生能力。
+
+搜索词：`github presentation skill pptx animation powerpoint`、`github slidev pptx export animations`、`github marp powerpoint editable export`。
+
+- https://github.com/slidevjs/slidev：MIT，提交 a8d8ff717c5a72c1b3a9d98f1c849481f2ddcd00，最近推送 2026-08-25。官方导出文档确认 PPTX 为图片页面，文字不可选。未采用：无法满足本轮可编辑结构与 WPS 媒体原生播放。
+- https://github.com/marp-team/marp-cli：官方说明可编辑 PPTX 是实验功能，强调外观一致性时不推荐。GitHub 元数据接口本次发生 SSL EOF，未获得提交号；不能写成完成版本审计。未采用：已有原生输出，无需引入转换损耗。
+- https://github.com/PoplarPoplar/presentation-skill_-PPTskill：MIT，提交 3a22eed290fa2205b6a1e2de5549b4429c5fffd0，最近推送 2026-07-14。检查 SKILL.md 的源文件、叙事、重建和渲染 QA 工作流；部分采用其工作流原则，不安装新的生成依赖。
+- WPS 动画：在本机 WPS 为测试副本添加一次原生“渐变”并另存 .build/wps-animation-reference.pptx，以实际生成的 timing、group、build list 结构作为兼容参考。
+
+## 2026-09-14 · 答辩痛点与技术架构补充
+搜索词：`site:github.com slidevjs slidev pptx export`、`site:github.com gitbrent PptxGenJS addMedia`，先复核完整框架和导出生态，再复核媒体组件。真实仓库 https://github.com/slidevjs/slidev 与 https://github.com/gitbrent/PptxGenJS；固定提交、MIT 许可沿用本日上方实读记录，不升级依赖。搜索成功。继续采用现有 artifact-tool + 已验证 OOXML/WPS 媒体封装，避免转换迁移维护成本。此次仅改两页排版与讲稿，不更换动画实现。技术事实依据 apps/desktop/package.json、联动计划/package.json 与 docs/PROJECT-HISTORY.md；不推断生产数据库或线上部署状态。
+
+## 2026-09-14 项目收尾同步
+搜索词：`site:github.com squidfunk mkdocs-material documentation`、`site:github.com archiverjs node-archiver zip`。先检索完整文档框架，再检索归档库，检索成功。https://github.com/squidfunk/mkdocs-material 沿用已核提交9d65447eb4039c153edefbc378029257886737ff及MIT记录；https://github.com/archiverjs/node-archiver 本次仅发现ZIP/TAR能力，未做版本及许可证接入审计，因此不接入。继续使用已验证的本地Markdown、现有系统ZIP与校验脚本，仅补交付条目，不新造归档实现，不增加依赖维护成本。
+
+## 2026-09-14 · 根目录交付入口整理
+
+复用上方已完成的文档框架与归档生态检索，不重复安装依赖。采用现有 Markdown 入口、资源地图、交付台账和 `assemble-competition-delivery.mjs`；完整交付目录改为直接生成在 Mochi 根目录。`release/submission/` 继续承担源码归档和历史构建记录，不再作为评委查找最终成品的入口。
+
+## 2026-09-14 · 根目录排布复核
+
+搜索词：`site:github.com nodejs monorepo apps packages docs project structure`、`site:github.com vercel turborepo apps packages docs repository structure`。检查 https://github.com/vercel/turborepo 当前 HEAD `2167e7410f7c2dde3d2b5df882beb3ac0ea5aaa1`、MIT 许可证及其结构指南：可部署应用归入 `apps/`，共享代码归入 `packages/`，文档归入 `docs/`。本项目已有自己的运行、插件和打包体系，因此只采用目录职责原则，不安装 Turborepo、不引入根 workspace，也不移动 `apps/`、`plugins/`、`packages/`、`vendor/` 等运行路径。完整交付包增加 `01-` 排序前缀，早期 foundation 设计移入 `docs/history/`。
+
+接入核验发现 `foundation/ui/` 的两份 CSS 仍由主题构建脚本实际读取，因此它们不属于历史文档。现已迁入 `client-plugins/jxl-theme/styles/`，构建脚本改用相对 URL 读取样式与图标，并重新生成 `client.js`。这次采用的是目录职责与可移植构建原则，没有接入 Turborepo 代码或新增依赖；生成产物内容哈希是否变化由后续构建检查确认。
+
+同一原则用于媒体工程：宣传片的脚本、时间轴、许可和轻量输入进入 Git，大体积录屏、音视频、导出与 QA 帧留在本机并由交付包分发；答辩制作脚本从 `.build/` 移到 `scripts/`，`.build/` 只保留可再生成的中间产物。未引入媒体资产管理框架或 Git LFS；当前仓库没有现成 LFS 配置，临时引入会增加比赛交接步骤。

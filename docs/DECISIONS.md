@@ -1,8 +1,8 @@
 # Mochi 决策记录（DECISIONS）
 
-> **status**: active　**last_verified**: 2026-09-12　**verified_by**: 工具线
+> **status**: active　**last_verified**: 2026-09-13　**verified_by**: Codex（保留既有决定并更新文档入口）
 > **性质**：记录**已经拍板、且会影响后续 Agent 判断**的决定。目的是让后来者不要反复"修好"一个其实是有意为之的设计。
-> 只记决定 + 理由 + 代价；不记排期（见 `docs/tasks/MOCHI-URGENT-REPLAN-2026-09-11.md`）、不记实现（见源码与 `docs/RUNTIME-FACTS.md`）。
+> 只记决定、理由和代价；不汇总排期或项目状态。当前状态见 `docs/PROJECT-STATUS.md`，实现见源码与 `docs/RUNTIME-FACTS.md`。
 
 ---
 

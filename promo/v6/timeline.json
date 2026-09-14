@@ -1,0 +1,123 @@
+[
+  {
+    "id": "intro",
+    "start": 0.0,
+    "duration": 2.5,
+    "title": "",
+    "subtitle": ""
+  },
+  {
+    "id": "home",
+    "start": 2.5,
+    "duration": 2.143,
+    "title": "先选择工作区",
+    "subtitle": "文件、任务与上下文，在一起"
+  },
+  {
+    "id": "setup",
+    "start": 4.643,
+    "duration": 2.857,
+    "title": "切换「工作」，开放执行权限",
+    "subtitle": "选择完全权限 → 全部允许；工作台及时收起"
+  },
+  {
+    "id": "compose",
+    "start": 7.5,
+    "duration": 6.0,
+    "title": "",
+    "subtitle": ""
+  },
+  {
+    "id": "outputs",
+    "start": 13.5,
+    "duration": 8.0,
+    "title": "",
+    "subtitle": ""
+  },
+  {
+    "id": "model-request",
+    "start": 21.5,
+    "duration": 6.5
+  },
+  {
+    "id": "model",
+    "start": 28.0,
+    "duration": 6.5,
+    "title": "",
+    "subtitle": ""
+  },
+  {
+    "id": "quiz-story",
+    "start": 34.5,
+    "duration": 8.5
+  },
+  {
+    "id": "campus",
+    "start": 43.0,
+    "duration": 4.0,
+    "title": "校园网页，让事务一眼可见",
+    "subtitle": "待办 → 学生 → 事件 · 继续交给 Mochi 办理"
+  },
+  {
+    "id": "campus-flow",
+    "start": 47.0,
+    "duration": 15.5,
+    "title": "",
+    "subtitle": ""
+  },
+  {
+    "id": "teacher-talk",
+    "start": 62.5,
+    "duration": 9.0,
+    "title": "",
+    "subtitle": ""
+  },
+  {
+    "id": "findpeer",
+    "start": 71.5,
+    "duration": 3.112,
+    "title": "",
+    "subtitle": "管理员端 · 真实协作找资料"
+  },
+  {
+    "id": "findreturn",
+    "start": 74.612,
+    "duration": 3.888,
+    "title": "",
+    "subtitle": "教师端 · 已完成回执"
+  },
+  {
+    "id": "received",
+    "start": 78.5,
+    "duration": 3.555,
+    "title": "",
+    "subtitle": "局域网文件接收"
+  },
+  {
+    "id": "classroom",
+    "start": 82.055,
+    "duration": 4.445,
+    "title": "",
+    "subtitle": ""
+  },
+  {
+    "id": "presets",
+    "start": 86.5,
+    "duration": 7.0,
+    "title": "为不同工作，选择不同能力",
+    "subtitle": "工作预设 · 插件 · 自定义 Agent"
+  },
+  {
+    "id": "connected",
+    "start": 93.5,
+    "duration": 2,
+    "title": "成果汇聚（恢复）"
+  },
+  {
+    "id": "end",
+    "start": 95.5,
+    "duration": 4.5,
+    "title": "",
+    "subtitle": ""
+  }
+]

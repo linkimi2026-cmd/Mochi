@@ -26,7 +26,7 @@ The direct renderer handles the bounded generic pages, paragraphs and tables; it
 The package entry is `plugin.mjs`. In a teacher runtime profile it registers
 six registered tool names through the fixed Alpha `@deepseek-ai/dsh-tools` `defineTool`
 contract. Names must stay gateway-safe (`^[a-zA-Z0-9_-]+$`); dotted legacy
-names from `plan/01_TOOLCHAIN.md` (`doc.create`) are not registrable.
+historical dotted names such as `doc.create` are not registrable.
 
 | Tool | Writes | Behaviour |
 | --- | --- | --- |
