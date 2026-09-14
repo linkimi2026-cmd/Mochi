@@ -484,7 +484,9 @@ async function createPptx(input, path) {
   const pptx = new pptxgen();
   pptx.layout = 'LAYOUT_WIDE'; pptx.author = 'Mochi Presentations'; pptx.subject = input.sourceKind; pptx.title = input.title; pptx.lang = 'zh-CN';
   pptx.theme = { headFontFace: PROJECTION_FONT, bodyFontFace: PROJECTION_FONT, lang: 'zh-CN' };
-  input.slides.forEach((slide, index) => addSlide(pptx, slide, index, input.theme));
+  input.slides.forEach((slide, index) => {
+    addSlide(pptx, slide, index, input.theme);
+  });
   await pptx.writeFile({ fileName: path, compression: true });
 }
 
@@ -826,8 +828,9 @@ export function parseXmlDocument(source) {
     if (!nameMatch) throw malformed();
     const node = { name: nameMatch[1], local: xmlLocalName(nameMatch[1]), attrs: {}, children: [], text: '' };
     const attrPattern = /([^\s=/]+)\s*=\s*("([^"]*)"|'([^']*)')/gu;
-    let match;
-    while ((match = attrPattern.exec(body)) !== null) node.attrs[match[1]] = decodeXmlText(match[3] ?? match[4] ?? '');
+    for (let match = attrPattern.exec(body); match !== null; match = attrPattern.exec(body)) {
+      node.attrs[match[1]] = decodeXmlText(match[3] ?? match[4] ?? '');
+    }
     stack[stack.length - 1].children.push(node);
     if (!selfClosing) stack.push(node);
   }

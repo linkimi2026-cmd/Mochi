@@ -1,4 +1,4 @@
-import { useEffect, useId, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent as ReactKeyboardEvent } from "react";
+import { useEffect, useId, useRef, useState, type CSSProperties } from "react";
 import "./ExpressiveOrb.css";
 
 /**
@@ -204,13 +204,9 @@ export function ExpressiveOrb({
   const still = !active || reduceMotion;
 
   const tune = TUNING[mood];
-  const initialD = useMemo(
-    () => organicBlob(0, 42, tune.wobble, tune.wobbleSpeed, tune.breath),
-    // The path is fully driven by the rAF loop afterwards; this only paints
-    // the first frame before effects run (and the whole still pose).
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
-  );
+  // The rAF loop owns every later frame. State keeps only the first paint,
+  // so mood changes cannot reset the animated path mid-frame.
+  const [initialD] = useState(() => organicBlob(0, 42, tune.wobble, tune.wobbleSpeed, tune.breath));
 
   const bodyRef = useRef<SVGPathElement | null>(null);
   const shadowRef = useRef<SVGEllipseElement | null>(null);
@@ -260,9 +256,6 @@ export function ExpressiveOrb({
     interactive && !still
       ? {
           onPointerDown: handlePoke,
-          onKeyDown: (event: ReactKeyboardEvent) => {
-            if (event.key === "Enter" || event.key === " ") handlePoke();
-          },
         }
       : {};
 
@@ -373,6 +366,7 @@ export function ExpressiveOrb({
   }, [still]);
 
   return (
+    // biome-ignore lint/a11y/useAriaPropsSupportedByRole: the role is selected dynamically and each labelled branch supports aria-label.
     <span
       className={`expressive-orb expressive-orb--${mood}${className ? ` ${className}` : ""}`}
       data-mood={mood}
@@ -383,7 +377,7 @@ export function ExpressiveOrb({
       aria-hidden={label ? undefined : true}
       {...pokeHandlers}
     >
-      <svg viewBox="0 0 100 100" className="expressive-orb__svg">
+      <svg aria-hidden="true" viewBox="0 0 100 100" className="expressive-orb__svg">
         <defs>
           {/* Bottom inner shade only — weight, not a highlight. */}
           <radialGradient id={depthGradientId} cx="50%" cy="122%" r="78%">

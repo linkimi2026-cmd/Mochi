@@ -20,7 +20,12 @@ import { fileURLToPath } from "node:url";
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const releaseDir = join(repoRoot, "release", "submission");
-const archiveName = process.argv[2] ?? "Mochi-参赛源码包-2026-09-14.zip";
+const requestedName = process.argv[2];
+if (requestedName === "--help" || requestedName === "-h") {
+  process.stdout.write("用法：node scripts/package-competition-source.mjs [不含路径的 .zip 文件名]\n");
+  process.exit(0);
+}
+const archiveName = requestedName ?? "Mochi-参赛源码包-2026-09-14.zip";
 const archivePath = resolve(releaseDir, archiveName);
 const maxArchiveBytes = 500_000_000;
 const packageRootName = archiveName.replace(/\.zip$/i, "");

@@ -57,11 +57,13 @@ export function OrbCompanion({ state = "idle", size = 64, mood, label }: OrbComp
   const reduceMotion = useReducedMotion();
   const orbMood = mood ?? MOOD_BY_STATE[state];
   return (
+    // biome-ignore lint/a11y/useAriaPropsSupportedByRole: the role and label are supplied together by the labelled branch.
     <span
       aria-label={label}
+      aria-hidden={label ? undefined : true}
       className={`orb-companion orb-companion--${state}${reduceMotion ? " orb-companion--still" : ""}`}
       data-state={state}
-      role={label ? "img" : "presentation"}
+      role={label ? "img" : undefined}
       style={{ width: size, height: Math.round(size * 1.22) }}
     >
       <span className="orb-companion__orb">

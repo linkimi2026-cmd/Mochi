@@ -13,6 +13,7 @@
 - `apps/desktop/`：Electron 桌面宿主源码、配置、构建图标与测试脚本。
 - `plugins/`、`client-plugins/`、`packages/`、`skills/`：Mochi 能力、界面和共享模块。
 - `vendor/`：`package.json` 实际引用的本地 tgz 与许可闭包，用于复现依赖安装。
+- 根 `package.json`、`package-lock.json`、`biome.json`：仓库级质量门禁与五个核心插件的可复现测试闭包。
 - `.github/`、`scripts/`、`tools/`：快照清单、原生出包流程、校验和维护工具。
 - 当前项目文档和 `参赛材料/`：总体方案、状态、资源地图、联动计划关系、开源复用审计、教师手册与验收记录。
 

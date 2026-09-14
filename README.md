@@ -18,10 +18,18 @@ Mochi 是面向教师办公和校园协作的 AI Agent 桌面应用。它把对�
 - [文档目录](docs/README.md)：按用途查找维护、开发、参赛和历史资料。
 - [交付台账](docs/DELIVERY-LEDGER.md)：安装包、视频、PPT 及证据状态。
 - [文档治理规则](docs/DOC-AUTHORITY.md)：冲突如何裁定，哪些内容只能作为历史参考。
+- [工程质量门禁](docs/QUALITY-GATES.md)：CI、lint、插件测试、依赖锁与剩余技术债。
 
 ## 快速启动
 
-仓库根目录没有应用 `package.json`。桌面开发从 `apps/desktop` 开始：
+先复核仓库级质量门禁：
+
+```bash
+npm ci --ignore-scripts
+npm run check
+```
+
+根 `package.json` 只负责质量工具和核心插件测试。桌面开发仍从 `apps/desktop` 开始：
 
 ```bash
 cd apps/desktop

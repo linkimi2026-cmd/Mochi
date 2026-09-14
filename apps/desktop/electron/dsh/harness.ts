@@ -155,10 +155,11 @@ export class DshSidecar extends EventEmitter {
 
   private onStdout(chunk: string): void {
     this.buf += chunk;
-    let nl: number;
-    while ((nl = this.buf.indexOf('\n')) >= 0) {
+    let nl = this.buf.indexOf('\n');
+    while (nl >= 0) {
       const line = this.buf.slice(0, nl).trim();
       this.buf = this.buf.slice(nl + 1);
+      nl = this.buf.indexOf('\n');
       if (!line) continue;
       let msg: { id?: number; result?: unknown; error?: { code: number; message: string }; method?: string; params?: unknown };
       try {

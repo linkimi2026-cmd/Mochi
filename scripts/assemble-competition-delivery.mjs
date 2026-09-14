@@ -14,7 +14,12 @@ import { basename, dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const outputName = process.argv[2] ?? "01-Mochi-参赛交付包-2026-09-14";
+const requestedName = process.argv[2];
+if (requestedName === "--help" || requestedName === "-h") {
+  process.stdout.write("用法：node scripts/assemble-competition-delivery.mjs [不含路径的输出目录名]\n");
+  process.exit(0);
+}
+const outputName = requestedName ?? "01-Mochi-参赛交付包-2026-09-14";
 const outputRoot = resolve(repoRoot, outputName);
 
 if (basename(outputRoot) !== outputName || existsSync(outputRoot)) {

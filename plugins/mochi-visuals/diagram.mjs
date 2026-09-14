@@ -767,7 +767,9 @@ export function layeredLevels(nodes, edges) {
   // 极端情况下仍有未被处理的节点（例如整图就是若干互不连通的环）：按声明顺序排在最后。
   const remaining = nodes.filter((node) => !processed.has(node.id));
   const base = Math.max(0, ...level.values());
-  remaining.forEach((node, index) => level.set(node.id, base + 1 + index));
+  remaining.forEach((node, index) => {
+    level.set(node.id, base + 1 + index);
+  });
   const cyclic = nodes.filter((node) => [...backEdges].some((edge) => edge.from === node.id || edge.to === node.id));
   return { level, cyclic, backEdgeCount: backEdges.size };
 }
@@ -978,7 +980,9 @@ function renderRelationship(spec) {
   };
   const sizes = new Map();
   sizes.set(centerNode.id, boxOf(centerNode.label, 150));
-  outer.forEach((node, index) => sizes.set(node.id, boxOf(node.label, 130)));
+  outer.forEach((node) => {
+    sizes.set(node.id, boxOf(node.label, 130));
+  });
 
   const widestOuter = Math.max(130, ...[...sizes.entries()].filter(([id]) => id !== centerNode.id).map(([, size]) => size.width));
   const count = Math.max(1, outer.length);

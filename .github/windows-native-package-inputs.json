@@ -6,7 +6,7 @@
     "manifestPath": ".github/windows-native-package-inputs.json",
     "manifestIsTheOnlyUnhashedSnapshotFile": true,
     "expectedFileCount": 496,
-    "expectedFileBytes": 91963689
+    "expectedFileBytes": 91963933
   },
   "externalBuildInputs": [
     {
@@ -323,8 +323,8 @@
     },
     {
       "path": "apps/desktop/electron/dsh/doctor-window.ts",
-      "sha256": "582b764ff61a6b8bfa8068c8f6a10ef25ae5b59fa0dfa7dd7728d8c1e49d9c36",
-      "bytes": 14307,
+      "sha256": "bb3dec0887ac806e93fc6ff8171e43f8dfe0186ee2890463c6f141e748dfdc3d",
+      "bytes": 14314,
       "categories": [
         "desktop-source"
       ]
@@ -339,8 +339,8 @@
     },
     {
       "path": "apps/desktop/electron/dsh/harness.ts",
-      "sha256": "3386174264ad7c4100f283eebe4d40c977ee99f88ed01fc22b46fb1e7e3d626f",
-      "bytes": 12015,
+      "sha256": "dc0e8c43c3e070d27e99187fb0bcb78ece87cc02c60c80e01c1effda15869656",
+      "bytes": 12040,
       "categories": [
         "desktop-source"
       ]
@@ -1549,8 +1549,8 @@
     },
     {
       "path": "plugins/mochi-presentations/index.mjs",
-      "sha256": "1e1e9aaaef44fa79e1c25bfe5f566ef76e340b2be2838a7ab18e6d538dd1fc16",
-      "bytes": 92677,
+      "sha256": "beb74d2cc1e71440f1ef9d87ef5c98ee33954462035145af14f8c78216f7ec2d",
+      "bytes": 92726,
       "categories": [
         "staged-plugin:mochi-presentations"
       ]
@@ -3733,8 +3733,8 @@
     },
     {
       "path": "plugins/mochi-documents/document-io.mjs",
-      "sha256": "207ffaa2839f9bb34d7ee9d89c64056f299d3c78ec3fd92c72634c7fe5cbf47e",
-      "bytes": 54101,
+      "sha256": "ac43a15a08ba38e8fb3ab089a47d55de63b5c893bab9f5e42679541bbe491c99",
+      "bytes": 54129,
       "categories": [
         "staged-plugin:mochi-documents"
       ]
@@ -3813,8 +3813,8 @@
     },
     {
       "path": "plugins/mochi-sheets/formula.mjs",
-      "sha256": "d7f2782adc8b03a04afccc195cb2a1634b28c6f279c92b17c08dfd5abc28c90b",
-      "bytes": 43161,
+      "sha256": "e33047ccbb6d1866936ce89015fb9c552ba9daa6f4cbee212f346bdc5df9e16d",
+      "bytes": 43172,
       "categories": [
         "staged-plugin:mochi-sheets"
       ]
@@ -3853,8 +3853,8 @@
     },
     {
       "path": "plugins/mochi-visuals/tools.mjs",
-      "sha256": "03bd201b947a4b1bd90ad09d5c7a63b6ac472b9fc55baedb8b06764262c45085",
-      "bytes": 27035,
+      "sha256": "56ea65d848220d630251d19a7a1ca8a87ab74b3c41c010e1776c2cc6198a99a4",
+      "bytes": 27144,
       "categories": [
         "staged-plugin:mochi-visuals"
       ]
@@ -3885,8 +3885,8 @@
     },
     {
       "path": "plugins/mochi-visuals/diagram.mjs",
-      "sha256": "e19642e7eb9428b8867564f112da281c4d27b5cbe10f4d814282839d3d812259",
-      "bytes": 59739,
+      "sha256": "66ffa08351aceaa901e7dac37d3db37a1c39db270c62d76d640d749d4ba8427e",
+      "bytes": 59754,
       "categories": [
         "staged-plugin:mochi-visuals"
       ]

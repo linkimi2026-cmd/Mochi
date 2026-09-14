@@ -12,6 +12,7 @@
 | 产品总览 | `Mochi-总体方案.md` | 只写当前定位、能力、交互和边界 |
 | 当前状态 | `docs/PROJECT-STATUS.md` | 分开记录机器事实、用户确认与未验证项 |
 | 开发运行 | `docs/RUNTIME-FACTS.md`、`docs/build-standard.md` 等 | 与源码同步，冲突时修正文档 |
+| 工程质量 | `docs/QUALITY-GATES.md`、根 `package.json` | 记录真实门禁、依赖边界与仍未覆盖的技术债 |
 | 交付验收 | `docs/DELIVERY-LEDGER.md`、`参赛材料/真机验收记录.md` | 每个结论标明证据层级 |
 | 参赛材料 | `参赛材料/`、`参赛PPT/`、`promo/` | 面向提交和演示；当前 PPT 与历史 PPT 必须分目录保存 |
 | 源码提交 | `docs/SOURCE-SUBMISSION.md`、`scripts/package-competition-source.mjs` | 控制 500 MB 上限、排除项、敏感信息和逐文件校验 |

@@ -16,10 +16,12 @@ type ChatLogProps = {
  */
 export function ChatLog({ messages, teacherInitial }: ChatLogProps) {
   const endRef = useRef<HTMLDivElement | null>(null);
+  const messageCount = messages.length;
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: the count is an intentional change trigger for scrolling.
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-  }, [messages]);
+  }, [messageCount]);
 
   return (
     <div className="chat-log" role="log" aria-live="polite" aria-label="对话记录">

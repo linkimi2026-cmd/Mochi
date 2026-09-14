@@ -27,6 +27,7 @@
 | `docs/DECISIONS.md` | 已经拍板且仍影响实现的决定 |
 | `docs/RUNTIME-FACTS.md` | 启动、配置、插件和服务接线的技术事实 |
 | `docs/build-standard.md` | 如何构建、打包和校验 |
+| `docs/QUALITY-GATES.md` | CI、依赖边界、lint、格式和类型检查覆盖 |
 | `参赛材料/*` | 对评委和使用者的现行说明 |
 
 `docs/history/foundation/`、`docs/tasks/`、`WORKLOG.md`、`docs/history/` 和 `artifacts/` 都是历史或证据层。它们可以解释为什么形成现在的设计，不能覆盖现行文档和源码。

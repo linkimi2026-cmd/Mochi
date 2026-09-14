@@ -15,7 +15,8 @@
 | 服务默认值 | `campusApiUrl` 与 `searxngEndpoint` 当前均为 `null` | `runtime-profile.json` |
 | 校园源码选择 | 显式环境变量优先，其次同级“联动计划”，最后兼容副本 `campus.nosync`；本机当前解析到同级“联动计划” | `scripts/campus-paths.cjs` 及本轮运行结果 |
 | 能力插件 | 当前源码包含课件、文档、文件、表格、视觉、建模、知识库、记忆、搜索、成绩、校园、调度、A2A、局域网、模式与预设等能力 | `plugins/`、`client-plugins/`、`skills/` |
-| 快照清单 | 496 项、91,963,676 字节，当前检查为 0 缺失、0 不一致 | `.github/windows-native-package-inputs.json` 与检查脚本 |
+| 快照清单 | 496 项、91,963,933 字节，当前检查为 0 缺失、0 不一致 | `.github/windows-native-package-inputs.json` 与检查脚本 |
+| 工程质量 | 根 lockfile 可冷安装；核心 lint、首批插件 `checkJs`、依赖边界和五个核心插件 126 个测试已进入 CI 硬门禁 | 根 `package.json`、`.github/workflows/mochi-ci.yml`、`docs/QUALITY-GATES.md` |
 | 宣传片 | 当前参赛选用 V5，规格为 2560×1440、120 fps、80 秒；另有未选用的 100 秒 V6 导出 | `promo/output/Mochi_80秒_2K120帧_V5.mp4`、`promo/output/Mochi_100秒_2K120帧_V6.mp4` 与媒体探测记录 |
 | 桌面包 | Mac arm64、Mac x64 和 2026-09-13 Windows x64 归档均在磁盘 | 见 `docs/DELIVERY-LEDGER.md` |
 

@@ -388,3 +388,18 @@ V6补足展示时间：实际搜索`site:github.com heygen-com hyperframes GSAP 
 接入核验发现 `foundation/ui/` 的两份 CSS 仍由主题构建脚本实际读取，因此它们不属于历史文档。现已迁入 `client-plugins/jxl-theme/styles/`，构建脚本改用相对 URL 读取样式与图标，并重新生成 `client.js`。这次采用的是目录职责与可移植构建原则，没有接入 Turborepo 代码或新增依赖；生成产物内容哈希是否变化由后续构建检查确认。
 
 同一原则用于媒体工程：宣传片的脚本、时间轴、许可和轻量输入进入 Git，大体积录屏、音视频、导出与 QA 帧留在本机并由交付包分发；答辩制作脚本从 `.build/` 移到 `scripts/`，`.build/` 只保留可再生成的中间产物。未引入媒体资产管理框架或 Git LFS；当前仓库没有现成 LFS 配置，临时引入会增加比赛交接步骤。
+
+## 2026-09-14 · CI、lint 与依赖边界硬化
+
+实际搜索词：`site:github.com nx monorepo lint test typecheck GitHub Actions`、`site:github.com moonrepo moon node monorepo task runner lint test`、`site:github.com biomejs biome JavaScript linter formatter CI`、`site:github.com oxlint oxlint JavaScript linter CI`。检索成功，无权限错误。
+
+| 仓库 | 核对版本与现成功能 | 许可证与维护 | 采用结论 |
+|---|---|---|---|
+| https://github.com/nrwl/nx | HEAD `e6a5c010b70924e8d4d94709a7b1f2ed7b709751`；任务图、affected lint/typecheck/test 与缓存 | MIT；GitHub API 显示未归档，2026-09-13 有推送 | 不采用。现有 npm 桌面出包与 pnpm 校园/插件边界已经稳定，迁入统一 workspace 会扩大安装包回归面 |
+| https://github.com/moonrepo/moon | HEAD `9c9498248132f7a72156eb8dc96efb19c44a1f2a`；跨项目任务与 CI affected 执行 | MIT；未归档，2026-09-13 有推送 | 不采用。与 Nx 同类，当前仓库规模不需要再增加任务图运行时 |
+| https://github.com/biomejs/biome | HEAD `f0eeab22bb8aacad10d75cbe84a75da9930843d5`；npm 包 `@biomejs/biome@2.5.6`，单 CLI 提供 JS/TS/MJS/JSON/CSS lint 与 format | npm 包为 MIT OR Apache-2.0；未归档，2026-09-14 有推送；Node 要求 `>=14.21.3` | 部分采用。精确固定 2.5.6，用于核心源码错误门禁和渐进格式治理；接入后对 94 个核心源码文件实跑 |
+| https://github.com/oxc-project/oxc | HEAD `aaff7583a616a4e16753ce275b41c9471e7b88e7`；Oxlint 支持 JS/TS 与 JSON 配置 | MIT；未归档，2026-09-14 有推送 | 不采用。Biome 已同时满足 lint 与 format，避免并存两套规则和二进制依赖 |
+
+兼容性与接入验证：仓库 CI 固定 Node 22.22.2，满足 Biome 引擎要求；根 `package-lock.json` 固定质量依赖和五个核心插件测试闭包，`npm run lint`、`npm run format:check`、首批插件 `checkJs` 与依赖边界检查均已本机执行。modes / visuals / sheets / documents / presentations 共 126 个测试使用根锁定依赖实跑通过。没有仅凭 README 宣称适配。
+
+未采用根 workspace：根 `package.json` 只做质量编排。`apps/desktop/package-lock.json` 继续管理 Electron 运行和安装包闭包，相邻 pnpm/npm lockfile 继续管理少数可独立开发的插件；无相邻锁的第一方插件由桌面 lockfile 托管，并由 `scripts/quality/check-dependency-boundaries.mjs` 校验精确依赖存在。详细边界与尚未覆盖的类型、格式及 alpha 风险见 `docs/QUALITY-GATES.md`。

@@ -16,12 +16,14 @@
 6. [快速开始](QUICK-START.md)
 7. [交付台账](DELIVERY-LEDGER.md)
 8. [文档治理规则](DOC-AUTHORITY.md)
-9. [文档清单与整理记录](DOCUMENT-INVENTORY.md)
+9. [工程质量门禁](QUALITY-GATES.md)
+10. [文档清单与整理记录](DOCUMENT-INVENTORY.md)
 
 ## 开发与运行
 
 - [运行事实](RUNTIME-FACTS.md)
 - [构建标准](build-standard.md)
+- [工程质量门禁](QUALITY-GATES.md)
 - [Agent 接入手册](agent-integration-handbook.md)
 - [附件与成品渲染链路](attachment-and-render-pipeline.md)
 - [现有文件操作](p1-existing-file-workflows.md)

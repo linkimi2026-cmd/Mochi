@@ -256,9 +256,9 @@ node scripts/check-snapshot-manifest.mjs
 脚本会打印每个不一致文件的路径、期望字节 vs 实际字节、期望/实际哈希前 16 位，
 以及期望总字节与实际总字节的差值。加 `--fail` 会以退出码 1 表示存在漂移。
 
-`.github/workflows/mochi-ci.yml` 里的快照步骤**当前是「报告但不阻断」**
-（`continue-on-error: true`）。清单再维持一段时间 0 漂移之后，删掉
-`continue-on-error` 并给脚本加 `--fail`，就升级成硬门禁。
+`.github/workflows/mochi-ci.yml` 的快照步骤已经使用 `--fail` 作为硬门禁。
+任何缺失、字节数或哈希漂移都会让 CI 失败；修改快照内文件后必须先执行
+`node scripts/reconcile-snapshot-manifest.mjs --write`，再用上面的命令复核。
 
 ---
 
