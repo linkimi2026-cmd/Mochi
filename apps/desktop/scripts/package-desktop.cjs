@@ -78,9 +78,10 @@ function selectReleaseInput(options) {
 }
 
 function createElectronBuilderArgs(target, arch, directoryOnly) {
-  const args = [electronBuilderCli, target === "mac" ? "--mac" : "--win", `--${arch}`, "--publish=never"];
-  if (directoryOnly) args.push("--dir");
-  return args;
+  // An empty target list falls back to build.mac.target's two architectures.
+  // Specify the format so the requested architecture remains the only target.
+  const format = directoryOnly ? "dir" : target === "mac" ? "dmg" : "nsis";
+  return [electronBuilderCli, target === "mac" ? "--mac" : "--win", format, `--${arch}`, "--publish=never"];
 }
 
 function run(command, args, env, extra = {}) {
@@ -146,6 +147,9 @@ function packageDesktop(argv = process.argv.slice(2)) {
   const releaseInput = selectReleaseInput(options);
   const env = { ...process.env, MOCHI_CAMPUS_STATIC_ROOT: releaseInput.staticRoot };
   runNpm(["run", "build"], env);
+  // 原生 ABI 守卫：.forge-meta 声称已重建的模块，其二进制必须真能被 Electron ABI
+  // 加载（2026-09-19 fs-ext 事故的守门人：陈旧 meta 会让 electron-builder 跳过重建）。
+  run(process.execPath, [join(__dirname, "check-native-abi.cjs"), `--arch=${options.arch}`], env);
   const startedAt = Date.now();
   run(process.execPath, createElectronBuilderArgs(target, options.arch, options.directoryOnly), env);
   const installer = options.directoryOnly ? null : expectedInstallerPath(target, options.arch);

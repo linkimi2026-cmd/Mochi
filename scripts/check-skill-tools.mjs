@@ -111,7 +111,7 @@ const scanRoots = [
 const docsRoot = join(workspaceRoot, 'docs');
 if (existsSync(docsRoot)) {
   for (const e of readdirSync(docsRoot)) {
-    if (e === 'reference' || e === 'tasks') continue;
+    if (e === 'reference' || e === 'tasks' || e === 'history') continue;
     const fp = join(docsRoot, e);
     if (statSync(fp).isDirectory()) scanRoots.push(fp);
     else if (/\.md$/.test(e)) scanRoots.push(fp);

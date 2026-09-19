@@ -1,161 +1,162 @@
-# Mochi 运行机制实测事实（Runtime Facts）
+# Mochi 运行事实
 
-> **status**: active　**last_verified**: 2026-09-12 21:0x　**verified_by**: 工具线（只读侦察：三路代码级核查 + 实测命令）
-> **性质**：本文只记录**实测过**的运行机制事实，用来回答「它现在到底是怎么跑起来的」。
-> 它存在的理由：过去多个 Agent 因为把**文档里的描述**当成机制，改错地方、白跑一轮构建
-> （典型：以为 `NODE_PATH` 负责插件解析，实际 ESM 根本不看它）。
-> **L2 原则**：代码 > 本文 > 其它文档。本文与源码冲突时，以源码为准并回来改这里。
+> **status**: active
+> **last_verified**: 2026-09-13
+> **verified_by**: Codex（当前源码、运行配置和本轮只读命令；未重新启动完整桌面应用）
 
----
+本文回答“当前代码如何启动、选角色、装载插件、连接校园服务和进入安装包”。现场状态见 `docs/PROJECT-STATUS.md`，产品设计见 `Mochi-总体方案.md`。
 
-## 0. 三行速记
+## 启动入口
 
-1. **dev 有两条互不相干的入口**：浏览器版 `./mochi-dev-up.sh`（走官方 dsh web GUI，端口 3090）；桌面版 `cd apps/desktop && npm run dev`（Electron 自己再 spawn 一个 dsh，端口随机）。
-2. **打包版只有一个入口**：`Resources/app.asar.unpacked/node_modules/@deepseek-ai/dsh/lib/bin.js --profile mochi-web`，由 `DshWebHost` 用 `ELECTRON_RUN_AS_NODE=1` 拉起。
-3. **谁决定加载哪些插件**：不是 dsh，是 `apps/desktop/resources/mochi-web/runtime-profile.cjs` 的 `provisionMochiProfiles()` —— 它生成 profile 的 `package.json` + `cordis.patch.yml` + `node_modules/<插件名>` 软链，dsh 只按**名字**去 profile 目录里找。
-
----
-
-## 1. 启动链路（打包态）
-
-| 步骤 | 位置 | 事实 |
+| 场景 | 命令 | 说明 |
 |---|---|---|
-| 选角色 | `electron/main.ts:158-177` | `--role=` > `MOCHI_RUNTIME_ROLE` > 已记录角色文件 > 首启对话框 |
-| 起 sidecar | `main.ts:456-460` → `dsh/web-host.ts:132-152` | spawn dsh bin，参数 `--expose-internals --profile mochi-web --port <MOCHI_DSH_PORT 或 0> --no-open`，`cwd = dshHome` |
-| 就绪判据 | `web-host.ts:21-31` | 解析 stdout 的 `dsh web: <url>`，且必须是回环地址；90s 超时 |
-| 环境注入 | `web-host.ts:80-120` | 先剔除 `ELECTRON_*` / `PLAYWRIGHT_BROWSERS_PATH` / `NODE_PATH` / `MOCHI_RUNTIME_NODE`，再写 `DSH_HOME`、`DSH_TELEMETRY_DISABLED=1`、`MOCHI_CAMPUS_API_URL`（仅有值且非 null 时）、`MOCHI_SEARXNG_ENDPOINT`、`PLAYWRIGHT_BROWSERS_PATH`、`MOCHI_RUNTIME_NODE`、`NODE_PATH`、`ELECTRON_RUN_AS_NODE=1` |
+| Electron 开发 | `cd apps/desktop && npm run dev` | Electron 主进程启动一个 Web sidecar，端口由运行时选择 |
+| Web 开发 | `./mochi-dev-up.sh` | 默认启动 `mochi-web` 于 3090，并连接校园服务 |
+| Mochi CLI / Web | `./mochi.sh --profile mochi-web --port 3090 --no-open` | 使用指定 profile |
+| 打包应用 | 双击 Mochi | Electron 从包内资源启动 sidecar |
 
-**校园后端地址的覆盖链（2026-09-12 实测）**：`resolveServiceDefaults()` 的优先级是
-`环境变量 MOCHI_CAMPUS_API_URL` > `runtime-profile.json` 的 `serviceDefaults.campusApiUrl`。
-实测：不设环境变量且 manifest 为 `null` → 返回 `{}`（**什么都不注入**，插件退回 `127.0.0.1:8787`）；
-设成 `https://jyl-campus-health-entry.pages.dev` → 原样生效；带路径的地址或乱写的地址 → **明确拒绝**（只接受不含路径/查询/凭据的 HTTP(S) Origin）。
-→ 演示机上要连公网校园后端，就用 `MOCHI_CAMPUS_API_URL=<origin> open -a Mochi`，**不要去改 `runtime-profile.json`**。
-| 失败呈现 | `main.ts:272-299` | 只显示诊断码（`WEB_HOST_RUNTIME_MISSING` / `TIMEOUT` / `EXITED` / `START_FAILED`） |
+`mochi-dev-up.sh` 的 `cloud` 默认 Origin 仍是历史 Cloudflare 地址。当前“联动计划”把 CloudBase 作为国内主路线，但脚本不会自动发现该地址。演示时应通过 `MOCHI_CAMPUS_API_URL` 显式传入已验证 Origin。
 
-### 1.1 🔴 已实测的更正：`NODE_PATH` 对 ESM 插件解析**无效**
+## 角色选择
 
-`web-host.ts` 会注入 `NODE_PATH=<runtimeNodeModules>`，但实测：
+桌面角色选择顺序为：命令行 `--role` → `MOCHI_RUNTIME_ROLE` → 已保存角色 → 首次启动选择框。
 
-```
-node --input-type=module -e "import('mochi-hello')"   → ERR_MODULE_NOT_FOUND
-node -e "require.resolve('mochi-hello')"              → 成功
-```
+| 角色 | 默认预设 | 预设来源 | 插件范围 |
+|---|---|---|---|
+| `teacher` | `lesson-planning` | 受管教师预设、已安装预设、用户预设 | 对应 profile 的完整教师能力 |
+| `classroom` | `classroom` | 受管课堂预设 | 受控的 8 项课堂插件，不加载用户预设 |
 
-ESM 解析**不看 NODE_PATH**。插件能被加载，靠的是另一套机制（见 §2）。
-→ **不要再试图通过调 `NODE_PATH` 去修「插件找不到」的问题**，那条路是死的。
+教师和教室角色使用不同数据根。不要让教室一体机复用教师个人运行目录。
 
-### 1.2 三处「插件来源」的现行状态
+## 数据根
 
-| 来源 | 内容 | 运行时是否生效 |
-|---|---|---|
-| `plugins/` + `client-plugins/`（源码） | 最新 | **dev 生效**：`.mochi-home.nosync/profiles/*/node_modules/<name>` 全部软链到源码树 |
-| `apps/desktop/.mochi-package-resources-v1.nosync/`（暂存） | 每次打包由 `prepare-mochi-resources.cjs` 重生成 | 否，仅打包输入（`build.extraResources` 把它拷成包内 `Resources/mochi`） |
-| `apps/desktop/node_modules/<name>`（vendor tgz 装的副本） | **不是插件来源**：只供依赖闭包与打包取材，且**已与源码分叉** | 否（除作为 `NODE_PATH` 的无效目标） |
-
-⚠️ 因此「改了源码就等于改了包」是**错的**：包里的插件来自暂存目录，而暂存目录来自**白名单里逐文件拷贝**。
-白名单在 `prepare-mochi-resources.cjs` 的 `PLUGINS`（当前 26 个）；漏登记的文件不会进包，
-且**只有 `test-package-resources.mjs` 会拦**（它跑 import 闭包断言）。
-
----
-
-## 2. dsh 侧到底怎么找到插件
-
-- 生成器为每个 profile 写 `profiles/<name>/package.json`，其中 `dependencies: { "<插件名>": "link:<绝对路径>" }`（`runtime-profile.cjs:407-437`）。
-- 同时建 `profiles/<name>/node_modules/<插件名>` → 软链到插件目录（`ensurePluginLink`，`:363-385`；每次启动幂等重建）。
-- `cordis.patch.yml` 里写 `- insert: - id: X / name: X`，dsh 的 plugin-loader 以 **profile 目录为 baseUrl** 去 import 这个名字（`@deepseek-ai/cordis-plugin-loader/lib/index.js:270-283`）。
-- 这就是为什么必须传 `--expose-internals`。
-- 解包路径：dev 用 `workspacePath`，打包用 `resourcePath`（`resolvePluginTarget`，`:439-448`）。
-
-⚠️ **软链写的是绝对路径**：App 装好后再被移动（例如从 DMG 直接运行、或换目录），软链会断，
-表现为只剩一个 `WEB_HOST_START_FAILED` 诊断码。**移动 App 后请重新启动一次让它重建软链**。
-
----
-
-## 3. 三个 home 与角色契约
-
-| 目录 | 用途 |
+| 场景 | 默认位置 |
 |---|---|
-| `<workspace>/.mochi-home.nosync` | **开发态** 教师角色 |
-| `~/.mochi-home` | **打包态** 教师角色 |
-| `<workspace>/.mochi-classroom-home.nosync` | 开发态教室角色（打包态为 `~/.mochi-classroom-home`） |
+| 教师开发态 | `<workspace>/.mochi-home.nosync` |
+| 教师打包态 | `~/.mochi-home` |
+| 教室开发态 | `<workspace>/.mochi-classroom-home.nosync` |
+| 教室打包态 | `~/.mochi-classroom-home` |
 
-解析顺序（`electron/dsh/profile.ts:43-56`）：`DSH_HOME` > `MOCHI_RUNTIME_HOME` > 按是否打包选上表之一。
-⚠️ **父 shell 里若已有 `DSH_HOME`（例如 DSH 自身的 `~/.dsh`），会劫持 profile 落盘位置**——2026-09-12 的只读侦察就真的把 Mochi 的三个 profile、`presets-visible/` 与角色标记写进了 `~/.dsh`。
-**正确姿势**：在可能带 `DSH_HOME` 的终端里启动 Mochi，统一用
+解析优先级是 `DSH_HOME` → `MOCHI_RUNTIME_HOME` → 角色默认位置。父 shell 如果已经设置 `DSH_HOME`，可能把 Mochi 写入错误目录。开发时可使用：
 
 ```bash
 env -u DSH_HOME ./mochi.sh --profile mochi-web --port 3090 --no-open
 ```
 
-或显式给 `MOCHI_RUNTIME_HOME`。另外 `~/.dsh/profiles/node_modules.lock`（`66154\n`，2026-09-04 的陈旧锁）会让以该 home 启动的 dsh 直接报 `atomic-write: timed out waiting for the writer lock`——**这是环境地雷，不是代码问题**。
+成果文件应按工具返回的输出路径和工作区查找。运行数据根不是默认成果目录。
 
-角色标记文件（`runtime-profile.cjs:586-601`）**硬绑定**：非空 home 不允许换角色复用；
-两个角色的数据完全隔离（教室端读不到教师密钥/记忆/会话）。
+## 插件如何装载
 
-| | teacher | classroom |
-|---|---|---|
-| 默认预设 | `lesson-planning` | `classroom` |
-| 预设根 | 打包：`Resources/mochi/teacher-agent-presets` | `classroom-agent-presets`（相对资源根） |
-| 官方/用户预设根 | 都挂载 | 都不挂载 |
-| 插件白名单 | 全量 | 只 8 项：hello / llm-mimo / knowledge / jxl-theme / jxl-brand / workbench / lan / lan-client |
-| 白名单实现 | `profileForRole()`，只能做减法，越界即 throw |
+`apps/desktop/resources/mochi-web/runtime-profile.cjs` 根据 `runtime-profile.json` 生成 profile 配置、Cordis patch 和插件链接。运行时按 profile 目录里的插件名装载。
 
----
+三类位置必须区分：
 
-## 4. 插件与工具的注册契约
+| 位置 | 用途 |
+|---|---|
+| `plugins/`、`client-plugins/` | 开发态源码 |
+| `apps/desktop/.mochi-package-resources-v1.nosync/` | 打包时由白名单生成的临时资源 |
+| `apps/desktop/node_modules/` | 依赖闭包和打包取材，不是开发态插件真值 |
 
-- 插件入口必须 `export const name` + `export function apply(ctx)`；可选 `export const inject`。
-- 工具：`import { defineTool } from '@deepseek-ai/dsh-tools'` → `ctx.tools.register(defineTool({...}))`。
-- **工具名不得含点号**（网关只接受 `^[a-zA-Z0-9_-]+$`）；带点号会让整轮请求 400。守卫：`test-package-resources.mjs` 的 `assertModelFacingToolNames` + `scripts/check-skill-tools.mjs`。
-- 插件之间可以互相 import（如 `@mochi/pdf-layout`），靠各自 `node_modules` 软链；**跨插件硬依赖没有声明机制**，加载顺序也不保证。
+修改源码不等于修改已经生成的安装包。打包前必须重新生成受管资源并执行 `test:package-resources`。
 
----
+当前 stager 定义 26 项插件资源；不同 profile 实际启用数量不同，不能把“打包定义数”写成每个角色都会同时加载的插件数。
 
-## 5. 出包链路（唯一路径）
+## 工具命名
 
-```
-npm run dist:mac:arm64  (apps/desktop)
-  └ package-desktop.cjs
-      ① 参数/交叉编译校验 assertNativeTarget
-      ② check-dsh-host-peers.cjs（dsh peer 契约）
-      ③ seed-packaging-keys.cjs → resources/mochi-web/seeds/*.json（0600；无密钥源则 warn 退 0）
-      ④ prepare-release-input.cjs → .mochi-release-staging.nosync/（记录源 git HEAD + dirty + 每文件 sha256）
-      ⑤ npm run build → dist-electron/
-      ⑥ electron-builder
-           beforePack → prepare-mochi-resources.cjs（生成 .mochi-package-resources-v1.nosync/）
-           files: dist-electron + package.json；asarUnpack: node_modules/**
-           extraResources: .mochi-package-resources-v1.nosync → Resources/mochi
-      ⑦ 断言安装器存在且 mtime ≥ 开建时间
+模型可见工具名只能使用字母、数字、下划线和连字符。点号会导致模型网关拒绝整轮请求。当前守卫：
+
+```bash
+node scripts/check-skill-tools.mjs
 ```
 
-快照清单：`.github/windows-native-package-inputs.json`（496 条）由 `scripts/reconcile-snapshot-manifest.mjs --write` 收敛，
-`scripts/check-snapshot-manifest.mjs [--fail]` 校验（**不带 `--fail` 永远 exit 0**，CI 里目前是报告模式）。
+工具文档应使用源码真实注册名，不根据自然语言自行猜测。
 
-⚠️ **密钥是设计上随包分发的**（作者 2026-09-12 决策，见 `docs/DECISIONS.md`）：`seeds/credentials-seed.json`
-会被打进安装包，任何拿到安装包的人都能解出这两枚 key。**不要**把它当缺陷去"修"掉注入逻辑；
-要改的是密钥本身的发放策略（用官方 key、可轮换、限额）。
+## 聊天模式与工作模式
 
----
+默认聊天模式收窄执行工具。教师要生成文件、课件、表格或模型时，先切换到工作模式。
 
-## 6. 已知的机制性风险（2026-09-12 实测，未修）
+模式限制在确认服务不可用时允许降级，目的是避免教师永远无法进入工作模式；校园写操作自己的审批仍然关闭失败，不会因为模式降级而自动执行。
 
-| # | 风险 | 证据 |
-|---|---|---|
-| 1 | 包内 `runtime-profile.cjs` 与源码有代差：9/11 包内无 `presets-visible`（源码 3 处命中）→ 教师包把 standard/ptc/minimal 预设也暴露出去 | 包内文件 vs 源码 grep |
-| 2 | 9/11 包只含 20 个插件，缺 `mochi-files/sheets/visuals/modes/modes-client/task-scheduler` | 包内 `Resources/mochi/plugins` 列表 |
-| 3 | `apps/desktop/node_modules` 里的插件副本是 9/8 的，注册的是**带点**旧工具名（43 处） | 该目录 vs 源码 diff |
-| 4 | profile 软链是绝对路径，移动 App 后需重启重建 | `ensurePluginLink` |
-| 5 | 干净克隆装不上：`package.json` 引用的 `vendor/local-plugins/*.tgz` 有 14 个未入 git | `git cat-file -e origin/main:<path>` 逐条 ABSENT |
-| 6 | 🔴 **本机打包态教师的 home 依赖构建树，且已经是断链状态**：`~/.mochi-home/profiles/*/node_modules/*` 全部指向 `apps/desktop/release/mac-arm64/Mochi.app/Contents/Resources/mochi/plugins/*`；实测 `mochi-hello` 存在、**`mochi-sheets` 已是断链**（9/11 包里没有它） | `ls -l ~/.mochi-home/profiles/*/node_modules/` + `[ -e ]` 探测 |
+## 校园接入
 
-> ⚠️ **由此得到的两条操作纪律**：
-> 1. **不要为了省磁盘删掉 `apps/desktop/release/mac-arm64/`** —— 那份 `Mochi.app` 既是台账里的证据，也是本机打包态 home 的软链目标；删了会把 home 打成全断链，再启动只会看到一个 `WEB_HOST_START_FAILED` 诊断码。（`failed-bundle-*` 与它无关，可以删。）
-> 2. 当前生产 home 处于**混合状态**（profile 声明 26 个插件、包内只有 20 个）——若直接用 `release/.../Mochi.app` 启动，某些插件解析不到。**要干净复现请用 DMG 装到 `/Applications` 后再跑**，别在这个混合 home 上做演示验收。
+### 源码和静态资源
 
----
+`scripts/campus-paths.cjs` 的校园源码优先级：
 
-## 7. 怎么用本文
+1. 有效的 `MOCHI_CAMPUS_SOURCE_ROOT`；
+2. 同级 `../联动计划`；
+3. `campus.nosync` 兼容副本。
 
-- 改代码前：先读本文 §1/§2，确认你要改的是「真正生效的那一份」。
-- 发现本文与源码不符：**改本文**，并在提交说明里写清哪一条被推翻。
-- 本文不记录产品设计、排期、交付状态——那些分别看 `Mochi-总体方案.md`、`docs/tasks/MOCHI-URGENT-REPLAN-2026-09-11.md`、`docs/DELIVERY-LEDGER.md`。
+当前本机解析到 `../联动计划`。校园静态资源可以由 `MOCHI_CAMPUS_STATIC_ROOT` 显式指定，或使用包内审核后的客户端。
+
+### API
+
+API Origin 优先使用 `MOCHI_CAMPUS_API_URL`，其次使用 `runtime-profile.json` 的 `serviceDefaults.campusApiUrl`。
+
+当前随包发行的版本化值为 `https://jyl-campus-health-entry.pages.dev`（内测阶段的生产入口）。这是**有意写进配置的事实**，不是待办：安装包必须开箱即连，否则打包版会静静地回落到 `plugins/mochi-campus/connection.mjs` 的兜底 `http://127.0.0.1:8787`，在老师电脑上表现为"校园功能全部不可用"。环境变量仍然可以覆盖它，用于受控测试或后续换域名。
+
+改动该值后必须重新出包（`extraResources` 把 `resources/mochi-web` 复制成包内 `Contents/Resources/mochi/profile`），只改源码不会影响已安装的应用。
+
+`client-plugins/jxl-campus` 提供校园界面和 `/jxl-api` 同源代理；`plugins/mochi-campus` 提供 Agent 工具。校园账号与模型凭据分开，所有写操作继续由校园权限和人工确认约束。
+
+完整关系见 `docs/PROJECT-HISTORY.md`。
+
+## 搜索接入
+
+搜索端点优先使用 `MOCHI_SEARXNG_ENDPOINT`，其次使用 `runtime-profile.json` 的 `serviceDefaults.searxngEndpoint`。当前配置值为 `null`。没有配置时不能承诺联网搜索一定可用，也不应临时依赖未经验证的公共实例。
+
+## 桌面打包链
+
+```text
+源码
+  → 平台与架构检查
+  → 依赖与 peer 检查
+  → 构建期种子
+  → 校园静态发布输入
+  → TypeScript 构建
+  → 受管 Mochi 资源暂存
+  → electron-builder
+  → 安装器存在性和时间检查
+```
+
+主要入口：`apps/desktop/scripts/package-desktop.cjs`。Mac arm64 与 x64 构建要求宿主平台和 CPU 架构匹配。Windows 正式包通过原生 Windows CI 生成。
+
+快照清单为 `.github/windows-native-package-inputs.json`。当前本轮检查结果为 504 项、91,992,954 字节、0 缺失、0 不一致。检查命令：
+
+```bash
+node scripts/check-snapshot-manifest.mjs --fail
+```
+
+不带 `--fail` 的报告模式不能作为门禁通过证据。
+
+## 凭据
+
+构建脚本可以把模型凭据种子写入安装包，以满足安装后直接使用。这是当前产品决定，同时意味着安装包接收者可能提取凭据。技术事实和治理风险见 `docs/DECISIONS.md` 与 `参赛材料/伦理与社会影响.md`。
+
+校园服务端密钥、校园数据库和用户会话不会作为校园静态客户端复制进桌面包。
+
+## 当前风险
+
+- 校园 API 和搜索端点没有默认现行地址。
+- Web 启动脚本的 Cloudflare 默认值与“联动计划”CloudBase 主路线不一致。
+- 安装包内置模型凭据需要限额、轮换和撤销治理。
+- 插件链接和运行数据可能受错误的 `DSH_HOME` 或移动后的旧 profile 影响；遇到启动错误先检查实际数据根和链接。
+- 源码、暂存资源和已发布安装包可能处于不同时间点；验收必须绑定具体包。
+
+## 维护检查
+
+```bash
+cd apps/desktop
+npm run typecheck
+npm run test:runtime-profile
+npm run test:profile-skills
+npm run test:package-resources
+
+cd ../..
+node scripts/test-campus-paths.cjs
+node scripts/test-jxl-campus-static-root.mjs
+node scripts/check-skill-tools.mjs
+node scripts/check-snapshot-manifest.mjs --fail
+```
+
+测试通过说明相应代码和资源契约成立，不自动证明线上服务、最终安装包或现场设备已经验收。

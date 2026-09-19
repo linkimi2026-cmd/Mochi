@@ -1,0 +1,93 @@
+[
+  {
+    "source": "home",
+    "start": 0,
+    "duration": 8,
+    "title": "Mochi",
+    "caption": "你的校园工作伙伴"
+  },
+  {
+    "source": "workspace",
+    "start": 8,
+    "duration": 8,
+    "title": "先选工作区",
+    "caption": "让任务与文件，留在同一个地方"
+  },
+  {
+    "source": "permissions-menu",
+    "start": 16,
+    "duration": 8,
+    "title": "明确执行权限",
+    "caption": "演示会话选择「完全权限」"
+  },
+  {
+    "source": "result-full",
+    "start": 24,
+    "duration": 8,
+    "title": "进入工作模式",
+    "caption": "从需求，到实际文件"
+  },
+  {
+    "source": "model-acute-wide",
+    "start": 32,
+    "duration": 11,
+    "title": "把知识变成可操作的模型",
+    "caption": "在 Mochi 内直接预览、点击、讲解"
+  },
+  {
+    "source": "typed",
+    "start": 43,
+    "duration": 9,
+    "title": "继续用一句话修改",
+    "caption": "保留内容，只调整你想改的地方"
+  },
+  {
+    "source": "edit-final",
+    "start": 52,
+    "duration": 5,
+    "title": "修改已完成",
+    "caption": "执行过程已省略 · 本次修改用时 31 秒"
+  },
+  {
+    "source": "updated-acute",
+    "start": 57,
+    "duration": 13,
+    "title": "修改，落实到文件",
+    "caption": "打开结果，再点一下确认"
+  },
+  {
+    "source": "ui-campus",
+    "start": 70,
+    "duration": 12,
+    "title": "今日工作，一处查看",
+    "caption": "待办、审批与班级概况"
+  },
+  {
+    "source": "ui-student-query",
+    "start": 82,
+    "duration": 13,
+    "title": "需要的信息，及时找到",
+    "caption": "用自然语言查询学生档案 · 演示数据"
+  },
+  {
+    "source": "ui-a2a-approval",
+    "start": 95,
+    "duration": 13,
+    "title": "关键操作，由人确认",
+    "caption": "看清申请内容，再决定下一步"
+  },
+  {
+    "source": "ui-commands",
+    "start": 108,
+    "duration": 6,
+    "title": "教学与校园工作",
+    "caption": "从同一个入口开始"
+  },
+  {
+    "source": "home",
+    "start": 114,
+    "duration": 6,
+    "title": "Mochi",
+    "caption": "把时间，留给教学。"
+  }
+]

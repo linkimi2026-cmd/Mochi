@@ -1,0 +1,882 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><title>Mochi · 2K 发布会版</title><script src="assets/gsap.min.js"></script><style>
+.native .root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Side pads ride the shared clearance (figma Input_Bottom drew L32/R32/B8;
+     the sides narrow with the shared width axis); the bottom gradient mask
+     is owned by the chat scroller. No top pad: the composer stack's gap owns
+     the space above; the status strip still carries its own margin. */
+  padding: 0 var(--dsh-composer-side-clearance) 8px;
+}
+
+.native .hero {
+  /* No bottom pad in the centered hero, but the side clearance must survive:
+     the hero wrapper is full-width on narrow viewports, so this padding is
+     the only thing keeping the card off the edges there. */
+  padding: 0 var(--dsh-composer-side-clearance);
+}
+
+.native .notice {
+  width: 100%;
+  max-width: var(--dsh-composer-card-max-width);
+  margin-bottom: 6px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: var(--dsw-alias-interactive-bg-hover);
+  color: var(--dsw-alias-label-secondary);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.native .card {
+  box-sizing: border-box;
+  position: relative; /* overlay anchor positioning context */
+  display: flex;
+  flex-direction: column;
+  /* figma Input 75:8208: 12px between the text area and the button row; 10px
+     top pad on the card before .InputText. */
+  gap: 12px;
+  width: 100%;
+  max-width: var(--dsh-composer-card-max-width);
+  padding-top: 10px;
+  /* Input stroke: the light neutral (l2, one step above the menus' l1),
+     drawn as the elevation hairline so it costs no layout; the shadow is the
+     soft elevation tier. Fill: the input surface token (elevated in dark). */
+  border: 0;
+  --dsw-elevation-stroke-color: var(--dsw-alias-border-l2);
+  border-radius: 22px;
+  background: var(--dsw-specific-input-major);
+  box-shadow: var(--dsw-elevation-soft);
+  /* The draft text follows the Settings font-size preference (the textarea,
+     mirror, and backdrop all inherit from here, so the three layers stay in
+     step); the line height keeps the default 10px leading via the shared px
+     delta. */
+  font-size: var(--dsh-content-font-size, 14px);
+  line-height: calc(24px + var(--dsh-content-font-delta, 0px));
+  /* Elevated surface in dark, same as the menus: the draft scrollport inside
+     scrolls once the composer hits its height cap, so the thumb takes the l2
+     pair. Declared on the card because the elevation belongs to the surface,
+     and the custom properties inherit down to the box that actually scrolls
+     (see ui-theme styles/scrollbar.css for the rebinding contract). */
+  --dsh-scrollbar-thumb: var(--dsw-alias-scrollbar-bg-l2);
+  --dsh-scrollbar-thumb-hover: var(--dsw-alias-scrollbar-hover-l2);
+}
+
+/* No-workspace trigger state: dashed l4 stroke marks the card as a pick-a-
+   workspace affordance rather than a live composer; hover answers in the
+   business blue to invite the click. Native `dashed` has a fixed browser
+   pattern, so the stroke is an ::after overlay: theme-token background masked
+   by an SVG dash ring (stroke-width 2 centered on the box edge = 1px visible
+   inside), which keeps the 22px radius and both themes. */
+.native .cardWorkspaceTrigger {
+  --dsw-elevation-stroke-color: transparent;
+  cursor: pointer;
+}
+
+.native .cardWorkspaceTrigger::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 22px;
+  background: var(--dsw-alias-border-l4);
+  transition: background-color 100ms ease;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='100%25' height='100%25' fill='none' rx='22' ry='22' stroke='black' stroke-width='2' stroke-dasharray='4 4'/%3E%3C/svg%3E");
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='100%25' height='100%25' fill='none' rx='22' ry='22' stroke='black' stroke-width='2' stroke-dasharray='4 4'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+/* Disabled toolbar controls neither receive nor swallow clicks in the trigger
+   state: pointer events fall through to the card's own click handler, making
+   the full capsule one pick target. */
+.native .cardWorkspaceTrigger :disabled {
+  pointer-events: none;
+}
+
+.native .cardWorkspaceTrigger:hover::after {
+  background: var(--dsw-alias-state-business-primary);
+}
+
+.native .accessory {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px 0;
+}
+
+/* Floating overlay anchor (menu / popupSelect shell): entries position
+   themselves against the card (bottom: 100% + gap); closed entries render null. */
+.native .overlayAnchor {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 0;
+}
+
+/* The draft's scrollport, and the ONLY scrolling box in the composer. The
+   contenteditable grows with its content inside; the 14-line cap lives here
+   because this is the box the cap describes. */
+.native .scroll {
+  max-height: var(--dsh-composer-text-max-height);
+  overflow-y: auto;
+  /* Keeps the bar off the card's right border; .input's right pad gives the
+     4px back so the text column is unchanged. */
+  margin-right: 4px;
+}
+
+/* The card's 22px corner arc still overlaps the scrollport's top (10px top
+   pad reaches only y=10): start the thumb's travel below the arc so it never
+   pokes outside the capsule. WebKit-path only; Firefox's thin bar has no
+   track margin, an accepted remainder. */
+.native .scroll::-webkit-scrollbar-track {
+  margin-top: 8px;
+}
+
+/* Auto-grow anchor: the contenteditable is in normal flow and sets the
+   draft's height; the placeholder rides it absolutely. */
+.native .grow {
+  position: relative;
+}
+
+/* Machine pending dot (adjudicating / submitting). */
+.native .pending {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  corner-shape: round;
+  background: var(--dsw-alias-state-business-primary);
+  animation: input-pending 1s ease-in-out infinite alternate;
+}
+
+@keyframes input-pending {
+  from { opacity: 0.35; }
+  to { opacity: 1; }
+}
+
+/* The contenteditable draft surface (grows with its content; .scroll caps
+   and scrolls it). figma .InputText 34:10434: pl 16 / pr 12 / pt 4 — the
+   right pad is 8 here plus .scroll's 4px bar inset. */
+.native .input {
+  box-sizing: border-box;
+  padding: 4px 8px 0 16px;
+  font-family: var(--dsw-font-family);
+  font-size: inherit;
+  line-height: inherit;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  outline: none;
+  color: var(--dsw-alias-label-primary);
+  /* Business blue, not brand-primary: that token resolves to ink in this sheet. */
+  caret-color: var(--dsw-alias-state-business-primary);
+}
+
+/* Lexical paragraphs are <p> blocks: strip the UA margins so the surface
+   keeps the textarea's line rhythm. */
+.native .input p {
+  margin: 0;
+}
+
+/* Claim ghost hint as generated content after the last paragraph: the bar
+   sets --dsh-composer-hint (a quoted string) while the claim's args are
+   blank; without the variable the declaration is invalid and nothing shows. */
+.native .input p:last-child::after {
+  content: var(--dsh-composer-hint);
+  color: var(--dsw-alias-label-caption);
+}
+
+/* figma 34:10434: #ADB2B8 light / #81858C dark — the caption pair exactly.
+   Right inset mirrors .input's 8px pad (the other 4px sits on .scroll). */
+.native .placeholder {
+  position: absolute;
+  inset: 4px 8px auto 16px;
+  color: var(--dsw-alias-label-caption);
+  pointer-events: none;
+  user-select: none;
+}
+
+.native .inputDisabled {
+  color: var(--dsw-alias-label-tertiary);
+  cursor: not-allowed;
+}
+
+.native .input[aria-haspopup='menu'] {
+  cursor: pointer;
+}
+
+/* Hero (centered empty-state) keeps the 2-line floor (figma min-h 52 = ~2 × 24
+   line + 4pt); the docked composer collapses to the content height. */
+.native .hero .input {
+  min-height: 52px;
+}
+
+/* Toolbar: attach + Plan + Read-only on the left; model + send on the right
+   (figma Input_Bottom chrome). */
+.native .row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  /* 2px moved from the bottom pad to the top: the whole control row sits 2px
+     lower in the card (it read too high against the textarea) while the card
+     height and the controls' own centering stay untouched. */
+  padding: 2px 8px 6px;
+  min-width: 0;
+  /* Size container so the chips inside can collapse to icon-only when the
+     card runs out of row width (PermissionSelect @container rule). Anonymous
+     on purpose: CSS modules hash container-name per module, so a name declared
+     here can never match a query in another module's sheet. */
+  container-type: inline-size;
+}
+
+.tools,
+.modes,
+.native .trailing {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+/* figma 75:8208 drew 16 between + and the mode chips and 4 between Plan /
+   Read-only; the chip gap widened to 12 so the pill chips read as separate
+   controls. */
+.native .tools {
+  gap: 16px;
+}
+
+.native .modes {
+  gap: 12px;
+}
+
+.native .trailing {
+  flex: none;
+  /* Wrap keeps the left mode chips and the right controls apart when the card
+     runs out of row width: the trailing group (model + send) moves to its own
+     line instead of the left group shrinking until its chip overlaps the
+     model trigger (external:107). The auto margin re-anchors it right on the
+     wrapped line; on a single line space-between already pins it right. */
+  margin-left: auto;
+  gap: 12px;
+}
+
+/* Attach circle (figma + control): 28px, selector fill, primary glyph. */
+.native .add {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 999px;
+  corner-shape: round;
+  background: var(--dsw-specific-selector);
+  color: var(--dsw-alias-label-primary);
+  cursor: pointer;
+}
+
+.native .add:hover:not(:disabled) {
+  background: var(--dsw-alias-interactive-bg-hover-solid);
+}
+
+.native .add:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* Plan / Read-only / model — native <select>, chip-like closed chrome
+   (figma ToggleButton: 13/20 medium secondary, 12px chevron). */
+.native .select {
+  max-width: 220px;
+  height: 28px;
+  padding: 0 20px 0 8px;
+  border: none;
+  border-radius: 8px;
+  outline: none;
+  background-color: transparent;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%2381858C' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 4px center;
+  background-size: 12px 12px;
+  color: var(--dsw-alias-label-secondary);
+  font-size: 13px;
+  line-height: 20px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  appearance: none;
+}
+
+.native .select:hover:not(:disabled) {
+  background-color: var(--dsw-alias-interactive-bg-hover);
+}
+
+.native .select:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* Primary send (figma IconButton 34:10465): 34px circle, #3964FE light /
+   #679EFE dark — the info-fill pair (500→400), NOT button-primary (ink);
+   white glyph; empty text = 0.4 opacity. */
+.native .primary {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 999px;
+  corner-shape: round;
+  background: var(--dsw-alias-button-info-fill);
+  /* Static white, not the foreground token: the arrow stays white on the blue
+     fill in both themes (design 34:10465). */
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 100ms ease;
+  /* Opts out of the row's 2px downward shift (.row top pad): the send circle
+     keeps its original seat while the smaller chips sit lower. Transform, not
+     margin, so flex centering math is untouched. */
+  transform: translateY(-2px);
+}
+
+.native .primary:hover:not(:disabled) {
+  background: var(--dsw-alias-button-info-hover);
+}
+
+.native .primary:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.native .retry {
+  margin-left: 8px;
+  padding: 1px 8px;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+/* 表情球工作台模组：球 + 小电脑。动作模组借自开源桌宠 Clawd（MIT），
+   本体为项目自绘焦糖色系。全部动画为 CSS keyframes，无脚本循环。 */
+
+.orb-companion {
+  position: relative;
+  display: inline-grid;
+  place-items: start center;
+}
+
+.orb-companion__orb {
+  position: relative;
+  z-index: 1;
+  display: block;
+  transform-origin: 50% 86%;
+}
+
+.orb-companion__laptop {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  z-index: 2;
+  width: 78%;
+  transform: translateX(-50%);
+}
+
+.companion-float {
+  position: absolute;
+  display: none;
+}
+
+/* ---------- idle：球静止呼吸（引擎自带），电脑静置 ---------- */
+.orb-companion--idle .companion-laptop {
+  transform-origin: 50% 100%;
+  animation: companion-laptop-breathe 4.6s ease-in-out infinite;
+}
+
+/* ---------- thinking：球表情由引擎驱动，右上角冒泡泡 ---------- */
+.orb-companion--thinking .companion-float--think {
+  display: block;
+  top: -14%;
+  right: -22%;
+  width: 46%;
+  animation: companion-float-in 0.4s ease-out both;
+}
+.orb-companion--thinking .companion-float--think circle { animation: companion-bubble 1.8s ease-in-out infinite; }
+.orb-companion--thinking .companion-float--think circle:nth-child(2) { animation-delay: 0.3s; }
+.orb-companion--thinking .companion-float--think circle:nth-child(3) { animation-delay: 0.6s; }
+
+/* ---------- typing：球左右摇摆模拟敲键盘，电脑轻微反向点头，屏幕字符闪动 ---------- */
+.orb-companion--typing .orb-companion__orb { animation: companion-rock 0.92s ease-in-out infinite; }
+.orb-companion--typing .orb-companion__laptop { animation: companion-laptop-nudge 0.92s ease-in-out infinite; }
+.orb-companion--typing .companion-glyph { animation: companion-glyph-blink 1.15s steps(2, jump-none) infinite; }
+.orb-companion--typing .companion-glyph:nth-child(2) { animation-delay: 0.14s; }
+.orb-companion--typing .companion-glyph:nth-child(3) { animation-delay: 0.28s; }
+.orb-companion--typing .companion-glyph:nth-child(4) { animation-delay: 0.42s; }
+.orb-companion--typing .companion-glyph:nth-child(5) { animation-delay: 0.57s; }
+
+/* ---------- celebrate：开心跳 ---------- */
+.orb-companion--celebrate .orb-companion__orb { animation: companion-hop 0.72s cubic-bezier(0.22, 1, 0.36, 1) infinite; }
+.orb-companion--celebrate .orb-companion__laptop { animation: companion-laptop-hop 0.72s ease-in-out infinite; }
+
+/* ---------- alert：惊叹泡泡 ---------- */
+.orb-companion--alert .companion-float--alert {
+  display: block;
+  top: -12%;
+  right: -18%;
+  width: 40%;
+  animation: companion-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.orb-companion--alert .orb-companion__orb { animation: companion-shiver 0.6s ease-in-out infinite; }
+
+/* ---------- sleep：球静止（引擎 active=false），Zzz 浮动 ---------- */
+
+.orb-companion--sleep .companion-float--zzz {
+  display: block;
+  top: -16%;
+  right: -14%;
+  width: 44%;
+  animation: companion-zzz 2.6s ease-in-out infinite;
+}
+
+/* ---------- keyframes ---------- */
+@keyframes companion-rock {
+  0%, 100% { transform: rotate(5deg); }
+  50% { transform: rotate(-5deg); }
+}
+@keyframes companion-laptop-nudge {
+  0%, 100% { transform: translateX(-50%) rotate(-1.4deg); }
+  50% { transform: translateX(-50%) rotate(1.4deg); }
+}
+@keyframes companion-laptop-breathe {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(0.8px); }
+}
+/* 作用于 svg 本体（自带 translateX(-50%) 居中），keyframe 必须保留它 */
+@keyframes companion-laptop-hop {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(1.4px); }
+}
+@keyframes companion-glyph-blink {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 1; }
+}
+@keyframes companion-bubble {
+  0%, 100% { opacity: 0.45; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(-1.5px); }
+}
+@keyframes companion-float-in {
+  from { opacity: 0; transform: translateY(4px) scale(0.9); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes companion-pop {
+  from { opacity: 0; transform: scale(0.4); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes companion-hop {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  30% { transform: translateY(-14%) rotate(-4deg); }
+  55% { transform: translateY(0) rotate(0deg); }
+  75% { transform: translateY(-7%) rotate(3deg); }
+}
+@keyframes companion-shiver {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-2.6deg); }
+  75% { transform: rotate(2.6deg); }
+}
+@keyframes companion-zzz {
+  0% { opacity: 0; transform: translateY(3px); }
+  35% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-7px); }
+}
+
+/* ---------- 减弱动态 ---------- */
+.orb-companion--still .orb-companion__orb,
+.orb-companion--still .orb-companion__laptop,
+.orb-companion--still .companion-glyph,
+.orb-companion--still .companion-float--think circle,
+.orb-companion--still .companion-float--zzz {
+  animation: none !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .orb-companion .orb-companion__orb,
+  .orb-companion .orb-companion__laptop,
+  .orb-companion .companion-glyph,
+  .orb-companion .companion-float--think circle,
+  .orb-companion .companion-float--zzz {
+    animation: none !important;
+  }
+}
+
+.expressive-orb {
+  /* Caramel ball with cream eyes: warm, picture-book, on-palette. No
+     gradient body, no highlight — colour lives on the ball itself and is
+     lerped per frame by the component. */
+  --orb-eye: #fff6e6;
+  --orb-rim: rgb(255 246 230 / 14%);
+  --orb-shadow: rgb(69 88 78 / 18%);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--orb-size, 48px);
+  block-size: var(--orb-size, 48px);
+  flex: none;
+  line-height: 0;
+}
+
+.expressive-orb__svg {
+  inline-size: 100%;
+  block-size: 100%;
+  overflow: visible;
+}
+
+/* Body fill is driven per frame (mood colour lerp). The hairline rim keeps
+   the dark ball legible on dark surfaces without acting as a highlight. */
+.expressive-orb__body {
+  stroke: var(--orb-rim);
+  stroke-width: 0.9;
+}
+
+/* Bottom inner shade only — weight, not a highlight. */
+.expressive-orb__depth {
+  opacity: 0.55;
+}
+
+.expressive-orb__shadow {
+  fill: var(--orb-shadow);
+}
+
+.expressive-orb__eye {
+  fill: var(--orb-eye);
+}
+
+/* Success settles warm and still; the reduced-motion path lands here too.
+   Still orbs keep a gentle CSS press so even the quiet ones feel alive. */
+.expressive-orb[data-still="true"] .expressive-orb__svg {
+  transform: none;
+  transition: transform 150ms ease;
+}
+
+.expressive-orb[data-still="true"]:active .expressive-orb__svg {
+  transform: scale(0.93);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .expressive-orb__svg {
+    transform: none;
+  }
+}
+  #model-original h1{
+    margin:0 0 6px;
+    font-size:22px;
+    font-weight:600;
+    letter-spacing:.02em;
+  }
+  #model-original .lede{margin:0 0 22px;font-size:13px;color:var(--ink-2)}
+
+  #model-original .stage{position:relative;height:300px;margin-bottom:20px}
+  #model-original .figure{
+    position:absolute;inset:0;
+    margin:0;
+    display:flex;align-items:center;justify-content:center;
+    opacity:0;visibility:hidden;
+    transition:opacity .22s ease;
+  }
+  #model-original .figure.is-on{opacity:1;visibility:visible}
+  #model-original .figure svg{width:100%;height:auto;max-width:360px}
+  #model-original .tri{fill:var(--fill);stroke:var(--accent);stroke-width:2.4;stroke-linejoin:round}
+  #model-original .arc{fill:none;stroke:var(--accent);stroke-width:2.2;stroke-linecap:round}
+  #model-original .arc-key{stroke-width:3.4}
+
+  #model-original .tabs{display:flex;gap:8px;margin-bottom:18px}
+  #model-original .tabs button{
+    flex:1;
+    padding:9px 4px;
+    font:inherit;font-size:13px;
+    color:var(--ink);
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:8px;
+    cursor:pointer;
+    transition:background .18s ease,color .18s ease,border-color .18s ease;
+  }
+  #model-original .tabs button:hover{border-color:#b9b9b4}
+  #model-original .tabs button[aria-pressed="true"]{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:#fff;
+  }
+  #model-original .tabs button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  #model-original .note{
+    margin:0;
+    padding-top:16px;
+    border-top:1px solid var(--line);
+    font-size:14px;
+    line-height:1.7;
+  }
+@font-face{font-family:Mochi;src:url(assets/NotoSansCJKsc-Regular.otf)}*{box-sizing:border-box}html,body{margin:0;background:#faf8f2;font-family:Mochi,sans-serif;color:#283d35}#film{width:2560px;height:1440px;position:relative;overflow:hidden}#stage{position:absolute;width:1920px;height:1080px;transform:scale(1.3333333333);transform-origin:0 0;overflow:hidden;background:#faf8f2}.scene{position:absolute;inset:0;display:none;background:#faf8f2}.brand{position:absolute;z-index:100;left:70px;top:35px;font-size:23px;letter-spacing:3px;color:#385a49}.edition{position:absolute;right:70px;top:39px;font-size:14px;color:#76857a;z-index:100}h1,h2,p{margin:0}h2{font-size:56px;line-height:1.4;letter-spacing:-2px;font-weight:600}small,.overline{font-size:18px;letter-spacing:2px;color:#6c8a77}img{display:block;width:100%}.intro-copy{position:absolute;left:210px;top:245px}.intro-copy h1{font-size:105px;line-height:1.32;letter-spacing:-5px;margin-top:35px}.intro-copy h1>span{display:block}.intro-mark{position:absolute;left:1360px;top:350px}.product-window{position:absolute;overflow:hidden;border:1px solid #dcded5;border-radius:23px;background:#f5f3e9;box-shadow:0 18px 48px #314c3512}.camera{position:absolute;transform-origin:0 0}.caption{position:absolute;bottom:40px;left:90px;right:90px;display:flex;align-items:baseline;justify-content:space-between;gap:40px}.caption b{font-weight:500;font-size:32px}.caption span{font-size:18px;color:#6b7d70}.side-copy{position:absolute;left:90px;top:285px;width:320px}.side-copy h2{font-size:49px;margin-top:30px}.relay{background:#eef4e9}.received{background:#f4efe7}.compose-label{position:absolute;left:380px;top:215px}.compose-label h2{margin-top:22px}.workspace{position:absolute;left:405px;top:455px;font-size:23px;color:#4c6255}#composer{position:absolute;left:390px;top:520px;width:1140px;transform-origin:50% 50%}.native{font-family:Mochi;--dsh-composer-card-max-width:760px;--dsh-composer-side-clearance:0;--dsh-content-font-size:18px;--dsw-specific-input-major:#fff;--dsw-elevation-soft:0 0 0 1px #e4e4db,0 8px 20px #43503e0c;--dsw-alias-label-primary:#45584e;--dsw-alias-label-secondary:#5d6b63;--dsw-specific-selector:#f4f3eb;--dsw-alias-button-info-fill:#496554;--dsw-alias-border-l2:#dedfd6;width:760px;transform:scale(1.5);transform-origin:0 0}.native .input{min-height:62px}.native .select{font-family:Mochi;padding-right:17px;font-size:13px}#caret{display:inline-block;width:1.3px;height:22px;background:#4d6856;vertical-align:middle}#execution{position:absolute;left:465px;top:610px;width:1030px;opacity:0;font-size:23px;color:#6b786e}.tool-row{padding:15px 0;border-bottom:1px solid #e5e8dd}.file-pill{display:inline-block;background:#fff;border:1px solid #dde2d5;border-radius:8px;padding:4px 14px;font-size:19px}.mini-mo{height:60px;width:55px}.mini-mo .orb-companion{transform:scale(.16);transform-origin:0 0}.small-note{position:absolute;bottom:40px;left:0;width:100%;text-align:center;font-size:16px;color:#839080}#hero-slide{position:absolute;left:290px;top:130px;width:1340px;border-radius:18px;overflow:hidden;box-shadow:0 25px 80px #30463626;transform-origin:50% 50%}#artifact-tag{position:absolute;bottom:52px;left:75px;font-size:20px;color:#607467}#outputs{background:#eff3e8}.gallery-heading{position:absolute;left:85px;top:355px;width:480px;opacity:0}.gallery-heading h2{font-size:49px;margin-top:25px}#conveyor{position:absolute;left:625px;top:85px;width:1230px;height:890px;overflow:hidden;opacity:0;mask-image:linear-gradient(transparent,black 7%,black 93%,transparent)}.belt{position:absolute;top:0;width:382px;display:flex;flex-direction:column;gap:24px}.belt.left{left:0}.belt.middle{left:414px}.belt.right{left:828px}.artifact{flex:none;border-radius:16px;overflow:hidden;background:white;border:1px solid #dfe5d6;box-shadow:0 10px 20px #2e493711}.artifact span{display:block;padding:17px 19px;font-size:17px;color:#51694f}.artifact.paper{padding:15px}.artifact.paper img{height:440px;object-fit:cover;object-position:top}.artifact.paper span{padding:12px 5px}.model-copy{position:absolute;left:120px;top:310px}.model-copy h2{margin-top:22px}.model-copy p{margin-top:30px;font-size:23px;line-height:1.8;color:#778177}#model{background:#eeeffb}#model-card{position:absolute;left:860px;top:135px;width:875px;height:820px;border-radius:25px;background:#fbfbf9;box-shadow:0 20px 60px #3f4c7418;overflow:hidden}#model-original{position:absolute;width:440px;left:118px;top:40px;transform:scale(1.45);transform-origin:0 0;--ink:#2c2c2c;--ink-2:#6b6b6b;--accent:#3F5B99;--fill:#e9eef7;--line:#dcdcd8;--bg:#fbfbf9;font-size:14px;font-family:Mochi}#classroom{background:#f1f3e8}.classroom-label{position:absolute;left:100px;top:115px}.classroom-label h2{font-size:42px;margin-top:12px}#class-slide1,#class-slide2{position:absolute;left:430px;top:275px;width:1060px;border-radius:15px;overflow:hidden;box-shadow:0 20px 50px #244f3a1a}#class-slide2{opacity:0}.class-controls{position:absolute;left:840px;top:915px;font-size:28px;width:260px;text-align:center}.connected-copy{position:absolute;left:100px;top:220px;width:760px}.connected-copy h2{font-size:62px;margin-top:25px}.end-art{position:absolute;border:1px solid #d7dfce;border-radius:17px;overflow:hidden;box-shadow:0 20px 50px #41633815}.end-art.a{left:1000px;top:200px;width:710px}.end-art.b{left:830px;top:485px;width:310px;transform:rotate(-5deg)}.end-art.c{left:1210px;top:665px;width:540px;transform:rotate(4deg)}.end-words{position:absolute;left:130px;right:140px;top:990px;display:flex;justify-content:space-between;font-size:28px;color:#4c6951}#end{background:#f9f3e7}#mo-final{position:absolute;left:830px;top:220px}.end-title{position:absolute;top:598px;width:100%;text-align:center;font-size:106px;letter-spacing:-4px}.end-sub{position:absolute;top:770px;width:100%;text-align:center;font-size:30px;color:#738270}#thread-layer{position:absolute;inset:0;z-index:110;pointer-events:none}#thread{fill:none;stroke:#79a882;stroke-width:4;stroke-linecap:round;opacity:0}#cursor{position:absolute;width:31px;height:41px;z-index:120;opacity:0;filter:drop-shadow(0 2px 2px #213b422b);transform-origin:3px 3px}#click{position:absolute;width:60px;height:60px;margin:-30px;border:2px solid #688f6f;border-radius:50%;z-index:119;opacity:0}.orb-companion *{animation:none!important}.expressive-orb__body{fill:#a06a32}@font-face{font-family:Mochi;src:url(assets/NotoSansCJKsc-Bold.otf);font-weight:700}h1,h2{font-weight:700}.intro-copy h1{letter-spacing:-6px}.intro-copy h1>span:last-child{color:#537552}.end-title{font-weight:700;letter-spacing:-5px}.gallery-heading h2{line-height:1.5;font-weight:700}.brand{font-weight:700;letter-spacing:-1px;font-size:29px}.edition{letter-spacing:1px}#model-original .figure,#model-original button{transition:none!important}.campus-title{position:absolute;left:320px;top:170px}.campus-title h2{margin-top:25px;font-size:54px}#campus-composer{position:absolute;left:390px;top:520px;width:1140px;transform-origin:50% 50%}.user-bubble{position:absolute;left:1060px;top:405px;max-width:570px;border-radius:22px;padding:20px 28px;background:#edf3ee;color:#43564c;font-size:26px}.native-answer{position:absolute;left:415px;top:535px;width:1120px;color:#45584e;font-size:27px;line-height:1.85}.native-answer p{margin:12px 0 30px}.native-answer strong{font-weight:700}.answer-mo{width:55px;height:67px}.answer-mo .orb-companion{transform:scale(.2);transform-origin:0 0}.approval-native{width:760px;transform:scale(1.5);transform-origin:0 0;--dsh-composer-side-clearance:0px;--dsh-chat-content-width:760px;--dsw-alias-state-warn-secondary:#d5a54e;--dsw-specific-input-major:#fff;--dsw-shadow-lv2:0 8px 20px #66481d09;--dsw-alias-state-warn-tertiary:#fbf5e8;--dsw-alias-state-warn-primary:#b78d4a;--dsw-alias-label-primary:#35473f}.approval-native button{font-family:Mochi;font-size:15px;line-height:24px;padding:7px 14px;border-radius:15px;border:1px solid #e0e4de;color:#45584e;background:#fff}.approval-native button.allow{background:#495e52;color:white;border-color:transparent}#approval-view{position:absolute;left:375px;top:335px;width:1140px}#approval-result{top:500px}.native-answer strong{border-radius:4px;padding:2px 5px}.gallery-heading small{letter-spacing:1px}
+@font-face{font-family:MochiDisplay;src:url(assets/NotoSerifCJKsc-SemiBold.otf);font-weight:600}.intro-copy h1>span:last-child{font-family:MochiDisplay;font-weight:600;letter-spacing:-4px}.end-title{display:flex;justify-content:center;align-items:baseline;gap:30px}.arrival{font-family:MochiDisplay;font-weight:600;font-size:116px;letter-spacing:1px}.wordmark{font-size:112px;letter-spacing:-6px}.end-dot{display:inline-block;width:15px;height:15px;background:#6c8b60;border-radius:50%;margin-left:-12px}.end-sub{letter-spacing:3px}
+.glyph-mask{display:inline-block;overflow:hidden;vertical-align:bottom;line-height:1.45;padding-bottom:.09em;margin-bottom:-.09em}.glyph{display:inline-block;white-space:pre;will-change:transform}.end-title .glyph-mask{line-height:1.45}.intro-copy .glyph-mask{line-height:1.4}
+
+.edition,small,.overline{color:#52634e}.small-note,#artifact-tag{color:#5b6c53}
+.network-header{position:absolute;left:635px;top:100px;width:1070px;height:75px;display:flex;align-items:center;justify-content:space-between;gap:30px}.network-agent{display:flex;align-items:center;position:relative;height:75px;width:235px;font-size:22px;white-space:nowrap}.network-agent>.orb-companion{position:absolute;left:0;top:1px;transform:scale(.21);transform-origin:0 0}.network-agent>span:last-child{margin-left:70px}.network-header>svg{width:500px;height:60px;flex-shrink:0;overflow:visible}.network-header path{fill:none;stroke:#b3c5a5;stroke-width:2}.message-dot{fill:#688e5a}
+.gallery-thumb{width:100%;aspect-ratio:16/9;background-size:cover;background-position:center}.paper .gallery-thumb{height:440px;aspect-ratio:auto;background-position:top}.end-sub{font-size:27px;letter-spacing:1px}
+.approval-native .root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px calc(var(--dsh-composer-side-clearance) + 16px) 12px;
+}
+
+.approval-native .card {
+  overflow: hidden;
+  width: 100%;
+  max-width: var(--dsh-chat-content-width);
+  border: 1px solid var(--dsw-alias-state-warn-secondary);
+  border-radius: 20px;
+  background: var(--dsw-specific-input-major);
+  box-shadow: var(--dsw-shadow-lv2);
+  --dsh-scrollbar-thumb: var(--dsw-alias-scrollbar-bg-l2);
+  --dsh-scrollbar-thumb-hover: var(--dsw-alias-scrollbar-hover-l2);
+}
+
+.approval-native .strip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--dsw-alias-state-warn-tertiary);
+  color: var(--dsw-alias-state-warn-primary);
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.approval-native .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  corner-shape: round;
+  background: var(--dsw-alias-state-warn-primary);
+}
+
+.approval-native .body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-sizing: border-box;
+  max-height: var(--dsh-composer-text-max-height);
+  overflow-y: auto;
+  padding: 12px 16px 0;
+}
+
+.approval-native .headline {
+  color: var(--dsw-alias-label-primary);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 24px;
+}
+
+.approval-native .command {
+  color: var(--dsw-alias-label-tertiary);
+  font-family: var(--ds-font-family-code);
+  font-size: 13px;
+  line-height: 20px;
+  word-break: break-all;
+}
+
+.approval-native .actionRow {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 14px 16px;
+}
+
+.approval-native .reject:hover:not(:disabled) {
+  background: var(--dsw-alias-interactive-bg-hover-danger);
+  color: var(--dsw-alias-state-error-primary);
+  border-color: transparent;
+}
+#thread{display:none!important}.network-header path{stroke-dasharray:5 9}.message-dot{display:none}.teacher-heading{position:absolute;left:210px;top:185px;width:1400px}.teacher-heading h2{margin-top:24px;font-size:52px}#teacher-incoming{top:515px}#teacher-composer{position:absolute;left:390px;top:520px;width:1140px;transform-origin:50% 50%}#teacher-response{top:495px}#teacher-talk{background:#f4f5ea}
+
+.model-copy p{color:#596951}
+#thread-layer,.network-header>svg{display:none!important}.approval-native .strip{color:#80612f}
+.gallery-heading h2,.model-copy h2,.teacher-heading h2,.connected-copy h2{font-family:MochiDisplay;font-weight:600;letter-spacing:-1px}
+.gallery-heading h2{font-size:48px}.teacher-heading h2{font-size:53px}.connected-copy h2{font-size:64px}
+#findpeer .side-copy h2,#findreturn .side-copy h2{font-family:MochiDisplay;font-weight:600}
+.preset-native .card {
+  border: 0.5px solid var(--dsw-alias-border-l4);
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  transition: border-color .16s, background .16s;
+}
+.preset-native .cardMain {
+  flex: 1;
+  appearance: none;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 16px 12px;
+  border-radius: 12px 12px 0 0;
+} .preset-title{position:absolute;left:160px;top:150px}.preset-title h2{margin-top:20px;font-size:54px}.preset-title h2>span{font-family:MochiDisplay;font-weight:600}.preset-pop{position:absolute;left:150px;top:450px;width:500px;background:#fff;border-radius:25px;box-shadow:0 18px 55px #29493410;overflow:hidden}.pop-1{left:710px;top:505px}.pop-2{left:1270px;top:460px}.preset-native{--dsw-alias-border-l4:#dbe0d6;color:#35493d;font-family:Mochi}.preset-native .cardMain{padding:32px}.preset-name{font-size:30px;font-weight:700;margin-bottom:22px}.preset-name span{font-weight:400;font-size:18px;margin-left:15px;border:1px solid #dbe0d6;border-radius:15px;padding:2px 8px}.preset-native p{font-size:24px;line-height:1.75;margin-bottom:24px}.preset-native code{font-size:20px;color:#607362}.preset-actions{border-top:1px solid #e5e8df;padding:17px 28px;text-align:right;font-size:22px;color:#647560}
+#quiz-page .back{
+    display:inline-block;
+    margin-bottom:16px;
+    font-size:13px;
+    color:var(--accent);
+    text-decoration:none;
+  }#quiz-page .back:hover{text-decoration:underline}#quiz-page h1{margin:0 0 6px;font-size:20px;font-weight:600;letter-spacing:.02em}#quiz-page .lede{margin:0 0 28px;font-size:13px;color:var(--ink-2)}#quiz-page .q{padding:22px 0;border-top:1px solid var(--line)}#quiz-page .q:first-of-type{border-top:0;padding-top:0}#quiz-page .stem{
+    display:flex;gap:10px;
+    margin:0 0 14px;
+    font-size:15px;line-height:1.7;
+  }#quiz-page .num{
+    flex:none;
+    font-size:12px;font-weight:600;color:var(--accent);
+    padding-top:4px;
+  }#quiz-page .choices{display:flex;gap:8px}#quiz-page .choices button{
+    min-width:68px;
+    padding:7px 14px;
+    font:inherit;font-size:14px;
+    color:var(--ink);
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:8px;
+    cursor:pointer;
+    transition:background .18s ease,color .18s ease,border-color .18s ease,opacity .18s ease;
+  }#quiz-page .choices button:hover:not(:disabled){border-color:#b9b9b4}#quiz-page .choices button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}#quiz-page .choices button:disabled{cursor:default}#quiz-page .choices button.is-correct{
+    background:var(--ok);border-color:var(--ok);color:#fff;
+  }#quiz-page .choices button.is-picked-wrong{
+    background:var(--no);border-color:var(--no);color:#fff;
+  }#quiz-page .choices button.is-hint{
+    background:#fff;border-color:var(--ok);color:var(--ok);
+  }#quiz-page .q.done .choices button:not(.is-correct):not(.is-picked-wrong){opacity:.45}#quiz-page .feedback{
+    display:none;
+    margin:14px 0 0;
+    padding-left:2px;
+    font-size:13.5px;line-height:1.75;
+  }#quiz-page .feedback.is-on{display:flex;gap:8px}#quiz-page .feedback .mark{flex:none;font-weight:600}#quiz-page .feedback.is-right{color:var(--ok)}#quiz-page .feedback.is-right .text{color:var(--ink)}#quiz-page .feedback.is-wrong{color:var(--no)}#quiz-page .feedback.is-wrong .text{color:var(--ink)}#quiz-page{position:absolute;left:970px;top:220px;width:520px;transform:scale(1.35);transform-origin:0 0;font-family:Mochi;--ink:#2c2c2c;--ink-2:#586058;--accent:#3f5b99;--ok:#2f7a4f;--no:#b4552d;--line:#dcdcd8;background:#fbfbf9;padding:30px;border-radius:22px;box-shadow:0 20px 55px #41533512}#quiz-page button{transition:none!important}#quiz-heading h2{max-width:700px}#quiz-story .back{pointer-events:none}
+</style></head><body><main id="film" data-composition-id="mochiV4" data-width="2560" data-height="1440" data-duration="80" data-fps="120"><div id="stage"><div class="brand">Mochi</div><div class="edition">连接整个校园。</div><section id="intro" class="scene " data-layout-allow-overflow><div class="intro-copy"><span class="overline">MOCHI · 校园工作的 AI 伙伴</span><h1><span>一句话。</span><span>让工作开始。</span></h1></div><div class="intro-mark"><span aria-label="Mo" class="orb-companion orb-companion--idle" data-state="idle" role="img" style="width:260px;height:317px"><span class="orb-companion__orb"><span class="expressive-orb expressive-orb--idle" data-mood="idle" data-still="false" style="--orb-size:260px" aria-hidden="true"><svg viewBox="0 0 100 100" class="expressive-orb__svg"><defs><radialGradient id="intro-depth" cx="50%" cy="122%" r="78%"><stop offset="0%" stop-color="#000000" stop-opacity="0.22"></stop><stop offset="60%" stop-color="#000000" stop-opacity="0"></stop></radialGradient></defs><ellipse cx="50" cy="93.5" rx="25" ry="4.2" class="expressive-orb__shadow"></ellipse><g><path d="M 93.50 50.00 C 93.64 58.25, 89.57 68.46, 84.46 75.04 C 79.35 81.62, 70.70 87.08, 62.83 89.47 C 54.95 91.87, 44.90 91.95, 37.19 89.41 C 29.49 86.88, 21.51 80.84, 16.59 74.27 C 11.67 67.70, 8.01 58.32, 7.69 50.00 C 7.38 41.68, 9.82 31.02, 14.70 24.35 C 19.59 17.69, 29.06 12.07, 37.00 10.00 C 44.95 7.92, 54.61 9.30, 62.38 11.90 C 70.15 14.49, 78.46 19.20, 83.65 25.55 C 88.84 31.90, 93.37 41.75, 93.50 50.00 Z" class="expressive-orb__body"></path><circle cx="50" cy="50" r="41" fill="url(#intro-depth)" class="expressive-orb__depth"></circle><g transform="translate(50 52)"><g><ellipse cx="-11" cy="0" rx="5.6" ry="7.2" class="expressive-orb__eye"></ellipse><ellipse cx="11" cy="0" rx="5.6" ry="7.2" class="expressive-orb__eye"></ellipse></g></g></g></svg></span></span><svg aria-hidden="true" class="orb-companion__laptop" viewBox="24 10 72 54"><ellipse class="companion-shadow" cx="60" cy="58" fill="rgba(46,26,10,0.15)" rx="36" ry="3.6"></ellipse><g class="companion-laptop"><rect class="companion-laptop__screen" fill="#4A3826" height="37" rx="5" width="54" x="33" y="11"></rect><rect fill="#2E2318" height="30" rx="3" width="48" x="36" y="14.5"></rect><g class="companion-laptop__glyphs" fill="#FFE7C2"><rect class="companion-glyph" height="2.8" rx="1.4" width="11" x="40" y="20"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="16" x="40" y="26.5"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="7" x="40" y="33"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="12" x="60" y="26.5"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="8" x="60" y="33"></rect></g><path d="M26 52.5 L94 52.5 L87 49.5 L33 49.5 Z" fill="#6B4E33"></path><rect fill="#7A5C3E" height="3.6" rx="1.8" width="70" x="25" y="51.1"></rect></g></svg><svg aria-hidden="true" class="companion-float companion-float--think" viewBox="0 0 60 48"><circle cx="14" cy="40" fill="var(--surface-strong, #FFF6E8)" opacity="0.9" r="4.5"></circle><circle cx="27" cy="28" fill="var(--surface-strong, #FFF6E8)" opacity="0.75" r="6.5"></circle><circle cx="43" cy="12" fill="var(--surface-strong, #FFF6E8)" opacity="0.6" r="9"></circle></svg><svg aria-hidden="true" class="companion-float companion-float--alert" viewBox="0 0 32 32"><circle cx="16" cy="16" fill="#E8B34B" opacity="0.95" r="14"></circle><rect fill="#5B3A14" height="13" rx="2.2" width="4.4" x="13.8" y="6"></rect><circle cx="16" cy="23.6" fill="#5B3A14" r="2.2"></circle></svg><svg aria-hidden="true" class="companion-float companion-float--zzz" viewBox="0 0 48 40"><text fill="#B98A5C" font-family="system-ui, sans-serif" font-size="11" font-weight="700" x="4" y="34">z</text><text fill="#B98A5C" font-family="system-ui, sans-serif" font-size="15" font-weight="700" x="18" y="22">Z</text><text fill="#B98A5C" font-family="system-ui, sans-serif" font-size="19" font-weight="700" x="32" y="10">Z</text></svg></span></div></section><section id="home" class="scene full" data-layout-allow-overflow><div class="product-window" style="left:200px;top:105px;width:1520px;height:855px"><div class="camera" style="width:1520px;height:855px;left:0px;top:0px"><video id="home-media" src="assets/home-80-0.714286.mp4" muted playsinline data-start="2.500000" data-duration="2.142857" data-track-index="2" style="width:100%;height:100%"></video></div></div><div class="caption"><b>先选择工作区</b><span>文件、任务与上下文，在一起</span></div></section><section id="setup" class="scene full" data-layout-allow-overflow><div class="product-window" style="left:200px;top:105px;width:1520px;height:855px"><div class="camera" style="width:1520px;height:855px;left:0px;top:0px"><video id="setup-media" src="assets/setup-80-0.714286.mp4" muted playsinline data-start="4.642857" data-duration="2.857143" data-track-index="3" style="width:100%;height:100%"></video></div></div><div class="caption"><b>切换「工作」，开放执行权限</b><span>选择完全权限 → 全部允许；工作台及时收起</span></div></section><section id="compose" class="scene " data-layout-allow-overflow><div class="compose-label"><small>准备一堂课，从真实材料开始</small><h2>把需求，交给 Mochi。</h2></div><div class="workspace">▱ 测试　⌄　　备课与课件　⌄</div><div id="composer"><div class="native"><div class="root hero"><div class="card"><div class="scroll"><div class="grow"><div class="input"><span id="typed"></span><i id="caret"></i></div></div></div><div class="row"><div class="tools"><button class="add">＋</button><button class="add"><svg width="15" height="15" viewBox="0 0 24 24"><path d="M8 12v5a4 4 0 0 0 8 0V7a3 3 0 0 0-6 0v9a1 1 0 0 0 2 0V8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><div class="modes"><span class="select">完全权限</span></div></div><div class="trailing"><span class="select">DeepSeek Expert Visual</span><button class="primary" id="send"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 20V4M5 11l7-7 7 7" fill="none" stroke="white" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div></div></div></div></div></div><div id="execution"><div class="mini-mo"><span aria-label="Mo" class="orb-companion orb-companion--idle" data-state="idle" role="img" style="width:260px;height:317px"><span class="orb-companion__orb"><span class="expressive-orb expressive-orb--idle" data-mood="idle" data-still="false" style="--orb-size:260px" aria-hidden="true"><svg viewBox="0 0 100 100" class="expressive-orb__svg"><defs><radialGradient id="exec-depth" cx="50%" cy="122%" r="78%"><stop offset="0%" stop-color="#000000" stop-opacity="0.22"></stop><stop offset="60%" stop-color="#000000" stop-opacity="0"></stop></radialGradient></defs><ellipse cx="50" cy="93.5" rx="25" ry="4.2" class="expressive-orb__shadow"></ellipse><g><path d="M 93.50 50.00 C 93.64 58.25, 89.57 68.46, 84.46 75.04 C 79.35 81.62, 70.70 87.08, 62.83 89.47 C 54.95 91.87, 44.90 91.95, 37.19 89.41 C 29.49 86.88, 21.51 80.84, 16.59 74.27 C 11.67 67.70, 8.01 58.32, 7.69 50.00 C 7.38 41.68, 9.82 31.02, 14.70 24.35 C 19.59 17.69, 29.06 12.07, 37.00 10.00 C 44.95 7.92, 54.61 9.30, 62.38 11.90 C 70.15 14.49, 78.46 19.20, 83.65 25.55 C 88.84 31.90, 93.37 41.75, 93.50 50.00 Z" class="expressive-orb__body"></path><circle cx="50" cy="50" r="41" fill="url(#exec-depth)" class="expressive-orb__depth"></circle><g transform="translate(50 52)"><g><ellipse cx="-11" cy="0" rx="5.6" ry="7.2" class="expressive-orb__eye"></ellipse><ellipse cx="11" cy="0" rx="5.6" ry="7.2" class="expressive-orb__eye"></ellipse></g></g></g></svg></span></span><svg aria-hidden="true" class="orb-companion__laptop" viewBox="24 10 72 54"><ellipse class="companion-shadow" cx="60" cy="58" fill="rgba(46,26,10,0.15)" rx="36" ry="3.6"></ellipse><g class="companion-laptop"><rect class="companion-laptop__screen" fill="#4A3826" height="37" rx="5" width="54" x="33" y="11"></rect><rect fill="#2E2318" height="30" rx="3" width="48" x="36" y="14.5"></rect><g class="companion-laptop__glyphs" fill="#FFE7C2"><rect class="companion-glyph" height="2.8" rx="1.4" width="11" x="40" y="20"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="16" x="40" y="26.5"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="7" x="40" y="33"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="12" x="60" y="26.5"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="8" x="60" y="33"></rect></g><path d="M26 52.5 L94 52.5 L87 49.5 L33 49.5 Z" fill="#6B4E33"></path><rect fill="#7A5C3E" height="3.6" rx="1.8" width="70" x="25" y="51.1"></rect></g></svg><svg aria-hidden="true" class="companion-float companion-float--think" viewBox="0 0 60 48"><circle cx="14" cy="40" fill="var(--surface-strong, #FFF6E8)" opacity="0.9" r="4.5"></circle><circle cx="27" cy="28" fill="var(--surface-strong, #FFF6E8)" opacity="0.75" r="6.5"></circle><circle cx="43" cy="12" fill="var(--surface-strong, #FFF6E8)" opacity="0.6" r="9"></circle></svg><svg aria-hidden="true" class="companion-float companion-float--alert" viewBox="0 0 32 32"><circle cx="16" cy="16" fill="#E8B34B" opacity="0.95" r="14"></circle><rect fill="#5B3A14" height="13" rx="2.2" width="4.4" x="13.8" y="6"></rect><circle cx="16" cy="23.6" fill="#5B3A14" r="2.2"></circle></svg><svg aria-hidden="true" class="companion-float companion-float--zzz" viewBox="0 0 48 40"><text fill="#B98A5C" font-family="system-ui, sans-serif" font-size="11" font-weight="700" x="4" y="34">z</text><text fill="#B98A5C" font-family="system-ui, sans-serif" font-size="15" font-weight="700" x="18" y="22">Z</text><text fill="#B98A5C" font-family="system-ui, sans-serif" font-size="19" font-weight="700" x="32" y="10">Z</text></svg></span></div><div class="tool-row">工具调用 · file_search · 宣传片V3</div><div class="tool-row">读取 · 校园节水调查.csv</div><div class="tool-row">本次产出　<span class="file-pill">presentation.pptx</span></div></div><div class="small-note">任务过程节选 · 演示材料为虚拟教学数据</div></section><section id="outputs" class="scene " data-layout-allow-overflow><div class="gallery-heading"><small>从原始数据，到可交付成果</small><h2>不止回答。<br>交付一整套课堂材料。</h2></div><div id="conveyor"><div class="belt left"><div class="artifact"><div class="gallery-thumb" role="img" aria-label="Mochi 实际生成成果" style="background-image:url(assets/slide-2.png)"></div><span>可编辑 PPT · 课堂展示</span></div><div class="artifact"><div class="gallery-thumb" role="img" aria-label="Mochi 实际生成成果" style="background-image:url(assets/slide-3.png)"></div><span>可编辑 PPT · 课堂展示</span></div><div class="artifact"><div class="gallery-thumb" role="img" aria-label="Mochi 实际生成成果" style="background-image:url(assets/slide-4.png)"></div><span>可编辑 PPT · 课堂展示</span></div><div class="artifact"><div class="gallery-thumb" role="img" aria-label="Mochi 实际生成成果" style="background-image:url(assets/slide-2.png)"></div><span>可编辑 PPT · 课堂展示</span></div></div><div class="belt middle"><div class="artifact paper"><div class="gallery-thumb" role="img" aria-label="Mochi 实际生成成果" style="background-image:url(assets/exam-1.png)"></div><span>学生练习</span></div><div class="artifact paper"><div class="gallery-thumb" role="img" aria-label="Mochi 实际生成成果" style="background-image:url(assets/exam-2.png)"></div><span>答案与解析</span></div><div class="artifact paper"><div class="gallery-thumb" role="img" aria-label="Mochi 实际生成成果" style="background-image:url(assets/exam-1.png)"></div><span>学生练习</span></div></div><div class="belt right"><div class="artifact"><div class="gallery-thumb" role="img" aria-label="Mochi 实际生成成果" style="background-image:url(assets/slide-4.png)"></div><span>从观察，到行动</span></div><div class="artifact"><div class="gallery-thumb" role="img" aria-label="Mochi 实际生成成果" style="background-image:url(assets/slide-1.png)"></div><span>从观察，到行动</span></div><div class="artifact"><div class="gallery-thumb" role="img" aria-label="Mochi 实际生成成果" style="background-image:url(assets/slide-3.png)"></div><span>从观察，到行动</span></div><div class="artifact"><div class="gallery-thumb" role="img" aria-label="Mochi 实际生成成果" style="background-image:url(assets/slide-4.png)"></div><span>从观察，到行动</span></div></div></div><div id="hero-slide"><img id="outputs-image-1" data-start="13.500000" data-duration="9.000000" src="assets/slide-1.png"></div><div id="artifact-tag">Mochi 实际生成 · 可编辑 PPTX / Word / PDF</div></section><section id="model" class="scene " data-layout-allow-overflow><div class="model-copy"><small>INTERACTIVE LEARNING</small><h2>让抽象知识，<br>动起来。</h2><p>点击、切换、观察。<br>把概念变成可操作的交互模型。</p></div><div id="model-card"><div id="model-original">
+  <h1>三角形，动手认识</h1>
+  <p class="lede">三角形按角的大小，分成三类。</p>
+
+  <div class="stage">
+    <!-- 锐角三角形：三顶点 A(180,50) B(50,250) C(310,250)，三角分别约 66°、57°、57° -->
+    <figure class="figure is-on" data-key="acute">
+      <svg viewBox="0 0 360 300" role="img" aria-label="锐角三角形，三个角都是锐角">
+        <polygon class="tri" points="180,50 50,250 310,250"/>
+        <path class="arc" d="M161.47,78.5 A34,34 0 0 0 198.53,78.5"/>
+        <path class="arc" d="M66.35,224.85 A30,30 0 0 1 80,250"/>
+        <path class="arc" d="M280,250 A30,30 0 0 1 293.65,224.85"/>
+      </svg>
+    </figure>
+
+    <!-- 直角三角形：直角在 B(70,250)，用方角标记 -->
+    <figure class="figure" data-key="right">
+      <svg viewBox="0 0 360 300" role="img" aria-label="直角三角形，在直角处用方角标记">
+        <polygon class="tri" points="70,60 70,250 300,250"/>
+        <path class="arc" d="M70,92 A32,32 0 0 0 94.67,80.38"/>
+        <path class="arc" d="M272,250 A28,28 0 0 1 278.41,232.17"/>
+        <path class="arc arc-key" d="M70,224 L96,224 L96,250"/>
+      </svg>
+    </figure>
+
+    <!-- 钝角三角形：钝角在 B(130,250)，约 114° -->
+    <figure class="figure" data-key="obtuse">
+      <svg viewBox="0 0 360 300" role="img" aria-label="钝角三角形，有一个大于 90 度的钝角">
+        <polygon class="tri" points="50,70 130,250 320,250"/>
+        <path class="arc" d="M61.37,95.59 A28,28 0 0 0 73.3,85.53"/>
+        <path class="arc" d="M300.03,236.69 A24,24 0 0 0 296,250"/>
+        <path class="arc arc-key" d="M114.57,215.28 A38,38 0 0 1 168,250"/>
+      </svg>
+    </figure>
+  </div>
+
+  <div class="tabs">
+    <button type="button" data-key="acute" aria-pressed="true">锐角三角形</button>
+    <button type="button" data-key="right" aria-pressed="false">直角三角形</button>
+    <button type="button" data-key="obtuse" aria-pressed="false">钝角三角形</button>
+  </div>
+
+  <p class="note" id="note">三个角都是锐角，都小于 90°。</p>
+</div></div></section><section id="campus" class="scene full" data-layout-allow-overflow><div class="product-window" style="left:200px;top:105px;width:1520px;height:855px"><div class="camera" style="width:1520px;height:855px;left:0px;top:0px"><video id="campus-media" src="assets/campus-80-0.750000.mp4" muted playsinline data-start="33.500000" data-duration="3.000000" data-track-index="7" style="width:100%;height:100%"></video></div></div><div class="caption"><b>我们也为校园协作搭建了配套后端</b><span>待办、学生记录与事务状态，连接起来</span></div></section><section id="campus-flow" class="scene " data-layout-allow-overflow><div class="campus-title"><small>校园工作，问 Mochi。</small><h2 id="campus-headline">问一句，状态就清楚。</h2></div><div id="campus-composer"><div class="native"><div class="root hero"><div class="card"><div class="scroll"><div class="grow"><div class="input"><span id="campus-typed"></span><i id="campus-caret"></i></div></div></div><div class="row"><div class="tools"><button class="add">＋</button><button class="add"><svg width="15" height="15" viewBox="0 0 24 24"><path d="M8 12v5a4 4 0 0 0 8 0V7a3 3 0 0 0-6 0v9a1 1 0 0 0 2 0V8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><div class="modes"><span class="select">完全权限</span></div></div><div class="trailing"><span class="select">DeepSeek Expert Visual</span><button class="primary" id="campus-send"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 20V4M5 11l7-7 7 7" fill="none" stroke="white" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div></div></div></div></div></div><div id="ask-bubble" class="user-bubble">林小禾在不在校，在哪里？</div><div id="ask-answer" class="native-answer"><div class="answer-mo"><span aria-label="Mo" class="orb-companion orb-companion--idle" data-state="idle" role="img" style="width:260px;height:317px"><span class="orb-companion__orb"><span class="expressive-orb expressive-orb--idle" data-mood="idle" data-still="false" style="--orb-size:260px" aria-hidden="true"><svg viewBox="0 0 100 100" class="expressive-orb__svg"><defs><radialGradient id="ask-depth" cx="50%" cy="122%" r="78%"><stop offset="0%" stop-color="#000000" stop-opacity="0.22"></stop><stop offset="60%" stop-color="#000000" stop-opacity="0"></stop></radialGradient></defs><ellipse cx="50" cy="93.5" rx="25" ry="4.2" class="expressive-orb__shadow"></ellipse><g><path d="M 93.50 50.00 C 93.64 58.25, 89.57 68.46, 84.46 75.04 C 79.35 81.62, 70.70 87.08, 62.83 89.47 C 54.95 91.87, 44.90 91.95, 37.19 89.41 C 29.49 86.88, 21.51 80.84, 16.59 74.27 C 11.67 67.70, 8.01 58.32, 7.69 50.00 C 7.38 41.68, 9.82 31.02, 14.70 24.35 C 19.59 17.69, 29.06 12.07, 37.00 10.00 C 44.95 7.92, 54.61 9.30, 62.38 11.90 C 70.15 14.49, 78.46 19.20, 83.65 25.55 C 88.84 31.90, 93.37 41.75, 93.50 50.00 Z" class="expressive-orb__body"></path><circle cx="50" cy="50" r="41" fill="url(#ask-depth)" class="expressive-orb__depth"></circle><g transform="translate(50 52)"><g><ellipse cx="-11" cy="0" rx="5.6" ry="7.2" class="expressive-orb__eye"></ellipse><ellipse cx="11" cy="0" rx="5.6" ry="7.2" class="expressive-orb__eye"></ellipse></g></g></g></svg></span></span><svg aria-hidden="true" class="orb-companion__laptop" viewBox="24 10 72 54"><ellipse class="companion-shadow" cx="60" cy="58" fill="rgba(46,26,10,0.15)" rx="36" ry="3.6"></ellipse><g class="companion-laptop"><rect class="companion-laptop__screen" fill="#4A3826" height="37" rx="5" width="54" x="33" y="11"></rect><rect fill="#2E2318" height="30" rx="3" width="48" x="36" y="14.5"></rect><g class="companion-laptop__glyphs" fill="#FFE7C2"><rect class="companion-glyph" height="2.8" rx="1.4" width="11" x="40" y="20"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="16" x="40" y="26.5"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="7" x="40" y="33"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="12" x="60" y="26.5"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="8" x="60" y="33"></rect></g><path d="M26 52.5 L94 52.5 L87 49.5 L33 49.5 Z" fill="#6B4E33"></path><rect fill="#7A5C3E" height="3.6" rx="1.8" width="70" x="25" y="51.1"></rect></g></svg><svg aria-hidden="true" class="companion-float companion-float--think" viewBox="0 0 60 48"><circle cx="14" cy="40" fill="var(--surface-strong, #FFF6E8)" opacity="0.9" r="4.5"></circle><circle cx="27" cy="28" fill="var(--surface-strong, #FFF6E8)" opacity="0.75" r="6.5"></circle><circle cx="43" cy="12" fill="var(--surface-strong, #FFF6E8)" opacity="0.6" r="9"></circle></svg><svg aria-hidden="true" class="companion-float companion-float--alert" viewBox="0 0 32 32"><circle cx="16" cy="16" fill="#E8B34B" opacity="0.95" r="14"></circle><rect fill="#5B3A14" height="13" rx="2.2" width="4.4" x="13.8" y="6"></rect><circle cx="16" cy="23.6" fill="#5B3A14" r="2.2"></circle></svg><svg aria-hidden="true" class="companion-float companion-float--zzz" viewBox="0 0 48 40"><text fill="#B98A5C" font-family="system-ui, sans-serif" font-size="11" font-weight="700" x="4" y="34">z</text><text fill="#B98A5C" font-family="system-ui, sans-serif" font-size="15" font-weight="700" x="18" y="22">Z</text><text fill="#B98A5C" font-family="system-ui, sans-serif" font-size="19" font-weight="700" x="32" y="10">Z</text></svg></span></div><p>最新记录是校内流动单（教室去宿舍），状态为「已离班在途」。<br>没有离校记录，按记录仍在校内。</p><p>这条单子<strong>没有到达记录，未确认到达</strong>。<br>系统只记到她离开教室，尚不能确认此刻的具体位置。</p></div><div id="approval-view"><div class="approval-native"><div class="root"><div class="card"><div class="strip"><span class="dot"></span>等待审批</div><div class="body"><div class="headline">林清老师 将批准并正式放行这条待审批申请：<br><br>学生：陈言蹊（七年级1班）<br>申请来源：林清老师 代学生登记<br>目的地：医务室<br>事由：身体不适<br>预计到达：10 分钟<br>申请编号：mreq_3a714d088c064af8b77a7c3a0fae0d10<br>当前状态：待审批</div></div><div class="actionRow"><button class="reject">拒绝</button><button class="allow">允许一次</button></div></div></div></div></div><div id="approval-result" class="native-answer"><div class="answer-mo"><span aria-label="Mo" class="orb-companion orb-companion--idle" data-state="idle" role="img" style="width:260px;height:317px"><span class="orb-companion__orb"><span class="expressive-orb expressive-orb--idle" data-mood="idle" data-still="false" style="--orb-size:260px" aria-hidden="true"><svg viewBox="0 0 100 100" class="expressive-orb__svg"><defs><radialGradient id="approve-depth" cx="50%" cy="122%" r="78%"><stop offset="0%" stop-color="#000000" stop-opacity="0.22"></stop><stop offset="60%" stop-color="#000000" stop-opacity="0"></stop></radialGradient></defs><ellipse cx="50" cy="93.5" rx="25" ry="4.2" class="expressive-orb__shadow"></ellipse><g><path d="M 93.50 50.00 C 93.64 58.25, 89.57 68.46, 84.46 75.04 C 79.35 81.62, 70.70 87.08, 62.83 89.47 C 54.95 91.87, 44.90 91.95, 37.19 89.41 C 29.49 86.88, 21.51 80.84, 16.59 74.27 C 11.67 67.70, 8.01 58.32, 7.69 50.00 C 7.38 41.68, 9.82 31.02, 14.70 24.35 C 19.59 17.69, 29.06 12.07, 37.00 10.00 C 44.95 7.92, 54.61 9.30, 62.38 11.90 C 70.15 14.49, 78.46 19.20, 83.65 25.55 C 88.84 31.90, 93.37 41.75, 93.50 50.00 Z" class="expressive-orb__body"></path><circle cx="50" cy="50" r="41" fill="url(#approve-depth)" class="expressive-orb__depth"></circle><g transform="translate(50 52)"><g><ellipse cx="-11" cy="0" rx="5.6" ry="7.2" class="expressive-orb__eye"></ellipse><ellipse cx="11" cy="0" rx="5.6" ry="7.2" class="expressive-orb__eye"></ellipse></g></g></g></svg></span></span><svg aria-hidden="true" class="orb-companion__laptop" viewBox="24 10 72 54"><ellipse class="companion-shadow" cx="60" cy="58" fill="rgba(46,26,10,0.15)" rx="36" ry="3.6"></ellipse><g class="companion-laptop"><rect class="companion-laptop__screen" fill="#4A3826" height="37" rx="5" width="54" x="33" y="11"></rect><rect fill="#2E2318" height="30" rx="3" width="48" x="36" y="14.5"></rect><g class="companion-laptop__glyphs" fill="#FFE7C2"><rect class="companion-glyph" height="2.8" rx="1.4" width="11" x="40" y="20"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="16" x="40" y="26.5"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="7" x="40" y="33"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="12" x="60" y="26.5"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="8" x="60" y="33"></rect></g><path d="M26 52.5 L94 52.5 L87 49.5 L33 49.5 Z" fill="#6B4E33"></path><rect fill="#7A5C3E" height="3.6" rx="1.8" width="70" x="25" y="51.1"></rect></g></svg><svg aria-hidden="true" class="companion-float companion-float--think" viewBox="0 0 60 48"><circle cx="14" cy="40" fill="var(--surface-strong, #FFF6E8)" opacity="0.9" r="4.5"></circle><circle cx="27" cy="28" fill="var(--surface-strong, #FFF6E8)" opacity="0.75" r="6.5"></circle><circle cx="43" cy="12" fill="var(--surface-strong, #FFF6E8)" opacity="0.6" r="9"></circle></svg><svg aria-hidden="true" class="companion-float companion-float--alert" viewBox="0 0 32 32"><circle cx="16" cy="16" fill="#E8B34B" opacity="0.95" r="14"></circle><rect fill="#5B3A14" height="13" rx="2.2" width="4.4" x="13.8" y="6"></rect><circle cx="16" cy="23.6" fill="#5B3A14" r="2.2"></circle></svg><svg aria-hidden="true" class="companion-float companion-float--zzz" viewBox="0 0 48 40"><text fill="#B98A5C" font-family="system-ui, sans-serif" font-size="11" font-weight="700" x="4" y="34">z</text><text fill="#B98A5C" font-family="system-ui, sans-serif" font-size="15" font-weight="700" x="18" y="22">Z</text><text fill="#B98A5C" font-family="system-ui, sans-serif" font-size="19" font-weight="700" x="32" y="10">Z</text></svg></span></div><p>已批准陈言蹊去医务室的申请，状态由「待审批」转为「已放行」。<br>正式放行单已生成，等她到达后登记到达即可。</p></div><div class="small-note">真实演示记录 · 内容节选与界面重演</div></section><section id="teacher-talk" class="scene " data-layout-allow-overflow><div class="teacher-heading"><small>沟通老师 · ASK / 回应</small><h2>让老师的安排，<br>得到清楚的回音。</h2></div><div id="teacher-incoming" class="native-answer"><div class="answer-mo"><span aria-label="Mo" class="orb-companion orb-companion--idle" data-state="idle" role="img" style="width:260px;height:317px"><span class="orb-companion__orb"><span class="expressive-orb expressive-orb--idle" data-mood="idle" data-still="false" style="--orb-size:260px" aria-hidden="true"><svg viewBox="0 0 100 100" class="expressive-orb__svg"><defs><radialGradient id="teacher-in-depth" cx="50%" cy="122%" r="78%"><stop offset="0%" stop-color="#000000" stop-opacity="0.22"></stop><stop offset="60%" stop-color="#000000" stop-opacity="0"></stop></radialGradient></defs><ellipse cx="50" cy="93.5" rx="25" ry="4.2" class="expressive-orb__shadow"></ellipse><g><path d="M 93.50 50.00 C 93.64 58.25, 89.57 68.46, 84.46 75.04 C 79.35 81.62, 70.70 87.08, 62.83 89.47 C 54.95 91.87, 44.90 91.95, 37.19 89.41 C 29.49 86.88, 21.51 80.84, 16.59 74.27 C 11.67 67.70, 8.01 58.32, 7.69 50.00 C 7.38 41.68, 9.82 31.02, 14.70 24.35 C 19.59 17.69, 29.06 12.07, 37.00 10.00 C 44.95 7.92, 54.61 9.30, 62.38 11.90 C 70.15 14.49, 78.46 19.20, 83.65 25.55 C 88.84 31.90, 93.37 41.75, 93.50 50.00 Z" class="expressive-orb__body"></path><circle cx="50" cy="50" r="41" fill="url(#teacher-in-depth)" class="expressive-orb__depth"></circle><g transform="translate(50 52)"><g><ellipse cx="-11" cy="0" rx="5.6" ry="7.2" class="expressive-orb__eye"></ellipse><ellipse cx="11" cy="0" rx="5.6" ry="7.2" class="expressive-orb__eye"></ellipse></g></g></g></svg></span></span><svg aria-hidden="true" class="orb-companion__laptop" viewBox="24 10 72 54"><ellipse class="companion-shadow" cx="60" cy="58" fill="rgba(46,26,10,0.15)" rx="36" ry="3.6"></ellipse><g class="companion-laptop"><rect class="companion-laptop__screen" fill="#4A3826" height="37" rx="5" width="54" x="33" y="11"></rect><rect fill="#2E2318" height="30" rx="3" width="48" x="36" y="14.5"></rect><g class="companion-laptop__glyphs" fill="#FFE7C2"><rect class="companion-glyph" height="2.8" rx="1.4" width="11" x="40" y="20"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="16" x="40" y="26.5"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="7" x="40" y="33"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="12" x="60" y="26.5"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="8" x="60" y="33"></rect></g><path d="M26 52.5 L94 52.5 L87 49.5 L33 49.5 Z" fill="#6B4E33"></path><rect fill="#7A5C3E" height="3.6" rx="1.8" width="70" x="25" y="51.1"></rect></g></svg><svg aria-hidden="true" class="companion-float companion-float--think" viewBox="0 0 60 48"><circle cx="14" cy="40" fill="var(--surface-strong, #FFF6E8)" opacity="0.9" r="4.5"></circle><circle cx="27" cy="28" fill="var(--surface-strong, #FFF6E8)" opacity="0.75" r="6.5"></circle><circle cx="43" cy="12" fill="var(--surface-strong, #FFF6E8)" opacity="0.6" r="9"></circle></svg><svg aria-hidden="true" class="companion-float companion-float--alert" viewBox="0 0 32 32"><circle cx="16" cy="16" fill="#E8B34B" opacity="0.95" r="14"></circle><rect fill="#5B3A14" height="13" rx="2.2" width="4.4" x="13.8" y="6"></rect><circle cx="16" cy="23.6" fill="#5B3A14" r="2.2"></circle></svg><svg aria-hidden="true" class="companion-float companion-float--zzz" viewBox="0 0 48 40"><text fill="#B98A5C" font-family="system-ui, sans-serif" font-size="11" font-weight="700" x="4" y="34">z</text><text fill="#B98A5C" font-family="system-ui, sans-serif" font-size="15" font-weight="700" x="18" y="22">Z</text><text fill="#B98A5C" font-family="system-ui, sans-serif" font-size="19" font-weight="700" x="32" y="10">Z</text></svg></span></div><p>林清老师询问：<br><strong>“明天上午能不能使用多媒体教室？”</strong></p></div><div id="teacher-composer"><div class="native"><div class="root hero"><div class="card"><div class="scroll"><div class="grow"><div class="input"><span id="teacher-typed"></span><i id="teacher-caret"></i></div></div></div><div class="row"><div class="tools"><button class="add">＋</button><button class="add"><svg width="15" height="15" viewBox="0 0 24 24"><path d="M8 12v5a4 4 0 0 0 8 0V7a3 3 0 0 0-6 0v9a1 1 0 0 0 2 0V8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><div class="modes"><span class="select">完全权限</span></div></div><div class="trailing"><span class="select">DeepSeek Expert Visual</span><button class="primary" id="teacher-send"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 20V4M5 11l7-7 7 7" fill="none" stroke="white" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div></div></div></div></div></div><div id="teacher-response" class="native-answer"><div class="answer-mo"><span aria-label="Mo" class="orb-companion orb-companion--idle" data-state="idle" role="img" style="width:260px;height:317px"><span class="orb-companion__orb"><span class="expressive-orb expressive-orb--idle" data-mood="idle" data-still="false" style="--orb-size:260px" aria-hidden="true"><svg viewBox="0 0 100 100" class="expressive-orb__svg"><defs><radialGradient id="teacher-out-depth" cx="50%" cy="122%" r="78%"><stop offset="0%" stop-color="#000000" stop-opacity="0.22"></stop><stop offset="60%" stop-color="#000000" stop-opacity="0"></stop></radialGradient></defs><ellipse cx="50" cy="93.5" rx="25" ry="4.2" class="expressive-orb__shadow"></ellipse><g><path d="M 93.50 50.00 C 93.64 58.25, 89.57 68.46, 84.46 75.04 C 79.35 81.62, 70.70 87.08, 62.83 89.47 C 54.95 91.87, 44.90 91.95, 37.19 89.41 C 29.49 86.88, 21.51 80.84, 16.59 74.27 C 11.67 67.70, 8.01 58.32, 7.69 50.00 C 7.38 41.68, 9.82 31.02, 14.70 24.35 C 19.59 17.69, 29.06 12.07, 37.00 10.00 C 44.95 7.92, 54.61 9.30, 62.38 11.90 C 70.15 14.49, 78.46 19.20, 83.65 25.55 C 88.84 31.90, 93.37 41.75, 93.50 50.00 Z" class="expressive-orb__body"></path><circle cx="50" cy="50" r="41" fill="url(#teacher-out-depth)" class="expressive-orb__depth"></circle><g transform="translate(50 52)"><g><ellipse cx="-11" cy="0" rx="5.6" ry="7.2" class="expressive-orb__eye"></ellipse><ellipse cx="11" cy="0" rx="5.6" ry="7.2" class="expressive-orb__eye"></ellipse></g></g></g></svg></span></span><svg aria-hidden="true" class="orb-companion__laptop" viewBox="24 10 72 54"><ellipse class="companion-shadow" cx="60" cy="58" fill="rgba(46,26,10,0.15)" rx="36" ry="3.6"></ellipse><g class="companion-laptop"><rect class="companion-laptop__screen" fill="#4A3826" height="37" rx="5" width="54" x="33" y="11"></rect><rect fill="#2E2318" height="30" rx="3" width="48" x="36" y="14.5"></rect><g class="companion-laptop__glyphs" fill="#FFE7C2"><rect class="companion-glyph" height="2.8" rx="1.4" width="11" x="40" y="20"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="16" x="40" y="26.5"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="7" x="40" y="33"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="12" x="60" y="26.5"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="8" x="60" y="33"></rect></g><path d="M26 52.5 L94 52.5 L87 49.5 L33 49.5 Z" fill="#6B4E33"></path><rect fill="#7A5C3E" height="3.6" rx="1.8" width="70" x="25" y="51.1"></rect></g></svg><svg aria-hidden="true" class="companion-float companion-float--think" viewBox="0 0 60 48"><circle cx="14" cy="40" fill="var(--surface-strong, #FFF6E8)" opacity="0.9" r="4.5"></circle><circle cx="27" cy="28" fill="var(--surface-strong, #FFF6E8)" opacity="0.75" r="6.5"></circle><circle cx="43" cy="12" fill="var(--surface-strong, #FFF6E8)" opacity="0.6" r="9"></circle></svg><svg aria-hidden="true" class="companion-float companion-float--alert" viewBox="0 0 32 32"><circle cx="16" cy="16" fill="#E8B34B" opacity="0.95" r="14"></circle><rect fill="#5B3A14" height="13" rx="2.2" width="4.4" x="13.8" y="6"></rect><circle cx="16" cy="23.6" fill="#5B3A14" r="2.2"></circle></svg><svg aria-hidden="true" class="companion-float companion-float--zzz" viewBox="0 0 48 40"><text fill="#B98A5C" font-family="system-ui, sans-serif" font-size="11" font-weight="700" x="4" y="34">z</text><text fill="#B98A5C" font-family="system-ui, sans-serif" font-size="15" font-weight="700" x="18" y="22">Z</text><text fill="#B98A5C" font-family="system-ui, sans-serif" font-size="19" font-weight="700" x="32" y="10">Z</text></svg></span></div><p>已回复林清老师。</p><p><strong>可以，明天上午多媒体教室可以使用。</strong><br>状态：已完成 · 投递结果：已确认投递。</p></div><div class="small-note">真实 ASK 与回应记录节选 · 经主人确认后发送</div></section><section id="findpeer" class="scene relay" data-layout-allow-overflow><div class="side-copy"><small>AGENT TO AGENT</small><h2>让同事的<br>Mochi，<br>一起找。</h2></div><div class="network-header"><div class="network-agent"><span aria-label="Mo" class="orb-companion orb-companion--idle" data-state="idle" role="img" style="width:260px;height:317px"><span class="orb-companion__orb"><span class="expressive-orb expressive-orb--idle" data-mood="idle" data-still="false" style="--orb-size:260px" aria-hidden="true"><svg viewBox="0 0 100 100" class="expressive-orb__svg"><defs><radialGradient id="findpeer-teacher-depth" cx="50%" cy="122%" r="78%"><stop offset="0%" stop-color="#000000" stop-opacity="0.22"></stop><stop offset="60%" stop-color="#000000" stop-opacity="0"></stop></radialGradient></defs><ellipse cx="50" cy="93.5" rx="25" ry="4.2" class="expressive-orb__shadow"></ellipse><g><path d="M 93.50 50.00 C 93.64 58.25, 89.57 68.46, 84.46 75.04 C 79.35 81.62, 70.70 87.08, 62.83 89.47 C 54.95 91.87, 44.90 91.95, 37.19 89.41 C 29.49 86.88, 21.51 80.84, 16.59 74.27 C 11.67 67.70, 8.01 58.32, 7.69 50.00 C 7.38 41.68, 9.82 31.02, 14.70 24.35 C 19.59 17.69, 29.06 12.07, 37.00 10.00 C 44.95 7.92, 54.61 9.30, 62.38 11.90 C 70.15 14.49, 78.46 19.20, 83.65 25.55 C 88.84 31.90, 93.37 41.75, 93.50 50.00 Z" class="expressive-orb__body"></path><circle cx="50" cy="50" r="41" fill="url(#findpeer-teacher-depth)" class="expressive-orb__depth"></circle><g transform="translate(50 52)"><g><ellipse cx="-11" cy="0" rx="5.6" ry="7.2" class="expressive-orb__eye"></ellipse><ellipse cx="11" cy="0" rx="5.6" ry="7.2" class="expressive-orb__eye"></ellipse></g></g></g></svg></span></span><svg aria-hidden="true" class="orb-companion__laptop" viewBox="24 10 72 54"><ellipse class="companion-shadow" cx="60" cy="58" fill="rgba(46,26,10,0.15)" rx="36" ry="3.6"></ellipse><g class="companion-laptop"><rect class="companion-laptop__screen" fill="#4A3826" height="37" rx="5" width="54" x="33" y="11"></rect><rect fill="#2E2318" height="30" rx="3" width="48" x="36" y="14.5"></rect><g class="companion-laptop__glyphs" fill="#FFE7C2"><rect class="companion-glyph" height="2.8" rx="1.4" width="11" x="40" y="20"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="16" x="40" y="26.5"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="7" x="40" y="33"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="12" x="60" y="26.5"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="8" x="60" y="33"></rect></g><path d="M26 52.5 L94 52.5 L87 49.5 L33 49.5 Z" fill="#6B4E33"></path><rect fill="#7A5C3E" height="3.6" rx="1.8" width="70" x="25" y="51.1"></rect></g></svg><svg aria-hidden="true" class="companion-float companion-float--think" viewBox="0 0 60 48"><circle cx="14" cy="40" fill="var(--surface-strong, #FFF6E8)" opacity="0.9" r="4.5"></circle><circle cx="27" cy="28" fill="var(--surface-strong, #FFF6E8)" opacity="0.75" r="6.5"></circle><circle cx="43" cy="12" fill="var(--surface-strong, #FFF6E8)" opacity="0.6" r="9"></circle></svg><svg aria-hidden="true" class="companion-float companion-float--alert" viewBox="0 0 32 32"><circle cx="16" cy="16" fill="#E8B34B" opacity="0.95" r="14"></circle><rect fill="#5B3A14" height="13" rx="2.2" width="4.4" x="13.8" y="6"></rect><circle cx="16" cy="23.6" fill="#5B3A14" r="2.2"></circle></svg><svg aria-hidden="true" class="companion-float companion-float--zzz" viewBox="0 0 48 40"><text fill="#B98A5C" font-family="system-ui, sans-serif" font-size="11" font-weight="700" x="4" y="34">z</text><text fill="#B98A5C" font-family="system-ui, sans-serif" font-size="15" font-weight="700" x="18" y="22">Z</text><text fill="#B98A5C" font-family="system-ui, sans-serif" font-size="19" font-weight="700" x="32" y="10">Z</text></svg></span><span>教师 Mochi</span></div><svg viewBox="0 0 500 60"><path d="M 10 30 H 490"/><circle class="message-dot" cx="10" cy="30" r="6"/></svg><div class="network-agent"><span aria-label="Mo" class="orb-companion orb-companion--idle" data-state="idle" role="img" style="width:260px;height:317px"><span class="orb-companion__orb"><span class="expressive-orb expressive-orb--idle" data-mood="idle" data-still="false" style="--orb-size:260px" aria-hidden="true"><svg viewBox="0 0 100 100" class="expressive-orb__svg"><defs><radialGradient id="findpeer-admin-depth" cx="50%" cy="122%" r="78%"><stop offset="0%" stop-color="#000000" stop-opacity="0.22"></stop><stop offset="60%" stop-color="#000000" stop-opacity="0"></stop></radialGradient></defs><ellipse cx="50" cy="93.5" rx="25" ry="4.2" class="expressive-orb__shadow"></ellipse><g><path d="M 93.50 50.00 C 93.64 58.25, 89.57 68.46, 84.46 75.04 C 79.35 81.62, 70.70 87.08, 62.83 89.47 C 54.95 91.87, 44.90 91.95, 37.19 89.41 C 29.49 86.88, 21.51 80.84, 16.59 74.27 C 11.67 67.70, 8.01 58.32, 7.69 50.00 C 7.38 41.68, 9.82 31.02, 14.70 24.35 C 19.59 17.69, 29.06 12.07, 37.00 10.00 C 44.95 7.92, 54.61 9.30, 62.38 11.90 C 70.15 14.49, 78.46 19.20, 83.65 25.55 C 88.84 31.90, 93.37 41.75, 93.50 50.00 Z" class="expressive-orb__body"></path><circle cx="50" cy="50" r="41" fill="url(#findpeer-admin-depth)" class="expressive-orb__depth"></circle><g transform="translate(50 52)"><g><ellipse cx="-11" cy="0" rx="5.6" ry="7.2" class="expressive-orb__eye"></ellipse><ellipse cx="11" cy="0" rx="5.6" ry="7.2" class="expressive-orb__eye"></ellipse></g></g></g></svg></span></span><svg aria-hidden="true" class="orb-companion__laptop" viewBox="24 10 72 54"><ellipse class="companion-shadow" cx="60" cy="58" fill="rgba(46,26,10,0.15)" rx="36" ry="3.6"></ellipse><g class="companion-laptop"><rect class="companion-laptop__screen" fill="#4A3826" height="37" rx="5" width="54" x="33" y="11"></rect><rect fill="#2E2318" height="30" rx="3" width="48" x="36" y="14.5"></rect><g class="companion-laptop__glyphs" fill="#FFE7C2"><rect class="companion-glyph" height="2.8" rx="1.4" width="11" x="40" y="20"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="16" x="40" y="26.5"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="7" x="40" y="33"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="12" x="60" y="26.5"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="8" x="60" y="33"></rect></g><path d="M26 52.5 L94 52.5 L87 49.5 L33 49.5 Z" fill="#6B4E33"></path><rect fill="#7A5C3E" height="3.6" rx="1.8" width="70" x="25" y="51.1"></rect></g></svg><svg aria-hidden="true" class="companion-float companion-float--think" viewBox="0 0 60 48"><circle cx="14" cy="40" fill="var(--surface-strong, #FFF6E8)" opacity="0.9" r="4.5"></circle><circle cx="27" cy="28" fill="var(--surface-strong, #FFF6E8)" opacity="0.75" r="6.5"></circle><circle cx="43" cy="12" fill="var(--surface-strong, #FFF6E8)" opacity="0.6" r="9"></circle></svg><svg aria-hidden="true" class="companion-float companion-float--alert" viewBox="0 0 32 32"><circle cx="16" cy="16" fill="#E8B34B" opacity="0.95" r="14"></circle><rect fill="#5B3A14" height="13" rx="2.2" width="4.4" x="13.8" y="6"></rect><circle cx="16" cy="23.6" fill="#5B3A14" r="2.2"></circle></svg><svg aria-hidden="true" class="companion-float companion-float--zzz" viewBox="0 0 48 40"><text fill="#B98A5C" font-family="system-ui, sans-serif" font-size="11" font-weight="700" x="4" y="34">z</text><text fill="#B98A5C" font-family="system-ui, sans-serif" font-size="15" font-weight="700" x="18" y="22">Z</text><text fill="#B98A5C" font-family="system-ui, sans-serif" font-size="19" font-weight="700" x="32" y="10">Z</text></svg></span><span>管理员 Mochi</span></div></div><div class="product-window" style="left:465px;top:205px;width:1360px;height:650px"><div class="camera" style="width:1920px;height:1080px;left:-420px;top:-235px"><video id="findpeer-media" src="assets/find-peer-clean-80-0.666667.mp4" muted playsinline data-start="57.500000" data-duration="2.666667" data-track-index="9" style="width:100%;height:100%"></video></div></div></section><section id="findreturn" class="scene relay" data-layout-allow-overflow><div class="side-copy"><small>AGENT TO AGENT</small><h2>找到资料。<br>回音回来。</h2></div><div class="network-header"><div class="network-agent"><span aria-label="Mo" class="orb-companion orb-companion--idle" data-state="idle" role="img" style="width:260px;height:317px"><span class="orb-companion__orb"><span class="expressive-orb expressive-orb--idle" data-mood="idle" data-still="false" style="--orb-size:260px" aria-hidden="true"><svg viewBox="0 0 100 100" class="expressive-orb__svg"><defs><radialGradient id="findreturn-teacher-depth" cx="50%" cy="122%" r="78%"><stop offset="0%" stop-color="#000000" stop-opacity="0.22"></stop><stop offset="60%" stop-color="#000000" stop-opacity="0"></stop></radialGradient></defs><ellipse cx="50" cy="93.5" rx="25" ry="4.2" class="expressive-orb__shadow"></ellipse><g><path d="M 93.50 50.00 C 93.64 58.25, 89.57 68.46, 84.46 75.04 C 79.35 81.62, 70.70 87.08, 62.83 89.47 C 54.95 91.87, 44.90 91.95, 37.19 89.41 C 29.49 86.88, 21.51 80.84, 16.59 74.27 C 11.67 67.70, 8.01 58.32, 7.69 50.00 C 7.38 41.68, 9.82 31.02, 14.70 24.35 C 19.59 17.69, 29.06 12.07, 37.00 10.00 C 44.95 7.92, 54.61 9.30, 62.38 11.90 C 70.15 14.49, 78.46 19.20, 83.65 25.55 C 88.84 31.90, 93.37 41.75, 93.50 50.00 Z" class="expressive-orb__body"></path><circle cx="50" cy="50" r="41" fill="url(#findreturn-teacher-depth)" class="expressive-orb__depth"></circle><g transform="translate(50 52)"><g><ellipse cx="-11" cy="0" rx="5.6" ry="7.2" class="expressive-orb__eye"></ellipse><ellipse cx="11" cy="0" rx="5.6" ry="7.2" class="expressive-orb__eye"></ellipse></g></g></g></svg></span></span><svg aria-hidden="true" class="orb-companion__laptop" viewBox="24 10 72 54"><ellipse class="companion-shadow" cx="60" cy="58" fill="rgba(46,26,10,0.15)" rx="36" ry="3.6"></ellipse><g class="companion-laptop"><rect class="companion-laptop__screen" fill="#4A3826" height="37" rx="5" width="54" x="33" y="11"></rect><rect fill="#2E2318" height="30" rx="3" width="48" x="36" y="14.5"></rect><g class="companion-laptop__glyphs" fill="#FFE7C2"><rect class="companion-glyph" height="2.8" rx="1.4" width="11" x="40" y="20"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="16" x="40" y="26.5"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="7" x="40" y="33"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="12" x="60" y="26.5"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="8" x="60" y="33"></rect></g><path d="M26 52.5 L94 52.5 L87 49.5 L33 49.5 Z" fill="#6B4E33"></path><rect fill="#7A5C3E" height="3.6" rx="1.8" width="70" x="25" y="51.1"></rect></g></svg><svg aria-hidden="true" class="companion-float companion-float--think" viewBox="0 0 60 48"><circle cx="14" cy="40" fill="var(--surface-strong, #FFF6E8)" opacity="0.9" r="4.5"></circle><circle cx="27" cy="28" fill="var(--surface-strong, #FFF6E8)" opacity="0.75" r="6.5"></circle><circle cx="43" cy="12" fill="var(--surface-strong, #FFF6E8)" opacity="0.6" r="9"></circle></svg><svg aria-hidden="true" class="companion-float companion-float--alert" viewBox="0 0 32 32"><circle cx="16" cy="16" fill="#E8B34B" opacity="0.95" r="14"></circle><rect fill="#5B3A14" height="13" rx="2.2" width="4.4" x="13.8" y="6"></rect><circle cx="16" cy="23.6" fill="#5B3A14" r="2.2"></circle></svg><svg aria-hidden="true" class="companion-float companion-float--zzz" viewBox="0 0 48 40"><text fill="#B98A5C" font-family="system-ui, sans-serif" font-size="11" font-weight="700" x="4" y="34">z</text><text fill="#B98A5C" font-family="system-ui, sans-serif" font-size="15" font-weight="700" x="18" y="22">Z</text><text fill="#B98A5C" font-family="system-ui, sans-serif" font-size="19" font-weight="700" x="32" y="10">Z</text></svg></span><span>教师 Mochi</span></div><svg viewBox="0 0 500 60"><path d="M 10 30 H 490"/><circle class="message-dot" cx="10" cy="30" r="6"/></svg><div class="network-agent"><span aria-label="Mo" class="orb-companion orb-companion--idle" data-state="idle" role="img" style="width:260px;height:317px"><span class="orb-companion__orb"><span class="expressive-orb expressive-orb--idle" data-mood="idle" data-still="false" style="--orb-size:260px" aria-hidden="true"><svg viewBox="0 0 100 100" class="expressive-orb__svg"><defs><radialGradient id="findreturn-admin-depth" cx="50%" cy="122%" r="78%"><stop offset="0%" stop-color="#000000" stop-opacity="0.22"></stop><stop offset="60%" stop-color="#000000" stop-opacity="0"></stop></radialGradient></defs><ellipse cx="50" cy="93.5" rx="25" ry="4.2" class="expressive-orb__shadow"></ellipse><g><path d="M 93.50 50.00 C 93.64 58.25, 89.57 68.46, 84.46 75.04 C 79.35 81.62, 70.70 87.08, 62.83 89.47 C 54.95 91.87, 44.90 91.95, 37.19 89.41 C 29.49 86.88, 21.51 80.84, 16.59 74.27 C 11.67 67.70, 8.01 58.32, 7.69 50.00 C 7.38 41.68, 9.82 31.02, 14.70 24.35 C 19.59 17.69, 29.06 12.07, 37.00 10.00 C 44.95 7.92, 54.61 9.30, 62.38 11.90 C 70.15 14.49, 78.46 19.20, 83.65 25.55 C 88.84 31.90, 93.37 41.75, 93.50 50.00 Z" class="expressive-orb__body"></path><circle cx="50" cy="50" r="41" fill="url(#findreturn-admin-depth)" class="expressive-orb__depth"></circle><g transform="translate(50 52)"><g><ellipse cx="-11" cy="0" rx="5.6" ry="7.2" class="expressive-orb__eye"></ellipse><ellipse cx="11" cy="0" rx="5.6" ry="7.2" class="expressive-orb__eye"></ellipse></g></g></g></svg></span></span><svg aria-hidden="true" class="orb-companion__laptop" viewBox="24 10 72 54"><ellipse class="companion-shadow" cx="60" cy="58" fill="rgba(46,26,10,0.15)" rx="36" ry="3.6"></ellipse><g class="companion-laptop"><rect class="companion-laptop__screen" fill="#4A3826" height="37" rx="5" width="54" x="33" y="11"></rect><rect fill="#2E2318" height="30" rx="3" width="48" x="36" y="14.5"></rect><g class="companion-laptop__glyphs" fill="#FFE7C2"><rect class="companion-glyph" height="2.8" rx="1.4" width="11" x="40" y="20"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="16" x="40" y="26.5"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="7" x="40" y="33"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="12" x="60" y="26.5"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="8" x="60" y="33"></rect></g><path d="M26 52.5 L94 52.5 L87 49.5 L33 49.5 Z" fill="#6B4E33"></path><rect fill="#7A5C3E" height="3.6" rx="1.8" width="70" x="25" y="51.1"></rect></g></svg><svg aria-hidden="true" class="companion-float companion-float--think" viewBox="0 0 60 48"><circle cx="14" cy="40" fill="var(--surface-strong, #FFF6E8)" opacity="0.9" r="4.5"></circle><circle cx="27" cy="28" fill="var(--surface-strong, #FFF6E8)" opacity="0.75" r="6.5"></circle><circle cx="43" cy="12" fill="var(--surface-strong, #FFF6E8)" opacity="0.6" r="9"></circle></svg><svg aria-hidden="true" class="companion-float companion-float--alert" viewBox="0 0 32 32"><circle cx="16" cy="16" fill="#E8B34B" opacity="0.95" r="14"></circle><rect fill="#5B3A14" height="13" rx="2.2" width="4.4" x="13.8" y="6"></rect><circle cx="16" cy="23.6" fill="#5B3A14" r="2.2"></circle></svg><svg aria-hidden="true" class="companion-float companion-float--zzz" viewBox="0 0 48 40"><text fill="#B98A5C" font-family="system-ui, sans-serif" font-size="11" font-weight="700" x="4" y="34">z</text><text fill="#B98A5C" font-family="system-ui, sans-serif" font-size="15" font-weight="700" x="18" y="22">Z</text><text fill="#B98A5C" font-family="system-ui, sans-serif" font-size="19" font-weight="700" x="32" y="10">Z</text></svg></span><span>管理员 Mochi</span></div></div><div class="product-window" style="left:465px;top:205px;width:1360px;height:650px"><div class="camera" style="width:1920px;height:1080px;left:-420px;top:-235px"><video id="findreturn-media" src="assets/find-teacher-clean-80-0.666667.mp4" muted playsinline data-start="60.166667" data-duration="3.333333" data-track-index="10" style="width:100%;height:100%"></video></div></div></section><section id="received" class="scene received" data-layout-allow-overflow><div class="side-copy"><small>READY FOR CLASS</small><h2>下一站，<br>教室。</h2></div><div class="product-window" style="left:370px;top:176px;width:1430px;height:700px"><div class="camera" style="width:1760px;height:990px;left:-170px;top:-30px"><video id="received-media" src="assets/classroom-refined-received-80-0.777778.mp4" muted playsinline data-start="63.500000" data-duration="3.111111" data-track-index="11" style="width:100%;height:100%"></video></div></div></section><section id="classroom" class="scene " data-layout-allow-overflow><div class="classroom-label"><small>课堂材料已就位</small><h2>收到，就能开始使用。</h2></div><div id="class-slide1"><img id="classroom-image-1" data-start="66.611111" data-duration="3.888889" src="assets/slide-1.png"></div><div id="class-slide2"><img id="classroom-image-2" data-start="66.611111" data-duration="3.888889" src="assets/slide-2.png"></div><div class="class-controls">‹　<span id="page-count">1 / 4</span>　›</div><div class="small-note">实际收到的课件内容 · 预览与翻页</div></section><section id="presets" class="scene full" data-layout-allow-overflow><div class="product-window" style="left:200px;top:105px;width:1520px;height:855px"><div class="camera" style="width:1520px;height:855px;left:0px;top:0px"><video id="presets-media" src="assets/agent-presets-80-2.000000.mp4" muted playsinline data-start="70.500000" data-duration="6.000000" data-track-index="13" style="width:100%;height:100%"></video></div></div><div class="caption"><b>为不同工作，选择不同能力</b><span>工作预设 · 插件 · 自定义 Agent</span></div></section><section id="connected" class="scene " data-layout-allow-overflow><div class="connected-copy"><small>ONE CONTINUOUS WORKFLOW</small><h2>从一个想法，<br>到整个校园的协作。</h2></div><div class="end-art a"><img id="connected-image-1" data-start="76.500000" data-duration="0.000000" src="assets/slide-2.png"></div><div class="end-art b"><img id="connected-image-2" data-start="76.500000" data-duration="0.000000" src="assets/exam-1.png"></div><div class="end-art c"><img id="connected-image-3" data-start="76.500000" data-duration="0.000000" src="assets/slide-4.png"></div><div class="end-words"><span>生成</span><span>执行</span><span>协作</span><span>交付</span></div></section><section id="end" class="scene " data-layout-allow-overflow><div id="mo-final"><span aria-label="Mo" class="orb-companion orb-companion--idle" data-state="idle" role="img" style="width:260px;height:317px"><span class="orb-companion__orb"><span class="expressive-orb expressive-orb--idle" data-mood="idle" data-still="false" style="--orb-size:260px" aria-hidden="true"><svg viewBox="0 0 100 100" class="expressive-orb__svg"><defs><radialGradient id="final-depth" cx="50%" cy="122%" r="78%"><stop offset="0%" stop-color="#000000" stop-opacity="0.22"></stop><stop offset="60%" stop-color="#000000" stop-opacity="0"></stop></radialGradient></defs><ellipse cx="50" cy="93.5" rx="25" ry="4.2" class="expressive-orb__shadow"></ellipse><g><path d="M 93.50 50.00 C 93.64 58.25, 89.57 68.46, 84.46 75.04 C 79.35 81.62, 70.70 87.08, 62.83 89.47 C 54.95 91.87, 44.90 91.95, 37.19 89.41 C 29.49 86.88, 21.51 80.84, 16.59 74.27 C 11.67 67.70, 8.01 58.32, 7.69 50.00 C 7.38 41.68, 9.82 31.02, 14.70 24.35 C 19.59 17.69, 29.06 12.07, 37.00 10.00 C 44.95 7.92, 54.61 9.30, 62.38 11.90 C 70.15 14.49, 78.46 19.20, 83.65 25.55 C 88.84 31.90, 93.37 41.75, 93.50 50.00 Z" class="expressive-orb__body"></path><circle cx="50" cy="50" r="41" fill="url(#final-depth)" class="expressive-orb__depth"></circle><g transform="translate(50 52)"><g><ellipse cx="-11" cy="0" rx="5.6" ry="7.2" class="expressive-orb__eye"></ellipse><ellipse cx="11" cy="0" rx="5.6" ry="7.2" class="expressive-orb__eye"></ellipse></g></g></g></svg></span></span><svg aria-hidden="true" class="orb-companion__laptop" viewBox="24 10 72 54"><ellipse class="companion-shadow" cx="60" cy="58" fill="rgba(46,26,10,0.15)" rx="36" ry="3.6"></ellipse><g class="companion-laptop"><rect class="companion-laptop__screen" fill="#4A3826" height="37" rx="5" width="54" x="33" y="11"></rect><rect fill="#2E2318" height="30" rx="3" width="48" x="36" y="14.5"></rect><g class="companion-laptop__glyphs" fill="#FFE7C2"><rect class="companion-glyph" height="2.8" rx="1.4" width="11" x="40" y="20"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="16" x="40" y="26.5"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="7" x="40" y="33"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="12" x="60" y="26.5"></rect><rect class="companion-glyph" height="2.8" rx="1.4" width="8" x="60" y="33"></rect></g><path d="M26 52.5 L94 52.5 L87 49.5 L33 49.5 Z" fill="#6B4E33"></path><rect fill="#7A5C3E" height="3.6" rx="1.8" width="70" x="25" y="51.1"></rect></g></svg><svg aria-hidden="true" class="companion-float companion-float--think" viewBox="0 0 60 48"><circle cx="14" cy="40" fill="var(--surface-strong, #FFF6E8)" opacity="0.9" r="4.5"></circle><circle cx="27" cy="28" fill="var(--surface-strong, #FFF6E8)" opacity="0.75" r="6.5"></circle><circle cx="43" cy="12" fill="var(--surface-strong, #FFF6E8)" opacity="0.6" r="9"></circle></svg><svg aria-hidden="true" class="companion-float companion-float--alert" viewBox="0 0 32 32"><circle cx="16" cy="16" fill="#E8B34B" opacity="0.95" r="14"></circle><rect fill="#5B3A14" height="13" rx="2.2" width="4.4" x="13.8" y="6"></rect><circle cx="16" cy="23.6" fill="#5B3A14" r="2.2"></circle></svg><svg aria-hidden="true" class="companion-float companion-float--zzz" viewBox="0 0 48 40"><text fill="#B98A5C" font-family="system-ui, sans-serif" font-size="11" font-weight="700" x="4" y="34">z</text><text fill="#B98A5C" font-family="system-ui, sans-serif" font-size="15" font-weight="700" x="18" y="22">Z</text><text fill="#B98A5C" font-family="system-ui, sans-serif" font-size="19" font-weight="700" x="32" y="10">Z</text></svg></span></div><div class="end-title"><span class="wordmark">Mochi</span><span class="arrival">已至</span><i class="end-dot"></i></div><div class="end-sub">连接老师，连接课堂，连接整个校园。</div></section><section id="model-request" style="position:absolute;inset:0;background:#faf8f2;z-index:95;display:none"><div class="compose-label"><small>从需求，到交互模型</small><h2 style="font-family:MochiDisplay;font-weight:600">把概念，做成可以操作的模型。</h2></div><div id="model-request-composer" style="position:absolute;left:390px;top:520px;width:1140px"><div class="native"><div class="root hero"><div class="card"><div class="scroll"><div class="grow"><div class="input"><span id="model-request-typed"></span><i id="model-request-caret"></i></div></div></div><div class="row"><div class="tools"><button class="add">＋</button><button class="add"><svg width="15" height="15" viewBox="0 0 24 24"><path d="M8 12v5a4 4 0 0 0 8 0V7a3 3 0 0 0-6 0v9a1 1 0 0 0 2 0V8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><div class="modes"><span class="select">完全权限</span></div></div><div class="trailing"><span class="select">DeepSeek Expert Visual</span><button class="primary" id="model-request-send"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 20V4M5 11l7-7 7 7" fill="none" stroke="white" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div></div></div></div></div></div><div id="model-writing" style="position:absolute;left:410px;top:480px;width:1100px;color:#45584e"><p style="font-size:24px;margin-bottom:18px">生成交互模型</p><pre id="model-code" style="white-space:pre-wrap;overflow:hidden;height:200px;font-size:19px;line-height:1.5;margin:0"></pre><div id="model-output" class="file-pill" style="margin-top:22px">triangle-demo.html</div></div><div class="small-note">需求精简重演 · 生成过程加速呈现 · 已生成源文件节选</div></section><section id="preset-showcase" style="position:absolute;inset:0;display:none;background:#f3f5ec;z-index:96"><div class="preset-title"><small>为不同的工作，准备不同的能力</small><h2>我们还预置了丰富的功能，<br><span>比如 Agent 预设。</span></h2></div><div class="preset-pop pop-0"><div class="preset-native"><div class="card"><div class="cardMain"><div class="preset-name">成绩分析<span>内置</span></div><p>用教师明确的成绩口径分析 XLSX 或 CSV，并在成绩工具可用时生成可复核的内部审计工作簿。</p><code>grade-analysis</code></div><div class="preset-actions">▤　▢</div></div></div></div><div class="preset-pop pop-1"><div class="preset-native"><div class="card"><div class="cardMain"><div class="preset-name">班级与教室<span>内置</span></div><p>查看当前班级与校园事项，按权限和人工确认协调消息、任务与设备协作；未连通时明确不可用。</p><code>classroom-coordination</code></div><div class="preset-actions">▤　▢</div></div></div></div><div class="preset-pop pop-2"><div class="preset-native"><div class="card"><div class="cardMain"><div class="preset-name">创造模式<span>内置</span></div><p>用于创建自定义 Agent preset：具备标准模式的全部能力，并提供运行时检查、插件实验和 preset 创作指导。</p><code>cordis</code></div><div class="preset-actions">▤　▢</div></div></div></div><div class="small-note">成绩分析 · 班级与教室 · 创造模式　｜　产品原生预设内容</div></section><section id="quiz-story" style="position:absolute;inset:0;display:none;background:#f6f3ed;z-index:95"><div id="quiz-heading" style="position:absolute;left:170px;top:170px"><small>从动手观察，到主动判断</small><h2 style="margin-top:22px;font-family:MochiDisplay;font-weight:600">接着，把理解变成练习。</h2></div><div id="quiz-composer" style="position:absolute;left:390px;top:520px;width:1140px"><div class="native"><div class="root hero"><div class="card"><div class="scroll"><div class="grow"><div class="input"><span id="quiz-typed"></span><i id="quiz-caret"></i></div></div></div><div class="row"><div class="tools"><button class="add">＋</button><button class="add"><svg width="15" height="15" viewBox="0 0 24 24"><path d="M8 12v5a4 4 0 0 0 8 0V7a3 3 0 0 0-6 0v9a1 1 0 0 0 2 0V8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><div class="modes"><span class="select">完全权限</span></div></div><div class="trailing"><span class="select">DeepSeek Expert Visual</span><button class="primary" id="quiz-send"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 20V4M5 11l7-7 7 7" fill="none" stroke="white" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div></div></div></div></div></div><div id="quiz-page">
+  <a class="back" href="triangle-demo.html">← 返回模型</a>
+  <h1>随堂练习 · 判断题</h1>
+  <p class="lede">一共 3 题。先想一想，再点「对」或「错」，看看你的判断对不对。</p>
+
+  <section class="q" data-answer="true"
+           data-explain="100° 比 90° 大，是钝角；按里面最大的那个角分类，它就是钝角三角形。">
+    <p class="stem"><span class="num">01</span><span>有一个角是 100° 的三角形，是钝角三角形。</span></p>
+    <div class="choices" role="group" aria-label="第 1 题作答">
+      <button type="button" data-choice="true">对</button>
+      <button type="button" data-choice="false">错</button>
+    </div>
+    <p class="feedback" aria-live="polite"><span class="mark"></span><span class="text"></span></p>
+  </section>
+
+  <section class="q" data-answer="false"
+           data-explain="50°＋60°＋70°＝180°，三个角都小于 90°，它是锐角三角形；直角三角形里必须有一个角正好是 90°。">
+    <p class="stem"><span class="num">02</span><span>三个角分别是 50°、60°、70° 的三角形，是直角三角形。</span></p>
+    <div class="choices" role="group" aria-label="第 2 题作答">
+      <button type="button" data-choice="true">对</button>
+      <button type="button" data-choice="false">错</button>
+    </div>
+    <p class="feedback" aria-live="polite"><span class="mark"></span><span class="text"></span></p>
+  </section>
+
+  <section class="q" data-answer="true"
+           data-explain="三角形内角和是 180°，去掉那个 90° 的直角，剩下两个角的和就是 180°－90°＝90°。">
+    <p class="stem"><span class="num">03</span><span>直角三角形中，另外两个角的和正好是 90°。</span></p>
+    <div class="choices" role="group" aria-label="第 3 题作答">
+      <button type="button" data-choice="true">对</button>
+      <button type="button" data-choice="false">错</button>
+    </div>
+    <p class="feedback" aria-live="polite"><span class="mark"></span><span class="text"></span></p>
+  </section>
+</div><div class="small-note">继续输入需求 · 生成加速节选 · Mochi 实际生成的随堂练习</div></section><svg id="thread-layer" width="1920" height="1080"><defs><filter id="orb-glow" x="-200%" y="-200%" width="500%" height="500%"><feGaussianBlur stdDeviation="6"/></filter></defs><path id="thread" pathLength="1"/><g id="guide-orb" opacity="0"><circle r="15" fill="#8db87d" opacity=".5" filter="url(#orb-glow)"/><circle r="6" fill="#739d62"/><circle r="2" fill="#f3ffde"/></g></svg><svg id="cursor" viewBox="0 0 34 44"><path d="M3 2L3 34L11 26L19 41L25 38L17 24L30 23Z" fill="#385544" stroke="#fff" stroke-width="2.3"/></svg><div id="click"></div></div><audio id="music" src="assets/music.wav" data-start="0.000000" data-duration="80.000000" data-track-index="40" data-timeline-role="music"></audio></main><script>function addCursorFlights(moves) {
+  const ns='http://www.w3.org/2000/svg', layer=document.getElementById('thread-layer');
+  let previous=null;
+  moves.sort((a,b)=>a.t-b.t).forEach((m,i)=>{
+    const start=previous||{x:m.x+140,y:m.y+80}; previous=m;
+    const dx=m.x-start.x,dy=m.y-start.y;
+    const d=`M ${start.x} ${start.y} C ${start.x+dx*.45} ${start.y+dy*.1} ${start.x+dx*.65} ${m.y-dy*.1} ${m.x} ${m.y}`;
+    const group=document.createElementNS(ns,'g'),defs=document.createElementNS(ns,'defs'),mask=document.createElementNS(ns,'mask'),reveal=document.createElementNS(ns,'path'),trail=document.createElementNS(ns,'path');
+    mask.id=`cursor-trail-mask-${i}`;mask.setAttribute('maskUnits','userSpaceOnUse');mask.setAttribute('x','0');mask.setAttribute('y','0');mask.setAttribute('width','1920');mask.setAttribute('height','1080');
+    reveal.setAttribute('d',d);reveal.setAttribute('pathLength','1');reveal.setAttribute('stroke','white');reveal.setAttribute('stroke-width','10');reveal.setAttribute('fill','none');reveal.setAttribute('stroke-dasharray','1');reveal.setAttribute('stroke-dashoffset','1');mask.append(reveal);defs.append(mask);group.append(defs);
+    trail.setAttribute('d',d);trail.setAttribute('fill','none');trail.setAttribute('stroke','#86a17a');trail.setAttribute('stroke-width','2');trail.setAttribute('stroke-dasharray','5 9');trail.setAttribute('stroke-linecap','round');trail.setAttribute('mask',`url(#${mask.id})`);group.append(trail);group.setAttribute('opacity','0');layer.prepend(group);
+    const length=trail.getTotalLength(),progress={p:0},cursor=document.getElementById('cursor'),orb=document.getElementById('guide-orb');
+    tl.set(group,{opacity:.65},m.t);tl.set(cursor,{opacity:1},m.t);tl.set(orb,{opacity:.8},m.t);
+    tl.fromTo(progress,{p:0},{p:1,duration:.55,ease:'power2.inOut',immediateRender:false,onUpdate:()=>{
+      const point=trail.getPointAtLength(length*progress.p);
+      gsap.set(cursor,{x:point.x,y:point.y});
+      orb.setAttribute('transform',`translate(${point.x} ${point.y})`);
+      reveal.setAttribute('stroke-dashoffset',String(1-progress.p));
+    }},m.t);
+    tl.to(group,{opacity:0,duration:.45},m.t+.65);
+    const next=moves[i+1]?.t??Infinity;
+    if(next>m.t+1.1)tl.to(orb,{opacity:0,duration:.3},m.t+.75);
+    if(next>m.t+1.35)tl.to(cursor,{opacity:0,duration:.25},m.t+1.05);
+  });
+}
+const editorial = document.querySelectorAll('.scene h2:not(#campus-headline),.intro-copy h1>span,.caption b,.end-title>.wordmark,.end-title>.arrival');
+editorial.forEach(el=>{if(el.closest('#model-original'))return;const walk=node=>{for(const child of [...node.childNodes]){if(child.nodeType===3){const fragment=document.createDocumentFragment();for(const char of Array.from(child.textContent)){const wrap=document.createElement('span');wrap.className='glyph-mask';const glyph=document.createElement('span');glyph.className='glyph';glyph.textContent=char;wrap.append(glyph);fragment.append(wrap);}child.replaceWith(fragment);}else if(child.nodeName!=='BR')walk(child);}};walk(el);});function addOrbGuide(t, path, duration) {
+  const geometry = document.createElementNS('http://www.w3.org/2000/svg','path');
+  geometry.setAttribute('d',path);
+  const length=geometry.getTotalLength(), progress={p:0};
+  const orb=document.getElementById('guide-orb');
+  tl.set(orb,{opacity:1},t);
+  tl.fromTo(progress,{p:0},{p:1,duration,ease:'power2.inOut',immediateRender:false,onUpdate:()=>{
+    const point=geometry.getPointAtLength(progress.p*length);
+    orb.setAttribute('transform',`translate(${point.x} ${point.y})`);
+  }},t);
+  tl.to(orb,{opacity:0,duration:.35},t+duration+.1);
+}
+const tl=gsap.timeline({paused:true,defaults:{ease:'power3.inOut'}});window.__timelines={mochiV4:tl};tl.set('#intro',{display:'block'},0);tl.fromTo('#intro',{opacity:0},{opacity:1,duration:.45,immediateRender:false},0);tl.set('#intro',{display:'none'},3.45);tl.set('#intro h1 span:nth-child(1)',{opacity:0},0);tl.fromTo('#intro h1 span:nth-child(1)',{x:0,y:50,opacity:0},{x:0,y:0,opacity:1,duration:.8,immediateRender:false},0.1);tl.set('#intro h1 span:nth-child(2)',{opacity:0},0);tl.fromTo('#intro h1 span:nth-child(2)',{x:0,y:60,opacity:0},{x:0,y:0,opacity:1,duration:.8,immediateRender:false},0.35);tl.set('#intro .intro-mark',{opacity:0},0);tl.fromTo('#intro .intro-mark',{x:80,y:0,opacity:0},{x:0,y:0,opacity:1,duration:.8,immediateRender:false},0.4);tl.set('#home',{display:'block'},3);tl.fromTo('#home',{opacity:0},{opacity:1,duration:.45,immediateRender:false},3);tl.set('#home',{display:'none'},6.45);tl.set('#home .product-window',{opacity:0},0);tl.fromTo('#home .product-window',{x:70,y:0,opacity:0},{x:0,y:0,opacity:1,duration:.8,immediateRender:false},3);tl.to('#home .camera',{scale:1.1,x:0,y:-33.51780598958345,duration:.65,ease:'power2.inOut'},3.208114233907525);tl.set('#click',{x:777,y:532,opacity:.8,scale:.15},3.858114233907525);tl.to('#click',{scale:1.4,opacity:0,duration:.5},3.858114233907525);tl.to('#cursor',{scale:.8,duration:.12},3.828114233907525);tl.to('#cursor',{scale:1,duration:.18},3.978114233907525);tl.to('#home .camera',{scale:1.1,x:0,y:-70.09280598958344,duration:.65,ease:'power2.inOut'},4.3583068902991835);tl.set('#click',{x:838,y:532,opacity:.8,scale:.15},5.008306890299184);tl.to('#click',{scale:1.4,opacity:0,duration:.5},5.008306890299184);tl.to('#cursor',{scale:.8,duration:.12},4.978306890299184);tl.to('#cursor',{scale:1,duration:.18},5.128306890299184);tl.to('#cursor',{opacity:0,duration:.2},5.7);tl.set('#setup',{display:'block'},6);tl.fromTo('#setup',{opacity:0},{opacity:1,duration:.45,immediateRender:false},6);tl.set('#setup',{display:'none'},10.45);tl.set('#setup .product-window',{opacity:0},0);tl.fromTo('#setup .product-window',{x:70,y:0,opacity:0},{x:0,y:0,opacity:1,duration:.8,immediateRender:false},6);tl.to('#setup .camera',{scale:1.1,x:0,y:0,duration:.65,ease:'power2.inOut'},6);tl.set('#click',{x:738,y:130,opacity:.8,scale:.15},6.55);tl.to('#click',{scale:1.4,opacity:0,duration:.5},6.55);tl.to('#cursor',{scale:.8,duration:.12},6.52);tl.to('#cursor',{scale:1,duration:.18},6.67);tl.to('#setup .camera',{scale:1.1,x:0,y:-85.50000000000011,duration:.65,ease:'power2.inOut'},6.929330904272938);tl.set('#click',{x:867,y:912,opacity:.8,scale:.15},7.579330904272938);tl.to('#click',{scale:1.4,opacity:0,duration:.5},7.579330904272938);tl.to('#cursor',{scale:.8,duration:.12},7.549330904272939);tl.to('#cursor',{scale:1,duration:.18},7.699330904272938);tl.to('#setup .camera',{scale:1.1,x:0,y:-85.50000000000011,duration:.65,ease:'power2.inOut'},8.295915866180854);tl.set('#click',{x:918,y:875,opacity:.8,scale:.15},8.945915866180854);tl.to('#click',{scale:1.4,opacity:0,duration:.5},8.945915866180854);tl.to('#cursor',{scale:.8,duration:.12},8.915915866180853);tl.to('#cursor',{scale:1,duration:.18},9.065915866180854);tl.to('#cursor',{opacity:0,duration:.2},9.7);tl.set('#compose',{display:'block'},10);tl.fromTo('#compose',{opacity:0},{opacity:1,duration:.45,immediateRender:false},10);tl.set('#compose',{display:'none'},18.45);tl.set('#compose .compose-label',{opacity:0},0);tl.fromTo('#compose .compose-label',{x:0,y:30,opacity:0},{x:0,y:0,opacity:1,duration:.8,immediateRender:false},10);tl.set('#composer',{opacity:0},0);tl.fromTo('#composer',{x:0,y:50,opacity:0},{x:0,y:0,opacity:1,duration:.8,immediateRender:false},10.1);tl.set('#typed',{textContent:""},10.6);tl.set('#typed',{textContent:"根"},10.674999999999999);tl.set('#typed',{textContent:"根据"},10.75);tl.set('#typed',{textContent:"根据校"},10.825);tl.set('#typed',{textContent:"根据校园"},10.9);tl.set('#typed',{textContent:"根据校园节"},10.975);tl.set('#typed',{textContent:"根据校园节水"},11.049999999999999);tl.set('#typed',{textContent:"根据校园节水调"},11.125);tl.set('#typed',{textContent:"根据校园节水调查"},11.2);tl.set('#typed',{textContent:"根据校园节水调查数"},11.275);tl.set('#typed',{textContent:"根据校园节水调查数据"},11.35);tl.set('#typed',{textContent:"根据校园节水调查数据，"},11.424999999999999);tl.set('#typed',{textContent:"根据校园节水调查数据，制"},11.5);tl.set('#typed',{textContent:"根据校园节水调查数据，制作"},11.575);tl.set('#typed',{textContent:"根据校园节水调查数据，制作一"},11.65);tl.set('#typed',{textContent:"根据校园节水调查数据，制作一份"},11.725);tl.set('#typed',{textContent:"根据校园节水调查数据，制作一份图"},11.799999999999999);tl.set('#typed',{textContent:"根据校园节水调查数据，制作一份图文"},11.875);tl.set('#typed',{textContent:"根据校园节水调查数据，制作一份图文课"},11.95);tl.set('#typed',{textContent:"根据校园节水调查数据，制作一份图文课件"},12.025);tl.set('#typed',{textContent:"根据校园节水调查数据，制作一份图文课件，"},12.1);tl.set('#typed',{textContent:"根据校园节水调查数据，制作一份图文课件，并"},12.174999999999999);tl.set('#typed',{textContent:"根据校园节水调查数据，制作一份图文课件，并整"},12.25);tl.set('#typed',{textContent:"根据校园节水调查数据，制作一份图文课件，并整理"},12.325);tl.set('#typed',{textContent:"根据校园节水调查数据，制作一份图文课件，并整理课"},12.399999999999999);tl.set('#typed',{textContent:"根据校园节水调查数据，制作一份图文课件，并整理课堂"},12.475);tl.set('#typed',{textContent:"根据校园节水调查数据，制作一份图文课件，并整理课堂练"},12.549999999999999);tl.set('#typed',{textContent:"根据校园节水调查数据，制作一份图文课件，并整理课堂练习"},12.625);tl.set('#typed',{textContent:"根据校园节水调查数据，制作一份图文课件，并整理课堂练习。"},12.7);tl.fromTo('#caret',{opacity:0},{opacity:1,duration:.32,repeat:9,yoyo:true,ease:'none'},10.5);tl.set('#click',{x:1484,y:666,opacity:.8,scale:.15},13.600000000000001);tl.to('#click',{scale:1.4,opacity:0,duration:.5},13.600000000000001);tl.to('#cursor',{scale:.8,duration:.12},13.57);tl.to('#cursor',{scale:1,duration:.18},13.72);tl.to('#send',{scale:.85,duration:.12},13.6);tl.to('#send',{scale:1,duration:.2},13.72);tl.to('#cursor',{opacity:0,duration:.18},13.7);tl.to('#composer',{y:-90,scale:.87,duration:1},13.8);tl.to('#compose .compose-label',{y:-40,opacity:0,duration:.6},13.8);tl.to('#compose .workspace',{opacity:0,duration:.3},13.8);tl.to('#caret',{opacity:0,duration:.2},13.8);tl.set('#execution',{opacity:0},0);tl.fromTo('#execution',{x:0,y:30,opacity:0},{x:0,y:0,opacity:1,duration:.8,immediateRender:false},14.5);tl.set('#execution .tool-row:nth-of-type(2)',{opacity:0},0);tl.fromTo('#execution .tool-row:nth-of-type(2)',{x:25,y:0,opacity:0},{x:0,y:0,opacity:1,duration:.8,immediateRender:false},14.8);tl.set('#execution .tool-row:nth-of-type(3)',{opacity:0},0);tl.fromTo('#execution .tool-row:nth-of-type(3)',{x:25,y:0,opacity:0},{x:0,y:0,opacity:1,duration:.8,immediateRender:false},15.450000000000001);tl.set('#execution .tool-row:nth-of-type(4)',{opacity:0},0);tl.fromTo('#execution .tool-row:nth-of-type(4)',{x:25,y:0,opacity:0},{x:0,y:0,opacity:1,duration:.8,immediateRender:false},16.1);tl.set('#outputs',{display:'block'},18);tl.fromTo('#outputs',{opacity:0},{opacity:1,duration:.45,immediateRender:false},18);tl.set('#outputs',{display:'none'},29.45);tl.set('#hero-slide',{opacity:0},0);tl.fromTo('#hero-slide',{x:130,y:50,opacity:0},{x:0,y:0,opacity:1,duration:.8,immediateRender:false},18);tl.to('#hero-slide',{x:765,y:55,scale:.31,duration:1.1},21);tl.to('#hero-slide',{opacity:0,duration:.3},22.1);tl.fromTo('#conveyor',{opacity:0,scale:.92},{opacity:1,scale:1,duration:1.1,immediateRender:false},21);tl.fromTo('.gallery-heading',{opacity:0,x:-45},{opacity:1,x:0,duration:.8,immediateRender:false},21.2);tl.fromTo('.belt.left',{y:20},{y:-515,duration:8,ease:'none',immediateRender:false},21);tl.fromTo('.belt.middle',{y:-615},{y:-65,duration:8,ease:'none',immediateRender:false},21);tl.fromTo('.belt.right',{y:90},{y:-470,duration:8,ease:'none',immediateRender:false},21);tl.set('#model',{display:'block'},29);tl.fromTo('#model',{opacity:0},{opacity:1,duration:.45,immediateRender:false},29);tl.set('#model',{display:'none'},35.45);tl.set('#model-card',{opacity:0},0);tl.fromTo('#model-card',{x:180,y:0,opacity:0},{x:0,y:0,opacity:1,duration:.8,immediateRender:false},29);tl.set('.model-copy',{opacity:0},0);tl.fromTo('.model-copy',{x:-50,y:0,opacity:0},{x:0,y:0,opacity:1,duration:.8,immediateRender:false},29.15);tl.set('#click',{x:1297,y:782,opacity:.8,scale:.15},30.55);tl.to('#click',{scale:1.4,opacity:0,duration:.5},30.55);tl.to('#cursor',{scale:.8,duration:.12},30.52);tl.to('#cursor',{scale:1,duration:.18},30.67);tl.set('#model-original .figure',{opacity:0,visibility:'hidden'},30.55);tl.set('#model-original .figure[data-key=right]',{visibility:'visible',opacity:1},30.55);tl.set('#model-original button',{attr:{'aria-pressed':'false'}},30.55);tl.set('#model-original button[data-key=right]',{attr:{'aria-pressed':'true'}},30.55);tl.set('#model-original #note',{textContent:"有一个角是直角，正好 90°，图上用「方角」标出来。"},30.55);tl.set('#click',{x:1510,y:782,opacity:.8,scale:.15},32.35);tl.to('#click',{scale:1.4,opacity:0,duration:.5},32.35);tl.to('#cursor',{scale:.8,duration:.12},32.32);tl.to('#cursor',{scale:1,duration:.18},32.47);tl.set('#model-original .figure',{opacity:0,visibility:'hidden'},32.35);tl.set('#model-original .figure[data-key=obtuse]',{visibility:'visible',opacity:1},32.35);tl.set('#model-original button',{attr:{'aria-pressed':'false'}},32.35);tl.set('#model-original button[data-key=obtuse]',{attr:{'aria-pressed':'true'}},32.35);tl.set('#model-original #note',{textContent:"有一个角是钝角，大于 90°，图上张得最大的那个角就是它。"},32.35);tl.set('#click',{x:1080,y:782,opacity:.8,scale:.15},34.05);tl.to('#click',{scale:1.4,opacity:0,duration:.5},34.05);tl.to('#cursor',{scale:.8,duration:.12},34.02);tl.to('#cursor',{scale:1,duration:.18},34.17);tl.set('#model-original .figure',{opacity:0,visibility:'hidden'},34.05);tl.set('#model-original .figure[data-key=acute]',{visibility:'visible',opacity:1},34.05);tl.set('#model-original button',{attr:{'aria-pressed':'false'}},34.05);tl.set('#model-original button[data-key=acute]',{attr:{'aria-pressed':'true'}},34.05);tl.set('#model-original #note',{textContent:"三个角都是锐角，都小于 90°。"},34.05);tl.to('#cursor',{opacity:0,duration:.3},34.65);tl.set('#campus',{display:'block'},35);tl.fromTo('#campus',{opacity:0},{opacity:1,duration:.45,immediateRender:false},35);tl.set('#campus',{display:'none'},39.45);tl.set('#campus .product-window',{opacity:0},0);tl.fromTo('#campus .product-window',{x:70,y:0,opacity:0},{x:0,y:0,opacity:1,duration:.8,immediateRender:false},35);tl.to('#campus .camera',{scale:1.1,x:0,y:-85.50000000000011,duration:.65,ease:'power2.inOut'},35);tl.set('#click',{x:322,y:712,opacity:.8,scale:.15},35.55);tl.to('#click',{scale:1.4,opacity:0,duration:.5},35.55);tl.to('#cursor',{scale:.8,duration:.12},35.52);tl.to('#cursor',{scale:1,duration:.18},35.67);tl.to('#campus .camera',{scale:1.1,x:0,y:-85.50000000000011,duration:.65,ease:'power2.inOut'},36.15999180999181);tl.set('#click',{x:322,y:822,opacity:.8,scale:.15},36.80999180999181);tl.to('#click',{scale:1.4,opacity:0,duration:.5},36.80999180999181);tl.to('#cursor',{scale:.8,duration:.12},36.77999180999181);tl.to('#cursor',{scale:1,duration:.18},36.92999180999181);tl.to('#cursor',{opacity:0,duration:.2},38.7);tl.set('#campus-flow',{display:'block'},39);tl.fromTo('#campus-flow',{opacity:0},{opacity:1,duration:.45,immediateRender:false},39);tl.set('#campus-flow',{display:'none'},58.45);tl.set('.campus-title',{opacity:0},0);tl.fromTo('.campus-title',{x:0,y:35,opacity:0},{x:0,y:0,opacity:1,duration:.8,immediateRender:false},39);tl.set('#campus-composer',{opacity:0},0);tl.fromTo('#campus-composer',{x:0,y:40,opacity:0},{x:0,y:0,opacity:1,duration:.8,immediateRender:false},39.1);tl.set('#campus-typed',{textContent:""},39.5);tl.set('#campus-typed',{textContent:"林"},39.6);tl.set('#campus-typed',{textContent:"林小"},39.7);tl.set('#campus-typed',{textContent:"林小禾"},39.8);tl.set('#campus-typed',{textContent:"林小禾在"},39.9);tl.set('#campus-typed',{textContent:"林小禾在不"},40.0);tl.set('#campus-typed',{textContent:"林小禾在不在"},40.1);tl.set('#campus-typed',{textContent:"林小禾在不在校"},40.2);tl.set('#campus-typed',{textContent:"林小禾在不在校，"},40.3);tl.set('#campus-typed',{textContent:"林小禾在不在校，在"},40.4);tl.set('#campus-typed',{textContent:"林小禾在不在校，在哪"},40.5);tl.set('#campus-typed',{textContent:"林小禾在不在校，在哪里"},40.6);tl.set('#campus-typed',{textContent:"林小禾在不在校，在哪里？"},40.7);tl.set('#campus-typed',{textContent:""},48.35);tl.set('#campus-typed',{textContent:"批"},48.410000000000004);tl.set('#campus-typed',{textContent:"批准"},48.47);tl.set('#campus-typed',{textContent:"批准陈"},48.53);tl.set('#campus-typed',{textContent:"批准陈言"},48.59);tl.set('#campus-typed',{textContent:"批准陈言蹊"},48.65);tl.set('#campus-typed',{textContent:"批准陈言蹊去"},48.71);tl.set('#campus-typed',{textContent:"批准陈言蹊去医"},48.77);tl.set('#campus-typed',{textContent:"批准陈言蹊去医务"},48.83);tl.set('#campus-typed',{textContent:"批准陈言蹊去医务室"},48.89);tl.set('#campus-typed',{textContent:"批准陈言蹊去医务室的"},48.95);tl.set('#campus-typed',{textContent:"批准陈言蹊去医务室的放"},49.01);tl.set('#campus-typed',{textContent:"批准陈言蹊去医务室的放行"},49.07);tl.set('#campus-typed',{textContent:"批准陈言蹊去医务室的放行申"},49.13);tl.set('#campus-typed',{textContent:"批准陈言蹊去医务室的放行申请"},49.190000000000005);tl.set('#campus-typed',{textContent:"批准陈言蹊去医务室的放行申请，"},49.25);tl.set('#campus-typed',{textContent:"批准陈言蹊去医务室的放行申请，请"},49.31);tl.set('#campus-typed',{textContent:"批准陈言蹊去医务室的放行申请，请展"},49.370000000000005);tl.set('#campus-typed',{textContent:"批准陈言蹊去医务室的放行申请，请展示"},49.43);tl.set('#campus-typed',{textContent:"批准陈言蹊去医务室的放行申请，请展示确"},49.49);tl.set('#campus-typed',{textContent:"批准陈言蹊去医务室的放行申请，请展示确认"},49.550000000000004);tl.set('#campus-typed',{textContent:"批准陈言蹊去医务室的放行申请，请展示确认卡"},49.61);tl.set('#campus-typed',{textContent:"批准陈言蹊去医务室的放行申请，请展示确认卡。"},49.67);tl.set('#click',{x:1484,y:666,opacity:.8,scale:.15},41.65);tl.to('#click',{scale:1.4,opacity:0,duration:.5},41.65);tl.to('#cursor',{scale:.8,duration:.12},41.620000000000005);tl.to('#cursor',{scale:1,duration:.18},41.77);tl.to('#campus-composer',{y:310,scale:.9,opacity:0,duration:.65},41.8);tl.to('#cursor',{opacity:0,duration:.18},41.9);tl.set('#ask-bubble',{opacity:0},0);tl.fromTo('#ask-bubble',{x:70,y:30,opacity:0},{x:0,y:0,opacity:1,duration:.8,immediateRender:false},41.8);tl.set('#ask-answer',{opacity:0},0);tl.fromTo('#ask-answer',{x:0,y:40,opacity:0},{x:0,y:0,opacity:1,duration:.8,immediateRender:false},42.7);tl.fromTo('#ask-answer strong',{backgroundColor:'#faf8f2'},{backgroundColor:'#e3edc9',duration:.65,immediateRender:false},45);tl.to('#ask-bubble,#ask-answer',{y:-60,opacity:0,duration:.6},47.5);tl.set('#campus-headline',{textContent:'核对申请，然后批准放行。'},48);tl.set('#campus-composer',{y:0,scale:1,opacity:1},48);tl.set('#campus-typed',{textContent:''},48);tl.set('#click',{x:1484,y:666,opacity:.8,scale:.15},49.949999999999996);tl.to('#click',{scale:1.4,opacity:0,duration:.5},49.949999999999996);tl.to('#cursor',{scale:.8,duration:.12},49.92);tl.to('#cursor',{scale:1,duration:.18},50.07);tl.to('#campus-composer',{y:-150,opacity:0,duration:.5},50.05);tl.to('#cursor',{opacity:0,duration:.2},50.2);tl.set('#approval-view',{opacity:0},0);tl.fromTo('#approval-view',{x:0,y:60,opacity:0},{x:0,y:0,opacity:1,duration:.8,immediateRender:false},50.25);tl.set('#click',{x:1439,y:805,opacity:.8,scale:.15},54.599999999999994);tl.to('#click',{scale:1.4,opacity:0,duration:.5},54.599999999999994);tl.to('#cursor',{scale:.8,duration:.12},54.57);tl.to('#cursor',{scale:1,duration:.18},54.72);tl.to('#approval-view .allow',{scale:.94,duration:.1},54.6);tl.to('#approval-view .allow',{scale:1,duration:.15},54.7);tl.to('#approval-view',{y:-50,opacity:0,duration:.5},55.05);tl.to('#cursor',{opacity:0,duration:.2},55.1);tl.set('#approval-result',{opacity:0},0);tl.fromTo('#approval-result',{x:0,y:45,opacity:0},{x:0,y:0,opacity:1,duration:.8,immediateRender:false},55.25);tl.fromTo('#findpeer .message-dot',{attr:{cx:10}},{attr:{cx:490},duration:1.5,immediateRender:false},58.65);tl.set('#findpeer',{display:'block'},58);tl.fromTo('#findpeer',{opacity:0},{opacity:1,duration:.45,immediateRender:false},58);tl.set('#findpeer',{display:'none'},62.45);tl.set('#findpeer .product-window',{opacity:0},0);tl.fromTo('#findpeer .product-window',{x:70,y:0,opacity:0},{x:0,y:0,opacity:1,duration:.8,immediateRender:false},58);tl.set('#findpeer .network-header',{opacity:0},0);tl.fromTo('#findpeer .network-header',{x:20,y:0,opacity:0},{x:0,y:0,opacity:1,duration:.8,immediateRender:false},58.1);tl.to('#findpeer .network-header',{opacity:0,y:-15,duration:.3},61.65);tl.to('#cursor',{opacity:0,duration:.2},61.7);tl.fromTo('#findreturn .message-dot',{attr:{cx:490}},{attr:{cx:10},duration:1.5,immediateRender:false},62.65);tl.set('#findreturn',{display:'block'},62);tl.fromTo('#findreturn',{opacity:0},{opacity:1,duration:.45,immediateRender:false},62);tl.set('#findreturn',{display:'none'},67.45);tl.set('#findreturn .product-window',{opacity:0},0);tl.fromTo('#findreturn .product-window',{x:70,y:0,opacity:0},{x:0,y:0,opacity:1,duration:.8,immediateRender:false},62);tl.set('#findreturn .network-header',{opacity:0},0);tl.fromTo('#findreturn .network-header',{x:20,y:0,opacity:0},{x:0,y:0,opacity:1,duration:.8,immediateRender:false},62.1);tl.to('#findreturn .network-header',{opacity:0,y:-15,duration:.3},66.65);tl.to('#cursor',{opacity:0,duration:.2},66.7);tl.set('#received',{display:'block'},67);tl.fromTo('#received',{opacity:0},{opacity:1,duration:.45,immediateRender:false},67);tl.set('#received',{display:'none'},71.45);tl.set('#received .product-window',{opacity:0},0);tl.fromTo('#received .product-window',{x:70,y:0,opacity:0},{x:0,y:0,opacity:1,duration:.8,immediateRender:false},67);tl.to('#cursor',{opacity:0,duration:.2},70.7);tl.set('#classroom',{display:'block'},71);tl.fromTo('#classroom',{opacity:0},{opacity:1,duration:.45,immediateRender:false},71);tl.set('#classroom',{display:'none'},76.45);tl.set('#class-slide1',{opacity:0},0);tl.fromTo('#class-slide1',{x:60,y:50,opacity:0},{x:0,y:0,opacity:1,duration:.8,immediateRender:false},71);tl.set('#click',{x:1130,y:928,opacity:.8,scale:.15},72.55);tl.to('#click',{scale:1.4,opacity:0,duration:.5},72.55);tl.to('#cursor',{scale:.8,duration:.12},72.52);tl.to('#cursor',{scale:1,duration:.18},72.67);tl.fromTo('#class-slide2',{x:110,opacity:0},{x:0,opacity:1,duration:.6,immediateRender:false},72.55);tl.to('#class-slide1',{x:-90,opacity:0,duration:.6},72.55);tl.set('#page-count',{textContent:'2 / 4'},72.55);tl.to('#cursor',{opacity:0,duration:.2},73.2);tl.set('#presets',{display:'block'},76);tl.fromTo('#presets',{opacity:0},{opacity:1,duration:.45,immediateRender:false},76);tl.set('#presets',{display:'none'},79.45);tl.set('#presets .product-window',{opacity:0},0);tl.fromTo('#presets .product-window',{x:70,y:0,opacity:0},{x:0,y:0,opacity:1,duration:.8,immediateRender:false},76);tl.to('#cursor',{opacity:0,duration:.2},78.7);tl.set('#connected',{display:'block'},79);tl.fromTo('#connected',{opacity:0},{opacity:1,duration:.45,immediateRender:false},79);tl.set('#connected',{display:'none'},85.45);tl.set('.end-art.a',{opacity:0},0);tl.fromTo('.end-art.a',{x:80,y:70,opacity:0},{x:0,y:0,opacity:1,duration:.8,immediateRender:false},79.0);tl.set('.end-art.b',{opacity:0},0);tl.fromTo('.end-art.b',{x:80,y:70,opacity:0},{x:0,y:0,opacity:1,duration:.8,immediateRender:false},79.17);tl.set('.end-art.c',{opacity:0},0);tl.fromTo('.end-art.c',{x:80,y:70,opacity:0},{x:0,y:0,opacity:1,duration:.8,immediateRender:false},79.34);tl.to('.end-art.a',{y:-65,duration:4.6,ease:'none'},80.2);tl.to('.end-art.b',{y:50,duration:4.6,ease:'none'},80.2);tl.to('.end-art.c',{y:-50,duration:4.6,ease:'none'},80.2);tl.set('#end',{display:'block'},85);tl.fromTo('#end',{opacity:0},{opacity:1,duration:.45,immediateRender:false},85);tl.set('#end',{display:'none'},90);tl.set('#mo-final',{opacity:0},0);tl.fromTo('#mo-final',{x:0,y:80,opacity:0},{x:0,y:0,opacity:1,duration:.8,immediateRender:false},85);tl.set('.end-title',{opacity:0},0);tl.fromTo('.end-title',{x:0,y:35,opacity:0},{x:0,y:0,opacity:1,duration:.8,immediateRender:false},85.45);tl.set('.end-sub',{opacity:0},0);tl.fromTo('.end-sub',{x:0,y:25,opacity:0},{x:0,y:0,opacity:1,duration:.8,immediateRender:false},85.75);tl.to('#mo-final .orb-companion__orb',{y:-7,scaleY:1.025,duration:1.4,repeat:2,yoyo:true,ease:'sine.inOut'},85.8);tl.to('#mo-final .expressive-orb__eye',{scaleY:.1,transformOrigin:'50% 50%',duration:.1,repeat:1,yoyo:true},87.5);tl.to({v:0},{v:1,duration:90},0);tl.fromTo('.arrival',{clipPath:'inset(0 100% 0 0)'},{clipPath:'inset(0 0% 0 0)',duration:.9,immediateRender:false},85.75);tl.fromTo('.end-dot',{scale:0},{scale:1,duration:.6,ease:'back.out(1.5)',immediateRender:false},86.2);tl.set('#intro .intro-mark',{scale:1.15},0);tl.fromTo('#intro .glyph',{yPercent:115,rotation:2,opacity:0},{yPercent:0,rotation:0,opacity:1,stagger:{amount:.28},duration:.7,ease:'power3.out',immediateRender:false},0.1);tl.to('#intro .glyph',{yPercent:-95,opacity:0,stagger:{amount:.12},duration:.4,ease:'power2.in'},2.45);tl.fromTo('#home .glyph',{yPercent:115,rotation:2,opacity:0},{yPercent:0,rotation:0,opacity:1,stagger:{amount:.28},duration:.7,ease:'power3.out',immediateRender:false},3.1);tl.to('#home .glyph',{yPercent:-95,opacity:0,stagger:{amount:.12},duration:.4,ease:'power2.in'},5.45);tl.to('#home .product-window',{x:-65,opacity:.65,duration:.6},5.85);tl.to('#home .caption span',{y:-15,opacity:0,duration:.35},5.9);tl.fromTo('#home .caption span',{y:20,opacity:0},{y:0,opacity:1,duration:.65,immediateRender:false},3.2);tl.fromTo('#setup .glyph',{yPercent:115,rotation:2,opacity:0},{yPercent:0,rotation:0,opacity:1,stagger:{amount:.28},duration:.7,ease:'power3.out',immediateRender:false},6.1);tl.to('#setup .glyph',{yPercent:-95,opacity:0,stagger:{amount:.12},duration:.4,ease:'power2.in'},9.45);tl.to('#setup .product-window',{x:-65,opacity:.65,duration:.6},9.85);tl.to('#setup .caption span',{y:-15,opacity:0,duration:.35},9.9);tl.fromTo('#setup .caption span',{y:20,opacity:0},{y:0,opacity:1,duration:.65,immediateRender:false},6.2);tl.fromTo('#compose .glyph',{yPercent:115,rotation:2,opacity:0},{yPercent:0,rotation:0,opacity:1,stagger:{amount:.28},duration:.7,ease:'power3.out',immediateRender:false},10.1);tl.to('#compose small',{opacity:0,duration:.25},17.65);tl.to('#compose .glyph',{yPercent:-95,opacity:0,stagger:{amount:.12},duration:.4,ease:'power2.in'},17.45);tl.fromTo('#outputs .glyph',{yPercent:115,rotation:2,opacity:0},{yPercent:0,rotation:0,opacity:1,stagger:{amount:.28},duration:.7,ease:'power3.out',immediateRender:false},21.25);tl.to('#outputs small',{opacity:0,duration:.25},28.65);tl.to('#outputs .glyph',{yPercent:-95,opacity:0,stagger:{amount:.12},duration:.4,ease:'power2.in'},28.45);tl.fromTo('#model .glyph',{yPercent:115,rotation:2,opacity:0},{yPercent:0,rotation:0,opacity:1,stagger:{amount:.28},duration:.7,ease:'power3.out',immediateRender:false},29.1);tl.to('#model small',{opacity:0,duration:.25},34.65);tl.to('#model .glyph',{yPercent:-95,opacity:0,stagger:{amount:.12},duration:.4,ease:'power2.in'},34.45);tl.fromTo('#campus .glyph',{yPercent:115,rotation:2,opacity:0},{yPercent:0,rotation:0,opacity:1,stagger:{amount:.28},duration:.7,ease:'power3.out',immediateRender:false},35.1);tl.to('#campus .glyph',{yPercent:-95,opacity:0,stagger:{amount:.12},duration:.4,ease:'power2.in'},38.45);tl.to('#campus .product-window',{x:-65,opacity:.65,duration:.6},38.85);tl.to('#campus .caption span',{y:-15,opacity:0,duration:.35},38.9);tl.fromTo('#campus .caption span',{y:20,opacity:0},{y:0,opacity:1,duration:.65,immediateRender:false},35.2);tl.to('#campus-flow small',{opacity:0,duration:.25},57.65);tl.fromTo('#findpeer .glyph',{yPercent:115,rotation:2,opacity:0},{yPercent:0,rotation:0,opacity:1,stagger:{amount:.28},duration:.7,ease:'power3.out',immediateRender:false},58.1);tl.to('#findpeer small',{opacity:0,duration:.25},61.65);tl.to('#findpeer .glyph',{yPercent:-95,opacity:0,stagger:{amount:.12},duration:.4,ease:'power2.in'},61.45);tl.to('#findpeer .product-window',{x:-65,opacity:.65,duration:.6},61.85);tl.fromTo('#findreturn .glyph',{yPercent:115,rotation:2,opacity:0},{yPercent:0,rotation:0,opacity:1,stagger:{amount:.28},duration:.7,ease:'power3.out',immediateRender:false},62.1);tl.to('#findreturn small',{opacity:0,duration:.25},66.65);tl.to('#findreturn .glyph',{yPercent:-95,opacity:0,stagger:{amount:.12},duration:.4,ease:'power2.in'},66.45);tl.to('#findreturn .product-window',{x:-65,opacity:.65,duration:.6},66.85);tl.fromTo('#received .glyph',{yPercent:115,rotation:2,opacity:0},{yPercent:0,rotation:0,opacity:1,stagger:{amount:.28},duration:.7,ease:'power3.out',immediateRender:false},67.1);tl.to('#received small',{opacity:0,duration:.25},70.65);tl.to('#received .glyph',{yPercent:-95,opacity:0,stagger:{amount:.12},duration:.4,ease:'power2.in'},70.45);tl.to('#received .product-window',{x:-65,opacity:.65,duration:.6},70.85);tl.fromTo('#classroom .glyph',{yPercent:115,rotation:2,opacity:0},{yPercent:0,rotation:0,opacity:1,stagger:{amount:.28},duration:.7,ease:'power3.out',immediateRender:false},71.1);tl.to('#classroom small',{opacity:0,duration:.25},75.65);tl.to('#classroom .glyph',{yPercent:-95,opacity:0,stagger:{amount:.12},duration:.4,ease:'power2.in'},75.45);tl.fromTo('#presets .glyph',{yPercent:115,rotation:2,opacity:0},{yPercent:0,rotation:0,opacity:1,stagger:{amount:.28},duration:.7,ease:'power3.out',immediateRender:false},76.1);tl.to('#presets .glyph',{yPercent:-95,opacity:0,stagger:{amount:.12},duration:.4,ease:'power2.in'},78.45);tl.to('#presets .product-window',{x:-65,opacity:.65,duration:.6},78.85);tl.to('#presets .caption span',{y:-15,opacity:0,duration:.35},78.9);tl.fromTo('#presets .caption span',{y:20,opacity:0},{y:0,opacity:1,duration:.65,immediateRender:false},76.2);tl.fromTo('#connected .glyph',{yPercent:115,rotation:2,opacity:0},{yPercent:0,rotation:0,opacity:1,stagger:{amount:.28},duration:.7,ease:'power3.out',immediateRender:false},79.1);tl.to('#connected small',{opacity:0,duration:.25},84.65);tl.to('#connected .glyph',{yPercent:-95,opacity:0,stagger:{amount:.12},duration:.4,ease:'power2.in'},84.45);tl.fromTo('#end .glyph',{yPercent:115,rotation:2,opacity:0},{yPercent:0,rotation:0,opacity:1,stagger:{amount:.28},duration:.7,ease:'power3.out',immediateRender:false},85.55);tl.to('#campus-headline',{y:-20,opacity:0,duration:.32},47.5);tl.fromTo('#campus-headline',{y:22,opacity:0},{y:0,opacity:1,duration:.6,immediateRender:false},48);tl.to('#intro .intro-mark',{x:-100,scale:.82,opacity:0,duration:.65},2.85);tl.to('#outputs #conveyor',{x:-80,scale:.97,duration:.7},28.8);tl.to('#model-card',{x:-80,opacity:.7,duration:.65},34.85);tl.to('#class-slide2',{x:-80,opacity:.65,duration:.6},75.85);tl.to('.end-art',{x:-70,opacity:0,stagger:.08,duration:.65},84.8);const lateScenes=new Set(["findpeer", "findreturn", "received", "classroom", "presets", "connected", "end"]);for(const tween of [...tl.getChildren(false,true,true)]){const start=tween.startTime();if(start<58)continue;const targets=tween.targets?.()||[];const scenes=targets.map(n=>n?.closest?.(".scene")?.id).filter(Boolean);if(scenes.some(id=>lateScenes.has(id))||(!scenes.length&&start>=59))tween.startTime(start+12);}tl.set('#teacher-talk',{display:'block'},58);tl.fromTo('#teacher-talk',{opacity:0},{opacity:1,duration:.45,immediateRender:false},58);tl.set('#teacher-talk',{display:'none'},70.45);tl.set('#teacher-incoming',{opacity:0},0);tl.fromTo('#teacher-incoming',{x:0,y:35,opacity:0},{x:0,y:0,opacity:1,duration:.8,immediateRender:false},58.35);tl.set('#teacher-composer',{opacity:0},0);tl.fromTo('#teacher-composer',{x:0,y:50,opacity:0},{x:0,y:0,opacity:1,duration:.8,immediateRender:false},60.1);tl.to('#teacher-incoming',{y:-55,opacity:0,duration:.5},60);tl.fromTo('#teacher-talk .glyph',{yPercent:110,opacity:0},{yPercent:0,opacity:1,stagger:{amount:.3},duration:.7,immediateRender:false},58.1);tl.set('#teacher-typed',{textContent:""},60.7);tl.set('#teacher-typed',{textContent:"回"},60.78);tl.set('#teacher-typed',{textContent:"回复"},60.86);tl.set('#teacher-typed',{textContent:"回复林"},60.940000000000005);tl.set('#teacher-typed',{textContent:"回复林清"},61.02);tl.set('#teacher-typed',{textContent:"回复林清老"},61.1);tl.set('#teacher-typed',{textContent:"回复林清老师"},61.18);tl.set('#teacher-typed',{textContent:"回复林清老师："},61.260000000000005);tl.set('#teacher-typed',{textContent:"回复林清老师：可"},61.34);tl.set('#teacher-typed',{textContent:"回复林清老师：可以"},61.42);tl.set('#teacher-typed',{textContent:"回复林清老师：可以，"},61.5);tl.set('#teacher-typed',{textContent:"回复林清老师：可以，明"},61.580000000000005);tl.set('#teacher-typed',{textContent:"回复林清老师：可以，明天"},61.660000000000004);tl.set('#teacher-typed',{textContent:"回复林清老师：可以，明天上"},61.74);tl.set('#teacher-typed',{textContent:"回复林清老师：可以，明天上午"},61.82);tl.set('#teacher-typed',{textContent:"回复林清老师：可以，明天上午多"},61.900000000000006);tl.set('#teacher-typed',{textContent:"回复林清老师：可以，明天上午多媒"},61.980000000000004);tl.set('#teacher-typed',{textContent:"回复林清老师：可以，明天上午多媒体"},62.06);tl.set('#teacher-typed',{textContent:"回复林清老师：可以，明天上午多媒体教"},62.14);tl.set('#teacher-typed',{textContent:"回复林清老师：可以，明天上午多媒体教室"},62.220000000000006);tl.set('#teacher-typed',{textContent:"回复林清老师：可以，明天上午多媒体教室可"},62.300000000000004);tl.set('#teacher-typed',{textContent:"回复林清老师：可以，明天上午多媒体教室可以"},62.38);tl.set('#teacher-typed',{textContent:"回复林清老师：可以，明天上午多媒体教室可以使"},62.46);tl.set('#teacher-typed',{textContent:"回复林清老师：可以，明天上午多媒体教室可以使用"},62.540000000000006);tl.set('#teacher-typed',{textContent:"回复林清老师：可以，明天上午多媒体教室可以使用。"},62.620000000000005);tl.set('#click',{x:1484,y:666,opacity:.8,scale:.15},63.65);tl.to('#click',{scale:1.4,opacity:0,duration:.5},63.65);tl.to('#cursor',{scale:.8,duration:.12},63.620000000000005);tl.to('#cursor',{scale:1,duration:.18},63.77);tl.to('#teacher-composer',{y:-100,opacity:0,duration:.6},64);tl.to('#teacher-talk .glyph',{yPercent:-95,opacity:0,stagger:{amount:.12},duration:.4},69.45);tl.to('#teacher-talk small',{opacity:0,duration:.3},69.6);tl.set('#teacher-response',{opacity:0},0);tl.fromTo('#teacher-response',{x:0,y:45,opacity:0},{x:0,y:0,opacity:1,duration:.8,immediateRender:false},64.8);tl.to('#campus-flow .small-note',{opacity:0,duration:.2},57.75);tl.fromTo('#teacher-talk .small-note',{opacity:0},{opacity:1,duration:.3,immediateRender:false},58.5);tl.set('#click',{x:680,y:834,opacity:.8,scale:.15},17.55);tl.to('#click',{scale:1.4,opacity:0,duration:.5},17.55);tl.to('#cursor',{scale:.8,duration:.12},17.52);tl.to('#cursor',{scale:1,duration:.18},17.67);addCursorFlights([{"x": 777, "y": 532, "t": 3.308114233907525, "click": true}, {"x": 838, "y": 532, "t": 4.458306890299184, "click": true}, {"x": 738, "y": 130, "t": 6, "click": true}, {"x": 867, "y": 912, "t": 7.029330904272938, "click": true}, {"x": 918, "y": 875, "t": 8.395915866180854, "click": true}, {"x": 1240, "y": 775, "t": 10.25, "click": false}, {"x": 1484, "y": 666, "t": 13.05, "click": true}, {"x": 1297, "y": 782, "t": 30, "click": true}, {"x": 1510, "y": 782, "t": 31.8, "click": true}, {"x": 1080, "y": 782, "t": 33.5, "click": true}, {"x": 322, "y": 712, "t": 35, "click": true}, {"x": 322, "y": 822, "t": 36.25999180999181, "click": true}, {"x": 1484, "y": 666, "t": 41.1, "click": true}, {"x": 1484, "y": 666, "t": 49.4, "click": true}, {"x": 1439, "y": 805, "t": 54.05, "click": true}, {"x": 1130, "y": 928, "t": 84, "click": true}, {"x": 1484, "y": 666, "t": 63.1, "click": true}, {"x": 680, "y": 834, "t": 17.0, "click": true}, {"x": 1365, "y": 320, "t": 21.7, "click": false}, {"x": 862, "y": 138, "t": 70.05, "click": false}, {"x": 1530, "y": 138, "t": 71.05, "click": false}, {"x": 1530, "y": 138, "t": 74.05, "click": false}, {"x": 862, "y": 138, "t": 75.05, "click": false}, {"x": 960, "y": 550, "t": 97.15, "click": false}]);tl.to({v:0},{v:1,duration:102},0);const edit=gsap.timeline({paused:true});const playhead={t:0};edit.fromTo(playhead,{t:0},{t:3,duration:2.5,ease:"none",immediateRender:false,onUpdate:()=>tl.time(playhead.t,false)},0);edit.fromTo(playhead,{t:3},{t:10,duration:5.0,ease:"none",immediateRender:false,onUpdate:()=>tl.time(playhead.t,false)},2.5);edit.fromTo(playhead,{t:10},{t:18,duration:6.0,ease:"none",immediateRender:false,onUpdate:()=>tl.time(playhead.t,false)},7.5);edit.fromTo(playhead,{t:18},{t:29,duration:4.0,ease:"none",immediateRender:false,onUpdate:()=>tl.time(playhead.t,false)},13.5);edit.fromTo(playhead,{t:29},{t:29,duration:5.0,ease:"none",immediateRender:false,onUpdate:()=>tl.time(playhead.t,false)},17.5);edit.fromTo(playhead,{t:29},{t:35,duration:5.0,ease:"none",immediateRender:false,onUpdate:()=>tl.time(playhead.t,false)},22.5);edit.fromTo(playhead,{t:35},{t:35,duration:6.0,ease:"none",immediateRender:false,onUpdate:()=>tl.time(playhead.t,false)},27.5);edit.fromTo(playhead,{t:35},{t:39,duration:3.0,ease:"none",immediateRender:false,onUpdate:()=>tl.time(playhead.t,false)},33.5);edit.fromTo(playhead,{t:39},{t:48,duration:6.0,ease:"none",immediateRender:false,onUpdate:()=>tl.time(playhead.t,false)},36.5);edit.fromTo(playhead,{t:48},{t:58,duration:7.0,ease:"none",immediateRender:false,onUpdate:()=>tl.time(playhead.t,false)},42.5);edit.fromTo(playhead,{t:58},{t:70,duration:8.0,ease:"none",immediateRender:false,onUpdate:()=>tl.time(playhead.t,false)},49.5);edit.fromTo(playhead,{t:70},{t:79,duration:6.0,ease:"none",immediateRender:false,onUpdate:()=>tl.time(playhead.t,false)},57.5);edit.fromTo(playhead,{t:79},{t:88,duration:7.0,ease:"none",immediateRender:false,onUpdate:()=>tl.time(playhead.t,false)},63.5);edit.fromTo(playhead,{t:88},{t:91,duration:6.0,ease:"none",immediateRender:false,onUpdate:()=>tl.time(playhead.t,false)},70.5);edit.fromTo(playhead,{t:91},{t:97,duration:0.0,ease:"none",immediateRender:false,onUpdate:()=>tl.time(playhead.t,false)},76.5);edit.fromTo(playhead,{t:97},{t:102,duration:3.5,ease:"none",immediateRender:false,onUpdate:()=>tl.time(playhead.t,false)},76.5);edit.set('#model-request',{display:'block'},17.5);edit.fromTo('#model-request',{opacity:0,y:45},{opacity:1,y:0,duration:.35},17.5);edit.set('#model-writing,#model-output',{opacity:0},0);edit.fromTo('#model-request h2',{y:35,opacity:0},{y:0,opacity:1,duration:.55},17.6);edit.set('#model-request-typed',{textContent:""},17.9);edit.set('#model-request-typed',{textContent:"做"},17.945);edit.set('#model-request-typed',{textContent:"做一"},17.989999999999995);edit.set('#model-request-typed',{textContent:"做一个"},18.034999999999997);edit.set('#model-request-typed',{textContent:"做一个三"},18.08);edit.set('#model-request-typed',{textContent:"做一个三角"},18.125);edit.set('#model-request-typed',{textContent:"做一个三角形"},18.17);edit.set('#model-request-typed',{textContent:"做一个三角形交"},18.215000000000003);edit.set('#model-request-typed',{textContent:"做一个三角形交互"},18.259999999999998);edit.set('#model-request-typed',{textContent:"做一个三角形交互模"},18.305);edit.set('#model-request-typed',{textContent:"做一个三角形交互模型"},18.349999999999994);edit.set('#model-request-typed',{textContent:"做一个三角形交互模型，"},18.394999999999996);edit.set('#model-request-typed',{textContent:"做一个三角形交互模型，可"},18.439999999999998);edit.set('#model-request-typed',{textContent:"做一个三角形交互模型，可切"},18.485);edit.set('#model-request-typed',{textContent:"做一个三角形交互模型，可切换"},18.53);edit.set('#model-request-typed',{textContent:"做一个三角形交互模型，可切换锐"},18.575000000000003);edit.set('#model-request-typed',{textContent:"做一个三角形交互模型，可切换锐角"},18.619999999999997);edit.set('#model-request-typed',{textContent:"做一个三角形交互模型，可切换锐角、"},18.665);edit.set('#model-request-typed',{textContent:"做一个三角形交互模型，可切换锐角、直"},18.709999999999994);edit.set('#model-request-typed',{textContent:"做一个三角形交互模型，可切换锐角、直角"},18.754999999999995);edit.set('#model-request-typed',{textContent:"做一个三角形交互模型，可切换锐角、直角和"},18.799999999999997);edit.set('#model-request-typed',{textContent:"做一个三角形交互模型，可切换锐角、直角和钝"},18.845);edit.set('#model-request-typed',{textContent:"做一个三角形交互模型，可切换锐角、直角和钝角"},18.89);edit.set('#model-request-typed',{textContent:"做一个三角形交互模型，可切换锐角、直角和钝角。"},18.935000000000002);edit.fromTo('#cursor',{x:1350,y:735,opacity:0},{x:1484,y:666,opacity:1,duration:.4},18.799999999999997);edit.fromTo('#click',{x:1484,y:666,scale:.15,opacity:.8},{scale:1.4,opacity:0,duration:.4},19.200000000000003);edit.to('#model-request-send',{scale:.88,duration:.1,yoyo:true,repeat:1},19.200000000000003);edit.to('#cursor',{opacity:0,duration:.2},19.4);edit.to('#model-request-composer',{y:-100,opacity:0,duration:.35},19.5);edit.to('#model-request h2',{y:-30,opacity:0,duration:.35},19.5);edit.fromTo('#model-writing',{y:40,opacity:0},{y:0,opacity:1,duration:.4},19.799999999999997);edit.set('#model-code',{textContent:""},20.0);edit.set('#model-code',{textContent:"<svg viewBo"},20.045);edit.set('#model-code',{textContent:"<svg viewBox=\"0 0 360 "},20.090000000000003);edit.set('#model-code',{textContent:"<svg viewBox=\"0 0 360 300\" role=\"i"},20.135000000000005);edit.set('#model-code',{textContent:"<svg viewBox=\"0 0 360 300\" role=\"img\" aria-la"},20.18);edit.set('#model-code',{textContent:"<svg viewBox=\"0 0 360 300\" role=\"img\" aria-label=\"锐角三角形，三"},20.225);edit.set('#model-code',{textContent:"<svg viewBox=\"0 0 360 300\" role=\"img\" aria-label=\"锐角三角形，三个角都是锐角\">\n  "},20.269999999999996);edit.set('#model-code',{textContent:"<svg viewBox=\"0 0 360 300\" role=\"img\" aria-label=\"锐角三角形，三个角都是锐角\">\n        <polyg"},20.314999999999998);edit.set('#model-code',{textContent:"<svg viewBox=\"0 0 360 300\" role=\"img\" aria-label=\"锐角三角形，三个角都是锐角\">\n        <polygon class=\"t"},20.36);edit.set('#model-code',{textContent:"<svg viewBox=\"0 0 360 300\" role=\"img\" aria-label=\"锐角三角形，三个角都是锐角\">\n        <polygon class=\"tri\" points=\""},20.405);edit.set('#model-code',{textContent:"<svg viewBox=\"0 0 360 300\" role=\"img\" aria-label=\"锐角三角形，三个角都是锐角\">\n        <polygon class=\"tri\" points=\"180,50 50,2"},20.450000000000003);edit.set('#model-code',{textContent:"<svg viewBox=\"0 0 360 300\" role=\"img\" aria-label=\"锐角三角形，三个角都是锐角\">\n        <polygon class=\"tri\" points=\"180,50 50,250 310,250\"/"},20.495000000000005);edit.set('#model-code',{textContent:"<svg viewBox=\"0 0 360 300\" role=\"img\" aria-label=\"锐角三角形，三个角都是锐角\">\n        <polygon class=\"tri\" points=\"180,50 50,250 310,250\"/>\n        <"},20.54);edit.set('#model-code',{textContent:"<svg viewBox=\"0 0 360 300\" role=\"img\" aria-label=\"锐角三角形，三个角都是锐角\">\n        <polygon class=\"tri\" points=\"180,50 50,250 310,250\"/>\n        <path class=\""},20.585);edit.set('#model-code',{textContent:"<svg viewBox=\"0 0 360 300\" role=\"img\" aria-label=\"锐角三角形，三个角都是锐角\">\n        <polygon class=\"tri\" points=\"180,50 50,250 310,250\"/>\n        <path class=\"arc\" d=\"M16"},20.629999999999995);edit.set('#model-code',{textContent:"<svg viewBox=\"0 0 360 300\" role=\"img\" aria-label=\"锐角三角形，三个角都是锐角\">\n        <polygon class=\"tri\" points=\"180,50 50,250 310,250\"/>\n        <path class=\"arc\" d=\"M161.47,78.5 A3"},20.674999999999997);edit.set('#model-code',{textContent:"<svg viewBox=\"0 0 360 300\" role=\"img\" aria-label=\"锐角三角形，三个角都是锐角\">\n        <polygon class=\"tri\" points=\"180,50 50,250 310,250\"/>\n        <path class=\"arc\" d=\"M161.47,78.5 A34,34 0 0 0 "},20.72);edit.set('#model-code',{textContent:"<svg viewBox=\"0 0 360 300\" role=\"img\" aria-label=\"锐角三角形，三个角都是锐角\">\n        <polygon class=\"tri\" points=\"180,50 50,250 310,250\"/>\n        <path class=\"arc\" d=\"M161.47,78.5 A34,34 0 0 0 198.53,78.5"},20.765);edit.set('#model-code',{textContent:"<svg viewBox=\"0 0 360 300\" role=\"img\" aria-label=\"锐角三角形，三个角都是锐角\">\n        <polygon class=\"tri\" points=\"180,50 50,250 310,250\"/>\n        <path class=\"arc\" d=\"M161.47,78.5 A34,34 0 0 0 198.53,78.5\"/>\n        "},20.810000000000002);edit.set('#model-code',{textContent:"<svg viewBox=\"0 0 360 300\" role=\"img\" aria-label=\"锐角三角形，三个角都是锐角\">\n        <polygon class=\"tri\" points=\"180,50 50,250 310,250\"/>\n        <path class=\"arc\" d=\"M161.47,78.5 A34,34 0 0 0 198.53,78.5\"/>\n        <path class"},20.855000000000004);edit.set('#model-code',{textContent:"<svg viewBox=\"0 0 360 300\" role=\"img\" aria-label=\"锐角三角形，三个角都是锐角\">\n        <polygon class=\"tri\" points=\"180,50 50,250 310,250\"/>\n        <path class=\"arc\" d=\"M161.47,78.5 A34,34 0 0 0 198.53,78.5\"/>\n        <path class=\"arc\" d=\"M6"},20.9);edit.set('#model-code',{textContent:"<svg viewBox=\"0 0 360 300\" role=\"img\" aria-label=\"锐角三角形，三个角都是锐角\">\n        <polygon class=\"tri\" points=\"180,50 50,250 310,250\"/>\n        <path class=\"arc\" d=\"M161.47,78.5 A34,34 0 0 0 198.53,78.5\"/>\n        <path class=\"arc\" d=\"M66.35,224.85"},20.945);edit.set('#model-code',{textContent:"<svg viewBox=\"0 0 360 300\" role=\"img\" aria-label=\"锐角三角形，三个角都是锐角\">\n        <polygon class=\"tri\" points=\"180,50 50,250 310,250\"/>\n        <path class=\"arc\" d=\"M161.47,78.5 A34,34 0 0 0 198.53,78.5\"/>\n        <path class=\"arc\" d=\"M66.35,224.85 A30,30 0 0 "},20.989999999999995);edit.set('#model-code',{textContent:"<svg viewBox=\"0 0 360 300\" role=\"img\" aria-label=\"锐角三角形，三个角都是锐角\">\n        <polygon class=\"tri\" points=\"180,50 50,250 310,250\"/>\n        <path class=\"arc\" d=\"M161.47,78.5 A34,34 0 0 0 198.53,78.5\"/>\n        <path class=\"arc\" d=\"M66.35,224.85 A30,30 0 0 1 80,250\"/>"},21.034999999999997);edit.set('#model-code',{textContent:"<svg viewBox=\"0 0 360 300\" role=\"img\" aria-label=\"锐角三角形，三个角都是锐角\">\n        <polygon class=\"tri\" points=\"180,50 50,250 310,250\"/>\n        <path class=\"arc\" d=\"M161.47,78.5 A34,34 0 0 0 198.53,78.5\"/>\n        <path class=\"arc\" d=\"M66.35,224.85 A30,30 0 0 1 80,250\"/>\n        <pa"},21.08);edit.set('#model-code',{textContent:"<svg viewBox=\"0 0 360 300\" role=\"img\" aria-label=\"锐角三角形，三个角都是锐角\">\n        <polygon class=\"tri\" points=\"180,50 50,250 310,250\"/>\n        <path class=\"arc\" d=\"M161.47,78.5 A34,34 0 0 0 198.53,78.5\"/>\n        <path class=\"arc\" d=\"M66.35,224.85 A30,30 0 0 1 80,250\"/>\n        <path class=\"a"},21.125);edit.set('#model-code',{textContent:"<svg viewBox=\"0 0 360 300\" role=\"img\" aria-label=\"锐角三角形，三个角都是锐角\">\n        <polygon class=\"tri\" points=\"180,50 50,250 310,250\"/>\n        <path class=\"arc\" d=\"M161.47,78.5 A34,34 0 0 0 198.53,78.5\"/>\n        <path class=\"arc\" d=\"M66.35,224.85 A30,30 0 0 1 80,250\"/>\n        <path class=\"arc\" d=\"M280,"},21.17);edit.set('#model-code',{textContent:"<svg viewBox=\"0 0 360 300\" role=\"img\" aria-label=\"锐角三角形，三个角都是锐角\">\n        <polygon class=\"tri\" points=\"180,50 50,250 310,250\"/>\n        <path class=\"arc\" d=\"M161.47,78.5 A34,34 0 0 0 198.53,78.5\"/>\n        <path class=\"arc\" d=\"M66.35,224.85 A30,30 0 0 1 80,250\"/>\n        <path class=\"arc\" d=\"M280,250 A30,30 "},21.215000000000003);edit.set('#model-code',{textContent:"<svg viewBox=\"0 0 360 300\" role=\"img\" aria-label=\"锐角三角形，三个角都是锐角\">\n        <polygon class=\"tri\" points=\"180,50 50,250 310,250\"/>\n        <path class=\"arc\" d=\"M161.47,78.5 A34,34 0 0 0 198.53,78.5\"/>\n        <path class=\"arc\" d=\"M66.35,224.85 A30,30 0 0 1 80,250\"/>\n        <path class=\"arc\" d=\"M280,250 A30,30 0 0 1 293.65"},21.260000000000005);edit.set('#model-code',{textContent:"<svg viewBox=\"0 0 360 300\" role=\"img\" aria-label=\"锐角三角形，三个角都是锐角\">\n        <polygon class=\"tri\" points=\"180,50 50,250 310,250\"/>\n        <path class=\"arc\" d=\"M161.47,78.5 A34,34 0 0 0 198.53,78.5\"/>\n        <path class=\"arc\" d=\"M66.35,224.85 A30,30 0 0 1 80,250\"/>\n        <path class=\"arc\" d=\"M280,250 A30,30 0 0 1 293.65,224.85\"/>\n"},21.305);edit.set('#model-code',{textContent:"<svg viewBox=\"0 0 360 300\" role=\"img\" aria-label=\"锐角三角形，三个角都是锐角\">\n        <polygon class=\"tri\" points=\"180,50 50,250 310,250\"/>\n        <path class=\"arc\" d=\"M161.47,78.5 A34,34 0 0 0 198.53,78.5\"/>\n        <path class=\"arc\" d=\"M66.35,224.85 A30,30 0 0 1 80,250\"/>\n        <path class=\"arc\" d=\"M280,250 A30,30 0 0 1 293.65,224.85\"/>\n      </svg>"},21.35);edit.fromTo('#model-output',{y:25,opacity:0},{y:0,opacity:1,duration:.35},21.5);edit.to('#model-request',{y:-50,opacity:0,duration:.45},22.65);edit.set('#model-request',{display:'none'},25.1);edit.set('#outputs',{visibility:'hidden'},17.85);edit.to('#model-writing,#model-request .compose-label,#model-request .small-note',{opacity:0,duration:.2},22.35);edit.set('#preset-showcase',{display:'block'},70.5);edit.fromTo('#preset-showcase',{opacity:0},{opacity:1,duration:.3},70.5);edit.fromTo('.preset-title',{y:40,opacity:0},{y:0,opacity:1,duration:.6},70.6);edit.fromTo('.pop-0',{y:160,scale:.85,opacity:0},{y:0,scale:1,opacity:1,duration:.7,ease:'back.out(1.15)'},70.8);edit.to('.pop-0',{y:-50,duration:3.5,ease:'sine.inOut'},71.7);edit.fromTo('.pop-1',{y:-130,scale:.85,opacity:0},{y:0,scale:1,opacity:1,duration:.7,ease:'back.out(1.15)'},70.98);edit.to('.pop-1',{y:45,duration:3.5,ease:'sine.inOut'},71.7);edit.fromTo('.pop-2',{y:160,scale:.85,opacity:0},{y:0,scale:1,opacity:1,duration:.7,ease:'back.out(1.15)'},71.16);edit.to('.pop-2',{y:-50,duration:3.5,ease:'sine.inOut'},71.7);edit.to('#preset-showcase',{y:-55,opacity:0,duration:.4},76.35);edit.set('#preset-showcase',{display:'none'},76.75);edit.to('#intro .expressive-orb__eye',{attr:{ry:1},duration:.09,yoyo:true,repeat:1},1.15);edit.to('#intro .orb-companion__orb',{y:-5,duration:.7,yoyo:true,repeat:1,ease:'sine.inOut'},.45);edit.to('#mo-final .expressive-orb__eye',{attr:{ry:1},duration:.1,yoyo:true,repeat:1},77.9);edit.to('#mo-final .orb-companion__orb',{rotation:3,transformOrigin:'50% 80%',duration:.45,yoyo:true,repeat:1,ease:'sine.inOut'},78.3);edit.set('#presets',{visibility:'hidden'},70.8);edit.set('#quiz-story',{display:'block'},27.5);edit.set('#model',{visibility:'hidden'},27.85);edit.set('#quiz-page',{opacity:0},0);edit.fromTo('#quiz-story',{opacity:0,y:45},{opacity:1,y:0,duration:.35},27.5);edit.fromTo('#quiz-heading',{opacity:0,y:35},{opacity:1,y:0,duration:.45},27.6);edit.set('#quiz-typed',{textContent:""},27.9);edit.set('#quiz-typed',{textContent:"根"},27.939999999999998);edit.set('#quiz-typed',{textContent:"根据"},27.979999999999997);edit.set('#quiz-typed',{textContent:"根据这"},28.02);edit.set('#quiz-typed',{textContent:"根据这个"},28.06);edit.set('#quiz-typed',{textContent:"根据这个模"},28.099999999999998);edit.set('#quiz-typed',{textContent:"根据这个模型"},28.139999999999997);edit.set('#quiz-typed',{textContent:"根据这个模型，"},28.18);edit.set('#quiz-typed',{textContent:"根据这个模型，生"},28.22);edit.set('#quiz-typed',{textContent:"根据这个模型，生成"},28.259999999999998);edit.set('#quiz-typed',{textContent:"根据这个模型，生成 "},28.299999999999997);edit.set('#quiz-typed',{textContent:"根据这个模型，生成 3"},28.34);edit.set('#quiz-typed',{textContent:"根据这个模型，生成 3 "},28.38);edit.set('#quiz-typed',{textContent:"根据这个模型，生成 3 道"},28.419999999999998);edit.set('#quiz-typed',{textContent:"根据这个模型，生成 3 道判"},28.459999999999997);edit.set('#quiz-typed',{textContent:"根据这个模型，生成 3 道判断"},28.5);edit.set('#quiz-typed',{textContent:"根据这个模型，生成 3 道判断题"},28.54);edit.set('#quiz-typed',{textContent:"根据这个模型，生成 3 道判断题，"},28.58);edit.set('#quiz-typed',{textContent:"根据这个模型，生成 3 道判断题，并"},28.619999999999997);edit.set('#quiz-typed',{textContent:"根据这个模型，生成 3 道判断题，并给"},28.66);edit.set('#quiz-typed',{textContent:"根据这个模型，生成 3 道判断题，并给出"},28.7);edit.set('#quiz-typed',{textContent:"根据这个模型，生成 3 道判断题，并给出解"},28.74);edit.set('#quiz-typed',{textContent:"根据这个模型，生成 3 道判断题，并给出解析"},28.779999999999998);edit.set('#quiz-typed',{textContent:"根据这个模型，生成 3 道判断题，并给出解析。"},28.82);edit.fromTo('#cursor',{x:1300,y:755,opacity:0},{x:1484,y:666,opacity:1,duration:.35},28.7);edit.fromTo('#click',{x:1484,y:666,scale:.15,opacity:.8},{scale:1.4,opacity:0,duration:.4},29.05);edit.to('#quiz-composer',{y:-100,opacity:0,duration:.3},29.2);edit.to('#cursor',{opacity:0,duration:.15},29.35);edit.to('#quiz-heading',{y:160,duration:.5},29.3);edit.fromTo('#quiz-page',{x:130,opacity:0},{x:0,opacity:1,duration:.6},29.5);edit.fromTo('#quiz-page .q',{y:25,opacity:0},{y:0,opacity:1,stagger:.2,duration:.4},29.7);edit.fromTo('#cursor',{x:1400,y:700,opacity:0},{x:1056,y:501,opacity:1,duration:.4},30.7);edit.fromTo('#click',{x:1056,y:501,scale:.15,opacity:.8},{scale:1.4,opacity:0,duration:.4},31.1);edit.set('#quiz-page .q:first-of-type button:first-child',{backgroundColor:'#2f7a4f',color:'#fff'},31.1);edit.set('#quiz-page .q:first-of-type .feedback',{display:'flex',color:'#2f7a4f'},31.1);edit.set('#quiz-page .q:first-of-type .feedback .text',{textContent:'答对了。100° 比 90° 大，是钝角；按最大的角分类，它就是钝角三角形。'},31.1);edit.to('#cursor',{opacity:0,duration:.2},31.5);edit.to('#quiz-story',{x:-80,opacity:0,duration:.35},33.45);edit.set('#quiz-story',{display:'none'},33.8);edit.to('#classroom .small-note',{opacity:0,duration:.2},70.25);window.__timelines={mochiV4:edit};</script></body></html>

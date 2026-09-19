@@ -78,6 +78,7 @@ function loadClient(fetchImpl, options = {}) {
     clearInterval: options.runEffects === true ? () => {} : clearInterval,
     window: {
       ...(options.desktopBridge ? { mochiLanDesktop: options.desktopBridge } : {}),
+      ...(options.railBridge ? { mochiRailDesktop: options.railBridge } : {}),
       __ModuleLoader__: {
         load(entry) { factories.set(entry.id, entry.factory); },
       },
@@ -205,9 +206,25 @@ test("all state-changing LAN actions use fixed host routes; the UI exposes no se
   await api.executeConfirmation(lan, api.confirmationFor("peer-unpair", { endpointId: "room-1" }));
   await api.executeConfirmation(lan, api.confirmationFor("peer-block", { endpointId: "room-1" }));
   await api.executeConfirmation(lan, api.confirmationFor("message-seen", { messageId: "notice-1" }));
-  assert.deepEqual(calls.map((call) => call.path), [api.ROUTES.pairRequest, api.ROUTES.peerUnpair, api.ROUTES.peerBlock, api.ROUTES.messageSeen]);
-  assert.equal(Object.values(api.ROUTES).some((route) => /send/u.test(route)), false);
-  assert.doesNotMatch(source, /\/api\/mochi-lan\/send/u);
+  await api.executeConfirmation(lan, api.confirmationFor("student-request", {
+    targetEndpointId: "teacher-1",
+    request: { student: "李明", kind: "appointment" },
+    body: "第三题不太懂。",
+  }));
+  assert.deepEqual(calls.map((call) => call.path), [api.ROUTES.pairRequest, api.ROUTES.peerUnpair, api.ROUTES.peerBlock, api.ROUTES.messageSeen, api.ROUTES.requestSend]);
+  // [Mochi 2026-09-18] 原断言查的是「路由名里有没有 send」。那个判据既会被改名绕过，
+  // 又会误伤反方向的学生预约——学生本人就是发起人，本就不该走 dispatch 审批。
+  // 真正要守的不变量是「浏览器 UI 不能发教师通知」，所以这里改成查行为与负载形状。
+  assert.deepEqual(
+    Object.values(api.ROUTES).filter((route) => route.endsWith("/send")),
+    [api.ROUTES.requestSend],
+    "UI 只有一条外发路由，且只能是学生预约",
+  );
+  const sent = calls[calls.length - 1].options.body;
+  assert.deepEqual(Object.keys(sent).sort(), ["body", "request", "targetEndpointId"], "预约负载只有这三个字段");
+  assert.equal(JSON.stringify(sent).includes("contentType"), false, "浏览器不能自己声明这是通知还是预约");
+  assert.equal(JSON.stringify(sent).includes("role"), false, "浏览器不能自己声明发件角色");
+  assert.equal(JSON.stringify(sent).includes("userConfirmed"), false);
 });
 
 test("classroom LAN attention opens once for startup inbox and new pairing state without granting an action", () => {
@@ -427,4 +444,106 @@ test("LAN overlay preserves the native hidden contract despite its grid layout",
     /\.mochi-lan-overlay\[hidden\]\{display:none\}/,
     "the overlay style must not override React's hidden state with display:grid",
   );
+});
+
+test("student request input rejects empty identity and out-of-range seat without inventing a name", () => {
+  const { plugin } = loadClient();
+  const api = plugin.__test;
+  const target = "teacher-1";
+  // 目标必须是已配对的教师端：没有配对就不能提交，而不是提交到一个猜出来的地址。
+  assert.equal(api.studentRequestInput({ student: "李明", body: "第三题" }, "").ok, false);
+  assert.equal(api.studentRequestInput({ student: "", body: "第三题" }, target).ok, false, "缺姓名不得提交");
+  assert.equal(api.studentRequestInput({ student: "李明", body: "" }, target).ok, false, "缺问题不得提交");
+  assert.equal(api.studentRequestInput({ student: "李明", body: "第三题", seat: "0" }, target).ok, false);
+  assert.equal(api.studentRequestInput({ student: "李明", body: "第三题", seat: "1000" }, target).ok, false);
+  assert.equal(api.studentRequestInput({ student: "李明", body: "第三题", seat: "3.5" }, target).ok, false);
+
+  const ok = api.studentRequestInput({ student: "李明", seat: "3", kind: "appointment", topic: "二次函数", slot: "第八节晚自习", body: "第三题不太懂" }, target);
+  assert.equal(ok.ok, true);
+  assert.deepEqual(plain(ok.request), { student: "李明", kind: "appointment", seat: 3, topic: "二次函数", slot: "第八节晚自习" });
+  assert.equal(ok.body, "第三题不太懂");
+
+  // 「哪份作业的哪道题」独立成字段，而不是让学生塞进正文：老师端待办条要把
+  // 这两个位置拼成一句能照着翻页的摘要，塞进自由文本就再也拆不出来了。
+  const located = api.studentRequestInput({
+    student: "李明", seat: "3", kind: "appointment",
+    material: "步步高 Unit 5", position: "完形填空第 7 空",
+    slot: "第八节晚自习", body: "这两个空总是错",
+  }, target);
+  assert.equal(located.ok, true);
+  assert.deepEqual(plain(located.request), {
+    student: "李明", kind: "appointment", seat: 3,
+    material: "步步高 Unit 5", position: "完形填空第 7 空", slot: "第八节晚自习",
+  });
+  // 只填其中一个也要能提交：作业知道、题号还不知道是常态。
+  const materialOnly = api.studentRequestInput({ student: "李明", material: "昨天的卷子", body: "想问" }, target);
+  assert.deepEqual(plain(materialOnly.request), { student: "李明", kind: "appointment", material: "昨天的卷子" });
+
+  // 未知预约类型回落到默认值而不是把原始值透传给服务层。
+  const unknownKind = api.studentRequestInput({ student: "李明", kind: "随便", body: "问题" }, target);
+  assert.equal(unknownKind.request.kind, "appointment");
+  // 可选字段留空时不得变成空字符串占位：服务层会把它当成「填了但为空」。
+  const minimal = api.studentRequestInput({ student: "李明", body: "问题" }, target);
+  assert.deepEqual(plain(minimal.request), { student: "李明", kind: "appointment" });
+});
+
+test("the browser forwards the raw LAN wire state to the desktop rail and only once per change", async () => {
+  const pushed = [];
+  const { plugin, disposeEffects } = loadClient(async (path) => {
+    if (path === "/api/mochi-lan/state") {
+      return { ok: true, status: 200, json: async () => ({ lockedRole: "teacher", inbox: [{ messageId: "req-1" }] }) };
+    }
+    if (path === "/api/mochi-lan/discovery") return { ok: true, status: 200, json: async () => ({ candidates: [] }) };
+    if (path.startsWith("/api/mochi-lan/events?cursor=")) return { ok: true, status: 200, json: async () => ({ cursor: 1, events: [] }) };
+    throw new Error(`unexpected route: ${path}`);
+  }, {
+    runEffects: true,
+    railBridge: { pushLanState(state) { pushed.push(state); return true; } },
+  });
+  const api = plugin.__test;
+  try {
+    // 直接驱动 refresh：注册 overlay 后渲染一次面板即可触发生命周期里的轮询。
+    const registrations = [];
+    plugin.apply({
+      effect(setup) { return setup(); },
+      slots: {
+        inject(name, generator) { for (const entry of generator()) registrations.push({ name, entry }); },
+        register(options, component) { return { options, component }; },
+      },
+    });
+    const overlay = registrations.find((item) => item.name === "shell.overlay").entry.component;
+    const panel = overlay().props.children[0];
+    panel.type({ onClose() {} });
+    for (let tick = 0; tick < 8 && pushed.length === 0; tick += 1) {
+      await new Promise((resolve) => setImmediate(resolve));
+    }
+    assert.equal(pushed.length, 1, "首次状态必须推给常驻条");
+    // 推的是**原始响应体**，不是归一化后的投影：预约描述、发件角色、已看到时刻
+    // 这些字段只在原文里，面板自己的投影会丢掉它们。
+    assert.equal(pushed[0].inbox[0].messageId, "req-1");
+    assert.equal(Object.hasOwn(pushed[0], "lockedRole"), true);
+
+    // 原样再推一次同一份负载（去重是按内容比的，不是按对象引用）。
+    api.requestRailSync(pushed[0]);
+    assert.equal(pushed.length, 1, "内容没变不重复推");
+    api.requestRailSync({ lockedRole: pushed[0].lockedRole, inbox: [{ messageId: "req-2" }] });
+    assert.equal(pushed.length, 2, "内容变了要推");
+  } finally {
+    disposeEffects();
+  }
+});
+
+test("a failing rail push is retried on the next poll instead of being marked as delivered", () => {
+  let attempts = 0;
+  const { plugin } = loadClient(undefined, {
+    // 第一次失败、之后成功：这是「主进程还没建好常驻条」时最可能出现的时序。
+    railBridge: { pushLanState() { attempts += 1; return attempts > 1; } },
+  });
+  const api = plugin.__test;
+  assert.equal(api.requestRailSync({ inbox: [] }), false, "首次推送失败");
+  assert.equal(attempts, 1);
+  assert.equal(api.requestRailSync({ inbox: [] }), true, "失败后同一份数据必须重推");
+  assert.equal(attempts, 2);
+  assert.equal(api.requestRailSync({ inbox: [] }), false, "成功之后同样的数据不再重推");
+  assert.equal(attempts, 2);
 });

@@ -103,6 +103,7 @@ function resolutionTier(width, height) {
 export function sanitizeBaseName(input, fallback) {
   const raw = String(input ?? '').trim();
   const cleaned = (raw || fallback)
+    // biome-ignore lint/suspicious/noControlCharactersInRegex: filenames must reject the complete C0 range.
     .replace(/[\\/:*?"<>|\u0000-\u001f]/g, '')
     .replace(/\.+$/g, '')
     .replace(/\s+/g, ' ')

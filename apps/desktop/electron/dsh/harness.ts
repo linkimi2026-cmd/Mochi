@@ -1,6 +1,18 @@
 /**
  * Mochi · dsh sidecar 生命周期 + stdio JSON-RPC 客户端（Batch 2 前半段）
  *
+ * ⚠️ 现状（2026-09-19 核实）：**本模块当前不可达**。
+ *   桌面主进程现在用 `./web-host` 的 `DshWebHost` 承载官方 Web SPA，
+ *   全仓搜索确认没有任何地方调用 `startDshSidecar()` 或 `attachIpcHandlers()`
+ *   （`electron/main.ts` 只引用 `DshWebHost`）。本文件是「自绘渲染进程 + 进程外
+ *   sidecar」那一版的遗留物。保留是因为它记录了一批实测事实（见下）且尚未正式
+ *   决定删除，但**不要把它当作现行链路**。
+ *
+ * ⚠️ 因此下面的 `initialize()` 里仍是早期默认路由 `deepseek-official` / `glm-4-flash`
+ *   （智谱）。它**不影响打包版**，因为这段代码不会被调用；但若将来把 sidecar 接回来，
+ *   这里必须改成当前出厂默认：`provider: 'mochi-aiaaa'` +
+ *   `model: 'deepseek-v4.1-flash'`（见 docs/gateway-aiaaa-verified-facts.md）。
+ *
  * 职责（与 08 §2 / §3 一致）：
  *   主进程 spawn `dsh --profile mochi-sdk` 子进程（stdio JSON-RPC sidecar），
  *   自己做「进程生命周期 + 健康检查 + 崩溃重启 + 优雅退出」，
@@ -105,6 +117,9 @@ export class DshSidecar extends EventEmitter {
   }
 
   private initialize(): Promise<unknown> {
+    // 早期默认路由（智谱）。本模块当前不可达，故不影响打包版；接回来时改成
+    // mochi-aiaaa / deepseek-v4.1-flash —— 理由见文件头与
+    // docs/gateway-aiaaa-verified-facts.md。
     return this.request(
       'initialize',
       {
@@ -155,10 +170,11 @@ export class DshSidecar extends EventEmitter {
 
   private onStdout(chunk: string): void {
     this.buf += chunk;
-    let nl: number;
-    while ((nl = this.buf.indexOf('\n')) >= 0) {
+    let nl = this.buf.indexOf('\n');
+    while (nl >= 0) {
       const line = this.buf.slice(0, nl).trim();
       this.buf = this.buf.slice(nl + 1);
+      nl = this.buf.indexOf('\n');
       if (!line) continue;
       let msg: { id?: number; result?: unknown; error?: { code: number; message: string }; method?: string; params?: unknown };
       try {

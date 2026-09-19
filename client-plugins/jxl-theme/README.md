@@ -2,7 +2,7 @@
 
 > **status**: active（2026-09-12 更正：原文标注「（draft）」已过时——该插件已在打包白名单内并随包交付）
 
-单一事实源：`foundation/ui/jxl-theme-bridge.css`（令牌映射 + 出处注释）。
+单一事实源：`styles/jxl-theme-bridge.css` 与 `styles/jxl-workspace.css`。
 改 CSS 后运行：`node scripts/build-client.mjs` 重新生成 `client.js`。
 
 ## 它做什么
@@ -26,10 +26,10 @@ browser roster the modules node half scans into window.__DSH_BOOT__"）：
    重跑 `./mochi.sh --profile mochi-web --dump-config` 确认行在树上，
    再起 web 实测浏览器里 `<style id="jxl-theme-bridge">` 出现、暖米白画布生效。
 3. 若契约不符（需要 Cordis 模块形态或官方构建管线）：改写 client.js 为对应形态；
-   或退回 Electron `insertCSS` 兜底（`foundation/ui/README` 路径 A），slot 级 UI 延后。
+   或退回 Electron `insertCSS` 兜底，slot 级 UI 延后。
 
 ## 兜底（永远可用）
 
 Electron 主进程对加载官方 SPA 的 WebView 执行
 `win.webContents.insertCSS(bridgeCss, { cssOrigin: "author" })`，
-CSS 读 `foundation/ui/jxl-theme-bridge.css`。此路不依赖 client 插件契约。
+CSS 读 `styles/jxl-theme-bridge.css` 与 `styles/jxl-workspace.css`。此路不依赖 client 插件契约。

@@ -16,10 +16,8 @@
  *   node scripts/check-snapshot-manifest.mjs --fail      # exit 1 on drift
  *   node scripts/check-snapshot-manifest.mjs --manifest <path>
  *
- * Default behaviour is report-only on purpose: at the time of writing five
- * entries are stale because of uncommitted edits by other people. The manifest
- * owner must re-hash those files (see docs/build-standard.md). Flip the CI step
- * to `--fail` once the manifest is reconciled.
+ * Default behaviour remains report-only for local diagnosis. CI always passes
+ * `--fail`, so any hash, size or missing-file drift blocks the change.
  */
 
 import { createHash } from "node:crypto";

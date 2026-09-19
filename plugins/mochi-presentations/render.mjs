@@ -14,6 +14,7 @@
 // 3×3 宫格，模型一张图看完一册的整体视觉节奏；细节存疑时再用 page 模式取单页。
 // 该思路为通用做法，本文件为自研实现。
 import { spawn } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { existsSync } from 'node:fs';
 import { mkdir, mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
@@ -365,6 +366,10 @@ export const presentationRenderOutput = {
     const lines = [
       `课件渲染：${value.状态}`,
       `文件：${value.文件}`,
+      `文件SHA256：${value.文件SHA256}`,
+      `视觉检查：${value.视觉检查}；渲染成功不等于模型已经看图或审美合格。`,
+      `覆盖页：${value.覆盖页?.join(', ') ?? ''}；未覆盖页：${value.未覆盖页?.join(', ') || '无'}`,
+      `当前模型：${value.模型?.provider}/${value.模型?.model}（目录声明可接收图像，非真实端点验证）`,
       `总页数：${value.总页数}`,
       value.模式 === 'overview'
         ? `概览宫格：${value.宫格数} 张（每张最多 9 页，标注了页号）`
@@ -377,6 +382,21 @@ export const presentationRenderOutput = {
   },
 };
 
+async function resolveVisualRoute(service, exec) {
+  const config = exec?.agent?.session?.requestHeader?.()?.config;
+  const provider = config?.provider ?? exec?.agent?.options?.provider;
+  const model = config?.model ?? exec?.agent?.options?.model;
+  const llm = service('llm');
+  if (!provider || !model || !llm?.resolveModelInfo) {
+    throw new Error('无法确认当前模型的图像输入能力，视觉未核验。请选用已配置且声明支持图像输入的模型。');
+  }
+  const info = await llm.resolveModelInfo(provider, model, exec?.signal);
+  if (!info?.inputModalities?.includes('image')) {
+    throw new Error(`当前模型 ${provider}/${model} 未声明图像输入，不能把渲染成功当成看图成功。视觉未核验，请选用已配置的视觉模型。`);
+  }
+  return { provider, model };
+}
+
 /**
  * 注册 mochi_ppt_render。只在附件服务已挂载、且当前模型声明了图像输入时
  * 才有意义；否则工具会被注册但执行时明确拒绝并给出可读原因。
@@ -386,7 +406,7 @@ export function registerPresentationRenderTool(ctx, { resolvePath, resolveSoffic
 
   ctx.tools.register(defineTool({
     name: 'mochi_ppt_render',
-    description: '把已生成的 .pptx 课件渲染成图片交给自己「看一眼」：overview 模式把整册拼成每 9 页一张的宫格图，用于判断整体版式节奏、留白与密度是否失衡；page 模式渲染指定单页的原尺寸图，用于核对文字是否溢出、元素是否重叠、配色是否失衡。生成或修改课件后应当调用它做视觉自检，发现问题就用 mochi_ppt_revise 改，改完再渲染复验，至少完成一轮「改—复验」。若渲染图与预期不符，以渲染图为准。当本机没有 LibreOffice、或当前模型不支持图像输入时，本工具会明确说明原因而不是假装看过。',
+    description: '把已生成的 .pptx 课件渲染成图片交给自己「看一眼」：overview 模式把整册拼成每 9 页一张的宫格图，用于判断整体版式节奏、留白与密度是否失衡；page 模式渲染指定单页的原尺寸图，用于核对文字是否溢出、元素是否重叠、配色是否失衡。生成或修改课件后应当调用它做视觉自检，实际查看返回的图像附件，不等用户提醒。overview 不能替代小字细节检查；未覆盖页须补看，密集页和图表页用 page 查看。只修改观察到的缺陷；首次通过不必修改。有问题用 mochi_ppt_revise 改，使用最新产物路径复验，每个问题最多两轮；仍有硬缺陷标为待修稿。若渲染图与预期不符，以渲染图为准。当本机没有 LibreOffice、或当前模型不支持图像输入时，本工具会明确说明原因而不是假装看过。',
     parameters: {
       filePath: { type: 'string', required: true, description: '要渲染的 .pptx 绝对路径（用 create/revise 返回的产物路径，不要凭记忆拼）。' },
       mode: { type: 'string', description: 'overview = 整册宫格概览（默认）；page = 单页细节。' },
@@ -412,6 +432,8 @@ export function registerPresentationRenderTool(ctx, { resolvePath, resolveSoffic
       const policy = imagePolicy(attachments);
       if (!policy) throw new Error('当前附件服务不接受 PNG 图像，无法把渲染结果交给模型查看。');
 
+      const route = await resolveVisualRoute(service, exec);
+      throwIfAborted(signal);
       const soffice = resolveSoffice(resolveSofficePath);
       if (!soffice) {
         throw new Error('本机没有找到 LibreOffice（soffice），无法把 .pptx 渲染成图。请安装 LibreOffice 后重试；这之前无法对课件做视觉自检。');
@@ -426,7 +448,12 @@ export function registerPresentationRenderTool(ctx, { resolvePath, resolveSoffic
       const workDir = await mkdtemp(join(tmpdir(), 'mochi-ppt-render-'));
       try {
         throwIfAborted(signal);
-        const pdfPath = await convertToPdf(filePath, workDir, soffice, signal);
+        const source = await readFile(filePath, { signal });
+        if (source.length > MAX_PPTX_BYTES) throw new Error('该 .pptx 超过渲染上限。');
+        const sourceHash = createHash('sha256').update(source).digest('hex');
+        const snapshot = join(workDir, 'source.pptx');
+        await writeFile(snapshot, source, { signal });
+        const pdfPath = await convertToPdf(snapshot, workDir, soffice, signal);
         const rendered = await renderPresentationImages({ pdfPath, page, signal });
         throwIfAborted(signal);
 
@@ -454,9 +481,18 @@ export function registerPresentationRenderTool(ctx, { resolvePath, resolveSoffic
           }
         }
 
+        const currentHash = createHash('sha256').update(await readFile(filePath, { signal })).digest('hex');
+        if (currentHash !== sourceHash) throw new Error('渲染期间原文件发生变化，请对最新文件重新渲染；旧图不能用作最新版验收证据。');
+        const covered = mode === 'page' ? [page] : rendered.sheets.flatMap((sheet) => Array.from({ length: sheet.to - sheet.from + 1 }, (_, index) => sheet.from + index));
+        const uncovered = Array.from({ length: rendered.total }, (_, index) => index + 1).filter((number) => !covered.includes(number));
         const truncated = mode === 'overview' && rendered.total > rendered.sheets.length * SHEET_CAPACITY;
         return {
           状态: '已渲染',
+          视觉检查: '待模型查看',
+          文件SHA256: sourceHash,
+          模型: route,
+          覆盖页: covered,
+          未覆盖页: uncovered,
           文件: filePath,
           总页数: rendered.total,
           模式: mode,

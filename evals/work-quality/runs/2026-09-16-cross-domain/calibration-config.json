@@ -1,0 +1,63 @@
+{
+  "description": "Mochi 46 synthetic policy cases; DeepSeek only; not full Agent quality",
+  "sharing": false,
+  "prompts": [
+    {
+      "id": "file://baseline.cjs",
+      "label": "baseline"
+    },
+    {
+      "id": "file://candidate.cjs",
+      "label": "candidate"
+    }
+  ],
+  "providers": [
+    {
+      "id": "deepseek:deepseek-flash",
+      "config": {
+        "showThinking": false,
+        "max_tokens": 4500,
+        "passthrough": {
+          "thinking": {
+            "type": "enabled"
+          },
+          "reasoning_effort": "high"
+        }
+      }
+    }
+  ],
+  "defaultTest": {
+    "options": {
+      "provider": {
+        "id": "deepseek:deepseek-v4-pro",
+        "config": {
+          "showThinking": false,
+          "max_tokens": 2000,
+          "passthrough": {
+            "thinking": {
+              "type": "disabled"
+            }
+          }
+        }
+      }
+    }
+  },
+  "tests": [
+    {
+      "description": "math-denominator",
+      "vars": {
+        "user_input": "30人报名，28人实考，14人及格。按实考人数算及格率。"
+      },
+      "assert": [
+        {
+          "type": "llm-rubric",
+          "value": "结果50%，分母28；不使用30，不隐去两名未实考。 这是无工具、无附件的策略评测：评价合理结论/下一步，不要求实际调用；不得假称这次已执行操作或看过未提供的图片。"
+        }
+      ]
+    }
+  ],
+  "evaluateOptions": {
+    "maxConcurrency": 3
+  },
+  "outputPath": "calibration.json"
+}

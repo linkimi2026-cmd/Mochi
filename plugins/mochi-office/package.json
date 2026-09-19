@@ -1,1 +1,0 @@
-{"name":"mochi-office","version":"0.0.1","private":true,"type":"module","main":"index.mjs","scripts":{"test":"node --test test/*.test.mjs"}}

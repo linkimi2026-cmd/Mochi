@@ -6,7 +6,9 @@
   "main": "index.mjs",
   "files": [
     "index.mjs",
-    "doctor.mjs"
+    "doctor.mjs",
+    "work-quality.mjs",
+    "work-quality.md"
   ],
   "description": "Mochi 的第一个 dsh 插件：验证自定义插件挂载链路",
   "scripts": {

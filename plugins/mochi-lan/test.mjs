@@ -218,7 +218,139 @@ try {
   assert.equal(seen.status, 'ACKNOWLEDGED');
   assert.equal((await teacher.call('state')).receipts.filter((item) => item.messageId === 'notify-seen').length, 1);
 
-  console.log('④ 目标错班、冒用教师 endpoint、教室主动发送均在服务层拒绝');
+  console.log('③a 反向通道：教室端发学生预约→教师端收件→教师确认已看到（两端各持一份回执）');
+  const studentRequest = await classroom.call('request', {
+    targetEndpointId: 'teacher-lan-test',
+    body: '第三题不太懂，想请老师讲一下。',
+    request: { student: '李明', seat: 3, kind: 'appointment', topic: '二次函数', slot: '第八节晚自习' },
+    messageId: 'request-seen',
+  });
+  assert.equal(studentRequest.delivery, 'ACKNOWLEDGED');
+  let teacherState = await teacher.call('state');
+  const requestRows = teacherState.inbox.filter((item) => item.messageId === 'request-seen');
+  assert.equal(requestRows.length, 1);
+  // 学生身份是学生在共用设备上自填的字段，随信封签名只保证「没被中途改过」，
+  // 不构成在校身份证明。服务层因此把它当数据带过来，不生成任何身份声明。
+  assert.equal(requestRows[0].contentType, 'REQUEST');
+  assert.equal(requestRows[0].request.student, '李明');
+  assert.equal(requestRows[0].request.seat, 3);
+  assert.equal(requestRows[0].from.role, 'classroom');
+  assert.equal(requestRows[0].seenAt, undefined);
+  const teacherSeen = await teacher.call('seen', { messageId: 'request-seen' });
+  assert.equal(teacherSeen.status, 'ACKNOWLEDGED');
+  assert.equal((await teacher.call('state')).inbox.find((item) => item.messageId === 'request-seen')?.seenAt !== undefined, true);
+  assert.equal((await classroom.call('state')).receipts.filter((item) => item.messageId === 'request-seen').length, 1);
+  console.log('③b 方向不可互换：教师端不能发预约，教室端缺预约描述仍被拒');
+  await rejectCode(
+    () => teacher.call('request', { targetEndpointId: 'classroom-lan-test', body: '教师端不能发学生预约。', request: { student: '李明' }, messageId: 'teacher-as-student' }),
+    'INVALID_REQUEST',
+  );
+  await rejectCode(
+    () => classroom.call('request', { targetEndpointId: 'teacher-lan-test', body: '缺预约描述。', messageId: 'request-missing' }),
+    'INVALID_REQUEST',
+  );
+  await rejectCode(
+    () => classroom.call('request', {
+      targetEndpointId: 'teacher-lan-test',
+      body: '越界座号。',
+      request: { student: '李明', seat: 10_000 },
+      messageId: 'request-bad-seat',
+    }),
+    'INVALID_REQUEST',
+  );
+
+  console.log('③c 教师下发处置名册：一批判决走一条消息，逐人个性化交代随信封过网');
+  const directive = await teacher.call('directive', {
+    targetEndpointId: 'classroom-lan-test',
+    body: '第 5 单元听写已登记，名单见下。',
+    directive: {
+      item: '第 5 单元听写',
+      verdicts: [
+        { student: '张三', seat: 1, action: 'pass' },
+        { student: '王五', seat: 5, action: 'fail', note: 'th /θ/ 读成了 /s/，课间来重听第 2 段。' },
+        { student: '赵六', seat: 6, action: 'fail' },
+      ],
+    },
+    messageId: 'directive-batch',
+  });
+  assert.equal(directive.delivery, 'ACKNOWLEDGED');
+  const boardRows = (await classroom.call('state')).inbox.filter((item) => item.messageId === 'directive-batch');
+  // 一批 = 一条消息，不是三条：否则一个班 40 人就是 40 条签名消息 + 40 条回执，
+  // 几分钟就能把收件箱上限吃光。
+  assert.equal(boardRows.length, 1);
+  assert.equal(boardRows[0].contentType, 'NOTIFY');
+  assert.equal(boardRows[0].directive.item, '第 5 单元听写');
+  assert.equal(boardRows[0].directive.verdicts.length, 3);
+  assert.equal(boardRows[0].directive.verdicts[0].action, 'pass');
+  assert.equal(boardRows[0].directive.verdicts[1].seat, 5);
+  assert.equal(boardRows[0].directive.verdicts[1].note, 'th /θ/ 读成了 /s/，课间来重听第 2 段。');
+  // 没给交代就不该凭空长出一句：缺省必须是「没有」，不是「模板补上」。
+  assert.equal(boardRows[0].directive.verdicts[2].note, undefined);
+  // 「过关或不过关是分老师的」：名册由发起登记的那位教师的身份签名，教室端能看出是谁登记的。
+  assert.equal(boardRows[0].from.role, 'teacher');
+  assert.equal(boardRows[0].from.endpointId, 'teacher-lan-test');
+  const boardSeen = await classroom.call('seen', { messageId: 'directive-batch' });
+  assert.equal(boardSeen.status, 'ACKNOWLEDGED');
+  assert.equal((await teacher.call('state')).receipts.filter((item) => item.messageId === 'directive-batch').length, 1);
+
+  console.log('③d 名册的方向与输入硬边界：教室端不得下发名册，座号/动作/交代越界即拒');
+  // 一台被配对过的教室设备若能下发名册，就等于它能伪造「教师判决」。
+  await rejectCode(
+    () => classroom.call('directive', {
+      targetEndpointId: 'teacher-lan-test',
+      body: '教室端伪造名册。',
+      directive: { item: '伪造', verdicts: [{ student: '张三', action: 'fail' }] },
+      messageId: 'directive-from-classroom',
+    }),
+    'INVALID_DIRECTIVE',
+  );
+  await rejectCode(
+    () => teacher.call('directive', {
+      targetEndpointId: 'classroom-lan-test',
+      body: '越界座号。',
+      directive: { item: '第 5 单元听写', verdicts: [{ student: '张三', action: 'fail', seat: 10_000 }] },
+      messageId: 'directive-bad-seat',
+    }),
+    'INVALID_DIRECTIVE',
+  );
+  await rejectCode(
+    () => teacher.call('directive', {
+      targetEndpointId: 'classroom-lan-test',
+      body: '动作不在表内。',
+      directive: { item: '第 5 单元听写', verdicts: [{ student: '张三', action: 'expelled' }] },
+      messageId: 'directive-bad-action',
+    }),
+    'INVALID_DIRECTIVE',
+  );
+  await rejectCode(
+    () => teacher.call('directive', {
+      targetEndpointId: 'classroom-lan-test',
+      body: '空名册。',
+      directive: { item: '第 5 单元听写', verdicts: [] },
+      messageId: 'directive-empty',
+    }),
+    'INVALID_DIRECTIVE',
+  );
+  await rejectCode(
+    () => teacher.call('directive', {
+      targetEndpointId: 'classroom-lan-test',
+      body: '超长交代。',
+      directive: { item: '第 5 单元听写', verdicts: [{ student: '张三', action: 'fail', note: '很'.repeat(500) }] },
+      messageId: 'directive-long-note',
+    }),
+    'INVALID_INPUT',
+  );
+  await rejectCode(
+    () => teacher.call('directive', {
+      targetEndpointId: 'classroom-lan-test',
+      body: '交代里塞换行。',
+      directive: { item: '第 5 单元听写', verdicts: [{ student: '张三', action: 'fail', note: '第一行\n第二行' }] },
+      messageId: 'directive-newline-note',
+    }),
+    'INVALID_INPUT',
+  );
+
+  console.log('④ 目标错班、冒用教师 endpoint、教室端越权发通知均在服务层拒绝');
   const target = { endpointId: 'classroom-lan-test', schoolId: 'demo-school', classId: 'g7-1', host: '127.0.0.1', port: classroom.snapshot.http.port };
   const wrongClass = await teacher.call('wrong-class', { target, classId: 'g7-2', messageId: 'wrong-class-test' });
   assert.equal(wrongClass.status, 403);
@@ -227,7 +359,10 @@ try {
   assert.equal(forged.status, 403);
   assert.equal(forged.body.code, 'SIGNATURE_INVALID');
   const teacherCandidate = await teacher.call('candidate');
-  await rejectCode(() => classroom.call('send', { targetEndpointId: 'teacher-lan-test', body: '教室端不能主动外发。', messageId: 'classroom-outbound' }), 'ROLE_FORBIDDEN');
+  // [Mochi 2026-09-18] 教室端现在能主动外发了，但只能发「学生预约」。它仍然不能
+  // 发通知——缺预约描述的信封在服务层就被拒，这条边界比原来那句「教室端不能主动
+  // 外发」更窄也更准：拒绝的是冒充教师下发通知，不是学生说话。
+  await rejectCode(() => classroom.call('send', { targetEndpointId: 'teacher-lan-test', body: '教室端不能主动外发通知。', messageId: 'classroom-outbound' }), 'INVALID_REQUEST');
   await rejectCode(() => classroom.call('pair-request', { candidate: teacherCandidate, address: { host: '127.0.0.1', port: teacher.snapshot.http.port } }), 'ROLE_FORBIDDEN');
 
   console.log('⑤ 解除配对与拉黑是两个不同的服务动作');
@@ -332,7 +467,7 @@ try {
   assert.equal(expirationEvents.events.some((event) => event.type === 'discovery-expired'), true);
   const expiredPeer = (await discoveryObserver.call('state')).peers.find((row) => row.endpointId === 'classroom-discovery-test');
   assert.equal(expiredPeer.online, false);
-  console.log('LAN two-process tests passed: pairing, signed delivery, ACK loss/restart dedupe, seen receipt, role/class/signature/unpair/block refusal, dual-path discovery dedupe/TTL and verified paired-address refresh');
+  console.log('LAN two-process tests passed: pairing, signed delivery, ACK loss/restart dedupe, seen receipt, student request (classroom→teacher) and teacher directive roster (teacher→classroom), role/class/signature/unpair/block refusal, directive direction+input bounds, dual-path discovery dedupe/TTL and verified paired-address refresh');
 } finally {
   await Promise.allSettled([teacher?.stop(), classroom?.stop(), discoveryObserver?.stop(), discoverySender?.stop(), clockSkewSender?.stop()]);
   await rm(temporary, { recursive: true, force: true });

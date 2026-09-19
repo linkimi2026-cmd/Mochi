@@ -1,0 +1,37 @@
+{
+  "name": "mochi-repository-quality",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Pinned repository-level quality gates for the Mochi source tree",
+  "engines": {
+    "node": ">=22.22.2"
+  },
+  "packageManager": "npm@11.17.0",
+  "scripts": {
+    "lint": "biome lint plugins/mochi-modes plugins/mochi-visuals plugins/mochi-sheets plugins/mochi-documents plugins/mochi-presentations apps/desktop/electron apps/desktop/renderer/src",
+    "format": "biome format --write scripts/quality biome.json package.json tsconfig.plugin-contracts.json",
+    "format:check": "biome format scripts/quality biome.json package.json tsconfig.plugin-contracts.json",
+    "typecheck:plugins": "tsc -p tsconfig.plugin-contracts.json",
+    "test:core-plugins": "node --test plugins/mochi-modes/test/*.test.mjs plugins/mochi-visuals/test/*.test.mjs plugins/mochi-sheets/test/*.test.mjs plugins/mochi-documents/test/*.test.mjs plugins/mochi-presentations/test/*.test.mjs",
+    "check:dependencies": "node scripts/quality/check-dependency-boundaries.mjs",
+    "check": "npm run check:dependencies && npm run lint && npm run format:check && npm run typecheck:plugins && npm run test:core-plugins && npm run test:prompt-quality && npm run test:eval-evidence && npm run test:model-transport && npm run test:compaction",
+    "test:prompt-quality": "node --test apps/desktop/scripts/test-work-quality.mjs plugins/mochi-hello/test-shell-env.mjs",
+    "test:eval-evidence": "node --test evals/work-quality/review-evidence.test.mjs",
+    "test:model-transport": "node --test apps/desktop/scripts/test-model-transport.mjs",
+    "test:compaction": "node --test apps/desktop/scripts/test-compaction.mjs"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.6",
+    "@deepseek-ai/dsh-tools": "file:vendor/alpha-family/deepseek-ai-dsh-tools-0.1.3-alpha.1.tgz",
+    "@mochi/pdf-layout": "file:vendor/local-plugins/mochi-pdf-layout-0.1.0-c4a3d2c2.tgz",
+    "@napi-rs/canvas": "1.0.8",
+    "@types/node": "22.18.6",
+    "docx": "9.7.1",
+    "exceljs": "4.4.0",
+    "jszip": "3.10.1",
+    "pdf-lib": "1.17.1",
+    "pdfjs-dist": "6.3.289",
+    "pptxgenjs": "4.0.1",
+    "typescript": "5.9.3"
+  }
+}

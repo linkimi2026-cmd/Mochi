@@ -291,7 +291,9 @@ function pluginEntrypoint(pluginRoot, pluginId) {
   return entry;
 }
 
-const EXPECTED_BUNDLED_PLUGIN_COUNT = 26;
+// 2026-09-18 由 26 降为 25：教师工作台面板（mochi-workbench）连同其内嵌 Office
+// 入口一并下线，白名单、runtime-profile 与快照清单三处同步移除。
+const EXPECTED_BUNDLED_PLUGIN_COUNT = 25;
 const CRITICAL_PLUGIN_ENTRYPOINTS = Object.freeze({
   "mochi-grades": "plugin.mjs",
   "mochi-memory": "index.mjs",
@@ -353,6 +355,29 @@ try {
   const stageRoot = join(temporaryRoot, STAGING_DIRECTORY_NAME);
   const homeDir = join(temporaryRoot, "dsh-home");
   const staged = stageMochiResources({ outputRoot: stageRoot, env: stageEnvironment });
+
+  // 反向对照：浏览器资源根里**多出任何一个顶层条目就必须被拒**。
+  // 打包对该目录走无过滤的整目录拷贝，多余条目会被原样打进安装包：
+  // 2026-09-19 实测本机资源根里嵌了一层 hold 目录（1.0 GB），安装包因此从
+  // 733 MB 涨到 1.18 GB，而全程没有任何一步报错。
+  // 布局校验发生在读取任何资源文件之前，所以这里只需要一个「多了一条」的目录。
+  const bloatedPlaywrightRoot = mkdtempSync(join(tmpdir(), "mochi-package-resources-test-playwright-bloated-"));
+  mkdirSync(join(bloatedPlaywrightRoot, "mochi-pw-hold-20260912"), { recursive: true });
+  writeFileSync(join(bloatedPlaywrightRoot, "metadata.json"), "{}\n");
+  assert.throws(
+    () => stageMochiResources({
+      outputRoot: stageRoot,
+      env: { ...process.env, [PLAYWRIGHT_BROWSER_RESOURCE_ENV]: bloatedPlaywrightRoot },
+    }),
+    /多余条目/,
+    "资源根带着多余条目时打包必须直接失败，而不是把它打进安装包",
+  );
+  assert.equal(
+    readFileSync(join(stageRoot, STAGING_MARKER_NAME), "utf8"),
+    STAGING_MARKER_CONTENT,
+    "被拒的输入不应该动到已暂存的产物",
+  );
+  rmSync(bloatedPlaywrightRoot, { recursive: true, force: true });
 
   // A release job receives only the reviewed static artifact. It must not need
   // a canonical source checkout merely because the normal development resolver
@@ -425,6 +450,16 @@ try {
     for (const file of plugin.files) {
       assert.equal(existsSync(join(stageRoot, "plugins", plugin.id, file)), true, `${plugin.id}/${file} was not staged`);
     }
+  }
+  for (const [plugin, files] of Object.entries({
+    "mochi-hello": ["work-quality.mjs", "work-quality.md"],
+    "mochi-presentations": ["process-layout.mjs"],
+  })) {
+    for (const file of files) assert.equal(
+      readFileSync(join(stageRoot, "plugins", plugin, file), "utf8"),
+      readFileSync(join(workspaceRoot, "plugins", plugin, file), "utf8"),
+      `${plugin}/${file} must match the current source`,
+    );
   }
   for (const packageName of PLUGIN_RUNTIME_MODULES) {
     assert.equal(existsSync(join(stageRoot, "node_modules", ...packageName.split("/"), "package.json")), true, `${packageName} was not staged`);

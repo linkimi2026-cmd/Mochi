@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "noEmit": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "target": "ES2022",
+    "types": ["node"]
+  },
+  "include": [
+    "plugins/mochi-modes/modes.mjs",
+    "plugins/mochi-sheets/address.mjs",
+    "plugins/mochi-visuals/image-meta.mjs"
+  ]
+}

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "serviceDefaults": {
-    "campusApiUrl": null,
+    "campusApiUrl": "https://jyl-campus-health-entry.pages.dev",
     "searxngEndpoint": null
   },
   "profiles": {
@@ -91,7 +91,6 @@
         "jxl-theme",
         "jxl-brand",
         "jxl-campus",
-        "mochi-workbench",
         "mochi-model-presets",
         "dsh-better-sidebar",
         "mochi-lan",
@@ -134,7 +133,6 @@
           "mochi-knowledge",
           "jxl-theme",
           "jxl-brand",
-          "mochi-workbench",
           "mochi-lan",
           "mochi-lan-client"
         ]
@@ -262,10 +260,6 @@
     "jxl-campus": {
       "workspacePath": "client-plugins/jxl-campus",
       "resourcePath": "jxl-campus"
-    },
-    "mochi-workbench": {
-      "workspacePath": "client-plugins/mochi-workbench",
-      "resourcePath": "mochi-workbench"
     },
     "mochi-model-presets": {
       "workspacePath": "client-plugins/mochi-model-presets",

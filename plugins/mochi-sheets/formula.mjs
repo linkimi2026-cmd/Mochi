@@ -819,7 +819,9 @@ export function evaluateWorkbookCells(model, targets, { maxOps = 200_000 } = {})
   let rangeClamped = false;
 
   const sheetIndexByName = new Map();
-  model.sheets.forEach((sheet, index) => sheetIndexByName.set(sheet.name.toLowerCase(), index));
+  model.sheets.forEach((sheet, index) => {
+    sheetIndexByName.set(sheet.name.toLowerCase(), index);
+  });
 
   function resolveSheetIndex(name, fallback) {
     if (!name) return fallback;

@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 
-// Mochi Dispatch 任务状态机（foundation/15_TASK_STATE_MACHINE.md）
+// Mochi Dispatch 任务状态机（docs/history/foundation/15_TASK_STATE_MACHINE.md）
 // v1 只启用 7 态：CREATED / DISPATCHING / DELIVERED / COMPLETED / DECLINED / FAILED / EXPIRED
 // INPUT_REQUIRED / APPROVAL_REQUIRED / CANCELLED 字段与 UI 预留，随 Golden Demo 需要。
 //

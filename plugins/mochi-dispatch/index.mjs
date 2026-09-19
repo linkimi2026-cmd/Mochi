@@ -6,7 +6,7 @@
 // 未知投递结果绝不重发；已确认未写入的失败只能经 retryTaskId 和第二次人工确认后建立新 attempt。
 import { defineTool } from '@deepseek-ai/dsh-tools';
 import { CampusRequestError, campusConnection as connection } from '../mochi-campus/connection.mjs';
-import { lanTaskMessageId, listLanClassrooms, localLanOwnerKey, sendLanFile, sendLanNotification } from './lan-transport.mjs';
+import { lanTaskMessageId, listLanClassrooms, localLanOwnerKey, sendLanDirective, sendLanFile, sendLanNotification } from './lan-transport.mjs';
 import { TERMINAL_STATES, relayStatusToTask, deriveCardState, expiryFor, idempotencyKeyFor } from './state-machine.mjs';
 import { createStore } from './store.mjs';
 
@@ -116,6 +116,31 @@ export function apply(ctx, connectionArg = connection, storeArg = null) {
       retryTaskId: { type: 'integer', description: '仅重试已明确未投递的同一文件任务；结果不明任务不能重发。' },
       newTask: { type: 'boolean', description: '主人明确要把同一文件作为独立任务再次发送；结果不明任务不能绕过。' },
     }, async (args, exec) => sendLanFile({ lan, approval: requireApproval(), args, exec, store }));
+    // 处置名册（喊人 / 过关 / 不过关）。刻意没有任何 HTTP 路由能到达它：名册是模型
+    // 调 skill 生成后发起的对外动作，必须在这个审批闸后面，与学生预约那条直连路由
+    // 是两类东西。
+    register('mochi_register_verdicts', '把一次听写/作业/提问的处置结果（喊人、过关、不过关、需补做）作为一份名册下发到已人工配对、同校指定班级的教室端；教室屏的常驻板和弹窗会按学生逐行显示。逐人的「个性化交代」必须先调对应 skill 为这一位学生生成（该补什么、错在哪、下一步找谁），再连同判决一起登记——只发一个「不过关」标签等于给学生一个没有出路的结论，本工具会直接拒绝这种调用。一次登记只调用一次本工具（一份名册），不要一位学生一次。先展示学校、班级、设备指纹和完整名册，主人确认后才走签名局域网投递。', {
+      classroomEndpointId: { type: 'string', required: true, description: '教室端 endpointId，必须来自本机已配对教室列表，不能猜测。' },
+      item: { type: 'string', required: true, description: '这次登记的名目，例如「第 5 单元听写」；会作为教室板上每一行的小标题。' },
+      verdicts: {
+        type: 'array',
+        required: true,
+        description: '逐人的处置结果。一次登记一份名册，不要一位学生调用一次；同一人不得出现两次。',
+        items: {
+          type: 'object',
+          properties: {
+            student: { type: 'string', required: true, description: '学生姓名。' },
+            seat: { type: 'integer', description: '座号，可选（1-999）；有座号时教室板上排序更稳。' },
+            action: { type: 'string', required: true, description: 'call=喊人 / pass=过关 / fail=不过关 / retry=需补做，只能取这四个值之一。' },
+            note: { type: 'string', description: '这一位学生的个性化交代（≤200 字，不能含换行）。pass/fail/retry 必填，且必须是调 skill 生成、针对这一位学生的内容，不能是通用套话。' },
+          },
+          additionalProperties: false,
+        },
+      },
+      message: { type: 'string', description: '可选：整批说明。省略时按名目与人数自动生成。' },
+      retryTaskId: { type: 'integer', description: '仅重试已明确未投递的同一份名册；结果不明任务不能重发。' },
+      newTask: { type: 'boolean', description: '主人明确要把同一份名册作为独立登记再次下发；结果不明任务不能绕过。' },
+    }, async (args, exec) => sendLanDirective({ lan, approval: requireApproval(), args, exec, store }));
   });
 
   // ── 与 Relay 的同步：出站任务按 relay 状态迁移；入站 relay 镜像为本地任务 ──

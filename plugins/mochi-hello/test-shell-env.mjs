@@ -15,6 +15,13 @@ function fixture() {
     logger: { info() {} },
     inject(dependencies, callback) {
       injections.push(dependencies);
+      if (dependencies.length === 1 && dependencies[0] === 'systemPrompt') {
+        callback({ systemPrompt: {
+          getSectionOrder() { return 0; },
+          section() { return () => {}; },
+        } });
+        return { kind: 'fixture-inject' };
+      }
       if (dependencies.includes('connection')) {
         callback({
           connection: {
@@ -72,7 +79,7 @@ test('exports the managed Electron Node through shellEnv and explains the Playwr
   const { ctx, registrations, sections, routes, injections, disposals, disposeInjected } = fixture();
   plugin.apply(ctx);
 
-  assert.deepEqual(injections, [['connection', 'llm'], ['shellEnv', 'systemPrompt']]);
+  assert.deepEqual(injections, [['systemPrompt'], ['connection', 'llm'], ['shellEnv', 'systemPrompt']]);
   assert.equal(routes.length, 1, 'the pre-existing host diagnostic must still register');
   assert.equal(routes[0].path, '/api/mochi-doctor/check-model');
   assert.equal(registrations.length, 1);

@@ -308,8 +308,7 @@ export function scanXmlElements(fragment) {
   let depth = 0;
   let current;
   TAG_PATTERN.lastIndex = 0;
-  let match;
-  while ((match = TAG_PATTERN.exec(source)) !== null) {
+  for (let match = TAG_PATTERN.exec(source); match !== null; match = TAG_PATTERN.exec(source)) {
     const tag = match[0];
     const prefix = match[1];
     const name = match[2];

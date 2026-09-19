@@ -269,8 +269,8 @@ assert.deepEqual(
 );
 assert.throws(() => packager.parseArguments(["--target", "win", "--release-input-root", "input", "--campus-static-root", "client"]), /不能同时使用/);
 assert.throws(() => packager.parseArguments(["--unsupported"]), /不支持的桌面打包参数/);
-assert.deepEqual(packager.createElectronBuilderArgs("mac", "arm64", false).slice(1), ["--mac", "--arm64", "--publish=never"]);
-assert.deepEqual(packager.createElectronBuilderArgs("win", "x64", true).slice(1), ["--win", "--x64", "--publish=never", "--dir"]);
+assert.deepEqual(packager.createElectronBuilderArgs("mac", "arm64", false).slice(1), ["--mac", "dmg", "--arm64", "--publish=never"]);
+assert.deepEqual(packager.createElectronBuilderArgs("win", "x64", true).slice(1), ["--win", "dir", "--x64", "--publish=never"]);
 assert.match(packager.expectedInstallerPath("mac", "arm64"), /release[\\/]Mochi-0\.1\.0-mac-arm64\.dmg$/);
 assert.match(packager.expectedInstallerPath("win", "x64"), /release[\\/]Mochi-Setup-0\.1\.0-win-x64\.exe$/);
 
@@ -281,3 +281,13 @@ if (process.platform === "darwin" && process.arch === "arm64") {
 }
 
 console.log("[test-installer-config] PASS: native installer contracts, physical production node_modules, isolated resources, and unsigned release boundaries are explicit.");
+
+// Check the installed builder's interpretation, not only the argv spelling.
+const { configureBuildCommand, createYargs, normalizeOptions } = requireFromHere("electron-builder/out/builder");
+const { Arch } = requireFromHere("builder-util");
+for (const [platform, arch, directoryOnly, format] of [["mac", "arm64", false, "dmg"], ["mac", "x64", false, "dmg"], ["win", "x64", false, "nsis"], ["win", "x64", true, "dir"]]) {
+  const argv = packager.createElectronBuilderArgs(platform, arch, directoryOnly).slice(1);
+  const normalized = normalizeOptions(configureBuildCommand(createYargs()).parse(argv));
+  assert.equal(normalized.targets.size, 1);
+  assert.deepEqual([...normalized.targets.values()][0], new Map([[Arch[arch], [format]]]), "explicit format prevents multi-architecture config fallback");
+}

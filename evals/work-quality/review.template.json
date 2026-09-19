@@ -1,0 +1,64 @@
+{
+  "schema": "mochi-quality-review-v1",
+  "caseId": "yan-stale-visual",
+  "executed": false,
+  "runId": null,
+  "domain": "visual",
+  "role": null,
+  "provider": null,
+  "model": null,
+  "reasoningEffort": null,
+  "variant": "candidate",
+  "reviewer": {
+    "id": null,
+    "kind": "human",
+    "notes": null
+  },
+  "hardFailures": null,
+  "scores": {
+    "correctness": null,
+    "completeness": null,
+    "evidence": null,
+    "usability": null
+  },
+  "artifacts": [
+    {
+      "id": "prompt",
+      "kind": "prompt",
+      "path": null,
+      "sha256": null
+    },
+    {
+      "id": "input",
+      "kind": "input",
+      "path": null,
+      "sha256": null
+    },
+    {
+      "id": "tool-catalog",
+      "kind": "tool-catalog",
+      "path": null,
+      "sha256": null
+    },
+    {
+      "id": "trace",
+      "kind": "trace",
+      "path": null,
+      "sha256": null
+    },
+    {
+      "id": "output",
+      "kind": "output",
+      "path": null,
+      "sha256": null
+    }
+  ],
+  "checks": [],
+  "visual": {
+    "required": true,
+    "reviewed": false,
+    "artifactId": "output",
+    "totalPages": null,
+    "pages": []
+  }
+}

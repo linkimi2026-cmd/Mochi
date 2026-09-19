@@ -280,10 +280,11 @@ class NativeDoctorWindow implements DoctorWindowController {
       if (!this.isCurrentWindow(window, generation)) return;
       this.notice = "环境检测未能完成，可稍后重新检测。";
     } finally {
-      if (!this.isCurrentWindow(window, generation)) return;
-      this.abort = null;
-      this.running = false;
-      await this.render();
+      if (this.isCurrentWindow(window, generation)) {
+        this.abort = null;
+        this.running = false;
+        await this.render();
+      }
     }
   }
 

@@ -44,7 +44,6 @@ const expectedProfilePlugins = Object.freeze({
     "mochi-knowledge",
     "jxl-theme",
     "jxl-brand",
-    "mochi-workbench",
     "mochi-lan",
     "mochi-lan-client",
   ],

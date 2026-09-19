@@ -15,6 +15,7 @@ import {
 } from 'node:path';
 import JSZip from 'jszip';
 import pptxgen from 'pptxgenjs';
+import { drawProcessPptx, processScene, validateProcess } from './process-layout.mjs';
 import {
   color as pdfColor,
   createPdfLayoutDocument,
@@ -76,7 +77,7 @@ const THEME_PRESETS = Object.freeze({
   // 活动：班会 / 节日 / 校园活动
   festive: { background: 'FFF7F0', surface: 'FFFFFF', primary: 'B33A20', accent: '0F766E', text: '33211A', muted: '8A6A5C', rule: 'F0D9C9', deep: 'B33A20', onDeep: 'FFF7F0' },
 });
-const THEME_NAMES = Object.keys(THEME_PRESETS);
+export const THEME_NAMES = Object.freeze(Object.keys(THEME_PRESETS));
 const DEFAULT_THEME_NAME = 'neutral';
 
 function blendHex(left, right, ratio = 0.5) {
@@ -164,7 +165,7 @@ export function resolveTheme(raw) {
   if (raw === undefined || raw === null || raw === '') return presetTheme(DEFAULT_THEME_NAME);
   if (typeof raw === 'string') return presetTheme(raw);
   if (!object(raw)) throw failure('INVALID_INPUT', 'theme must be a preset name or an object of hex color slots');
-  const resolved = { ...presetTheme(raw.preset === undefined ? DEFAULT_THEME_NAME : raw.preset) };
+  const resolved = { ...presetTheme(raw.preset ?? raw.name ?? DEFAULT_THEME_NAME) };
   for (const slot of THEME_SLOTS) {
     if (raw[slot] !== undefined) resolved[slot] = normalizeThemeColor(raw[slot], `theme.${slot}`);
   }
@@ -193,9 +194,9 @@ export function resolveTheme(raw) {
 // "连续三个版面视觉重量相同必须打破"，没有节奏页就永远做不到。
 // 封面与结束页走深底（三明治结构），章节/金句留在浅底做呼吸。
 // ═══════════════════════════════════════════════════════════════════════════
-const CONTENT_LAYOUTS = ['title-body', 'title-table', 'title-chart'];
+const CONTENT_LAYOUTS = ['title-body', 'title-table', 'title-chart', 'title-process'];
 const RHYTHM_LAYOUTS = ['cover', 'section', 'statement', 'kpi', 'closing'];
-const SUPPORTED_LAYOUTS = [...CONTENT_LAYOUTS, ...RHYTHM_LAYOUTS];
+export const SUPPORTED_LAYOUTS = Object.freeze([...CONTENT_LAYOUTS, ...RHYTHM_LAYOUTS]);
 const DEEP_LAYOUTS = new Set(['cover', 'closing']);
 /** 节奏页正文行数上限：节奏页的 body 是副题/出处，不是要点清单。 */
 const RHYTHM_BODY_LIMIT = Object.freeze({ cover: 3, section: 2, statement: 3, kpi: 4, closing: 3 });
@@ -336,6 +337,11 @@ function rhythmPlan(slide) {
 
 function projectionPlan(slide) {
   if (!CONTENT_LAYOUTS.includes(slide.layout)) return rhythmPlan(slide);
+  if (slide.layout === 'title-process') {
+    const fitted = fitTitle(slide.title, 11.8, [34, 28]);
+    if (!fitted || slide.body.length > 1 || slide.body.some(line => line.length > 40)) throw failure('INVALID_INPUT', '流程图需要简短标题，bullets至多1条且≤40字；说明写入各步骤detail');
+    return { ...fitted, titleHeight: fitted.titleLines === 1 ? 0.65 : 0.98, bodyY: 1.6, bodyHeight: 0.6, bodyFontSize: 18 };
+  }
   const fitted = fitTitle(slide.title, 11.8, [34, 28]);
   if (!fitted) throw failure('INVALID_INPUT', 'slide title exceeds the bounded two-line projection layout');
   const { titleLines, titleFontSize } = fitted;
@@ -374,11 +380,17 @@ export function validatePresentation(input) {
     if (RHYTHM_LAYOUTS.includes(slide.layout) && (slide.table !== undefined || slide.chart !== undefined)) {
       throw failure('INVALID_INPUT', `${slide.layout} slides carry no table or chart; use title-table / title-chart for data`);
     }
+    if (slide.process !== undefined && slide.layout !== 'title-process') throw failure('INVALID_INPUT', 'process必须使用title-process版式');
+    if (slide.layout === 'title-process' && (slide.table !== undefined || slide.chart !== undefined)) throw failure('INVALID_INPUT', '流程图不能同时含table/chart');
+    let process;
+    if (slide.layout === 'title-process') {
+      try { process = validateProcess(slide.process); } catch (error) { throw failure('INVALID_INPUT', error.message); }
+    }
     const table = slide.layout === 'title-table' ? validateTable(slide.table) : undefined;
     const chart = slide.layout === 'title-chart' ? validateChart(slide.chart) : undefined;
     if (slide.layout === 'title-body' && body.length < 1) throw failure('INVALID_INPUT', 'title-body slides require body content');
     if ((slide.layout === 'title-table' || slide.layout === 'title-chart') && body.length < 1) throw failure('INVALID_INPUT', 'table/chart slides require body content');
-    const validated = { id, version: slide.version, layout: slide.layout, title: text(slide.title, 100, 'slide title'), body, ...(table ? { table } : {}), ...(chart ? { chart } : {}), source: validateSource(slide.source) };
+    const validated = { id, version: slide.version, layout: slide.layout, title: text(slide.title, 100, 'slide title'), body, ...(table ? { table } : {}), ...(chart ? { chart } : {}), ...(process ? { process } : {}), source: validateSource(slide.source) };
     projectionPlan(validated);
     return validated;
   });
@@ -469,11 +481,12 @@ function addSlide(pptx, item, index, theme) {
     }
   } else {
     slide.addText(item.title, { x: STAGE_LEFT, y: 0.55, w: 11.8, h: plan.titleHeight, fontFace: PROJECTION_FONT, fontSize: plan.titleFontSize, bold: true, color: theme.primary, margin: 0, breakLine: false, lang: 'zh-CN', valign: 'mid' });
-    slide.addText(item.body.map((line) => ({ text: line, options: { bullet: { indent: 18 }, breakLine: true, lang: 'zh-CN' } })), { x: 0.9, y: plan.bodyY, w: TABLE_AREA_WIDTH, h: plan.bodyHeight, fontFace: PROJECTION_FONT, fontSize: plan.bodyFontSize, color: theme.text, breakLine: true, valign: 'top', margin: 0.08, lang: 'zh-CN', lineSpacing: Math.round(plan.bodyFontSize * 1.4), paraSpaceAfterPt: 6 });
+    if (item.body.length) slide.addText(item.body.map((line) => ({ text: line, options: { bullet: { indent: 18 }, breakLine: true, lang: 'zh-CN' } })), { x: 0.9, y: plan.bodyY, w: TABLE_AREA_WIDTH, h: plan.bodyHeight, fontFace: PROJECTION_FONT, fontSize: plan.bodyFontSize, color: theme.text, breakLine: true, valign: 'top', margin: 0.08, lang: 'zh-CN', lineSpacing: Math.round(plan.bodyFontSize * 1.4), paraSpaceAfterPt: 6 });
     if (item.table) {
       slide.addTable([item.table.headers, ...item.table.rows], { x: 0.9, y: plan.contentY, w: TABLE_AREA_WIDTH, h: plan.contentHeight, colW: Array(item.table.headers.length).fill(TABLE_AREA_WIDTH / item.table.headers.length), border: { type: 'solid', color: theme.rule, pt: 1 }, fill: theme.surface, color: theme.text, fontFace: PROJECTION_FONT, fontSize: 15, margin: 0.06, bold: false, rowH: 0.38, autoFit: false, lang: 'zh-CN' });
     }
     if (item.chart) addNativeChart(slide, item.chart, plan, pptx, theme);
+    if (item.process) drawProcessPptx(slide, item.process, theme, PROJECTION_FONT);
   }
 
   slide.addText(`${index + 1}  ${item.source.label}`, { x: STAGE_LEFT, y: FOOTER_Y, w: 11.8, h: FOOTER_HEIGHT, fontFace: PROJECTION_FONT, fontSize: 11, color: footerColor, margin: 0, lang: 'zh-CN' });
@@ -484,7 +497,9 @@ async function createPptx(input, path) {
   const pptx = new pptxgen();
   pptx.layout = 'LAYOUT_WIDE'; pptx.author = 'Mochi Presentations'; pptx.subject = input.sourceKind; pptx.title = input.title; pptx.lang = 'zh-CN';
   pptx.theme = { headFontFace: PROJECTION_FONT, bodyFontFace: PROJECTION_FONT, lang: 'zh-CN' };
-  input.slides.forEach((slide, index) => addSlide(pptx, slide, index, input.theme));
+  input.slides.forEach((slide, index) => {
+    addSlide(pptx, slide, index, input.theme);
+  });
   await pptx.writeFile({ fileName: path, compression: true });
 }
 
@@ -496,6 +511,7 @@ function slidePdfText(input) {
     fragments.push(slide.title, ...slide.body, slide.source.label);
     if (slide.table) fragments.push(...slide.table.headers, ...slide.table.rows.flat());
     if (slide.chart) fragments.push(...chartSummary(slide.chart));
+    if (slide.process) fragments.push(...slide.process.steps.flatMap(step => [step.label, step.detail]), slide.process.loopLabel);
   }
   return fragments.filter(Boolean);
 }
@@ -545,7 +561,29 @@ async function renderPresentationPdf(input, signal) {
     const bodyFill = pdfColor(plan.accentBody ? pdfAccent : (deep ? theme.onDeep : theme.text));
     const footerFill = pdfColor(deep ? theme.onDeep : theme.muted);
 
-    if (rhythm) {
+    if (item.process) {
+      drawTextBlock({ page, text: item.title, x: STAGE_LEFT * PDF_IN, top: fromTop(0.55), width: 11.8 * PDF_IN, font, size: plan.titleFontSize, lineHeight: plan.titleFontSize * 1.3, fill: titleFill });
+      if (item.body.length) drawTextBlock({ page, text: item.body[0], x: 0.9 * PDF_IN, top: fromTop(1.6), width: 11.5 * PDF_IN, font, size: 18, lineHeight: 23, fill: bodyFill });
+      const scene = processScene(item.process);
+      for (const card of scene.cards) {
+        page.drawRectangle({ x: card.x * PDF_IN, y: fromTop(card.y + card.h), width: card.w * PDF_IN, height: card.h * PDF_IN, color: pdfColor(theme.surface), borderColor: pdfColor(theme.rule), borderWidth: 1 });
+        page.drawRectangle({ x: card.x * PDF_IN, y: fromTop(card.y + 0.08), width: card.w * PDF_IN, height: 0.08 * PDF_IN, color: pdfColor(theme.primary) });
+        for (const block of [{ text: card.label, top: card.y + 0.4, height: 0.95, size: 26, factor: 1.3, fill: titleFill }, { text: card.detail, top: card.y + 1.45, height: 1.35, size: 18, factor: 1.25, fill: bodyFill }]) {
+          const fitted = fittedText([block.text], font, { width: (card.w - 0.4) * PDF_IN, maximumHeight: block.height * PDF_IN, preferredSize: block.size, minimumSize: block.size, lineHeightFactor: block.factor });
+          drawAlignedLines({ page, lines: fitted.wrapped, x: (card.x + 0.2) * PDF_IN, top: fromTop(block.top), font, size: fitted.size, lineHeight: fitted.lineHeight, fill: block.fill });
+        }
+      }
+      for (const a of scene.arrows) {
+        const line = (x1, y1, x2, y2) => page.drawLine({ start: { x: x1 * PDF_IN, y: fromTop(y1) }, end: { x: x2 * PDF_IN, y: fromTop(y2) }, thickness: 2, color: pdfColor(theme.primary) });
+        line(a.x1, a.y1, a.x2, a.y2);
+        if (a.head) {
+          const dx = Math.sign(a.x2 - a.x1); const dy = Math.sign(a.y2 - a.y1);
+          line(a.x2, a.y2, a.x2 - 0.13 * dx + 0.07 * dy, a.y2 - 0.13 * dy - 0.07 * dx);
+          line(a.x2, a.y2, a.x2 - 0.13 * dx - 0.07 * dy, a.y2 - 0.13 * dy + 0.07 * dx);
+        }
+      }
+      if (item.process.loopLabel) drawAlignedLines({ page, lines: [item.process.loopLabel], x: 0.8 * PDF_IN, centerX: PDF_SLIDE_WIDTH / 2, top: fromTop(5.65), font, size: 18, lineHeight: 22.5, fill: titleFill });
+    } else if (rhythm) {
       // 节奏页：与 PPTX 同一套几何（英寸 → pt，顶部原点换算成 pdf-lib 的底部原点）。
       const centerX = plan.centered ? PDF_SLIDE_WIDTH / 2 : undefined;
       const title = fittedText([item.title], font, {
@@ -720,9 +758,10 @@ export async function revisePresentationBundle({ previousSourcePath, revision, o
   let prior; try { prior = validatePresentation(JSON.parse(await readFile(previousSourcePath, 'utf8'))); } catch (error) { if (error instanceof MochiPresentationsError) throw error; throw failure('INVALID_REVISION', 'previous source is unavailable or invalid'); }
   const slideIndex = prior.slides.findIndex((slide) => slide.id === revision.slideId); if (slideIndex < 0) throw failure('INVALID_REVISION', 'target slide does not exist');
   const current = prior.slides[slideIndex];
-  const updated = { ...current, ...(revision.title !== undefined ? { title: revision.title } : {}), ...(revision.body !== undefined ? { body: revision.body } : {}), ...(revision.layout !== undefined ? { layout: revision.layout } : {}), ...(revision.table !== undefined ? { table: revision.table } : {}), ...(revision.chart !== undefined ? { chart: revision.chart } : {}), ...(revision.source !== undefined ? { source: revision.source } : {}), version: current.version + 1 };
+  const updated = { ...current, ...(revision.title !== undefined ? { title: revision.title } : {}), ...(revision.body !== undefined ? { body: revision.body } : {}), ...(revision.layout !== undefined ? { layout: revision.layout } : {}), ...(revision.table !== undefined ? { table: revision.table } : {}), ...(revision.chart !== undefined ? { chart: revision.chart } : {}), ...(revision.process !== undefined ? { process: revision.process } : {}), ...(revision.source !== undefined ? { source: revision.source } : {}), version: current.version + 1 };
   if (updated.layout !== 'title-table') delete updated.table;
   if (updated.layout !== 'title-chart') delete updated.chart;
+  if (updated.layout !== 'title-process') delete updated.process;
   const next = validatePresentation({ ...prior, version: prior.version + 1, slides: prior.slides.map((slide, index) => index === slideIndex ? updated : slide) });
   return generatePresentationBundle({ presentation: next, outputDirectory, signal });
 }
@@ -826,8 +865,9 @@ export function parseXmlDocument(source) {
     if (!nameMatch) throw malformed();
     const node = { name: nameMatch[1], local: xmlLocalName(nameMatch[1]), attrs: {}, children: [], text: '' };
     const attrPattern = /([^\s=/]+)\s*=\s*("([^"]*)"|'([^']*)')/gu;
-    let match;
-    while ((match = attrPattern.exec(body)) !== null) node.attrs[match[1]] = decodeXmlText(match[3] ?? match[4] ?? '');
+    for (let match = attrPattern.exec(body); match !== null; match = attrPattern.exec(body)) {
+      node.attrs[match[1]] = decodeXmlText(match[3] ?? match[4] ?? '');
+    }
     stack[stack.length - 1].children.push(node);
     if (!selfClosing) stack.push(node);
   }

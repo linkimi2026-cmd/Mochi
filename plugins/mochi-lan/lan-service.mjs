@@ -68,6 +68,129 @@ export const LAN_FILE_LIMITS = Object.freeze({
   chunkBytes: FILE_CHUNK_BYTES,
 });
 
+/**
+ * [Mochi 2026-09-18] 消息方向表。
+ *
+ * 教师→教室是「通知」，教室→教师是「学生预约」。两个方向共用同一套签名信封、
+ * 配对校验、投递回执与已看到回执，差别只在内容类型、谁有权发起、以及预约描述。
+ * 因此这里是一张纯映射表，而不是两套并行代码——并行代码会在某个分支上漏掉
+ * 一项签名或角色校验，那种漏洞从外面看不出来。
+ *
+ * 表按「本机角色视图」写：sends 是本机发得出去的类型，receives 是本机收得下的
+ * 类型，peerRole 是唯一合法的对端角色。两行互为镜像，测试里有一条断言专门盯着
+ * 这个镜像关系（teacher.sends 必须等于 classroom.receives），所以新增方向时不会
+ * 只改一半。
+ *
+ * 关键点：配对是「一教师 ↔ 一教室设备」。学生不是端点，学生身份是预约描述里的
+ * 自填字段，由学生在共用教室设备上输入。它因此**未经认证**，UI 必须按「学生自述」
+ * 呈现，不能显示成已核实的在校身份。
+ */
+const MESSAGE_DIRECTIONS = Object.freeze({
+  teacher: Object.freeze({ sends: 'NOTIFY', receives: 'REQUEST', peerRole: 'classroom' }),
+  classroom: Object.freeze({ sends: 'REQUEST', receives: 'NOTIFY', peerRole: 'teacher' }),
+});
+
+/** 预约描述字段长度上限。教室端是共用设备，超长输入不该把教师端待办条撑坏。 */
+const MAX_REQUEST_FIELD_LENGTH = 120;
+const REQUEST_KINDS = Object.freeze(['appointment', 'question', 'makeup', 'other']);
+
+/**
+ * 每位学生那段「个性化交代」的长度上限。
+ *
+ * 这段文字由 Mochi 调 skill 逐人生成（该补什么、错在哪、下一步找谁），不是模板里
+ * 拼出来的标签——所以它必须能跟着判决一起签名过网，教室端才有字可显示。上限压到
+ * 200 是给教室常驻板留的：板上是一人一行，超过一行的长度学生就不看了。
+ */
+const MAX_VERDICT_NOTE_LENGTH = 200;
+
+/**
+ * 教师处置（喊人 / 过关 / 不过关）的动作表。
+ *
+ * 「过关或不过关是分老师的」：这条记录由**发起登记的那位教师**的身份签名，
+ * 名册因此属于他而不是全校共享。同一台设备换一位老师登录，登记的是他自己的名单。
+ */
+const DIRECTIVE_ACTIONS = Object.freeze(['call', 'pass', 'fail', 'retry']);
+/** 一次登记的人数上限。一个班 40 人上下，64 给了余量又挡住了无限负载。 */
+const MAX_VERDICTS = 64;
+
+/**
+ * 教师处置描述：一次登记 = 一条消息，里面带一批 verdict。
+ *
+ * 为什么不「一个学生一条消息」：一个班 40 人就是 40 条签名消息 + 40 条回执，
+ * 几分钟内就能把收件箱上限（1000 条）吃掉，而它们本该是一条记录。
+ */
+function directiveDescriptor(input) {
+  if (!plain(input)) fail('INVALID_DIRECTIVE', '教师处置描述必须是对象。');
+  if (Object.keys(input).some((key) => !['item', 'verdicts'].includes(key))) {
+    fail('INVALID_DIRECTIVE', '教师处置描述含未知字段。');
+  }
+  const item = printable(input.item, '登记名目', MAX_REQUEST_FIELD_LENGTH, { required: false });
+  if (!Array.isArray(input.verdicts) || input.verdicts.length === 0) {
+    fail('INVALID_DIRECTIVE', '教师处置必须至少包含一位学生。');
+  }
+  if (input.verdicts.length > MAX_VERDICTS) {
+    fail('INVALID_DIRECTIVE', `一次登记最多 ${MAX_VERDICTS} 位学生。`);
+  }
+  const verdicts = input.verdicts.map((raw) => {
+    if (!plain(raw)) fail('INVALID_DIRECTIVE', '学生处置必须是对象。');
+    if (Object.keys(raw).some((key) => !['student', 'seat', 'action', 'note'].includes(key))) {
+      fail('INVALID_DIRECTIVE', '学生处置含未知字段。');
+    }
+    if (!DIRECTIVE_ACTIONS.includes(raw.action)) fail('INVALID_DIRECTIVE', '学生处置动作无效。');
+    let seat;
+    if (raw.seat !== undefined) {
+      seat = Number(raw.seat);
+      if (!Number.isSafeInteger(seat) || seat < 1 || seat > 999) fail('INVALID_DIRECTIVE', '座号必须是 1 到 999 的整数。');
+    }
+    // note 是「给这位学生看的那句话」，可以缺省（例如老师只喊人、不评价），但一旦
+    // 给了就必须是干净文本：换行会让常驻板一行的布局错位，控制字符会污染日志。
+    const note = printable(raw.note, '学生交代', MAX_VERDICT_NOTE_LENGTH, { required: false });
+    return {
+      student: printable(raw.student, '学生姓名', MAX_REQUEST_FIELD_LENGTH),
+      action: raw.action,
+      ...(seat === undefined ? {} : { seat }),
+      ...(note === undefined ? {} : { note }),
+    };
+  });
+  return { ...(item === undefined ? {} : { item }), verdicts };
+}
+
+/**
+ * 学生预约描述。它随信封一起签名，所以发送方与接收方必须对同一份规范化结果
+ * 做 messageId 冲突判定——否则同一 messageId 重发时会被误判为冲突。
+ *
+ * material / position 是「哪份作业的哪道题」这两个位置。没有它们的时候，学生只能
+ * 把题目位置塞进 topic 或正文，老师那条待办条上就只剩一坨截断的字——老师没法提前
+ * 翻到那一页，预约也就没起到预约的作用。两者都可选，所以旧的纯文字预约照旧合法。
+ */
+function requestDescriptor(input) {
+  if (!plain(input)) fail('INVALID_REQUEST', '学生预约描述必须是对象。');
+  if (Object.keys(input).some((key) => !['student', 'seat', 'kind', 'material', 'position', 'topic', 'slot'].includes(key))) {
+    fail('INVALID_REQUEST', '学生预约描述含未知字段。');
+  }
+  const student = printable(input.student, '学生姓名', MAX_REQUEST_FIELD_LENGTH);
+  const kind = input.kind === undefined ? 'other' : input.kind;
+  if (!REQUEST_KINDS.includes(kind)) fail('INVALID_REQUEST', '预约类型无效。');
+  const material = printable(input.material, '作业材料', MAX_REQUEST_FIELD_LENGTH, { required: false });
+  const position = printable(input.position, '题目位置', MAX_REQUEST_FIELD_LENGTH, { required: false });
+  const topic = printable(input.topic, '预约主题', MAX_REQUEST_FIELD_LENGTH, { required: false });
+  const slot = printable(input.slot, '预约时间', MAX_REQUEST_FIELD_LENGTH, { required: false });
+  let seat;
+  if (input.seat !== undefined) {
+    seat = Number(input.seat);
+    if (!Number.isSafeInteger(seat) || seat < 1 || seat > 999) fail('INVALID_REQUEST', '座号必须是 1 到 999 的整数。');
+  }
+  return {
+    student,
+    kind,
+    ...(seat === undefined ? {} : { seat }),
+    ...(material === undefined ? {} : { material }),
+    ...(position === undefined ? {} : { position }),
+    ...(topic === undefined ? {} : { topic }),
+    ...(slot === undefined ? {} : { slot }),
+  };
+}
+
 export class MochiLanError extends Error {
   constructor(code, message, httpStatus = 400) {
     super(message);
@@ -297,6 +420,22 @@ function identityProjection(identity) {
 
 function identityEqual(left, right) {
   return canonical(identityProjection(left)) === canonical(identityProjection(right));
+}
+
+/**
+ * 签名负载里的「收件人三元组」。
+ *
+ * classId 对教室端必填、对教师端可选，所以构造时**没有就必须省略**，不能写成
+ * `classId: undefined`：canonical() 递归遇到 undefined 会直接抛 INVALID_ENVELOPE
+ * （它只认 null/字符串/布尔/数字/数组/普通对象），而不是像 JSON.stringify 那样
+ * 悄悄丢掉。教师端之间的反向消息依赖这一点，所以这个约束只在这里集中实现一次。
+ */
+function recipientTuple(identity) {
+  return {
+    endpointId: identity.endpointId,
+    schoolId: identity.schoolId,
+    ...(identity.classId === undefined ? {} : { classId: identity.classId }),
+  };
 }
 
 function validateIdentity(input, previous = null) {
@@ -923,6 +1062,37 @@ export class MochiLanService extends EventEmitter {
   }
 
   /**
+   * [Mochi 2026-09-18] 教室端 → 教师端的学生预约。
+   *
+   * 与 sendMessage 的差别不只是方向：sendMessage 是「教师端替老师执行的外发动作」，
+   * 走 dispatch 审批链，模型是发起者；学生预约是**学生本人在教室设备上的直接动作**，
+   * 没有模型介入，所以它更像 markSeen——一条已认证的受控路由，令牌只由
+   * host-bridge 以 connection-direct 铸出（动作名与 send-message 不同，
+   * 两个方向的令牌因此不能互相复用）。
+   */
+  async sendRequest({ targetEndpointId, request, body, messageId: requestedMessageId, expectedSender = undefined, expectedPeer = undefined, authorization, signal } = {}) {
+    ensureAuthorization(authorization, 'send-request', '发送学生预约');
+    return this.#sendMessageInternal({ targetEndpointId, body, requestedMessageId, request, expectedSender, expectedPeer, signal });
+  }
+
+  /**
+   * [Mochi 2026-09-18] 教师端 → 教室端的处置登记（喊人 / 过关 / 不过关）。
+   *
+   * 与 sendRequest 的关键差别在**谁发起**：学生预约是人（学生）在共用设备上按的，
+   * 没有模型介入，所以 host-bridge 给了它一条 connection-direct 路由；处置登记是
+   * 模型（Mochi 调 skill 生成个性化文案后）发起的对外动作，因此**故意没有 HTTP 路由**，
+   * 令牌只能由 dispatch 在审批通过后铸出。动作名独立（send-directive），所以
+   * send-message 的令牌不能拿来下发名册。
+   *
+   * body 是这一批的整体说明（例如「第 5 单元听写已登记」），逐人的个性化文字在
+   * directive.verdicts[].note 里。
+   */
+  async sendDirective({ targetEndpointId, directive, body, messageId: requestedMessageId, expectedSender = undefined, expectedPeer = undefined, authorization, signal } = {}) {
+    ensureAuthorization(authorization, 'send-directive', '下发教师处置');
+    return this.#sendMessageInternal({ targetEndpointId, body, requestedMessageId, directive, expectedSender, expectedPeer, signal });
+  }
+
+  /**
    * Transfers one approved, whitelisted file before it emits the notification
    * that references it. The receiver only accepts that message after the same
    * fileId has been durably verified in its controlled inbox.
@@ -1017,23 +1187,26 @@ export class MochiLanService extends EventEmitter {
     const id = messageId(requestedMessageId);
     const prepared = await this.#commit((state) => {
       const currentIdentity = this.#identity(state);
-      if (currentIdentity.role !== 'classroom') fail('ROLE_FORBIDDEN', '只有教室端可以确认已看到。', 403);
+      // 两个方向都要能确认已看到：教室端确认老师布置的事，教师端确认学生的预约。
+      // 否则教师的待办条永远清不掉——「已处理」这个状态没有落点。
+      const direction = MESSAGE_DIRECTIONS[currentIdentity.role];
+      if (!direction) fail('ROLE_FORBIDDEN', '本机角色不能确认已看到。', 403);
       const incoming = state.inbox[id];
       if (!incoming) fail('MESSAGE_NOT_FOUND', '未找到收件。', 404);
       // Older rows deliberately remain readable after an identity change, but
-      // they did not record the classroom identity that accepted them. Never
-      // reinterpret such a row as belonging to the current classroom.
+      // they did not record the receiving identity that accepted them. Never
+      // reinterpret such a row as belonging to the current owner.
       if (!incoming.recipient) {
         fail('RECIPIENT_BINDING_REQUIRED', '此历史收件未记录接收身份，不能发送已看到回执。', 409);
       }
       if (!identityEqual(currentIdentity, incoming.recipient)) {
-        fail('RECIPIENT_BINDING_STALE', '当前教室身份不再对应此收件，不能发送已看到回执。', 409);
+        fail('RECIPIENT_BINDING_STALE', '本机身份不再对应此收件，不能发送已看到回执。', 409);
       }
       const sourceEndpointId = typeof incoming.from?.endpointId === 'string' ? incoming.from.endpointId : '';
       const peer = sourceEndpointId ? state.pairings[sourceEndpointId] : null;
-      if (!peer || peer.peer.role !== 'teacher') fail('PAIRING_REQUIRED', '原教师配对已不可用。', 403);
+      if (!peer || peer.peer.role !== direction.peerRole) fail('PAIRING_REQUIRED', '原配对已不可用。', 403);
       if (!identityEqual(peer.peer, incoming.from)) {
-        fail('PAIRING_CHANGED', '原教师配对身份已变化，不能向同 endpointId 的新身份发送已看到回执。', 409);
+        fail('PAIRING_CHANGED', '原配对身份已变化，不能向同 endpointId 的新身份发送已看到回执。', 409);
       }
       const seenAt = incoming.seenAt ?? now();
       incoming.seenAt = seenAt;
@@ -1053,13 +1226,13 @@ export class MochiLanService extends EventEmitter {
       createdAt: now(),
       seenAt: prepared.seenAt,
       sender: identityProjection(prepared.identity),
+      // 回执的收件人 = 「原发件人的 endpoint/school」+「原收件人的 class」。
+      // class 是消息绑定的班级，不是发件人的班级：教师端没有 class，所以那个位置
+      // 必须省略而不是写 undefined（canonical 会拒绝含 undefined 的签名负载）。
       recipient: {
         endpointId: prepared.sender.endpointId,
         schoolId: prepared.sender.schoolId,
-        // This is the classroom target of the original notice, not an
-        // optional teacher-owned class.  It keeps the receipt bound to the
-        // same school/class tuple that the sender signed into the message.
-        classId: prepared.recipient.classId,
+        ...(prepared.recipient.classId === undefined ? {} : { classId: prepared.recipient.classId }),
       },
     };
     try {
@@ -1085,7 +1258,7 @@ export class MochiLanService extends EventEmitter {
     }
   }
 
-  async #sendMessageInternal({ targetEndpointId, body, requestedMessageId, attachment = undefined, expectedSender = undefined, expectedPeer = undefined, signal }) {
+  async #sendMessageInternal({ targetEndpointId, body, requestedMessageId, attachment = undefined, request = undefined, directive = undefined, expectedSender = undefined, expectedPeer = undefined, signal }) {
     let chosenMessageId;
     try {
       const targetId = endpointId(targetEndpointId);
@@ -1094,17 +1267,44 @@ export class MochiLanService extends EventEmitter {
       chosenMessageId = requestedMessageId === undefined ? randomUUID() : messageId(requestedMessageId);
       await this.#commit((state) => {
         const local = this.#identity(state);
-        if (local.role !== 'teacher') fail('ROLE_FORBIDDEN', '教室端不能自主发起外发消息。', 403);
+        // 方向由本机角色决定：教师只能发通知，教室只能发学生预约。用一张表而不是
+        // 两处 if，是因为「新增一个方向」时最容易漏的就是另一侧的校验。
+        const direction = MESSAGE_DIRECTIONS[local.role];
+        if (!direction) fail('ROLE_FORBIDDEN', '本机角色不能发起消息。', 403);
+        // 先判「方向根本不接受处置名册」，再判「这个方向缺了它必需的东西」。反过来的话，
+        // 教室端伪造一份名册会得到一句误导性的「缺少预约描述」，而真正的问题是越权。
+        if (direction.sends === 'REQUEST' && directive !== undefined) {
+          fail('INVALID_DIRECTIVE', '学生预约不接受教师处置登记。', 400);
+        }
+        if (direction.sends === 'REQUEST' && request === undefined) {
+          fail('INVALID_REQUEST', '学生预约必须带预约描述（谁、预约什么）。', 400);
+        }
+        if (direction.sends === 'NOTIFY' && request !== undefined) {
+          fail('INVALID_REQUEST', '通知方向不接受学生预约描述。', 400);
+        }
+        // 教室→教师的文件传输还没实现。显式拒绝而不是让它走到 #outgoingAttachment，
+        // 否则会得到一句误导性的「文件未向同一教室验证」。
+        if (direction.sends === 'REQUEST' && attachment !== undefined) {
+          fail('INVALID_FILE_REFERENCE', '学生预约暂不支持附件。', 400);
+        }
+        const verifiedRequest = request === undefined ? undefined : requestDescriptor(request);
+        const verifiedDirective = directive === undefined ? undefined : directiveDescriptor(directive);
         const peer = state.pairings[targetId];
-        if (!peer || state.blocked[targetId]) fail('PAIRING_REQUIRED', '目标不是可用的已配对教室设备。', 403);
-        if (peer.peer.role !== 'classroom') fail('ROLE_FORBIDDEN', '教师端只能向教室端发送通知。', 403);
+        if (!peer || state.blocked[targetId]) fail('PAIRING_REQUIRED', '目标不是可用的已配对设备。', 403);
+        if (peer.peer.role !== direction.peerRole) {
+          fail('ROLE_FORBIDDEN', local.role === 'teacher'
+            ? '教师端只能向教室端发送通知。'
+            : '教室端只能向教师端发送学生预约。', 403);
+        }
         this.#assertExpectedBinding(local, peer.peer, expectedSender, expectedPeer);
         const verifiedAttachment = this.#outgoingAttachment(state, attachment, targetId);
         const outgoing = state.outbox[chosenMessageId];
         if (outgoing) {
           if (outgoing.targetEndpointId !== targetId || outgoing.body !== text
-            || canonical(outgoing.attachment ?? null) !== canonical(verifiedAttachment ?? null)) {
-            fail('MESSAGE_ID_CONFLICT', 'messageId 已绑定不同的目标、正文或文件。', 409);
+            || canonical(outgoing.attachment ?? null) !== canonical(verifiedAttachment ?? null)
+            || canonical(outgoing.request ?? null) !== canonical(verifiedRequest ?? null)
+            || canonical(outgoing.directive ?? null) !== canonical(verifiedDirective ?? null)) {
+            fail('MESSAGE_ID_CONFLICT', 'messageId 已绑定不同的目标、正文、文件、预约或处置名册。', 409);
           }
           this.#assertStoredBinding(local, peer.peer, outgoing);
           return;
@@ -1113,20 +1313,25 @@ export class MochiLanService extends EventEmitter {
           v: LAN_PROTOCOL_VERSION,
           type: 'message',
           messageId: chosenMessageId,
-          contentType: 'NOTIFY',
+          contentType: direction.sends,
           createdAt: now(),
           sender: identityProjection(local),
-          recipient: { endpointId: peer.peer.endpointId, schoolId: peer.peer.schoolId, classId: peer.peer.classId },
+          recipient: recipientTuple(peer.peer),
           body: text,
+          ...(verifiedRequest === undefined ? {} : { request: verifiedRequest }),
+          ...(verifiedDirective === undefined ? {} : { directive: verifiedDirective }),
           ...(verifiedAttachment === undefined ? {} : { attachment: verifiedAttachment }),
         };
         state.outbox[chosenMessageId] = {
           messageId: chosenMessageId,
           targetEndpointId: targetId,
+          contentType: direction.sends,
           // 快照会直出浏览器：这里只能存公开投影，绝不能存含 privateKey 的完整身份。
           sender: identityProjection(local),
           peer: clone(peer.peer),
           body: text,
+          ...(verifiedRequest === undefined ? {} : { request: verifiedRequest }),
+          ...(verifiedDirective === undefined ? {} : { directive: verifiedDirective }),
           ...(verifiedAttachment === undefined ? {} : { attachment: verifiedAttachment }),
           envelope: envelope(local, payload),
           delivery: 'PENDING',
@@ -2187,12 +2392,22 @@ export class MochiLanService extends EventEmitter {
 
   async #receiveMessage(input) {
     const payload = input?.payload;
-    if (!plain(payload) || payload.type !== 'message' || payload.v !== LAN_PROTOCOL_VERSION || payload.contentType !== 'NOTIFY') fail('INVALID_ENVELOPE', '消息信封无效。', 403);
+    // 这里只做「信封形状」检查，不判断方向合法性：此刻角色还没验签，拿未认证的
+    // sender.role 去决定该接受什么类型，等于让发件人自己挑规则。方向在 #commit 里、
+    // 验签之后用**本机**角色判定。
+    if (!plain(payload) || payload.type !== 'message' || payload.v !== LAN_PROTOCOL_VERSION
+      || (payload.contentType !== 'NOTIFY' && payload.contentType !== 'REQUEST')) {
+      fail('INVALID_ENVELOPE', '消息信封无效。', 403);
+    }
     const senderId = endpointId(payload.sender?.endpointId, 'sender.endpointId');
     const id = messageId(payload.messageId);
     const body = printable(payload.body, '通知正文', MAX_MESSAGE_BYTES);
     if (Buffer.byteLength(body, 'utf8') > MAX_MESSAGE_BYTES) fail('PAYLOAD_TOO_LARGE', '通知正文超过 64KiB。', 413);
     const attachment = payload.attachment === undefined ? undefined : messageAttachment(payload.attachment);
+    const request = payload.request === undefined ? undefined : requestDescriptor(payload.request);
+    // 与 request 同理：这里只做形状校验，方向合法性放到验签之后的 #commit 里用
+    // **本机**角色判定。教室端因此不能靠自称是教师来塞一份判决名册进来。
+    const directive = payload.directive === undefined ? undefined : directiveDescriptor(payload.directive);
     const canonicalPayload = canonical(payload);
     const recorded = await this.#commit((state) => {
       const local = this.#identity(state);
@@ -2201,7 +2416,19 @@ export class MochiLanService extends EventEmitter {
       if (!paired) fail('PAIRING_REQUIRED', '发件设备未配对。', 403);
       const sender = validateRemoteIdentity(payload.sender, paired.publicKey);
       verifyEnvelope(paired.publicKey, input);
-      if (!identityEqual(sender, paired.peer) || local.role !== 'classroom' || sender.role !== 'teacher') fail('ROLE_FORBIDDEN', '消息角色不被允许。', 403);
+      if (!identityEqual(sender, paired.peer)) fail('ROLE_FORBIDDEN', '消息发件身份与配对不一致。', 403);
+      const direction = MESSAGE_DIRECTIONS[local.role];
+      // 对端角色与内容类型都由本机角色推导，而不是由发件人自称：教室端只收教师
+      // 通知，教师端只收学生预约。手工构造一个「教师发来 REQUEST」的信封会被挡下。
+      if (!direction || sender.role !== direction.peerRole || payload.contentType !== direction.receives) {
+        fail('ROLE_FORBIDDEN', '消息角色不被允许。', 403);
+      }
+      // 与发送端对称：预约必须带描述，通知不得带。这一条挡的是手工构造的信封。
+      if (direction.receives === 'REQUEST' && request === undefined) fail('INVALID_ENVELOPE', '学生预约缺少预约描述。', 403);
+      if (direction.receives === 'NOTIFY' && request !== undefined) fail('INVALID_ENVELOPE', '通知不应带学生预约描述。', 403);
+      // 处置名册只允许教师端下发。教师端收到一份带 directive 的收件，说明对面在
+      // 冒充教师下发判决——退回去，而不是把它当普通通知记下来。
+      if (direction.receives === 'REQUEST' && directive !== undefined) fail('INVALID_ENVELOPE', '学生预约不应带教师处置名册。', 403);
       if (payload.recipient?.endpointId !== local.endpointId || payload.recipient?.schoolId !== local.schoolId || payload.recipient?.classId !== local.classId) fail('RECIPIENT_MISMATCH', '消息目标班级或设备不匹配。', 403);
       if (attachment) {
         const receivedFile = state.incomingFiles[attachment.fileId];
@@ -2233,7 +2460,10 @@ export class MochiLanService extends EventEmitter {
         messageId: id,
         from: sender,
         recipient: clone(identityProjection(local)),
+        contentType: payload.contentType,
         body,
+        ...(request === undefined ? {} : { request }),
+        ...(directive === undefined ? {} : { directive }),
         ...(attachment === undefined ? {} : { attachment }),
         receivedAt,
         updatedAt: receivedAt,
@@ -2249,9 +2479,15 @@ export class MochiLanService extends EventEmitter {
       receivedAt: recorded.receivedAt,
       duplicate: recorded.duplicate,
       sender: identityProjection(recorded.local),
-      recipient: { endpointId: recorded.sender.endpointId, schoolId: recorded.sender.schoolId, classId: recorded.local.classId },
+      // 教师端没有 classId，这两个位置都必须省略而不是写 undefined：canonical()
+      // 只接受 JSON 能表达的值，显式 undefined 会让回执直接签不出来。
+      recipient: {
+        endpointId: recorded.sender.endpointId,
+        schoolId: recorded.sender.schoolId,
+        ...(recorded.local.classId === undefined ? {} : { classId: recorded.local.classId }),
+      },
       schoolId: recorded.local.schoolId,
-      classId: recorded.local.classId,
+      ...(recorded.local.classId === undefined ? {} : { classId: recorded.local.classId }),
     };
     return { status: recorded.duplicate ? 'duplicate' : 'recorded', ack: envelope(recorded.local, ackPayload) };
   }
@@ -2269,7 +2505,10 @@ export class MochiLanService extends EventEmitter {
       const sender = validateRemoteIdentity(payload.sender, paired.publicKey);
       verifyEnvelope(paired.publicKey, input);
       const outgoing = state.outbox[id];
-      if (!outgoing || outgoing.targetEndpointId !== senderId || local.role !== 'teacher' || sender.role !== 'classroom'
+      // 回执只能来自「本机消息的对端」：教师端的消息对端是教室端，教室端的
+      // 预约对端是教师端。方向由本机角色推导，而不是由回执自称。
+      const direction = MESSAGE_DIRECTIONS[local.role];
+      if (!outgoing || outgoing.targetEndpointId !== senderId || !direction || sender.role !== direction.peerRole
         || payload.recipient?.endpointId !== local.endpointId || payload.recipient?.schoolId !== local.schoolId || payload.recipient?.classId !== sender.classId) {
         fail('RECIPIENT_MISMATCH', '已看到回执与原消息不匹配。', 403);
       }

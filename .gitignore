@@ -6,6 +6,7 @@ node_modules/
 
 # iCloud 不外同步的大件（.nosync 后缀本身就是为了这个，但仍显式排除）
 *.nosync/
+apps/desktop/.mochi-package-resources-staging-*/
 dsh-src.nosync/
 .dsh-home.nosync/
 probe-log.nosync/
@@ -13,8 +14,45 @@ probe-log.nosync/
 # 构建产物
 dist/
 dist-electron/
-release/
+# 安装包本体（dmg/exe 单文件 440MB–1.2GB，超 GitHub 100MB 硬限，无法入仓）。
+# 分发走 GitHub Releases（见 README「下载安装包」）。但索引与校验清单要能查到，
+# 所以用 `release/*` 而非 `release/`：排除内容、保留目录可下钻，再放行索引文件。
+release/*
+!release/README.md
+!release/SHA256SUMS.txt
+# electron-builder 的桌面构建输出（1.9GB 的 dmg/解包树）必须整目录排除。
+# 注意 `release/*` 是锚定仓库根的，覆盖不到这一层，所以要单独写。
+apps/desktop/release/
+apps/desktop/release/*/**/release/
 out/
+**/__pycache__/
+*.py[cod]
+
+# 宣传片大件与派生结果保留在本机；Git 只保存脚本、时间轴、说明和许可
+/promo/assets/
+/promo/captures/
+/promo/evidence/
+/promo/output/
+/promo/recordings/
+/promo/research/
+/promo/sample/
+/promo/v*/assets/
+/promo/v*/beats/
+/promo/v*/qa*/
+/promo/v*/**/*.png
+/promo/v*/**/*.jpg
+/promo/v*/**/*.jpeg
+/promo/v*/check*.json
+/promo/v*/export-validation.json
+/promo/v*/font-check.jsonl
+/promo/v*/sound-check.json
+/promo/v*/motion-*.md5
+/promo/v4/mo-render.cjs
+/promo/v4/mo-render.mjs
+
+# 答辩工程只提交可编辑素材和制作脚本，中间包与最终 PPT 由交付目录承载
+/参赛PPT/Mochi四分钟答辩/.build/
+/参赛PPT/Mochi四分钟答辩/output/
 
 # 本地数据与凭据（校园数据不出校、不出仓库）
 **/.credentials.yaml
@@ -31,6 +69,8 @@ out/
 # 本机协作元数据与可重取的源码快照
 /.workbuddy/
 /mochi-harness-source.zip
+/release/source-snapshots/*.zip
+/01-Mochi-参赛交付包-*/
 
 # 审计与验证产物（体积大、过程性，留在本地不入仓；关键结论已沉淀进 docs/ 与 WORKLOG）
 artifacts/

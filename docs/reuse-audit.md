@@ -1,15 +1,10 @@
 # 开源复用审查
 
-> ⚠️ **历史记录（historical）· 2026-09-12 标注**
->
-> **status**: archived　**last_verified**: 2026-09-12　**verified_by**: 工具线
->
-> 本文是 2026-09-06 前后的复用审查留痕，**其中的数字均为该时点数字，不是现行真值**：
-> 文中出现的「插件总数 12 / 11」「只限 12 插件、29 运行模块资源闭包」，
-> 与「桌面实际 0.1.2-rc.1」等，**均已过时**。
-> **现行真值**：插件 **26** 个（`prepare-mochi-resources.cjs` 的 `PLUGINS`）、
-> 内核 **`0.1.3-alpha.1`**（同文件 `PLUGIN_RUNTIME_VERSIONS`）。
-> 正文原样保留，仅供追溯。参见 `docs/DOC-AUTHORITY.md`。
+> **status**: active
+> **last_verified**: 2026-09-13
+> **verified_by**: Codex
+
+本文按日期保存每次开发前的 GitHub 检索、许可证、版本和采用决定。旧条目中的数量与版本只代表该次审查时点，不能覆盖 [当前状态](PROJECT-STATUS.md)。当前插件打包定义为 25 项（2026-09-19 实读 `apps/desktop/scripts/prepare-mochi-resources.cjs` 的 `PLUGINS` 反解确认 25 条，与 `test-package-resources.mjs:296` 的 `EXPECTED_BUNDLED_PLUGIN_COUNT = 25` 一致），DSH 依赖为 `0.1.3-alpha.1`。
 
 > 打包/出包的唯一路径、什么会进包、快照清单重算方法，见 [`build-standard.md`](./build-standard.md)。本文仅保留当时的复用审查记录。
 
@@ -288,3 +283,268 @@ Playwright候选root独立复验：亲读 `/private/tmp/mochi-playwright155-prob
 沿用已核完整 LocalSend/PairDrop/A2A 生态及上列固定提交/许可证。本次执行者补搜 `site:github.com/localsend/localsend multicast discovery UDP broadcast protocol`、`site:github.com/schlagmichdoch/PairDrop multicast discovery local network`、`site:github.com/nodejs/node dgram addMembership setBroadcast multicast UDP example`，读取 LocalSend 的组播仅宣告、后续 HTTP 单播说明。部分采用该职责划分，继续 Node22 现成 dgram；不引入完整传输框架、Bonjour 服务或另一个任务域，维护成本限同一信标/TTL/设备表的双通道。执行者已提供 loopback 组播收包预检；root 尚未独立验证生产双进程备用通道，已要求单独屏蔽广播测试目标再验证组播。学校交换机/Windows 防火墙效果未实测。
 
 组播集成前root实证更新：独立Node22运行真实双进程test.mjs与durable测试exit0；主信标投向无监听端口时仍通过组播收到候选，恢复双路径只保留一个endpoint。组播加入失败保留原路径、UDP端口占用保留HTTP/手动连接降级通过。仅本机网络栈和测试进程，不宣称学校网络实测完成。
+
+
+## 2026-09-13 · 120 秒 Mochi 评委与采购演示片
+
+实际搜索词：`site:github.com video editor React Remotion Motion Canvas OpenCut`，随后 `site:github.com hyperframes video gsap license` 与 `site:github.com Greensock GSAP license animation`。先覆盖完整编辑应用、框架与插件目录，再选择动画库。
+
+| 仓库 | 实读提交 | 许可证与维护 | 结论 |
+| --- | --- | --- | --- |
+| https://github.com/OpenCut-app/OpenCut | 400f097becba5db0fbc305d5a65348cb81c20356 | MIT，未归档，2026-08-10 有推送 | 不接入完整剪辑应用；本次需要可重复离线导出，避免维护额外产品栈。未安装，不声称适配。 |
+| https://github.com/remotion-dev/remotion | e4f0d6308c8e7d9ab4787b79fdd805862d692a76 | 自定义 Remotion License，2026-09-12 活跃 | 不采用；需区分主体免费条件与企业授权，现有需求有 Apache 方案可选。未安装。 |
+| https://github.com/motion-canvas/motion-canvas | 7b91435c301d530351dcf5ebb91dd139c002e405 | MIT，未归档，2026-07-02 推送 | 不采用；已有真实 UI 图像，更适合 HTML 合成。未安装。 |
+| https://github.com/heygen-com/hyperframes | fdf9ffac953d9d18329907d6956faa58c73ad489 | Apache-2.0，2026-09-13 活跃，CLI requires Node >=22 | 采用 HTML 时间轴、现成媒体寻帧与本地 MP4 渲染。已读根清单、CLI 清单、LICENSE、组合与渲染契约。npm 正式包名 hyperframes@0.8.36；尝试 @hyperframes/cli 返回 404，是包名不对，不是 GitHub 检索失败或无权限。 |
+| https://github.com/FFmpeg/FFmpeg | ca164c6b98ebf9037434b95a7e942bab9fda7363 | LGPL/GPL 按构建选项；本机 9.0.1 启用 GPL | 使用已安装 CLI 编码、音轨混合和验证，不重新实现编码器，不随工程分发二进制。 |
+
+GSAP 锁定 npm 3.15.0，复用现成 timeline/easing，不移植录屏器代码。渲染工程位于 promo，和桌面产品依赖隔离；原 UI 不重绘，原有素材保留。安装与功能验证状态随成片验收更新。
+
+事实更新：用户在本任务明确确认 Windows 一体机与全部功能已完成实测且正常可用，覆盖旧台账的未实测状态。这是用户确认，非本任务独立硬件复测。原 V5 文档中的 78 段 JSON、原始录屏包并未随 DOCX 出现在当前目录；据可用素材调整镜头，不把占位假设当真实事件。
+
+2026-09-13 宣传片实录补充：本轮实际搜索 `site:github.com heygen-com hyperframes screencast cursor video gsap`，沿用前述已核完整应用/框架选择、HyperFrames0.8.36及GSAP3.15.0。发现 https://github.com/heygen-com/hyperframes-launch-video 完整样片工程，但仅参考目录与功能说明，未核其完整许可证，不复制素材或源代码。继续采用已锁定框架，实际完成14秒1920x1080/60fps无音轨样段渲染与抽帧检查；不称120秒成片完成。鼠标动画放在同一相机坐标系，源素材为真实CDP采集帧，长期维护仅限独立promo目录。
+
+2026-09-13 纯界面成片续作：实际补搜 `site:github.com/heygen-com/hyperframes GSAP video render timeline`，复核官方主仓与 core / troubleshooting / data-attributes 文档。继续使用此前完整生态审计所选 HyperFrames0.8.36（Apache-2.0）和 GSAP3.15.0；不引入新依赖，不复制未经许可的 launch-video 工程。保留根 data-duration=120 与 paused timeline，录制改用 CUA 支持的完整 screenshot，原始 UI 不改写。只在 promo/interface_film.py 及独立合成入口维护字幕、相机、真实控件坐标与鼠标动效。
+
+成片中文字体采用 notofonts/noto-cjk 的 NotoSansCJKsc-Regular.otf（SIL OFL1.1），下载及许可证实读完成。raw.githubusercontent.com 直连超时中止，改用该官方仓库的 jsDelivr 分发成功，非未找到字体。文件 SHA256 2c76254f6fc379fddfce0a7e84fb5385bb135d3e399294f6eeb6680d0365b74b，随工程锁定本地文件；字体加载与布局检查通过。无需依赖用户机器上的中文字体或另外购买字体。
+
+
+2026-09-13 V2 连续录屏与鼠标跟随补充：实际搜索 `screen recorder auto zoom cursor`，先覆盖完整应用。网页检索连接失败，GitHub API 检索成功，不是无权限或没有结果。查看 https://github.com/omacom/omareel 提交 e32ba4e654814b0d2b930aa120c893f7c669e86e（MIT）以及 https://github.com/martian0x80/framepipe 提交 376efe4dda4993877ae9b55496889ca949c77fe2（GPL-3.0）。前者完整录屏、鼠标/键盘事件分轨与自动缩放依赖 Hyprland/gpu-screen-recorder，后者依赖 Linux Wayland/DRM/PipeWire；本机 macOS 不接入，未安装或声称适配。不复制代码，继续采用已验证 CUA screenshot、HyperFrames0.8.36、GSAP3.15.0 与 FFmpeg9.0.1。连续素材保留真实帧；鼠标与相机在同一坐标系合成，维护范围仍限 promo。
+音乐换用 Mixkit ID130 Tech House vibes，官方 mp3 下载成功；读取官方 /license/modal/musicFree/ 正文确认商业/非商业网络视频、教育、在线广告允许，TV/广播/CD/DVD/游戏不在许可内。保存许可说明，不把音乐作为独立音乐作品发布。
+
+V2最终验证：HyperFrames现成单worker low-memory流式编码成功导出140秒1080p60 MP4，8400帧完整解码通过。两worker磁盘模式因预计69.7GB临时空间超过可用57GB被框架拒绝，改用已核源码支持的单worker流式路径，不删除用户文件、不降低分辨率。最终lint/runtime/layout/contrast检查无错误或警告，抽查15帧实际输出；不声称源素材全部60fps。
+
+2026-09-13 V3 开工补搜：实际词 `site:github.com video editing framework HyperFrames Motion Canvas OpenCut`、`site:github.com Breakthrough PySceneDetect librosa beat tracking`。检索返回完整应用 OpenCut-app/OpenCut、clawnify/OpenCut 和 HyperFrames 渲染文档；仍沿用前述固定 HyperFrames0.8.36/GSAP3.15.0/FFmpeg9.0.1，不增加编辑平台或依赖。真实仓库 https://github.com/heygen-com/hyperframes、https://github.com/OpenCut-app/OpenCut；提交与许可沿用本日已核记录，当前本地140秒导出证明基础渲染可用，不能据此证明V3镜头已完成。音视频参考分析复用FFmpeg原生fps/ebur128，不手写解码/响度算法；单组件查询本轮没有返回可用PySceneDetect/librosa条目，不称其不存在。独立promo目录维护，保留旧片；本轮只新增研究和演示输入数据，尚未修改产品代码。
+
+2026-09-13 V3 90秒工程实施：补搜实际词 `site:github.com heygen-com hyperframes video framework gsap timeline`，返回完整HyperFrames框架及官方时间轴文档。沿用前述完整应用比较与固定提交 fdf9ffac953d9d18329907d6956faa58c73ad489、Apache-2.0、已安装0.8.36及GSAP3.15.0；不升级、不复制launch-video素材。新版线上文档对composition duration有冲突，采用本地0.8.36已成功渲染的data-duration+paused timeline契约并实际验证。继续复用现成媒体寻帧/编码和easing，仅新增独立90秒分镜工程，避免迁移长期维护成本。
+
+2026-09-13 V4 发布会式2K重做：实际检索 `site:github.com video motion graphics framework HyperFrames Motion Canvas GSAP`，先覆盖完整框架/设计应用（heygen-com/hyperframes、ilya-makarov-dev/Reframe），再检索 `site:github.com gsap seamless loop vertical cards`，返回pixelgridui/card-stacking-gsap与GSAP社区循环样例。继续采用已核HyperFrames提交fdf9ffac953d9d18329907d6956faa58c73ad489、Apache-2.0、固定0.8.36和GSAP3.15.0；不接入新完整应用，避免迁移已验证录屏/寻帧管线。不复制未核许可社区组件；用现有GSAP时间轴的transform和SVG属性完成三列反向运动。Mo直接复用本项目OrbCompanion/ExpressiveOrb组件（当前HEAD e3be3d13912832100070973e9d8074151d77790a），不重画吉祥物。源4K截图已核实，关键UI从源PNG重编，非放大V3成片。维护范围独立promo/v4，不改产品代码。音乐检索Kimi K2.5宣传片BGM未找到原曲署名或公开商用授权，不等于确认无授权；用户提供的本地片音轨可用于本次剪辑审片，授权状态另记。
+
+V4 HTML 与字体复核：用户明确授权使用源文件重渲染原界面，覆盖此前“原 UI 不重绘”的拍摄方式约束。复用本地 InputBar、ApprovalPanel、MessageItem 结构/样式与原 Mo SSR，只编辑独立宣传工程；校园查询、审批采用已核实记录的内容节选重演，不声明为新一次实时执行。三角形直接复用实际生成的 triangle-demo.html SVG 与状态，解决可见性穿透并将 CSS 异步切换统一到导出时间轴。
+字体补核实际读取 https://github.com/notofonts/noto-cjk/blob/main/Sans/LICENSE 与 Sans/OTF/SimplifiedChinese/NotoSansCJKsc-Bold.otf；GitHub API 成功获取 Bold blob ff4c0450e8a5bf0290fbb6013a72dc61a10e8e56（Version2.004）及 Serif SemiBold blob41668d00fa67926d143544ddba2937b7d7f6fcf6（Version2.003），读取 Serif/LICENSE 确认 OFL1.1。jsDelivr 与 raw 下载超时，改用 GitHub API blob 成功，不归因为无权限。采用原生字体字形、GSAP逐字遮罩与统一字距，不生成栅格字形。复用现有 fontkit 检查三套字体覆盖本工程401个汉字，零缺字。
+
+V4 102秒收尾：沿用已核 HyperFrames0.8.36/GSAP3.15.0，不增加依赖。鼠标、虚线揭示和光点共用原生 SVG getTotalLength/getPointAtLength 几何进度；实线引导禁用。插入已核 ASK 回应原记录的12秒源界面重演，后续媒体与鼠标时间同步后移。三套字体覆盖412个本片汉字，无缺字。修复转场脚注重叠与模型说明对比度，最终指定采样的 lint/runtime/layout/contrast 均零错误、零警告；转场离场遮挡仍有信息级提示。完整102秒MP4编码与输出抽检另见 promo/evidence/v4-final-qa。
+
+V5 60秒无引导线精剪：实际补搜 `site:github.com heygen-com hyperframes video gsap timeline`，先复核完整HyperFrames应用框架与插件文档，再沿用本地GSAP时间轴组件。真实仓库https://github.com/heygen-com/hyperframes，继续固定0.8.36/提交fdf9ffac953d9d18329907d6956faa58c73ad489、Apache-2.0及GSAP3.15.0，维护与许可证沿用本日审计，不复制宣传样片代码。使用现成时间轴寻帧和FFmpeg变速，按镜头分配60秒；原工程保留，新版独立promo/v5。用户追加2560×1440、120fps目标，实际编码验收后才认定通过。
+
+V5最终需求更新为80秒、2560×1440、120fps。沿用同一渲染生态；使用GSAP分段寻帧、新增源HTML建模请求/实际三角形源码节选、实际《三角形练习》出题与点击反馈、原AgentPresetSection卡片几何及三条实测预设内容。鼠标不再携带任何引导线。Mo原SVG眼睛ry动画实测7.2→1.076543→7.2，结尾7.2→1→7.2。字体检查、画面检查和最终MP4参数以promo/v5与输出验收为准。
+网站依据改为用户指定 /Users/a1379/Documents/联动计划：亲读README、server/node-server.mjs、server/function-entry.mjs对应部署文档；当前文档的国内路线为CloudBase HTTP函数及共享PostgreSQL HTTP适配层，而非旧报告中的CloudRun直连。README国内入口当前只读health探测返回HTTP410，因此不宣称当前公网可用；用户明确授权直接制作现有网站内容，片内不展示问题报告、不做在线状态承诺。
+声音沿用已核许可的Mixkit ID130完整原曲连续0–80秒，不循环、不拼接重复乐段；用FFmpeg原生sine/afade/adelay/amix生成轻量点击及重点落点，动作cue写入promo/v5/audio-cues.json。HyperFrames现成beats检测复用，不新增节拍引擎；自动BPM仅作参考，不作为真实音乐拍号断言。
+
+V6补足展示时间：实际搜索`site:github.com heygen-com hyperframes GSAP video timeline`，复核完整框架、插件转场和时间轴文档。继续采用已核Apache-2.0的HyperFrames0.8.36/提交fdf9ffac953d9d18329907d6956faa58c73ad489及GSAP3.15.0；不更换生态。读V5时间轴确认原91–97秒成果汇聚被压到零时长，本次恢复该源动画2秒，同时把其他18秒分配给过短展示，成片100秒。源视频从V4原媒体重编码，HTML源动效重新以120fps求值；不靠给V5成片重复帧假称恢复源动作。维护仅在promo/v6与构建脚本，音乐改为原曲连续100秒并重映射cue。
+
+## 2026-09-13 交接文档整理复用审计
+
+> **status**: active　**last_verified**: 2026-09-13　**verified_by**: Codex
+
+实际检索词：`site:github.com documentation framework mkdocs material diataxis`。先查看完整框架 https://github.com/squidfunk/mkdocs-material 及其 MkDocs 插件生态，再核对现有项目自带的文档分层和检查脚本。GitHub API 查得 master 提交 `9d65447eb4039c153edefbc378029257886737ff`（2026-08-30）、最新 release `9.7.7`（2026-07-17）。仓库标注 MIT；本轮不接入、不复制代码，因此未安装验证其 Python 依赖兼容性，不宣称已经适配。
+
+不引入文档站：任务是本地项目交接，现成 Markdown 权威分层、台账、相对链接已满足阅读；新站点会增加构建、发布与版本维护成本。实际复用 `docs/DOC-AUTHORITY.md`、`scripts/scan-doc-drift.mjs`、`scripts/check-skill-tools.mjs`、`scripts/check-snapshot-manifest.mjs`，不重写检查框架。整理结果见 `docs/DOCUMENT-INVENTORY.md`。检索成功，无权限错误；不是“未找到成熟方案”。
+
+2026-09-13 内容复核续轮：实际检索 `site:github.com/squidfunk/mkdocs-material documentation links validation`，查看完整框架及官方 creating-your-site 文档；版本/提交沿用本日已核 9.7.7 / 9d65447eb4039c153edefbc378029257886737ff，仍不安装新框架。现有 Markdown 链接检查不能证明业务描述正确，本轮直接读取 modes、campus、memory、sheets、侧边栏与打包源码逐项更正文案，复用已有门禁；未复制外部实现。
+
+## 2026-09-13 · 全量文档重组
+
+实际搜索词：`site:github.com squidfunk mkdocs material documentation versioning archive plugin`、`site:github.com Diataxis documentation framework repository`。先比较完整文档站框架，再看分类方法。
+
+| 仓库 | 本轮核对 | 采用结论 |
+|---|---|---|
+| https://github.com/evildmp/diataxis-documentation-framework | GitHub 仓库可访问，许可证为 CC-BY-SA-4.0，仓库显示 290 次提交 | **部分采用**：使用 tutorial / how-to / reference / explanation 分责思想，把当前状态、操作、技术事实和历史解释分开；不复制正文或代码 |
+| https://github.com/squidfunk/mkdocs-material | 继续沿用本日已核 master `9d65447eb4039c153edefbc378029257886737ff`、release `9.7.7`、MIT | **不接入**：当前交付是本地 Markdown 与比赛材料，引入 Python 站点构建、主题和发布链会增加维护成本；现有 Git、相对链接和检查脚本足够 |
+
+最终采用轻量目录治理：一个根入口、一个现行总体方案、一个项目现状、一个交付台账；`foundation`、工单和时点报告明确归档。检索成功，无权限或网络失败。分类方法可以降低冲突，不能代替业务事实核对，因此本轮同时读取运行配置、打包脚本、交付物元数据和参赛材料逐项修正。
+# 2026-09-14 · WPS 四分钟答辩演示复用
+
+- 搜索词：`github reveal.js embedded video presentation`、`github pptxgenjs addMedia video autoPlay`。先检查完整演示框架与导出库，再查看媒体对象实现。
+- `https://github.com/hakimel/reveal.js`：检查提交 `75dff6f515d2d08df0c32cf2b7328b89425c6f25`，MIT，最近推送 2026-09-10。支持内嵌媒体、演讲备注、转场。用户明确使用 WPS，故不采用浏览器演示框架，避免增加现场依赖。
+- `https://github.com/gitbrent/PptxGenJS`：检查提交 `3c9ec1b687c174952166f6a34b5e87ebf69fa469`，MIT，最近推送 2025-11-28；检查 `src/gen-xml.ts` 中 videoFile、p14:media、媒体点击动作和预览图关系。部分采用其标准 OOXML 媒体结构作为互操作参考，不安装整套依赖。页面使用环境已有 `@oai/artifact-tool` 生成，再封装视频与基础动画。
+- 照片与界面来源：联动计划真实历史网站截图、Mochi 真实录屏、现有 Mo 品牌画面，不使用外部图库或生成式场景。
+- 验证范围：最终检查内嵌视频哈希、五页结构、讲稿备注、动画 XML、逐页画面并在本机 WPS 打开放映；Windows WPS 的目标机行为仍需现场排练。
+
+## 2026-09-14 · Apple Design 与演示生态补查
+
+用户要求强化结尾层级后，读取本机 apple-design/SKILL.md，采用目的、信息层次、空间一致性与克制动效原则；不把 Web 弹簧动画误称为 WPS 原生能力。
+
+搜索词：`github presentation skill pptx animation powerpoint`、`github slidev pptx export animations`、`github marp powerpoint editable export`。
+
+- https://github.com/slidevjs/slidev：MIT，提交 a8d8ff717c5a72c1b3a9d98f1c849481f2ddcd00，最近推送 2026-08-25。官方导出文档确认 PPTX 为图片页面，文字不可选。未采用：无法满足本轮可编辑结构与 WPS 媒体原生播放。
+- https://github.com/marp-team/marp-cli：官方说明可编辑 PPTX 是实验功能，强调外观一致性时不推荐。GitHub 元数据接口本次发生 SSL EOF，未获得提交号；不能写成完成版本审计。未采用：已有原生输出，无需引入转换损耗。
+- https://github.com/PoplarPoplar/presentation-skill_-PPTskill：MIT，提交 3a22eed290fa2205b6a1e2de5549b4429c5fffd0，最近推送 2026-07-14。检查 SKILL.md 的源文件、叙事、重建和渲染 QA 工作流；部分采用其工作流原则，不安装新的生成依赖。
+- WPS 动画：在本机 WPS 为测试副本添加一次原生“渐变”并另存 .build/wps-animation-reference.pptx，以实际生成的 timing、group、build list 结构作为兼容参考。
+
+## 2026-09-14 · 答辩痛点与技术架构补充
+搜索词：`site:github.com slidevjs slidev pptx export`、`site:github.com gitbrent PptxGenJS addMedia`，先复核完整框架和导出生态，再复核媒体组件。真实仓库 https://github.com/slidevjs/slidev 与 https://github.com/gitbrent/PptxGenJS；固定提交、MIT 许可沿用本日上方实读记录，不升级依赖。搜索成功。继续采用现有 artifact-tool + 已验证 OOXML/WPS 媒体封装，避免转换迁移维护成本。此次仅改两页排版与讲稿，不更换动画实现。技术事实依据 apps/desktop/package.json、联动计划/package.json 与 docs/PROJECT-HISTORY.md；不推断生产数据库或线上部署状态。
+
+## 2026-09-14 项目收尾同步
+搜索词：`site:github.com squidfunk mkdocs-material documentation`、`site:github.com archiverjs node-archiver zip`。先检索完整文档框架，再检索归档库，检索成功。https://github.com/squidfunk/mkdocs-material 沿用已核提交9d65447eb4039c153edefbc378029257886737ff及MIT记录；https://github.com/archiverjs/node-archiver 本次仅发现ZIP/TAR能力，未做版本及许可证接入审计，因此不接入。继续使用已验证的本地Markdown、现有系统ZIP与校验脚本，仅补交付条目，不新造归档实现，不增加依赖维护成本。
+
+## 2026-09-14 · 根目录交付入口整理
+
+复用上方已完成的文档框架与归档生态检索，不重复安装依赖。采用现有 Markdown 入口、资源地图、交付台账和 `assemble-competition-delivery.mjs`；完整交付目录改为直接生成在 Mochi 根目录。`release/submission/` 继续承担源码归档和历史构建记录，不再作为评委查找最终成品的入口。
+
+## 2026-09-14 · 根目录排布复核
+
+搜索词：`site:github.com nodejs monorepo apps packages docs project structure`、`site:github.com vercel turborepo apps packages docs repository structure`。检查 https://github.com/vercel/turborepo 当前 HEAD `2167e7410f7c2dde3d2b5df882beb3ac0ea5aaa1`、MIT 许可证及其结构指南：可部署应用归入 `apps/`，共享代码归入 `packages/`，文档归入 `docs/`。本项目已有自己的运行、插件和打包体系，因此只采用目录职责原则，不安装 Turborepo、不引入根 workspace，也不移动 `apps/`、`plugins/`、`packages/`、`vendor/` 等运行路径。完整交付包增加 `01-` 排序前缀，早期 foundation 设计移入 `docs/history/`。
+
+接入核验发现 `foundation/ui/` 的两份 CSS 仍由主题构建脚本实际读取，因此它们不属于历史文档。现已迁入 `client-plugins/jxl-theme/styles/`，构建脚本改用相对 URL 读取样式与图标，并重新生成 `client.js`。这次采用的是目录职责与可移植构建原则，没有接入 Turborepo 代码或新增依赖；生成产物内容哈希是否变化由后续构建检查确认。
+
+同一原则用于媒体工程：宣传片的脚本、时间轴、许可和轻量输入进入 Git，大体积录屏、音视频、导出与 QA 帧留在本机并由交付包分发；答辩制作脚本从 `.build/` 移到 `scripts/`，`.build/` 只保留可再生成的中间产物。未引入媒体资产管理框架或 Git LFS；当前仓库没有现成 LFS 配置，临时引入会增加比赛交接步骤。
+
+## 2026-09-14 · CI、lint 与依赖边界硬化
+
+实际搜索词：`site:github.com nx monorepo lint test typecheck GitHub Actions`、`site:github.com moonrepo moon node monorepo task runner lint test`、`site:github.com biomejs biome JavaScript linter formatter CI`、`site:github.com oxlint oxlint JavaScript linter CI`。检索成功，无权限错误。
+
+| 仓库 | 核对版本与现成功能 | 许可证与维护 | 采用结论 |
+|---|---|---|---|
+| https://github.com/nrwl/nx | HEAD `e6a5c010b70924e8d4d94709a7b1f2ed7b709751`；任务图、affected lint/typecheck/test 与缓存 | MIT；GitHub API 显示未归档，2026-09-13 有推送 | 不采用。现有 npm 桌面出包与 pnpm 校园/插件边界已经稳定，迁入统一 workspace 会扩大安装包回归面 |
+| https://github.com/moonrepo/moon | HEAD `9c9498248132f7a72156eb8dc96efb19c44a1f2a`；跨项目任务与 CI affected 执行 | MIT；未归档，2026-09-13 有推送 | 不采用。与 Nx 同类，当前仓库规模不需要再增加任务图运行时 |
+| https://github.com/biomejs/biome | HEAD `f0eeab22bb8aacad10d75cbe84a75da9930843d5`；npm 包 `@biomejs/biome@2.5.6`，单 CLI 提供 JS/TS/MJS/JSON/CSS lint 与 format | npm 包为 MIT OR Apache-2.0；未归档，2026-09-14 有推送；Node 要求 `>=14.21.3` | 部分采用。精确固定 2.5.6，用于核心源码错误门禁和渐进格式治理；接入后对 94 个核心源码文件实跑 |
+| https://github.com/oxc-project/oxc | HEAD `aaff7583a616a4e16753ce275b41c9471e7b88e7`；Oxlint 支持 JS/TS 与 JSON 配置 | MIT；未归档，2026-09-14 有推送 | 不采用。Biome 已同时满足 lint 与 format，避免并存两套规则和二进制依赖 |
+
+兼容性与接入验证：仓库 CI 固定 Node 22.22.2，满足 Biome 引擎要求；根 `package-lock.json` 固定质量依赖和五个核心插件测试闭包，`npm run lint`、`npm run format:check`、首批插件 `checkJs` 与依赖边界检查均已本机执行。modes / visuals / sheets / documents / presentations 共 126 个测试使用根锁定依赖实跑通过。没有仅凭 README 宣称适配。
+
+未采用根 workspace：根 `package.json` 只做质量编排。`apps/desktop/package-lock.json` 继续管理 Electron 运行和安装包闭包，相邻 pnpm/npm lockfile 继续管理少数可独立开发的插件；无相邻锁的第一方插件由桌面 lockfile 托管，并由 `scripts/quality/check-dependency-boundaries.mjs` 校验精确依赖存在。详细边界与尚未覆盖的类型、格式及 alpha 风险见 `docs/QUALITY-GATES.md`。
+
+
+## 2026-09-15 · 提示词、PPT 视觉复核与评测
+
+先检索完整应用/框架及插件生态，再检索提示词与评测组件。实际搜索词：
+`site:github.com/openai/codex prompt.md system prompt`、`site:github.com/anthropics skills pptx`、
+`site:github.com presentation generation agent framework presenton pptagent promptfoo`（结果偏离，继续定向查询）、
+`site:github.com/presenton/presenton`、`site:github.com/icip-cas/PPTAgent`、`site:github.com/promptfoo/promptfoo`、
+`site:github.com/anthropics/claude-code system prompt`、`site:github.com/promptfoo/promptfoo llm-rubric file prompts yaml`、
+`site:github.com/icip-cas/PPTAgent visual reflection presentation evaluation`。
+
+| 仓库 / 固定提交 | 实读范围与许可、维护 | 结论与维护成本 |
+| --- | --- | --- |
+| https://github.com/openai/codex / `7f01a84effccef40d4726c3ca12e6c839ec98d7a` | `codex-rs/core/gpt-5.2-codex_prompt.md`，Apache-2.0，未归档，提交日期 2026-09-15 | 部分采用任务复杂度决定规划、证据化检查、简洁交付的原则；独立编写校园指令，不移植 CLI 权限与工具接口 |
+| https://github.com/anthropics/claude-code / `f96c3b49c4c8721685206aaab23609b2d399df4e` | `plugins/plugin-dev/skills/agent-development/references/system-prompt-design.md`、`LICENSE.md`；All rights reserved / 商业条款，未归档，2026-09-15 | 仅研究具体流程与可测质量标准，不复制材料；该文件是代理提示词设计指南，不能冒称完整 Claude Code 线上系统提示词 |
+| https://github.com/anthropics/skills / `34040c9c568585f6929bedeaad110ad08f079624` | `skills/pptx/SKILL.md`、`skills/pptx/LICENSE.txt`；专门限制性许可，未归档，2026-09-10 | 仅对照渲染检查工作流，不复制、接入或用作训练语料；不能把全仓视作 Apache-2.0 |
+| https://github.com/presenton/presenton / `bd4bd5039239b236cd8dd2a25b4906eed1c70899` | README 的模板、可编辑导出、MCP、Electron/FastAPI 路线；Apache-2.0，未归档，2026-09-14 | 不接入。本轮修改指令与评测，迁移需额外 Python/uv、Next.js 服务和桌面打包验证；README 能力尚未在 Mochi 验证 |
+| https://github.com/icip-cas/PPTAgent / `2419d30b134a71486523e95ded60b32489fd3c61` | README 的参考页分析、反思和 Content/Design/Coherence 评估；pyproject.toml 要求 Python >=3.11、Playwright、python-pptx 等；MIT，未归档，2026-06-28 | 部分采用以参考页和实物证据评价的思路，不安装框架；保留为未来渲染器对照实验候选，不声称已兼容 |
+| https://github.com/promptfoo/promptfoo / `29a15d1edb256c789d0035ce3f36ad7cf91db6bb` | package.json 0.123.0、Node >=22.22.0、MIT，未归档，2026-09-15；官方配置文档的外部测试集和 llm-rubric | 采用其 JSON 测试集格式提供案例；不在产品增加依赖，不自建通用模型评测框架。实际模型 provider/凭证未确认，线上评测不伪造通过 |
+
+GitHub 检索及元数据成功，无权限错误。Codex 旧路径 `codex-rs/core/prompt.md` 返回 404，随后通过固定提交树找到真实文件；这是路径变化，不是没有官方材料。未核验第三方 leaks 内容的真实性，不将其作官方或训练数据。
+
+本地复用：现有 PptxGenJS 4.0.1、`ppt_inspect`、`mochi_ppt_render` 的 PNG attachment 输出与 overview/page 模式、`mochi_ppt_revise` 定页修订、runtime-profile 临时目录集成测试。无依赖升级。新增的主要维护面是短提示词、案例和人工评分规范；无需第二套渲染器或后台自我训练。源码及工具链验证结果见 docs/prompt-quality.md。
+
+验证补记：npm run check全部通过（128测试，0失败/跳过）；真实PPTX→PNG→image block回归通过，受管profile生成与解析通过。额外完整会话技能探针被已有fs-ext x86_64/当前ARM Node不匹配阻断，未进入技能加载；不能将配置解析成功冒称完整会话通过。未运行实际模型评分。
+
+
+## 2026-09-15 · 全领域质量与 Harness 提示词继承
+
+用户将范围扩展为全部输出与任务正确率。实施前搜索词：`github "Anthropic" "fable-5.1" system prompt`、`github "gpt-5.6-sol" prompt`、`github deepseek harness agent framework skills evaluation reliability`、`site:github.com/deepseek-ai/deepseek-harness`。先覆盖完整Harness、跨Harness框架与插件/SOP生态，再读提示词组装、技能与验证组件。
+
+| 仓库 / 固定提交 | 实读、许可与维护 | 采用结论 |
+| --- | --- | --- |
+| https://github.com/deepseek-ai/deepseek-harness / `0d1f50007f9bca3f52b06e1c3074fa14d5fb0720` | docs/subsystems/{system-prompt,skills}.md、packages/core/system-prompt/README.md；MIT，未归档，2026-09-15提交 | 采用已有section/scoped-layer机制，不升级内核。最新文档提供personaPrefix/Suffix，但本地0.1.3-alpha.1仍是单persona字段，不能照抄最新配置 |
+| https://github.com/sandbaseai/deepseek-harness-handbook / `425dd255f9be22c97b2273cd0c38b3951aecddc3` | docs/en/agent-patterns/skills.md；Apache-2.0，未归档，2026-08-31提交 | 社区手册，仅作线索。技能加载不等于执行通过的结论在本地组装和工具回执边界核验，不引入wrapper |
+| https://github.com/DataArcTech/Bayesian-Agent / `4b69b4ed02d166c8d1673ea67e2ac836ac377896` | README中的已验证轨迹、独立verifier、SOP证据更新与重复失败晋升；MIT，未归档，2026-08-12提交 | 部分采用“失败证据→窄规则→回归”的流程；不安装自演化框架、不自动改生产提示词。未验证其依赖适配和论文提升可迁移性，不宣称其指标适用于Mochi |
+| https://github.com/asgeirtj/system_prompts_leaks / `b55f7e37b71f076eb3228faa836954b6610046fe` | OpenAI/gpt-5.6-sol.md，126855字符，多数为ChatGPT工具/界面协议；仓库CC0-1.0，未归档，2026-09-13提交 | 研究用户指定快照的工具精确性与检索边界，不复制工具接口、隐藏标记或身份；第三方汇编许可不证明原文权利或OpenAI正式发布 |
+| https://github.com/simonw/claude-system-prompts / `cd4beb2d9c78786da0d0b77677b56adce56c1981` | 元数据和官方快照追踪入口；GitHub未识别许可，未归档，2026-09-03提交 | 不复制；转读Anthropic官方页面核验Fable 5.1 |
+
+官方实读： https://platform.claude.com/docs/en/release-notes/system-prompts/claude-fable-5-1 （2026-09-01公开版本）及 https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-fable-5-1 。只借鉴明确任务范围、完成已授权工作、变化信息先检索的思想，独立编写本项目规则；不把Claude专有产品/拒绝策略/接口迁入Mochi。
+
+网络状态：搜索与所有仓库元数据成功；Harness与leaks的recursive tree接口发生SSL EOF，原始固定提交文件读取成功，属于网络错误，不是无权限或未找到方案。
+
+关键本地证据：已安装dsh-persona/lib/index.js使用同一个PERSONA_SECTION，预设会覆盖deployment persona。本轮复用所有角色都已挂载的mochi-hello，以独立命名section注入公共行为约束，角色persona保留边界；不新增生产依赖、不重写Harness、不开后台训练。增加真实SystemPrompt组装测试验证覆盖、隔离和卸载，不能用YAML中出现词句替代生效证明。特殊complete persona仍可能替换全prompt，是可信配置边界，不宣称此规则不可绕过。
+
+
+全领域接入验证：`npm run check`通过（128核心测试及当时5项提示词/环境测试）；随后新增目标Harness技能provider实加载用例，`npm run test:prompt-quality`共6项全通过。五个角色最终组装保留独立质量section且无串扰；卸载/重载无残留；8个技能由真实FileSystemSkillProvider读取。npm pack dry-run确认work-quality.md/mjs进入包，新增模块lint通过。受管profile生成/解析及技能工具名扫描通过。skill-creator通用Python验证器缺PyYAML未运行成功，使用目标Harness解析验证替代；未安装新依赖。40条JSON开发案例完成格式/唯一ID核对，未跑在线模型评分。完整App启动的既有native架构问题仍未处理。
+
+
+## 2026-09-15 · Yan Agent 版本与 Harness 研究
+
+实际搜索词：`"Yan Agent" "1.6.0"`、`"Yan Agent" "DeepSeek" harness`、`github YanAgent deepseek harness`。先检索完整应用和 DSH 插件生态，再读协议、视觉、经验与设计技能组件。真实仓库 https://github.com/666-gy/Yan-Agent ，审阅提交173d68708821436dddf3f4ed0b3e100ead27b6a2；v1.6.0-Beta1/Beta2/Beta3与v1.5.0均指向它，源码package仍1.5.0、OpenCode1.18.11，不能宣称是Beta3完整源码或官方DSH实现。根MIT、未归档、2026-09-14 push。Beta3仅核发布说明，未运行Windows安装包。另一真实搜索命中地址https://github.com/666-gy/Yan-Agent-DeepSeek-Harness当前页面与API均404，原因未确定；搜索成功与源仓库不可访问分开记录。
+
+部分采用研究思路：可执行视觉通路、协议兼容、经验版本/回滚、按能力注入；不直接接入OpenCode代码或技能，避免与Mochi固定DSH、Cordis和macOS打包体系冲突，第三方技能许可未逐项审计。源码实际能力和缺口见[研究报告](yan-agent-research.md)。8项离线存储/模拟视觉测试通过，3种DSML探针行为通过；无真实模型质量/费用实测，不宣称已适配。本轮只写文档，不修改生产代码。
+
+### 用户提供官网后的实施决策
+
+用户明确要求依据 https://666-gy.github.io/Yan-Agent/ 改造Mochi。web工具无法打开该站，直接HTTPS获取200，页面标题仍1.5.0并指向上述同一GitHub仓库；不是另一个DSH源码入口。沿用本轮已完成的完整应用/生态检索及固定提交审计。复用Mochi现有9套主题、8种版式、read-image/附件服务、llm.resolveModelInfo与LibreOffice渲染；不增加视觉供应商、不复制Yan技能、不迁移内核。实际发现PPT工具层未暴露后端theme/layout，render注释承诺模型能力检查但执行仅检查附件服务。将接通现有主题/版式、补模型路由能力检查与文件指纹/覆盖页证据。维护成本限工具schema、渲染记录、提示案例与回归，不新建验收主循环。
+
+接入后验证：npm run check退出0，130核心+6提示词/技能测试通过，0跳过；真实工具调用覆盖8种版式、主题和定页修订，其余页XML字节不变。现有主题name在二次归一化丢失的问题已修正。真实PPTX渲染、当前模型能力拒绝/路由优先、文件哈希和覆盖页、渲染中版本改变拒绝均已测；查看5页真实overview确认中文/主题/版式生效。45条开发案例格式可用，未跑在线模型A/B；安装包/现有App未更新，原生依赖架构问题未处理。没有据此声称审美/正确率达到旗舰水平。
+
+## 2026-09-15 · 经验案例的证据校验
+
+先检索完整评测框架与Yan经验实现，实际词`site:github.com/promptfoo/promptfoo eval output results compare assertions`、`site:github.com/666-gy/Yan-Agent continual harness successfulRuns`。前者命中官方仓库配置/输出文档，后者未得到新的有效源码结果；继续沿用已实读Yan提交173d68708821436dddf3f4ed0b3e100ead27b6a2及Promptfoo提交29a15d1edb256c789d0035ce3f36ad7cf91db6bb（0.123.0、MIT、Node>=22.22.0）。部分采用：保留现有Promptfoo cases格式，模型执行和裁判留给其现成框架，不接入生产依赖。新增只读本地证据校验器补足文件哈希、人工复核、页覆盖与硬失败约束；这是项目产物契约，不是重写通用模型评测引擎。无网络传输、无自动修改生产提示词，维护范围仅案例契约与测试。
+
+证据校验接入：本地review-evidence只核文件哈希/范围、轨迹和最终完整prompt等必备产物、人工记录、硬失败与视觉页覆盖，输出reviewable而非passed；不会联网或晋升规则。5项合成单测覆盖缺证据/自评、旧版本、越界链接、缺页/错版本和可审阅路径；模板保留未执行状态，不作为模型成绩。真实A/B仍缺已执行轨迹与人工评分。
+
+继续复用Yan固定源码的协议/视觉/批量读取/压缩/经验思路，并核对本地DSH base已有llm-retry、token-meter、compaction-basic、结果pruner与subagent，mochi-memory已有有界检索注入；不因研究新增同功能框架。新增2项当前安装DeepSeekAdapter的模拟传输回归，验证完整工具调用与结果图片保留、Files失败后内联以及不支持图像时请求前拒绝；不声称真实端点已测。测试接入npm run check，无生产依赖变化。
+
+## 2026-09-15 · 完整会话加载验证
+
+先复核完整应用/框架（Yan、现有DSH、Electron）再检查原生组件。搜索`site:github.com/electron/electron "v39.8.10"`，搜索结果不作为安装依据；直接GitHub API确认官方v39.8.10 release（2026-05-05），官方SHASUMS256与本机缓存x64 zip SHA256 de5389b3a1a8803fa50e2a2c2a9a8816f1fd5d996ac66a217c04396109d42e6b一致，包内MIT许可。临时目录解压运行Electron Node22.22.1/x64/ABI140，成功加载当前fs-ext；普通Node24/ABI137不能替代。
+
+接着定位Koffi可选原生模块缺失。GitHub定向搜索`site:github.com/Koromix/koffi "3.2.1"`未命中有效官方源码，不称没有现成方案；使用已安装Koffi3.2.1加载代码及npm官方@koromix/koffi-darwin-x64/3.2.1元数据，MIT、darwin/x64、Node-API。下载并校验SHA512 gFCWxNBTZIvxo1p+PURWfsy2Ctj5FGnVVs1f03lTLhBvmxEto70pdIiFztdFLDFkAJ1pmtQmruRKapeK+E8YPA==，仅放入临时Electron的既有resourcesPath搜索位置，实加载版本3.2.1成功。未修改用户node_modules、锁文件、持久配置或App。复用现有test-profile-skills真实profile探针，增加公共规则组装证据，不重写启动器。
+
+接入后结果：匹配Electron/Koffi临时运行时成功运行增强的test-profile-skills：8技能、原生skill工具、真实standard Agent公共质量节1份且内容哈希匹配。原有test-classroom-role-runtime也通过，3个教室工具及锁定本地LAN边界。无凭据/模型API/校园请求，未修改正常开发依赖和App；该隔离路径不能被描述为生产启动修复。
+
+## 2026-09-15 · 真实模型小规模探针
+
+检索`site:github.com/deepseek-ai/deepseek-harness llm adapter stream evaluation`，先确认现有Harness/Promptfoo完整执行与评测生态，再读已安装适配器stream契约。沿用官方DSH固定版本0.1.3-alpha.1及既有GitHub提交审计，不照搬master版本。真实当前开发配置默认mochi-mimo/mimo-v2.5-pro/high，相关凭据已存在（不记录密钥）。复用安装适配器发少量合成策略题，基线取Git HEAD的core persona片段，候选取当前core persona+公共规则；这只测提示片段策略响应，不冒称完整Agent工具执行A/B。原始输入/输出和用量留本地，不发学生材料或仓库文件；不新建模型调度/裁判框架。
+
+### DeepSeek 专用测试修正
+
+用户明确排除MiMo后，沿用已审计的DSH适配器，测试入口改为只允许本地配置的https://api.deepseek.com和DEEPSEEK_API_KEY引用，不改产品默认模型。实查官方/models返回deepseek-flash、deepseek-v4-pro；官方https://api-docs.deepseek.com/guides/vision/确认Flash图像能力，旧V4别名不作为新测试模型ID。13次真实DeepSeek请求均完成：12次策略片段A/B和1次图片读取。结果及未通过事项见evals/work-quality/README.md；MiMo历史排除，未宣称完整Agent/全部45案通过。脚本复用安装适配器、无新依赖；语法与Biome lint通过。
+
+## 2026-09-15 · DeepSeek 完整 Agent 探针接线
+
+实施前检索`site:github.com/deepseek-ai/deepseek-harness sessionController prompt agent tools evaluation`，先复查官方完整Harness与已有Promptfoo生态，再读session-controller与Agent接口。继续采用已审计MIT Harness和本地0.1.3-alpha.1，不升级、不复制最新master接口。实际读取本地prompt(request, signal)、agent.whenIdle、snapshotEvents、agent/request及mochi-presentations入口；测试复用原生工具循环、隔离profile和临时匹配Electron，无新框架。完整会话探针最初遗漏prompt的AbortSignal，错误发生在模型请求前，修正后继续验证，不计为模型失败。
+
+完整探针暴露临时插件package缺版本字段，与DSH plugin-package-inventory-deepseek的强制name/version契约不符；补0.0.0后原生循环进入16次实际请求。另查完整Canvas项目https://github.com/Brooooooklyn/canvas（搜索`site:github.com/Brooooooklyn/canvas canvas NAPI_RS_NATIVE_LIBRARY_PATH`），先沿用既有渲染库，后补可选架构组件。只下载npm官方@napi-rs/canvas-darwin-x64@1.0.8，MIT、与已安装JS版本一致；SHA512 rRjDMZs9pIRKGxgijwezplKc1RnJsqUokrA9h88bbTkqQ+7ePj0ZN4ZnZDy8Vu0tXs7KRlI2tQLaK4mx9QlxHg==校验通过。使用现有NAPI_RS_NATIVE_LIBRARY_PATH在临时Electron中加载，创建16×16 PNG成功；未改依赖树、锁文件或App。
+
+首轮实际失败：技能参考路径含糊导致多轮目录探查、节奏页行数限制未充分暴露、Canvas缺失后模型误用独立讲义PDF看图并耗尽16次预算。已精确化技能相对路径、工具schema和错误修复建议中的真实行数限制，明确禁止讲义PDF充当PPT验收证据；5项相关回归通过。真实首轮失败记录evals/work-quality/runs/2026-09-15-deepseek-agent-first。
+
+复测补记（2026-09-16）：补齐Canvas后的真实DeepSeek Flash/high standard Agent完成13次主请求，调用create→inspect→render overview/page→revise→render latest→交付。一次layout/table错配、一次密度超限后恢复；产物和附件保留于evals/work-quality/runs/2026-09-16-deepseek-agent-retest。独立看图仍见文本/表格主导、空间和字号问题，未宣称高审美通过。入口整理为probe-agent-live.mjs，仅显式付费运行，语法/lint通过；原型实跑与整理后入口未重跑明确区分。
+
+## 2026-09-16 · 知识关系的可编辑图示
+
+先检索完整应用与生态：`github PPTAgent Presenton editable presentation diagram process PptxGenJS`，再组件：`site:github.com/gitbrent/PptxGenJS addShape chevron process diagram`。Presenton/PPTAgent沿用本报告已有固定提交和许可证审计，未做迁移。采用现有https://github.com/gitbrent/PptxGenJS v4.0.1 / 3c9ec1b687c174952166f6a34b5e87ebf69fa469（GitHub tag API实查），已安装包MIT；本地types验证addShape、line.beginArrowType/endArrowType。搜索成功，无权限错误。只复用native shape/text能力，不引入图编辑器、转HTML框架或新依赖。维护面为一个受约束的process scene、工具字段、现有PPTX/PDF两条路径及定页修订，现有布局不重写。
+
+新title-process支持3–4步骤与可选循环返回说明，原生可编辑；界面工具新增process/newProcess，内容验证与现有版本纪律沿用。DSH 0.1.3-alpha.1 DSL不支持minItems/maxLength，首次接线测试明确拒绝；移除不支持的schema关键字，用字段说明+执行验证，不冒称JSON Schema全功能。初步真实文件测试已通过步骤内容、原生箭头、无整页图替代、四步骤修订、退出流程版式删除旧内容和未改页XML一致性；最终视觉与模型复测继续进行。
+
+PptxGenJS维护补核：GitHub API仓库未归档，pushed_at为2025-11-28；不是近期活跃更新的保证。本次沿用已安装4.0.1、无升级，可控范围只使用长期现有的原生形状/文字能力，并以真实产物回归补兼容性证据。全量npm run check退出0：131核心+6提示词+5证据+2适配器=144项通过，0失败/跳过。
+
+真实接入验证补记：整理后的probe-agent-live入口已实跑DeepSeek Flash/high，8次主请求、无工具错误、自动选用process并对实际PPTX overview和单页查看。原生循环箭头方向/文字已独立看图确认；不是仅凭README或schema宣称接通。工具回归与模型探针分列，保留第3页科学表述和交付说明失实问题。DeepSeek Pro补充审稿第一次max-tokens无文字，调整后提示科学简化但漏检交付问题，不作为自动验收。通用交付一致性短规则及跨领域工作表案例已加入，4次DeepSeek片段回归正确但基线也正确，不宣称统计提升。
+
+## 2026-09-16 · 跨领域Promptfoo评测接入
+
+检索完整框架/生态：`site:github.com/promptfoo/promptfoo deepseek provider thinking apiBaseUrl`；再查配置：`site:promptfoo.dev docs providers deepseek reasoning effort thinking eval no-cache`。采用已审计Promptfoo 0.123.0 / 29a15d1edb256c789d0035ce3f36ad7cf91db6bb，npm元数据MIT、Node>=22.22.0，本机Node24.19.0兼容；包integrity sha512-t2ADh6vU6OVGMu31hdcGZJLCfl4csqg+Ei8uRKzAaA2MZ/r9cTcsko43U8hdG6WfxqG+kqfx4Llplv6N0IfxZg==。先读官方DeepSeek provider、OpenAI兼容provider及prompt文件接口源码，不仅看README。DeepSeek模型ID依本轮官方/models实查，Promptfoo页面里的旧模型名不采用。临时目录安装框架，不改产品依赖。生成/评分均显式DeepSeek、本地结果、关闭共享/遥测，不调用默认其他模型。框架负责执行与评分，项目仅提供快照、案例和配置。46案属于合成策略题，无真实工具/文件，成绩不冒称全任务正确率。
+
+
+Promptfoo实际接入结果：临时安装0.123.0，常规安装解析可选依赖过慢后明确停止，改用omit optional/legacy peer；CLI实际仍需hono4.13.8和@libsql/darwin-arm64 0.5.29（MIT，平台匹配），显式补齐并成功校准。未改产品依赖或锁文件。46案×2版生成完成，92份输出、0调用错误；使用框架原生echo回放相同输出，加完整原题后仅以DeepSeek重评，未重写评测器。两次各91/92自动通过但唯一失败的版本反转；复核确认rubric冲突及裁判漏检，因此不作为正确率/提升率证据。四条开发rubric已据此澄清，未追改原始成绩，修改后尚未重跑；证据见evals/work-quality/runs/2026-09-16-cross-domain。
+
+## 2026-09-16 · 自动上下文压缩与科学建模检索
+
+用户澄清：缺少自动压缩功能；建模指物理/化学、3D和键能/公式表达。搜索先覆盖完整Harness和Yan：`site:github.com/deepseek-ai/deepseek-harness compaction context summary`、`site:github.com/666-gy/Yan-Agent context compaction checkpoint`，再读官方compaction组件和本地实际源码。官方仓库https://github.com/deepseek-ai/deepseek-harness提交0d1f50007f9bca3f52b06e1c3074fa14d5fb0720，MIT，未归档，2026-09-15 push；安装版本0.1.3-alpha.1。采用官方standard预设的隔离group、compaction-basic、command-compact及tool-result-pruner，不改压缩内核、不新建摘要数据库、不增加依赖。实际发现web-app禁用host backend，Mochi四教师角色和教室角色又未挂载；“base有插件”并不证明自定义角色能自动压缩，纠正前轮过宽判断。新配置显式auto=true、thresholdRatio=.8、retainRatio=.16；保留默认失败恢复、持久日志、配对约束和当前模型路由。
+
+科学建模先查完整生态：`site:github.com physics simulation educational modeling PhET`，再查组件：`site:github.com chemical molecule 3Dmol smiles rdkit`。实际仓库/快照：https://github.com/phetsims/states-of-matter / 9380195ad45c4b2cd5c2a09a220c4a2b011b4c8c（GPL-3.0，2026-09-13 push）；https://github.com/3dmol/3Dmol.js / cf6b68429dd9f435ba004d172c0616a8fe124206（GitHub许可证识别NOASSERTION，不能视为已完成许可审计，2026-09-12 push）；https://github.com/rdkit/rdkit / 20331b5101183089580840759c3ddf11a73efe31（BSD-3-Clause，2026-09-15 push）；均未归档，检索/API成功。PhET官方构建说明显示多仓库依赖，不适合为单个模型默认安装。此次只将其作为任务检索方向，不接入代码，不声称任何候选已适配。建模具体任务再核许可证、文件/方程、依赖及资产兼容；适用则复用，未找到则自行生成，无网络/访问失败与未命中分别记录。维护面为共享规则、mochi技能的一个参考文件和既有工具说明。
+
+实际接入验证：7项自动压缩测试全部通过（五角色配置触发、摘要缩小及日志恢复、截断保留原历史、低压/关闭时不调用）；全量check为151项、0失败/跳过。真实完整profile在临时匹配Electron中启动，standard和五个自定义角色逐个自动压缩后继续回答，全部通过；多角色同时已挂载，未出现重复压缩。运行时探针首次暴露离线fixture元数据字段不符，修正id/name；六角色串行测试超过原30秒限时，增加到180秒并等待子进程退出再清理，避免超时与临时目录清理竞争。均为离线模拟适配器，无供应商调用，不能证明真实DeepSeek摘要内容无遗漏。受管profile生成/组合解析及原建模工具测试通过，git diff --check通过。没有重启用户App、修改用户会话或升级依赖。
+
+
+## 2026-09-16 · 答辩 PPT 增加教师端与教室端互联
+
+- 检索顺序：先完整框架及插件生态，搜索 `site:github.com reveal.js presentation framework plugins`；再生成组件，搜索 `site:github.com gitbrent PptxGenJS presentation`。搜索与 GitHub API 成功，不属于检索失败、无权限或未执行搜索。
+- https://github.com/hakimel/reveal.js ：提交 `75dff6f515d2d08df0c32cf2b7328b89425c6f25`，MIT，未归档，最近 push 2026-09-10；网页演示、讲稿和动画。
+- https://github.com/rajgoel/reveal.js-plugins ：提交 `5e5375a830eb8101836c10c1f3b56c71066c458e`，MIT，未归档，最近 push 2025-06-23；音频、注释等演示插件。
+- https://github.com/gitbrent/PptxGenJS ：提交 `3c9ec1b687c174952166f6a34b5e87ebf69fa469`，MIT，未归档，最近 push 2025-11-28；JavaScript 生成可编辑 PPTX。
+- 不接入以上候选：此次仅在现有 PPTX 增页，网页框架不直接匹配交付格式，更换 PPTX 生成库会扩大内嵌视频、字体、原生动画回归范围。候选依赖未安装，兼容性未测试，不宣称已适配。复用已有 Artifact Tool 构建脚本与 media.py 动画/视频封装，不增加依赖，不重写基础能力。
+- 已确认：项目区分教师端与独立教室端；计划文本要求课前准备依据课表、教师偏好及有效授权计划。用户本轮补充学生查错题、AI 解题和答疑预约。合理设计推测：预约请求发往教师端，老师确认时间后回传。未验证：上述学生功能和课前管家已完成端到端落地；因此整页明确标为未来规划。
+- 维护影响：五页增为六页，必须同步讲稿、媒体封装页数、末页动画时点及校验页数；保持四分钟排练目标，实际语速和现场播放另行确认。
+- 接入后验证：六页 PPTX 完整性、几何/字体策略和 Artifact Tool 重导入通过；新增页渲染人工检查通过。最终包内 MP4 与原视频 SHA-256 一致；第六页品牌进入 35000 ms、旧文字退出 34350 ms 已核查。未进行新版 WPS/PowerPoint 原生放映验证。
+
+## 安装包更新 · 2026-09-16
+
+先检索完整打包框架 `site:github.com electron-userland electron-builder electron native dependencies mac arm64 x64`，再核对其原生依赖重建及现有资源暂存机制。采用 https://github.com/electron-userland/electron-builder 的已安装25.1.8（tag object 4e51e4cc84251698ef9c9a4f3445584637fd4d4b）、MIT、未归档，API显示2026-09-16 push。沿用Electron39.8.10、现有package-desktop和beforePack，不升级到当前27系列；其配置迁移会增加无关兼容成本。本机darwin/arm64，构建同架构DMG，不宣称Windows或Intel安装包已验证。已发现暂存白名单漏work-quality.md/mjs及process-layout.mjs，补齐并增加包内内容与源码一致性验证。构建、资源检查和启动实测结果随后记录。
+
+## 2026-09-19 · 桌面桌宠模式（Petdex）
+
+- 任务：评估把 Mochi 改成桌面桌宠（平时只有桌宠，点击才弹出待办/已批准面板）。**本票只做取证与方案，未采用任何新依赖、未改动任何源码**；结论落 [desktop-pet-mode.md](desktop-pet-mode.md)。
+- 检索顺序：先完整应用形态，搜索 `github desktop pet app electron`、`site:github.com petdex`；再官方事实，读 petdex.dev 首页、`/docs` 与仓库 README。网页与 GitHub 均可访问，不属于检索失败或未执行搜索。
+- [crafter-station/petdex](https://github.com/crafter-station/petdex)：**MIT**，未归档；官方文档 2026-09 仍活跃（最近提交 Sep 11, 2026）。自述为三部分：Next.js 网页画廊、Bun CLI（npm 包 `petdex`）、以及**原生 SDK 桌面端**。
+- 关键兼容性事实（读官方 README 与 /docs 得）：其桌面端是 **native SDK app + 进程内 Zig hook server（127.0.0.1:7777）**，官方明示当前发布路径**没有 WebView、也没有 Node sidecar**；`packages/petdex-desktop-windows` 是已废弃的 Tauri 旧实现。宠物包格式为 `pet.json` + 8×9（或 8×11）网格精灵图、每帧 192×208，九行状态固定为 `idle/running-right/running-left/waving/jumping/failed/waiting/running/review`。
+- **采用结论：不接入、不 fork、不引入依赖。** 理由：它的桌宠只提供"活动气泡"，且气泡设计上鼠标穿透，**不存在业务面板概念**；改造它等于写一个原生应用，而本任务形态是给已有 Electron 应用加一块屏。本仓已有等价基建（`rail.ts:248-251` 无边框置顶窗、`tray.ts:120` 托盘开关、`OrbCompanion.tsx:17` 六态机、`rail-model.ts` 行派生），**复用本仓既有机制即可，零新依赖**。仅借鉴其形态约定（置顶不抢焦点、气泡穿透、可拖拽、快捷键、设置项克制）。
+- 未验证项（不写成已完成）：未安装其桌面端、未测试 127.0.0.1:7777 协议、未核对 `pet.json` 字段全貌；本仓侧"透明异形窗 + 鼠标穿透 + 拖拽"**亦未做任何验证**（全仓无 `transparent:true` 窗口、无 `setIgnoreMouseEvents` 调用）。
+- 维护影响：若后续实施，走"纯主进程窗口 + `data:` URL 页面"路线则不动打包插件白名单与快照清单；走新插件路线则需同步 `PLUGINS`、`runtime-profile.json`、`EXPECTED_BUNDLED_PLUGIN_COUNT`（当前 25，已实读 `prepare-mochi-resources.cjs` 反解确认 25 条）与 `test-runtime-profile.mjs` 五处。

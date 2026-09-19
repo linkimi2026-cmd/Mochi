@@ -1,0 +1,191 @@
+[
+  {
+    "kind": "image",
+    "asset": "slide-1.png",
+    "start": 0,
+    "duration": 3,
+    "title": "从备课，到校园协作",
+    "caption": "Mochi · 校园工作的 AI 伙伴",
+    "style": "hero"
+  },
+  {
+    "kind": "image",
+    "asset": "slide-2.png",
+    "start": 3,
+    "duration": 2,
+    "title": "把数据，变成看得懂的发现",
+    "caption": "真实生成的可编辑课件",
+    "style": "output"
+  },
+  {
+    "kind": "video",
+    "asset": "model.mp4",
+    "start": 5,
+    "duration": 3,
+    "title": "让知识，可以动手",
+    "caption": "交互模型 · 真实操作",
+    "style": "wide"
+  },
+  {
+    "kind": "video",
+    "asset": "home.mp4",
+    "start": 8,
+    "duration": 2.5,
+    "title": "从工作区开始",
+    "caption": "文件与任务放在一起",
+    "style": "wide"
+  },
+  {
+    "kind": "video",
+    "asset": "setup.mp4",
+    "start": 10.5,
+    "duration": 2.5,
+    "title": "切换工作模式",
+    "caption": "教学生成 · 选择权限",
+    "style": "wide"
+  },
+  {
+    "kind": "video",
+    "asset": "typing.mp4",
+    "start": 13,
+    "duration": 3,
+    "title": "把需求交给 Mochi",
+    "caption": "输入 → 发送",
+    "style": "input"
+  },
+  {
+    "kind": "video",
+    "asset": "generation.mp4",
+    "start": 16,
+    "duration": 3,
+    "title": "看见执行过程",
+    "caption": "真实生成过程加速节选",
+    "style": "input"
+  },
+  {
+    "kind": "image",
+    "asset": "slide-1.png",
+    "start": 19,
+    "duration": 3,
+    "title": "课件，也能直接交付",
+    "caption": "另一项真实任务 · 节水调查课件",
+    "style": "output"
+  },
+  {
+    "kind": "image",
+    "asset": "slide-2.png",
+    "start": 22,
+    "duration": 3,
+    "title": "数据变成课堂重点",
+    "caption": "场景、数值与图表逐项对应",
+    "style": "output"
+  },
+  {
+    "kind": "image",
+    "asset": "slide-3.png",
+    "start": 25,
+    "duration": 2,
+    "title": "让推理过程清楚可见",
+    "caption": "图形化换算 · 虚拟教学数据",
+    "style": "output"
+  },
+  {
+    "kind": "image",
+    "asset": "exam-1.png",
+    "start": 27,
+    "duration": 3,
+    "title": "把课堂问题，整理成一份试卷",
+    "caption": "学生卷与答案分开 · 可编辑 Word + PDF",
+    "style": "exam"
+  },
+  {
+    "kind": "video",
+    "asset": "model.mp4",
+    "start": 30,
+    "duration": 5,
+    "title": "抽象概念，亲手验证",
+    "caption": "点击切换并观察变化",
+    "style": "wide"
+  },
+  {
+    "kind": "video",
+    "asset": "campus.mp4",
+    "start": 35,
+    "duration": 5,
+    "title": "课堂之外，校园工作也在这里",
+    "caption": "待办与事件，连接教师的下一步",
+    "style": "wide"
+  },
+  {
+    "kind": "video",
+    "asset": "ask.mp4",
+    "start": 40,
+    "duration": 9,
+    "title": "“她在不在校，在哪里？”",
+    "caption": "Mochi 查询登记状态与到达记录",
+    "style": "chat"
+  },
+  {
+    "kind": "video",
+    "asset": "approve.mp4",
+    "start": 49,
+    "duration": 11,
+    "title": "核对申请，再批准放行",
+    "caption": "真实演示账号 · 保留人工确认",
+    "style": "chat"
+  },
+  {
+    "kind": "video",
+    "asset": "find-peer-clean.mp4",
+    "start": 60,
+    "duration": 6,
+    "title": "Agent to Agent · 协作找资料",
+    "caption": "管理员的 Mochi 查找数据、讲解稿与课件",
+    "style": "relay"
+  },
+  {
+    "kind": "video",
+    "asset": "find-teacher-clean.mp4",
+    "start": 66,
+    "duration": 8,
+    "title": "回音，回到教师手中",
+    "caption": "真实查询 → 完成回执 · 资料查找闭环",
+    "style": "relay"
+  },
+  {
+    "kind": "video",
+    "asset": "classroom-refined-received.mp4",
+    "start": 74,
+    "duration": 4,
+    "title": "课件，送到教室",
+    "caption": "真实局域网接收 · 教师端 → 教室端",
+    "style": "received"
+  },
+  {
+    "kind": "video",
+    "asset": "classroom-open.mp4",
+    "start": 78,
+    "duration": 4,
+    "title": "收到，然后开始使用",
+    "caption": "收到的课件 · 实际打开与翻页",
+    "style": "opened"
+  },
+  {
+    "kind": "video",
+    "asset": "agent-presets.mp4",
+    "start": 82,
+    "duration": 5,
+    "title": "让能力，适应你的工作",
+    "caption": "工作预设 · 插件 · 自定义 Agent",
+    "style": "presets"
+  },
+  {
+    "kind": "image",
+    "asset": "slide-1.png",
+    "start": 87,
+    "duration": 3,
+    "title": "Mochi",
+    "caption": "连接教师、同事与课堂",
+    "style": "end"
+  }
+]

@@ -1,19 +1,18 @@
 #!/usr/bin/env node
-// build-client.mjs —— 把 foundation/ui/jxl-theme-bridge.css 内联为官方 ModuleLoader 注册形态的 client.js
-// 单一事实源 = bridge CSS；本脚本只做内联与包装，禁止在两处手工同步。
+// build-client.mjs —— 把主题插件自有样式内联为官方 ModuleLoader 注册形态的 client.js
+// 单一事实源 = styles/；本脚本只做内联与包装，禁止在生成文件里手工同步。
 // bundle 形态对照：@deepseek-ai/dsh-client-ui-brand-official（官方源码实证，2026-09-04）。
 import { readFileSync, writeFileSync } from "node:fs";
 
-const CSS_PATH = "/Users/a1379/Documents/Mochi/foundation/ui/jxl-theme-bridge.css";
+const BRIDGE_PATH = new URL("../styles/jxl-theme-bridge.css", import.meta.url);
+const WORKSPACE_PATH = new URL("../styles/jxl-workspace.css", import.meta.url);
+const ICON_PATH = new URL("../assets/icons/icon.svg", import.meta.url);
 // 注意：输出到包根（scripts/ 的上一级），不是脚本所在目录。
 const OUT_PATH = new URL("../client.js", import.meta.url);
 
-const css = readFileSync(CSS_PATH, "utf8") + "\n" + readFileSync(new URL("../../../foundation/ui/jxl-workspace.css", import.meta.url), "utf8");
+const css = readFileSync(BRIDGE_PATH, "utf8") + "\n" + readFileSync(WORKSPACE_PATH, "utf8");
 // favicon = 嘉行联正式图标（联动计划/public/icons/icon.svg 复制件，内联零请求）
-const faviconSvg = readFileSync(
-  "/Users/a1379/Documents/Mochi/client-plugins/jxl-theme/assets/icons/icon.svg",
-  "utf8",
-);
+const faviconSvg = readFileSync(ICON_PATH, "utf8");
 const faviconUri = "data:image/svg+xml," + encodeURIComponent(faviconSvg);
 
 const body = [

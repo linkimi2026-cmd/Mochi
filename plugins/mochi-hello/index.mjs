@@ -1,6 +1,7 @@
 import { existsSync } from 'node:fs';
 import { isAbsolute, resolve } from 'node:path';
 import { installModelDiagnostic } from './doctor.mjs';
+import { installWorkQuality } from './work-quality.mjs';
 
 export const name = 'mochi-hello';
 
@@ -18,6 +19,8 @@ function managedNodePath() {
 }
 
 export function apply(ctx) {
+  // A separate section survives a role persona shadowing deployment:persona.
+  ctx.inject(['systemPrompt'], installWorkQuality);
   console.log('[Mochi] hello plugin loaded! 内核已挂载自定义插件');
   if (ctx.logger?.info) ctx.logger.info('[mochi-hello] apply() 被调用');
   // Keep the existing authenticated diagnostic endpoint available only when

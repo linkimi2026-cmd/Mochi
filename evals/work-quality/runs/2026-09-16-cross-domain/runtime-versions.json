@@ -1,0 +1,17 @@
+[
+  {
+    "name": "promptfoo",
+    "version": "0.123.0",
+    "license": "MIT"
+  },
+  {
+    "name": "hono",
+    "version": "4.13.8",
+    "license": "MIT"
+  },
+  {
+    "name": "@libsql/darwin-arm64",
+    "version": "0.5.29",
+    "license": "MIT"
+  }
+]

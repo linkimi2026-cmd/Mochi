@@ -44,7 +44,7 @@ const expectedProfiles = {
   },
   "mochi-web": {
     bundles: ["@deepseek-ai/dsh-base", "@deepseek-ai/dsh-web-app"],
-    plugins: ["mochi-hello", "mochi-dispatch", "mochi-campus", "mochi-web-search", "mochi-knowledge", "mochi-llm-mimo", "mochi-grades", "mochi-presentations", "mochi-documents", "mochi-files", "mochi-sheets", "mochi-visuals", "mochi-modeling", "mochi-memory", "mochi-task-scheduler", "mochi-modes", "mochi-modes-client", "jxl-theme", "jxl-brand", "jxl-campus", "mochi-workbench", "mochi-model-presets", "dsh-better-sidebar", "mochi-lan", "mochi-lan-client"],
+    plugins: ["mochi-hello", "mochi-dispatch", "mochi-campus", "mochi-web-search", "mochi-knowledge", "mochi-llm-mimo", "mochi-grades", "mochi-presentations", "mochi-documents", "mochi-files", "mochi-sheets", "mochi-visuals", "mochi-modeling", "mochi-memory", "mochi-task-scheduler", "mochi-modes", "mochi-modes-client", "jxl-theme", "jxl-brand", "jxl-campus", "mochi-model-presets", "dsh-better-sidebar", "mochi-lan", "mochi-lan-client"],
   },
 };
 
@@ -78,17 +78,27 @@ for (const [name, expected] of Object.entries(expectedProfiles)) {
   assert.deepEqual(runtimeProfile.profiles?.[name]?.bundles, expected.bundles, `${name} bundles must remain versioned with the runtime profile`);
   assert.deepEqual(runtimeProfile.profiles?.[name]?.plugins, expected.plugins, `${name} plugin whitelist must remain versioned with the runtime profile`);
 }
-const expectedServiceDefaults = { campusApiUrl: null, searxngEndpoint: null };
+// 随包发行的校园 API Origin：安装包必须开箱即连，因此这里是有值的版本化事实，
+// 不再是 null。它同时是 resolveServiceDefaults 在无环境变量时的兜底。
+const expectedServiceDefaults = {
+  campusApiUrl: "https://jyl-campus-health-entry.pages.dev",
+  searxngEndpoint: null,
+};
 assert.deepEqual(runtimeProfile.serviceDefaults, expectedServiceDefaults, "service defaults must be versioned with the runtime profile");
 assert.deepEqual(
   runtime.readServiceDefaults(resourceRoot),
-  { campusApiUrl: undefined, searxngEndpoint: undefined },
-  "null service defaults must remain unconfigured",
+  { campusApiUrl: expectedServiceDefaults.campusApiUrl, searxngEndpoint: undefined },
+  "the shipped campus origin must be readable without a user home",
 );
 assert.deepEqual(
   runtime.resolveServiceDefaults({ resourceRoot, environment: {} }),
-  { campusApiUrl: undefined, searxngEndpoint: undefined },
-  "an empty environment must not invent a loopback or cloud service default",
+  { campusApiUrl: expectedServiceDefaults.campusApiUrl, searxngEndpoint: undefined },
+  "an empty environment must fall back to the shipped versioned origin, never to a loopback",
+);
+assert.equal(
+  runtime.resolveServiceDefaults({ resourceRoot, environment: {} }).campusApiUrl,
+  expectedServiceDefaults.campusApiUrl,
+  "the packaged app must not degrade to 127.0.0.1",
 );
 const mimoInitialConfig = runtimeProfile.plugins?.["mochi-llm-mimo"]?.initialConfig;
 assert.deepEqual(mimoInitialConfig, expectedMimoInitialConfig, "MIMO initial config must stay versioned with the runtime profile");
@@ -551,6 +561,9 @@ try {
     assert.equal(pluginRowCount(patch, "mochi-llm-mimo"), 1, `${name} must keep exactly one MIMO entry`);
 
     const dump = dumpProfile(home, name);
+    // dump-config validates composition only; real scoped prompt inheritance is
+    // covered by test-work-quality.mjs against the installed SystemPrompt service.
+    assert.ok(expected.plugins.includes("mochi-hello"), `${name} omitted shared quality contributor`);
     assert.match(dump, /id: skill-filesystem[\s\S]{0,300}disabled: false/);
     assert.ok(dump.includes(skillsDir), `${name} dump omitted the Mochi skills directory`);
     for (const plugin of expected.plugins) assert.match(dump, new RegExp(`id: ${plugin}`));

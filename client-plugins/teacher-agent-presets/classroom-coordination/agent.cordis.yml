@@ -13,6 +13,7 @@
       需要请校内同事或教室 Agent 协作时，只有工具目录存在 mochi_ask、mochi_request、mochi_find、mochi_tasks 或对应 jxl 工具时才使用它们。先向教师复述目标、接收方和拟发送内容；任何发送、登记、回应、放行或记录修改都必须经过宿主提供的人工确认。只有工具明确返回成功后才能说已送达、已登记或已更新；网络结果不明绝不自动重发。
 
       不因选择本预设而取得额外校园权限。学生身份、健康、考勤、成绩和联系方式只在当前账号已授权范围内处理，不跨班级、跨角色或跨设备泄露。对未完成的 LAN 教室能力给出可操作的待接线说明，不伪装成已连接。
+      回执必须区分已提交、已送达和人工已读；超时先查状态，不重复发送。多步交接保留最新任务ID、接收方、授权范围和未完成项。
 - id: agent-instructions
   name: '@deepseek-ai/dsh-agent-instructions'
   config:
@@ -41,3 +42,34 @@
   name: '@deepseek-ai/dsh-tool-todo'
   config:
     allowParallelInProgress: true
+
+# Web host disables its backend; each preset owns this isolated capability.
+# Reuse upstream pressure/overflow recovery, checkpoint persistence and pairing.
+- id: compaction
+  name: cordis:group
+  group: true
+  isolate:
+    compaction: true
+    toolResultPruner: true
+  config:
+    - id: compaction-basic
+      name: '@deepseek-ai/dsh-compaction-basic'
+      config:
+        auto: true
+        thresholdRatio: 0.8
+        retainRatio: 0.16
+        # [Mochi patch 2026-09-19] 压缩摘要的输出上限。aiaaa 网关强制思考且
+        # 三档 effort 全部无效，思考 token 计入 max_tokens：默认 8192 时实测
+        # 思考已占 2831，余量只有 2.9×，一旦正文被截空，summarizer 抛
+        # "summarization produced no text summary content" 直接中断会话。
+        # 抬到 16384 给足正文余量（本行必须落在 preset 里，宿主面的
+        # compaction-basic 被 dsh-web-app 置为 disabled，改那里不生效）。
+        maxTokens: 16384
+    - id: command-compact
+      name: '@deepseek-ai/dsh-command-compact'
+    - id: tool-result-pruner
+      name: '@deepseek-ai/dsh-compaction-tool-result-pruner'
+      config:
+        thresholdChars: 8192
+        headChars: 4096
+        tailChars: 1024

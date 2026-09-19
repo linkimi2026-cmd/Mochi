@@ -33,6 +33,22 @@ const SEEDS_DIRNAME = "apps/desktop/resources/mochi-web/seeds";
 // prompt()，无自动切模型兜底），默认模型必须自己带 image。MiMo 降为备选（教室端仍用 MiMo）。
 // 下面的 AUTHORITATIVE_PROVIDERS.aiaaa.defaultModel 即出厂默认；切换默认只改这张表，seeds 构建期重渲染。
 
+// ── aiaaa 网关的模型能力事实（2026-09-18 实测，见 docs/gateway-aiaaa-verified-facts.md）──
+// 为什么必须在这里显式声明：`mochi-aiaaa` 不是 pi-ai 内置目录里的 provider，
+// 所以 llm-pi-ai 的 resolveRouteModels 拿不到任何 catalog 基线，未声明的字段一律落到
+// pi-ai 的兜底（contextWindow 262,144 / maxTokens 32,768），既不是模型的真实能力，
+// 也不反映网关行为。实测结论：
+//   · 上下文：811,622 prompt token 实测通过；约 1.53M token 被 400
+//     `Input token exceed the limit` 拒绝。取 1,000,000 —— 与 pi-ai 内置 deepseek
+//     目录、以及 llm-deepseek 的 DEFAULT_CONTEXT_WINDOW 三处一致。
+//   · 输出上界：网关不校验 max_tokens（2,000,000 亦被接受，且不挤占上下文预算：
+//     387,977 prompt + max_tokens 384,000 仍 200）。取 llm-deepseek 对 DeepSeek 的
+//     惯例值 256,000，而非 pi-ai 的 32,768 兜底。这个方向是安全侧：声明它等于让
+//     未自带配额的请求默认拿到大预算，而本网关的思考后端会先吃掉一部分输出配额
+//     （小配额会直接产出空正文，见 core.patch.yml 的 session-title-llm 覆盖）。
+const AIAAA_CONTEXT_WINDOW = 1_000_000;
+const AIAAA_MAX_TOKENS = 256_000;
+
 // MOCHI-WIN-PACK-01 WO-3 Provider 实参表（权威）。key 值来自密钥源，本表只持有引用名与端点。
 const AUTHORITATIVE_PROVIDERS = Object.freeze([
   {
@@ -48,8 +64,18 @@ const AUTHORITATIVE_PROVIDERS = Object.freeze([
     baseURL: "https://aiaaa.cc/v1",
     apiKeyEnv: "MOCHI_AIAAA_API_KEY",
     role: "出厂默认对话 + 视觉模型",
-    defaultModel: { id: "deepseek-v4.1-flash", name: "DeepSeek V4.1 Flash" },
-    visionModel: { id: "deepseek-v4-flash-vision-exp", name: "DeepSeek Expert Visual" },
+    defaultModel: {
+      id: "deepseek-v4.1-flash",
+      name: "DeepSeek V4.1 Flash",
+      contextWindow: AIAAA_CONTEXT_WINDOW,
+      maxTokens: AIAAA_MAX_TOKENS,
+    },
+    visionModel: {
+      id: "deepseek-v4-flash-vision-exp",
+      name: "DeepSeek Expert Visual",
+      contextWindow: AIAAA_CONTEXT_WINDOW,
+      maxTokens: AIAAA_MAX_TOKENS,
+    },
     seedEnvVar: "MOCHI_SEED_MOCHI_AIAAA_API_KEY",
   },
 ]);
@@ -154,11 +180,15 @@ function renderSettingsDefaults() {
     {
       id: aiaaa.defaultModel.id,
       name: aiaaa.defaultModel.name,
+      contextWindow: aiaaa.defaultModel.contextWindow,
+      maxTokens: aiaaa.defaultModel.maxTokens,
       input: ["text", "image"],
     },
     {
       id: aiaaa.visionModel.id,
       name: aiaaa.visionModel.name,
+      contextWindow: aiaaa.visionModel.contextWindow,
+      maxTokens: aiaaa.visionModel.maxTokens,
       input: ["text", "image"],
     },
   ];

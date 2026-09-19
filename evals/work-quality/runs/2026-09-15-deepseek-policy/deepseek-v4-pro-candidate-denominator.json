@@ -1,0 +1,23 @@
+{
+  "scope": "system-fragment policy probe; no tools executed",
+  "variant": "candidate",
+  "testId": "denominator",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "reasoningEffort": "high",
+  "systemSha256": "66104c314cb5ba44c4748aab6f41bfab8b65986531e33d83d8d7d23743a48402",
+  "input": "这是合成测试，无工具可用。班级4人，分数分别为80、0、缺考、100。缺考不计入平均分，零分计入。请给出平均分、分母和缺考人数，保留两位小数。",
+  "output": "平均分：60.00  \n分母：3（计入 80、0、100）  \n缺考人数：1",
+  "usage": {
+    "inputTokens": 2458,
+    "outputTokens": 209,
+    "totalTokens": 2667,
+    "cacheReadTokens": 0,
+    "reasoningTokens": 183
+  },
+  "finish": {
+    "kind": "stop"
+  },
+  "error": null,
+  "latencyMs": 3172
+}

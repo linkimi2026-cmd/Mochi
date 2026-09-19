@@ -20,6 +20,8 @@ window.__ModuleLoader__.load({
       peerUnpair: API_BASE + "/peer/unpair",
       peerBlock: API_BASE + "/peer/block",
       messageSeen: API_BASE + "/message-seen",
+      // [Mochi 2026-09-18] 反向通道：教室端唯一的外发动作。
+      requestSend: API_BASE + "/request/send",
     });
     var STYLE_ID = "mochi-lan-client-style";
     var POLL_MS = 3_000;
@@ -282,6 +284,53 @@ window.__ModuleLoader__.load({
         unpair: function (endpointId, signal) { return call(ROUTES.peerUnpair, { method: "POST", body: { endpointId: endpointId }, signal: signal }); },
         block: function (endpointId, signal) { return call(ROUTES.peerBlock, { method: "POST", body: { endpointId: endpointId }, signal: signal }); },
         markSeen: function (messageId, signal) { return call(ROUTES.messageSeen, { method: "POST", body: { messageId: messageId }, signal: signal }); },
+        sendRequest: function (targetEndpointId, request, body, signal) {
+          return call(ROUTES.requestSend, {
+            method: "POST",
+            body: { targetEndpointId: targetEndpointId, request: request, body: body },
+            signal: signal,
+          });
+        },
+      });
+    }
+
+    /**
+     * 学生预约的输入校验。
+     *
+     * 学生姓名是**自填**字段：教室端是一台共用设备，服务层只保证它随信封签名没被
+     * 中途改过，不构成在校身份证明。所以这里既不查名册也不做「实名」暗示——
+     * 只挡住空值和越界，并让 UI 明确写成「学生自填」。
+     */
+    var REQUEST_KINDS = Object.freeze(["appointment", "question", "makeup", "other"]);
+    function studentRequestInput(draft, targetEndpointId) {
+      var source = object(draft);
+      var target = text(targetEndpointId, 80);
+      var student = text(source.student, 120);
+      // [Mochi 2026-09-18] material + position 就是「哪份作业的哪道题」。以前这两个
+      // 位置不存在，学生只能把题目位置塞进正文，老师端待办条上就只剩一坨截断的字，
+      // 老师没法提前翻页备课。两者都可选，所以不填也照旧能提交。
+      var material = text(source.material, 120);
+      var position = text(source.position, 120);
+      var topic = text(source.topic, 120);
+      var slot = text(source.slot, 120);
+      var body = text(source.body, 2000);
+      var kind = REQUEST_KINDS.indexOf(source.kind) >= 0 ? source.kind : "appointment";
+      var seat = source.seat === "" || source.seat === undefined || source.seat === null ? null : Number(source.seat);
+      if (!target) return Object.freeze({ ok: false, message: "尚未配对到教师端，无法提交预约。" });
+      if (!student) return Object.freeze({ ok: false, message: "请填写学生姓名。" });
+      if (!body) return Object.freeze({ ok: false, message: "请填写要预约的问题。" });
+      if (seat !== null && (!Number.isSafeInteger(seat) || seat < 1 || seat > 999)) return Object.freeze({ ok: false, message: "座号必须是 1 到 999 的整数。" });
+      return Object.freeze({
+        ok: true,
+        request: Object.freeze(Object.assign(
+          { student: student, kind: kind },
+          seat === null ? {} : { seat: seat },
+          material ? { material: material } : {},
+          position ? { position: position } : {},
+          topic ? { topic: topic } : {},
+          slot ? { slot: slot } : {},
+        )),
+        body: body,
       });
     }
 
@@ -338,6 +387,7 @@ window.__ModuleLoader__.load({
       if (action.type === "peer-unpair") return api.unpair(value.endpointId, signal);
       if (action.type === "peer-block") return api.block(value.endpointId, signal);
       if (action.type === "message-seen") return api.markSeen(value.messageId, signal);
+      if (action.type === "student-request") return api.sendRequest(value.targetEndpointId, value.request, value.body, signal);
       throw new Error("LAN_ACTION_INVALID");
     }
 
@@ -423,6 +473,31 @@ window.__ModuleLoader__.load({
       var bridge = typeof window === "object" ? window.mochiLanDesktop : null;
       if (!bridge || typeof bridge.attention !== "function") return;
       try { void bridge.attention(kind); } catch (_) {}
+    }
+
+    /**
+     * 把「原始 LAN 快照」转推给桌面常驻条。
+     *
+     * 页面在这里刻意不做任何业务判断：哪些算待办、哪些该弹窗，全部由主进程派生
+     * （dsh/rail-model.ts）。两块屏——老师那条待办横条、教室那块名单常驻屏——
+     * 因此始终看到同一份判断；如果页面也自己算一遍，就会出现「两处判断、只修了
+     * 一处」的情况，而那种不一致只在演示时才被看见。
+     *
+     * 这里只做传输层去重：原始负载没变就不推，免得每 3 秒搬一次同样的数据。
+     */
+    var lastPushedLanState = "";
+    function requestRailSync(rawState) {
+      var bridge = typeof window === "object" ? window.mochiRailDesktop : null;
+      if (!bridge || typeof bridge.pushLanState !== "function") return false;
+      var encoded;
+      try { encoded = JSON.stringify(rawState); } catch (_) { return false; }
+      if (encoded === lastPushedLanState) return false;
+      var accepted = false;
+      try { accepted = bridge.pushLanState(rawState) === true; } catch (_) { accepted = false; }
+      // 推进只在真的推成功之后：否则一次失败会让这份数据永远不再重推，
+      // 常驻条就永久停在旧内容上，而页面看上去一切正常。
+      if (accepted) lastPushedLanState = encoded;
+      return accepted;
     }
 
     function installStyles() {
@@ -688,6 +763,19 @@ window.__ModuleLoader__.load({
         return [roleLabel(value.lockedRole), next.schoolId, next.classId || "（未绑定班级）", next.displayName].join("\n");
       }
       if (action?.type === "message-seen") return [value.from?.displayName || "已配对教师", value.from?.schoolId || "", value.from?.classId || "", "消息：" + (value.body || "")].join("\n");
+      if (action?.type === "student-request") {
+        var req = value.request || {};
+        var where = [req.material, req.position].filter(Boolean).join(" ");
+        return [
+          value.peer?.displayName || "已配对教师",
+          value.peer?.schoolId || "",
+          "学生（自填）：" + (req.student || "") + (req.seat ? " · " + req.seat + " 号" : ""),
+          where ? "要讲：" + where : "",
+          req.topic ? "知识点：" + req.topic : "",
+          req.slot ? "时间：" + req.slot : "",
+          "学生原话：" + (value.body || ""),
+        ].filter(Boolean).join("\n");
+      }
       return [identity?.displayName || value.endpointId || value.requestId || "目标未识别", identity?.schoolId || "", identity?.classId || "", identity?.role ? roleLabel(identity.role) : "", identity?.fingerprint || ""].filter(Boolean).join("\n");
     }
 
@@ -700,6 +788,7 @@ window.__ModuleLoader__.load({
         "peer-unpair": ["确认解除配对", "解除后不再允许该设备投递或接收；不会自动拉黑。", "解除配对"],
         "peer-block": ["确认拉黑设备", "将解除配对并拒绝该设备后续相识或投递；当前服务没有解除拉黑入口。", "拉黑设备"],
         "message-seen": ["确认已看到", "这会向下方已验证教师发送签名“已看到”回执。", "确认已看到"],
+        "student-request": ["确认提交预约", "学生姓名是学生在教室设备上自填的，不构成在校身份证明；提交后教师端待办条会收到这条预约，老师看到的是上面的「要讲」和你的原话。", "提交预约"],
       };
       return copies[action?.type] || ["确认操作", "请核对目标后继续。", "继续"];
     }
@@ -715,6 +804,97 @@ window.__ModuleLoader__.load({
         React.createElement("div", { className: "mochi-lan-actions" },
           React.createElement("button", { className: action.type === "peer-block" ? "mochi-lan-button mochi-lan-button--danger" : "mochi-lan-button", type: "button", disabled: props.busy, onClick: props.onProceed }, props.busy ? "正在提交…" : copy[2]),
           React.createElement("button", { className: "mochi-lan-button mochi-lan-button--soft", type: "button", disabled: props.busy, onClick: props.onCancel }, "返回核对")
+        )
+      );
+    }
+
+    /**
+     * 教室端的学生预约入口。
+     *
+     * 这是整套系统里唯一「学生自己发起」的动作，所以它在 UI 上也要像学生的动作，
+     * 而不是老师的：字段是「谁 · 想约什么 · 什么时候」，提交前有一次核对，并且
+     * 明说姓名是学生自填的——教室端是一台共用设备，服务层只能保证这条预约在传输
+     * 途中没被改过，不能证明写字的人就是名单上的那个人。
+     *
+     * 只在教室端出现。教师端没有这张卡片，因为教师不能替学生发预约，
+     * 服务层也会按方向拒绝。
+     */
+    function StudentRequestCard(props) {
+      var teachers = rows(props.snapshot.peers).filter(function (peer) {
+        return peer.identity.role === "teacher" && peer.blocked !== true && peer.identity.endpointId;
+      });
+      var emptyDraft = { student: "", seat: "", kind: "appointment", material: "", position: "", topic: "", slot: "", body: "" };
+      var state = React.useState(emptyDraft);
+      var draft = state[0];
+      var setDraft = state[1];
+      var errorState = React.useState("");
+      var error = errorState[0];
+      var setError = errorState[1];
+      var succeeded = props.successNonce;
+      React.useEffect(function () {
+        // 提交成功后才清空，而不是一点「提交」就清空：学生还要在核对卡上确认一次，
+        // 中途取消时输入必须还在。
+        setDraft(emptyDraft);
+      }, [succeeded]);
+      if (props.snapshot.lockedRole !== "classroom") return null;
+      function set(key, value) {
+        var next = Object.assign({}, draft);
+        next[key] = value;
+        setDraft(next);
+      }
+      function submit(event) {
+        event.preventDefault();
+        var target = teachers[0];
+        if (!target) { setError("尚未与教师端建立配对，无法提交预约。"); return; }
+        var result = studentRequestInput(draft, target.identity.endpointId);
+        if (!result.ok) { setError(result.message); return; }
+        setError("");
+        props.onConfirm(confirmationFor("student-request", {
+          targetEndpointId: target.identity.endpointId,
+          peer: target.identity,
+          request: result.request,
+          body: result.body,
+        }));
+      }
+      return React.createElement("section", { className: "mochi-lan-card" },
+        React.createElement("h2", { className: "mochi-lan-card__title" }, "提交预约"),
+        React.createElement("p", { className: "mochi-lan-card__intro" }, teachers.length
+          ? "提交给：" + teachers.map(function (peer) { return peer.identity.displayName || "未命名教师端"; }).join("、") + "。姓名由学生自己填写。"
+          : "尚未与教师端配对，暂时无法提交预约。"),
+        React.createElement("form", { className: "mochi-lan-fields", onSubmit: submit },
+          React.createElement("label", { className: "mochi-lan-field" }, "学生姓名（自填）",
+            React.createElement("input", { value: draft.student, maxLength: 120, placeholder: "例如：李明", onChange: function (event) { set("student", event.target.value); } })
+          ),
+          React.createElement("label", { className: "mochi-lan-field" }, "座号（可选）",
+            React.createElement("input", { value: draft.seat, inputMode: "numeric", maxLength: 3, placeholder: "例如：3", onChange: function (event) { set("seat", event.target.value); } })
+          ),
+          React.createElement("label", { className: "mochi-lan-field" }, "预约类型",
+            React.createElement("select", { value: draft.kind, onChange: function (event) { set("kind", event.target.value); } },
+              React.createElement("option", { value: "appointment" }, "预约讲题"),
+              React.createElement("option", { value: "question" }, "提问"),
+              React.createElement("option", { value: "makeup" }, "补做登记"),
+              React.createElement("option", { value: "other" }, "留言")
+            )
+          ),
+          React.createElement("label", { className: "mochi-lan-field" }, "哪份作业/材料（可选）",
+            React.createElement("input", { value: draft.material, maxLength: 120, placeholder: "例如：步步高 Unit 5", onChange: function (event) { set("material", event.target.value); } })
+          ),
+          React.createElement("label", { className: "mochi-lan-field" }, "哪道题（可选）",
+            React.createElement("input", { value: draft.position, maxLength: 120, placeholder: "例如：完形填空第 7 空", onChange: function (event) { set("position", event.target.value); } })
+          ),
+          React.createElement("label", { className: "mochi-lan-field" }, "知识点（可选）",
+            React.createElement("input", { value: draft.topic, maxLength: 120, placeholder: "例如：二次函数", onChange: function (event) { set("topic", event.target.value); } })
+          ),
+          React.createElement("label", { className: "mochi-lan-field" }, "希望的时间（可选）",
+            React.createElement("input", { value: draft.slot, maxLength: 120, placeholder: "例如：第八节晚自习", onChange: function (event) { set("slot", event.target.value); } })
+          ),
+          React.createElement("label", { className: "mochi-lan-field" }, "要问的问题",
+            React.createElement("input", { value: draft.body, maxLength: 2000, placeholder: "例如：第三题不太懂", onChange: function (event) { set("body", event.target.value); } })
+          ),
+          error ? React.createElement("div", { className: "mochi-lan-error", role: "alert" }, error) : null,
+          React.createElement("div", { className: "mochi-lan-actions" },
+            React.createElement("button", { className: "mochi-lan-button", type: "submit", disabled: props.busy || teachers.length === 0 }, "核对后提交")
+          )
         )
       );
     }
@@ -744,6 +924,11 @@ window.__ModuleLoader__.load({
       var refreshState = React.useState(0);
       var refreshNonce = refreshState[0];
       var requestRefresh = function () { refreshState[1](function (value) { return value + 1; }); };
+      // 学生预约提交成功后 +1，用来清空表单（见 StudentRequestCard 里的 effect）。
+      // 用计数而不是布尔，是因为连续两次成功也必须各自触发一次清空。
+      var requestNonceState = React.useState(0);
+      var requestSentNonce = requestNonceState[0];
+      var setRequestSentNonce = requestNonceState[1];
       var api = React.useMemo ? React.useMemo(function () { return createLanApi(); }, []) : createLanApi();
 
       React.useEffect(function () {
@@ -776,6 +961,9 @@ window.__ModuleLoader__.load({
             setDiscovered(nextDiscovery);
             setFailure("");
             setPhase("ready");
+            // 常驻条吃的是未经归一化的原始响应体：预约描述、发件角色、已看到时刻
+            // 这些字段只在原文里，归一化后的投影会丢掉它们。
+            requestRailSync(statePayload);
             updateUi({ configured: nextSnapshot.configured, role: nextSnapshot.lockedRole, nearby: nextDiscovery.length, inbox: unreadInboxMessages(nextSnapshot).length, discoveryStatus: nextSnapshot.discovery.status, discoveryErrorCode: nextSnapshot.discovery.errorCode });
             if (attentionKinds.length) {
               if (focusedMessageId) openLanPanelForMessage(focusedMessageId);
@@ -819,6 +1007,9 @@ window.__ModuleLoader__.load({
         setFailure("");
         try {
           await executeConfirmation(api, confirmation);
+          // 学生预约成功后清空表单：否则学生会以为没提交成功而连点两次，
+          // 教师端待办条上就会出现两条一模一样的预约。
+          if (confirmation.type === "student-request") setRequestSentNonce(function (value) { return value + 1; });
           setConfirmation(null);
           if (confirmation.type !== "pair-request") setVerified(null);
         } catch (error) {
@@ -846,6 +1037,7 @@ window.__ModuleLoader__.load({
           React.createElement(DiscoveryCard, { snapshot: snapshot, candidates: discovered, busy: busy, onProbe: probe }),
           React.createElement(VerifiedCandidateCard, { verified: verified, localIdentity: snapshot.identity, busy: busy, onConfirm: setConfirmation }),
           React.createElement(InboxCard, { snapshot: snapshot, busy: busy, onConfirm: setConfirmation }),
+          React.createElement(StudentRequestCard, { snapshot: snapshot, busy: busy, successNonce: requestSentNonce, onConfirm: setConfirmation }),
           React.createElement("div", { className: "mochi-lan-actions" }, React.createElement("button", { className: "mochi-lan-button mochi-lan-button--soft", type: "button", disabled: busy, onClick: requestRefresh }, "立即刷新状态"))
         )
       );
@@ -924,6 +1116,9 @@ window.__ModuleLoader__.load({
       newAttentionKinds: newAttentionKinds,
       focusedUnreadMessageId: focusedUnreadMessageId,
       focusedInboxMessage: focusedInboxMessage,
+      studentRequestInput: studentRequestInput,
+      requestRailSync: requestRailSync,
+      StudentRequestCard: StudentRequestCard,
       InboxCard: InboxCard,
       IncomingMessageCard: IncomingMessageCard,
       openLanPanel: openLanPanel,

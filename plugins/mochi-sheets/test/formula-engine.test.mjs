@@ -51,18 +51,18 @@ function evaluate(formula, extraCells = {}) {
   return evaluateWorkbookCells(model, [{ sheetIndex: 0, row: 1, column: 1 }]).results.get('0:1:1');
 }
 
-function valueOf(formula, extraCells) {
+function evaluateValue(formula, extraCells) {
   const result = evaluate(formula, extraCells);
   assert.equal(result.ok, true, `${formula} 求值失败：${result.message}`);
   return result.value;
 }
 
 test('引擎：算术、文本函数与错误码的确定值', () => {
-  assert.equal(valueOf('=1+2*3'), 7);
-  assert.equal(valueOf('=2^10'), 1024);
-  assert.equal(valueOf('=ROUND(2.345,2)'), 2.35);
-  assert.equal(valueOf('=LEN("Mochi 表格")'), 8);
-  assert.equal(valueOf('=MID("2024级3班",1,4)'), '2024');
+  assert.equal(evaluateValue('=1+2*3'), 7);
+  assert.equal(evaluateValue('=2^10'), 1024);
+  assert.equal(evaluateValue('=ROUND(2.345,2)'), 2.35);
+  assert.equal(evaluateValue('=LEN("Mochi 表格")'), 8);
+  assert.equal(evaluateValue('=MID("2024级3班",1,4)'), '2024');
   assert.equal(evaluate('=1/0').error, '#DIV/0!');
   assert.equal(evaluate('=SQRT(-1)').error, '#NUM!');
   const unsupported = evaluate('=VLOOKUP(1,A1:B2,2)');
@@ -77,15 +77,15 @@ test('引擎：算术、文本函数与错误码的确定值', () => {
 });
 
 test('SUBSTITUTE 第 4 参：前 N-1 次命中的原文必须原样保留（回归：曾返回 "b+c"）', () => {
-  assert.equal(valueOf('=SUBSTITUTE("a-b-c","-","+",1)'), 'a+b-c');
-  assert.equal(valueOf('=SUBSTITUTE("a-b-c","-","+",2)'), 'a-b+c');
-  assert.equal(valueOf('=SUBSTITUTE("abcabc","b","X",2)'), 'abcaXc');
+  assert.equal(evaluateValue('=SUBSTITUTE("a-b-c","-","+",1)'), 'a+b-c');
+  assert.equal(evaluateValue('=SUBSTITUTE("a-b-c","-","+",2)'), 'a-b+c');
+  assert.equal(evaluateValue('=SUBSTITUTE("abcabc","b","X",2)'), 'abcaXc');
   // 出现次数超过实际命中数 → 原样返回（Excel 语义，不是错误）
-  assert.equal(valueOf('=SUBSTITUTE("a-b-c","-","+",9)'), 'a-b-c');
+  assert.equal(evaluateValue('=SUBSTITUTE("a-b-c","-","+",9)'), 'a-b-c');
   // 第 4 参 < 1 → #VALUE!，不得静默当成第 1 次或原样返回
   assert.equal(evaluate('=SUBSTITUTE("a-b-c","-","+",0)').error, '#VALUE!');
   // 三参形态不受影响
-  assert.equal(valueOf('=SUBSTITUTE("a-b-c","-","+")'), 'a+b+c');
+  assert.equal(evaluateValue('=SUBSTITUTE("a-b-c","-","+")'), 'a+b+c');
 });
 
 test('COUNTIF/SUMIF/AVERAGEIF 的通配符：* ? 与 ~ 转义（回归：曾恒返回 0）', () => {
@@ -99,19 +99,19 @@ test('COUNTIF/SUMIF/AVERAGEIF 的通配符：* ? 与 ~ 转义（回归：曾恒�
     '4:2': cell(30),
     '5:2': cell(40),
   };
-  assert.equal(valueOf('=COUNTIF(A2:A5,"张*")', data), 2);
-  assert.equal(valueOf('=COUNTIF(A2:A5,"*张*")', data), 3);
-  assert.equal(valueOf('=COUNTIF(A2:A5,"?三")', data), 1);
-  assert.equal(valueOf('=COUNTIF(A2:A5,"张三")', data), 1);
-  assert.equal(valueOf('=COUNTIF(A2:A5,"<>张三")', data), 3);
-  assert.equal(valueOf('=COUNTIF(A2:A5,"王*")', data), 1);
-  assert.equal(valueOf('=SUMIF(A2:A5,"张*",B2:B5)', data), 30);
-  assert.equal(valueOf('=AVERAGEIF(A2:A5,"张*",B2:B5)', data), 15);
+  assert.equal(evaluateValue('=COUNTIF(A2:A5,"张*")', data), 2);
+  assert.equal(evaluateValue('=COUNTIF(A2:A5,"*张*")', data), 3);
+  assert.equal(evaluateValue('=COUNTIF(A2:A5,"?三")', data), 1);
+  assert.equal(evaluateValue('=COUNTIF(A2:A5,"张三")', data), 1);
+  assert.equal(evaluateValue('=COUNTIF(A2:A5,"<>张三")', data), 3);
+  assert.equal(evaluateValue('=COUNTIF(A2:A5,"王*")', data), 1);
+  assert.equal(evaluateValue('=SUMIF(A2:A5,"张*",B2:B5)', data), 30);
+  assert.equal(evaluateValue('=AVERAGEIF(A2:A5,"张*",B2:B5)', data), 15);
   // 数值条件不受本次改动影响
-  assert.equal(valueOf('=COUNTIF(B2:B5,">15")', data), 3);
-  assert.equal(valueOf('=COUNTIF(B2:B5,20)', data), 1);
+  assert.equal(evaluateValue('=COUNTIF(B2:B5,">15")', data), 3);
+  assert.equal(evaluateValue('=COUNTIF(B2:B5,20)', data), 1);
   // ~ 转义：~* 是字面量星号，~? 是字面量问号，本表里都不存在
-  assert.equal(valueOf('=COUNTIF(A2:A5,"~*")', data), 0);
-  assert.equal(valueOf('=COUNTIF(A2:A5,"~?")', data), 0);
-  assert.equal(valueOf('=COUNTIF(A2:A5,"*")', data), 4);
+  assert.equal(evaluateValue('=COUNTIF(A2:A5,"~*")', data), 0);
+  assert.equal(evaluateValue('=COUNTIF(A2:A5,"~?")', data), 0);
+  assert.equal(evaluateValue('=COUNTIF(A2:A5,"*")', data), 4);
 });

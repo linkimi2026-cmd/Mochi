@@ -1,0 +1,20 @@
+{
+  "scope": "live endpoint image perception; not full Agent execution",
+  "model": "mimo-v2.5-pro",
+  "reasoningEffort": "high",
+  "imageSha256": "0342b067365649b020e5bc94876c189df957da843df98725160682b1d66d2c4f",
+  "input": "仅根据所附幻灯片缩略图，输出第1页标题、第3页的第二条要点、第5页标题。看不清就说看不清，不要猜，不要解释。",
+  "output": "1. 第1页标题：**水的旅程**\n2. 第3页第二条要点：**凝结：水蒸气遇冷形成小水滴。**\n3. 第5页标题：**下一次下雨，你会观察什么？**",
+  "usage": {
+    "inputTokens": 2337,
+    "outputTokens": 375,
+    "totalTokens": 5144,
+    "cacheReadTokens": 2432,
+    "reasoningTokens": 320
+  },
+  "finish": {
+    "kind": "stop"
+  },
+  "error": null,
+  "latencyMs": 10312
+}

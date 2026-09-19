@@ -1,5 +1,5 @@
 import { join } from "node:path";
-import { app, BrowserWindow, clipboard, dialog, ipcMain, Notification, shell, type IpcMainInvokeEvent } from "electron";
+import { app, BrowserWindow, clipboard, dialog, ipcMain, Notification, shell, type IpcMainEvent, type IpcMainInvokeEvent } from "electron";
 import {
   createDesktopDoctorConfig,
   createDoctorWindowController,
@@ -17,7 +17,10 @@ import {
   type MochiRuntimeRole,
 } from "./dsh/launch-role";
 import { resolveMochiServiceDefaults } from "./dsh/profile";
-import { IPC, type LanAttentionKind } from "./dsh/protocol";
+import { IPC, type LanAttentionKind, type RailAction, type RailSnapshot, type RailSurface } from "./dsh/protocol";
+import { createMochiRail, type MochiRailHandle } from "./dsh/rail";
+import { classroomRailSnapshot, newAttentionPayloads, teacherRailSnapshot } from "./dsh/rail-model";
+import { createRailPositionStore } from "./dsh/rail-store";
 import { destroyMochiTray, initializeMochiTray, type MochiTrayHandle } from "./dsh/tray";
 import { DshWebHost } from "./dsh/web-host";
 
@@ -83,6 +86,18 @@ let runtimeRole: MochiRuntimeRole | null = null;
 let roleSwitchedTo: MochiRuntimeRole | null = null;
 let lanAttentionInstalled = false;
 let lastLanAttentionAt = 0;
+// [Mochi 2026-09-18] 常驻条：教师端一条待办横条、教室端一块名单常驻屏。
+// 两块屏都由本进程持有，页面只把原始 LAN 快照推上来，派生在本进程做一次。
+let mochiRail: MochiRailHandle | null = null;
+let railBridgeInstalled = false;
+let railVisible = true;
+/**
+ * 上一份派生结果。弹窗只对「这一份里新出现的行」触发，所以必须记住上一份；
+ * 它同时提供了「首次拿到快照不弹窗」的依据——否则每次启动都会把历史待办全弹一遍。
+ */
+let railLastSnapshot: RailSnapshot | null = null;
+/** 上一份派生结果的内容指纹；轮询每 3 秒推一次，内容没变就不再重绘窗口。 */
+let railLastSignature = "";
 
 /**
  * [Mochi 2026-09-11] WO-7 每个角色一个 Electron userData 目录。教师端沿用
@@ -238,6 +253,169 @@ function installLanAttentionBridge(): void {
     showLanAttention(kind);
     return true;
   });
+}
+
+/* ───────────────────────── 常驻条（悬浮窗） ───────────────────────── */
+
+/**
+ * [Mochi 2026-09-18] 角色决定这一端有哪块屏：
+ *   教师端 → teacher-rail（学生预约待办横条）
+ *   教室端 → classroom-board（老师喊谁做什么 + 过关名单）
+ * 一块进程只服务一块屏，所以这里是一个纯映射，不是开关。
+ */
+function railSurfaceForRole(role: MochiRuntimeRole): RailSurface {
+  return role === "classroom" ? "classroom-board" : "teacher-rail";
+}
+
+/**
+ * 常驻条窗口是唯一允许发 railAction 的来源。判据是「不是主窗口 + 页面是 data: URL」，
+ * 而不是「窗口 id 在白名单里」——后者会在窗口重建后失效。
+ */
+function isRailWindowSender(event: IpcMainEvent): boolean {
+  const sender = event.sender;
+  if (event.senderFrame !== sender.mainFrame) return false;
+  if (mainWindow !== null && !mainWindow.isDestroyed() && sender === mainWindow.webContents) return false;
+  const window = BrowserWindow.fromWebContents(sender);
+  if (window === null || window === mainWindow) return false;
+  return sender.getURL().startsWith("data:text/html");
+}
+
+/**
+ * 内容指纹：只覆盖会显示出来的部分，**不含 updatedAt**。
+ * 含时间戳的话每次轮询都算「变了」，窗口每 3 秒重绘一次——那是无意义的重绘。
+ * 代价是「更新于」显示的是最后一次数据变更时间，而不是最后一次拉取时间；
+ * 对老师来说前者更有用（后者永远是「刚刚」，等于没有信息）。
+ */
+function railSignature(snapshot: RailSnapshot): string {
+  return snapshot.rows
+    .map((row) => [row.id, row.seq, row.name, row.meta, row.note, row.badge, row.tone].join("\u0000"))
+    .join("\u0001");
+}
+
+/**
+ * 已认证 Harness 页面推来的原始 LAN 快照 → 常驻条。
+ *
+ * 派生放在主进程而不是页面里：两块屏共用同一份判断——「什么算新待办」「什么值得
+ * 弹窗」只有一处实现。页面因此不需要懂业务，只负责把已认证的数据递过来；而页面
+ * 与主进程各算一遍，迟早会不一致，那种不一致只会在演示时被看见。
+ *
+ * 原始快照是不可信输入：所有裁剪与类型判断都在 dsh/rail-model.ts 里，
+ * 这里只负责选面、去抖、算差集。
+ */
+function applyLanStateToRail(lanState: unknown): void {
+  const rail = mochiRail;
+  if (rail === null || runtimeRole === null) return;
+  const surface = railSurfaceForRole(runtimeRole);
+  const now = new Date().toISOString();
+  const next = surface === "classroom-board"
+    ? classroomRailSnapshot(lanState, now)
+    : teacherRailSnapshot(lanState, now);
+
+  const signature = railSignature(next);
+  if (signature === railLastSignature) return;
+
+  // 差集必须在替换上一份之前算：它要的是「上一份」与「这一份」的差。
+  const attention = newAttentionPayloads(surface, railLastSnapshot, next);
+  railLastSnapshot = next;
+  railLastSignature = signature;
+
+  rail.apply(next);
+  for (const payload of attention) rail.attention(payload);
+}
+
+function installRailBridge(): void {
+  if (railBridgeInstalled) return;
+  railBridgeInstalled = true;
+
+  // Harness 页面 → 主进程。页面只被允许推「原始 LAN 快照」，不认识常驻条的形状。
+  ipcMain.on(IPC.railLanState, (event, lanState: unknown) => {
+    if (!isCurrentHarnessMainFrame(event)) return;
+    applyLanStateToRail(lanState);
+  });
+  // 常驻条窗口 → 主进程。
+  ipcMain.on(IPC.railAction, (event, action: unknown) => {
+    if (!isRailWindowSender(event)) return;
+    mochiRail?.dispatch(action);
+  });
+}
+
+function handleRailAction(action: RailAction): void {
+  if (action.type === "open") {
+    // 常驻条只负责「把人叫回来」。具体定位到哪一条由 Harness 页面自己决定：
+    // 主进程不认识业务 id，也不该认识。
+    focusOrRestoreMainWindow();
+    return;
+  }
+  if (action.type === "hide") railVisible = false;
+}
+
+/** 常驻条被意外销毁时的有限次重建。无限重建会把一次崩溃放大成循环崩溃。 */
+const RAIL_MAX_REBUILDS = 3;
+let railRebuilds = 0;
+
+/**
+ * 独立的读写函数，而不是在 initializeDesktopRail 里直接 `mochiRail.setVisible`：
+ * 那个函数开头有 `mochiRail !== null` 的提前返回，TS 会把这个收窄带进同一作用域的
+ * 闭包里，导致闭包内的 `mochiRail` 被当成 never。
+ */
+function setDesktopRailVisible(visible: boolean): void {
+  mochiRail?.setVisible(visible);
+}
+
+function rebuildDesktopRail(): void {
+  if (appIsQuitting || railRebuilds >= RAIL_MAX_REBUILDS) {
+    if (!appIsQuitting) console.error("[mochi] 待办条多次异常关闭，已停止自动重建");
+    return;
+  }
+  railRebuilds += 1;
+  initializeDesktopRail();
+  setDesktopRailVisible(railVisible);
+}
+
+function initializeDesktopRail(): void {
+  if (mochiRail !== null || appIsQuitting || runtimeRole === null) return;
+  mochiRail = createMochiRail({
+    surface: railSurfaceForRole(runtimeRole),
+    preload: join(__dirname, "rail-preload.js"),
+    store: createRailPositionStore(join(app.getPath("userData"), "mochi-rail-positions.json")),
+    onAction: handleRailAction,
+    onClosed: () => {
+      mochiRail = null;
+      rebuildDesktopRail();
+    },
+  });
+  // 窗口是在「数据可能早就到了」之后才建的（托盘重新显示、崩溃重建），
+  // 而 applyLanStateToRail 会因为内容没变而提前返回。这里补推一次，
+  // 否则重建出来的窗口会一直空着，直到数据下一次变化。
+  if (railLastSnapshot !== null) mochiRail.apply(railLastSnapshot);
+  setDesktopRailVisible(railVisible);
+}
+
+function disposeDesktopRail(): void {
+  const rail = mochiRail;
+  mochiRail = null;
+  if (rail !== null) rail.dispose();
+}
+
+function toggleDesktopRail(): void {
+  railVisible = !railVisible;
+  if (mochiRail === null) {
+    railRebuilds = 0;
+    if (railVisible) initializeDesktopRail();
+    return;
+  }
+  setDesktopRailVisible(railVisible);
+}
+
+/**
+ * 常驻条窗口存在时 `window-all-closed` 不会再触发，所以「关掉主窗口要不要退出」
+ * 必须在这里补回原来的语义：非 macOS、且没有可用托盘时，关掉主窗口仍然是退出
+ * 应用，而不是留下一条孤零零的悬浮条和一个半死的进程。
+ */
+function quitIfMainWindowWasLastSurface(): void {
+  if (appIsQuitting || process.platform === "darwin" || hasLiveMochiTray()) return;
+  disposeDesktopRail();
+  app.quit();
 }
 
 function isHarnessUrl(url: string): boolean {
@@ -399,6 +577,7 @@ function createWindow(): BrowserWindow {
   window.on("closed", () => {
     if (mainWindow === window) mainWindow = null;
     activeDiagnosticPageUrl = null;
+    quitIfMainWindowWasLastSurface();
   });
   return window;
 }
@@ -712,6 +891,7 @@ function initializeDesktopTray(): void {
         icon,
         currentRoleLabel: runtimeRole === null ? "未设置" : launchRoleLabel(runtimeRole),
         open: focusOrRestoreMainWindow,
+        toggleRail: toggleDesktopRail,
         restart: restartHostFromTray,
         switchRole: switchLaunchRole,
         quit: quitFromTray,
@@ -794,8 +974,10 @@ if (!hasSingleInstanceLock) {
       // 角色专属 userData 目录，保证下次启动的单实例锁落在同一处。
       applyRoleUserDataPath(selectedRole);
       installLanAttentionBridge();
+      installRailBridge();
       initializeDoctorWindow();
       openWindowForCurrentState();
+      initializeDesktopRail();
       initializeDesktopTray();
     } catch {
       await reportLaunchRoleFailure();
@@ -813,6 +995,7 @@ if (!hasSingleInstanceLock) {
 
   app.on("before-quit", (event) => {
     appIsQuitting = true;
+    disposeDesktopRail();
     destroyDesktopTray();
     doctorWindow?.cancel();
     if (quitStopPromise !== null) {

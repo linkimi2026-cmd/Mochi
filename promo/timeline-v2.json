@@ -1,0 +1,100 @@
+[
+  {
+    "source": "intro",
+    "start": 0,
+    "duration": 3,
+    "title": "明天，要把这节课讲清楚。",
+    "caption": "Mochi · 校园工作的 AI 伙伴"
+  },
+  {
+    "source": "home",
+    "start": 3,
+    "duration": 4,
+    "title": "从一个工作区开始",
+    "caption": "任务和文件，放在一起"
+  },
+  {
+    "source": "setup",
+    "start": 7,
+    "duration": 5,
+    "title": "进入工作模式",
+    "caption": "教学生成演示 · 选择完全权限"
+  },
+  {
+    "source": "model",
+    "start": 12,
+    "duration": 10,
+    "title": "先让概念，变得可以动手",
+    "caption": "点击切换三种三角形，边看边讲"
+  },
+  {
+    "source": "typing",
+    "start": 22,
+    "duration": 7,
+    "title": "再让讲解，接上练习",
+    "caption": "继续输入需求，点击发送"
+  },
+  {
+    "source": "generation",
+    "start": 29,
+    "duration": 10,
+    "title": "Mochi 开始生成",
+    "caption": "真实过程加速节选 · 本次生成用时 1 分 08 秒"
+  },
+  {
+    "source": "quiz",
+    "start": 39,
+    "duration": 10,
+    "title": "每一次判断，都有反馈",
+    "caption": "答对有解释，答错也知道为什么"
+  },
+  {
+    "source": "campus",
+    "start": 49,
+    "duration": 6,
+    "title": "课堂之外，班级工作也在这里",
+    "caption": "今日待办与学生档案 · 演示数据"
+  },
+  {
+    "source": "ask",
+    "start": 55,
+    "duration": 15,
+    "title": "“她在不在校，在哪里？”",
+    "caption": "直接问 Mochi · 查询登记状态与到达记录"
+  },
+  {
+    "source": "approve",
+    "start": 70,
+    "duration": 18,
+    "title": "“批准这条放行申请。”",
+    "caption": "核对学生与目的地 → 点击确认 → 真实放行结果"
+  },
+  {
+    "source": "a2asend",
+    "start": 88,
+    "duration": 14,
+    "title": "需要协作，就让 Mochi 去问",
+    "caption": "Agent to Agent · 教师 Mochi → 管理员 Mochi"
+  },
+  {
+    "source": "a2areply",
+    "start": 102,
+    "duration": 16,
+    "title": "对方的 Mochi 接住请求",
+    "caption": "接收方确认后回话 · 已送达与已答应分开记录"
+  },
+  {
+    "source": "a2areturn",
+    "start": 118,
+    "duration": 15,
+    "title": "一句回音，把事情接上",
+    "caption": "管理员已答应，教师 Mochi 收到完成回执"
+  },
+  {
+    "source": "end",
+    "start": 133,
+    "duration": 7,
+    "title": "Mochi",
+    "caption": "连接教学、人和任务。"
+  }
+]

@@ -1,0 +1,22 @@
+{
+  "scope": "system-fragment policy probe; no tools executed",
+  "variant": "candidate",
+  "testId": "unverified-visual",
+  "model": "mimo-v2.5-pro",
+  "reasoningEffort": "high",
+  "systemSha256": "af3228e111ea1fcbc3a65a33917c382db541d4822a143f5d6bcbcab7a4d933e1",
+  "input": "这是合成测试，无工具可用。PPT生成器只返回文件路径presentation.pptx，尚未渲染，也没有图片。请用一句话交付，不能遗漏检查状态。",
+  "output": "**交付**：`presentation.pptx` 已生成（仅路径返回，未渲染、无图片、视觉未检），需渲染后才能验证内容与版式。",
+  "usage": {
+    "inputTokens": 448,
+    "outputTokens": 188,
+    "totalTokens": 2684,
+    "cacheReadTokens": 2048,
+    "reasoningTokens": 148
+  },
+  "finish": {
+    "kind": "stop"
+  },
+  "error": null,
+  "latencyMs": 5901
+}

@@ -1,8 +1,10 @@
+> **status**: active　**last_verified**: 2026-09-14　**verified_by**: Codex（本轮核对交接、目录与打包入口；未重建安装器）
+
+> **2026-09-13 核对**：最新状态见 [项目现状](PROJECT-STATUS.md)。本文负责构建路径，不负责声明某个安装包已经现场验收。
+
 # Mochi 打包标准（唯一出包路径）
 
 **状态：生效中 ｜ 适用范围：所有会影响 Windows 安装包内容的改动**
-
-> `status`: 生效中 ｜ `last_verified`: 2026-09-12（新增 §5 私有出包分支机制）｜ `verified_by`: WorkBuddy 工具线
 
 本文只回答一件事：**一个源码改动怎么变成用户装得到的修复。**
 
@@ -254,22 +256,22 @@ node scripts/check-snapshot-manifest.mjs
 脚本会打印每个不一致文件的路径、期望字节 vs 实际字节、期望/实际哈希前 16 位，
 以及期望总字节与实际总字节的差值。加 `--fail` 会以退出码 1 表示存在漂移。
 
-`.github/workflows/mochi-ci.yml` 里的快照步骤**当前是「报告但不阻断」**
-（`continue-on-error: true`）。清单再维持一段时间 0 漂移之后，删掉
-`continue-on-error` 并给脚本加 `--fail`，就升级成硬门禁。
+`.github/workflows/mochi-ci.yml` 的快照步骤已经使用 `--fail` 作为硬门禁。
+任何缺失、字节数或哈希漂移都会让 CI 失败；修改快照内文件后必须先执行
+`node scripts/reconcile-snapshot-manifest.mjs --write`，再用上面的命令复核。
 
 ---
 
-## 3. 本机（Mac）不能出包
+## 3. macOS 不能交叉生成 Windows 安装包
 
 Windows 安装包**只能在原生 Windows runner 上构建**。这不只是约定，是代码里写死的：
 `apps/desktop/scripts/package-desktop.cjs` 的 `assertNativeTarget`（第 62 行附近）
 会比较 `process.platform` 与目标平台，不一致直接抛错：
 
 - 在 macOS 上跑 `npm run dist:win` → 立即被拒，不会产出 Windows 安装器；
-- 同理，Windows 安装器必须在 `windows-2022` 上、用 x64 架构构建。
+- 当前正式 CI 使用 `windows-2022` x64；源码的硬检查是原生平台和同 CPU 架构，不是特定 runner 名称。
 
-所以本机能做的只有两件事：
+就 Windows 出包而言，macOS 本机能做以下两类准备；Mac 自身安装包可在匹配的原生 CPU 架构上通过 `dist:mac` / `dist:mac:x64` 构建：
 
 1. **取证**：读源码、读包内容、比对哈希；
 2. **校验**：跑测试、跑快照清单检查、跑打包前的资源暂存检查。
