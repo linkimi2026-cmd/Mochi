@@ -1,0 +1,13 @@
+{
+  "provider": "deepseek-official",
+  "model": "deepseek-flash",
+  "reasoningEffort": "high",
+  "steps": 8,
+  "ending": {
+    "turn": 1,
+    "reason": {
+      "kind": "completed"
+    }
+  },
+  "status": "unreviewed"
+}

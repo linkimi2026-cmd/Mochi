@@ -14,6 +14,11 @@ export interface MochiTrayOptions extends MochiTrayCallbacks {
   icon: NativeImage;
   /** 当前角色中文名，只用于菜单文案，例如「当前角色：教师办公电脑」。 */
   currentRoleLabel?: string;
+  /**
+   * [Mochi 2026-09-18] 显示/隐藏常驻条。常驻条的关闭被拦截成隐藏，所以必须有一个
+   * 托盘入口能把它叫回来；不提供时菜单里就不出现这一项。
+   */
+  toggleRail?: () => void | Promise<void>;
 }
 
 export interface MochiTrayHandle {
@@ -98,6 +103,7 @@ export function initializeMochiTray(options: MochiTrayOptions): MochiTrayHandle 
   if (options.icon.isEmpty()) throw new Error("Mochi tray requires a non-empty application icon");
 
   const currentRoleLabel = options.currentRoleLabel ?? "未设置";
+  const toggleRail = options.toggleRail;
   const tray = new Tray(options.icon);
   try {
     const menu = Menu.buildFromTemplate([
@@ -106,6 +112,15 @@ export function initializeMochiTray(options: MochiTrayOptions): MochiTrayHandle 
         label: "打开",
         click: () => invoke(options.open),
       },
+      ...(toggleRail === undefined
+        ? []
+        : [
+          {
+            id: "mochi-tray-rail",
+            label: "显示 / 隐藏待办条",
+            click: () => invoke(toggleRail),
+          },
+        ]),
       { type: "separator" },
       ...roleMenuItems(currentRoleLabel, options.switchRole),
       { type: "separator" },

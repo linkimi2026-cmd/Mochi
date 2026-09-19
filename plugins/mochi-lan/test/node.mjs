@@ -143,6 +143,14 @@ async function execute(method, args = {}) {
     case 'block': return lan.blockPeer({ ...args, authorization: authorization('block-peer') });
     case 'unpair': return lan.unpairPeer({ ...args, authorization: authorization('unpair-peer') });
     case 'send': return lan.sendMessage({ ...args, authorization: authorization('send-message', 'dispatch-approved') });
+    // [Mochi 2026-09-18] 反向通道：教室端的学生预约。与 send 的差别不只是方向——
+    // 学生预约是学生本人在设备上的直接动作，所以令牌来源是 connection-direct，
+    // 而 send 走的是模型审批链 dispatch-approved。
+    case 'request': return lan.sendRequest({ ...args, authorization: authorization('send-request', 'connection-direct') });
+    // [Mochi 2026-09-18] 教师下发处置名册。令牌来源刻意是 dispatch-approved 而不是
+    // connection-direct：名册是模型调 skill 生成后发起的对外动作，必须过审批闸，
+    // 所以生产环境里根本没有一条 HTTP 路由能铸出这个令牌。
+    case 'directive': return lan.sendDirective({ ...args, authorization: authorization('send-directive', 'dispatch-approved') });
     case 'retry': return lan.retryMessage({ ...args, authorization: authorization('retry-message', 'dispatch-approved') });
     case 'seen': return lan.markSeen({ ...args, authorization: authorization('mark-seen') });
     case 'wrong-class': return rawMessage({ ...args, classOverride: args.classId });

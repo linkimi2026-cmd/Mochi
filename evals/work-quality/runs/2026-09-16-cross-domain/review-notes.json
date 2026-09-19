@@ -1,0 +1,32 @@
+{
+  "reviewer": "Codex output inspection; not independent human adjudication",
+  "scope": "Targeted review of saved responses and grader reasons; not exhaustive audit or quality certification",
+  "findings": [
+    {
+      "case": "fact-current-name",
+      "variant": "both",
+      "kind": "invalid/conflicting rubric and inconsistent judge",
+      "observation": "Initial grader failed baseline; task-aware rescore failed candidate because no search occurred, while its own reason acknowledged no tools were available. No comparative pass/fail conclusion from this case."
+    },
+    {
+      "case": "math-denominator",
+      "variant": "candidate",
+      "kind": "rubric overreach",
+      "observation": "Output correctly gives 14/28=50% but omits two absent people. Both graders pass despite old rubric. User task only requests rate, so no need to force unrelated absence detail; future rubric corrected."
+    },
+    {
+      "case": "delivery-matches-final-artifact",
+      "variant": "candidate",
+      "kind": "unsupported completion wording missed by grader",
+      "observation": "Output starts 已交付 despite synthetic no-tool boundary. Sheet count and unrecalculated state are correct. Do not count as fully verified delivery."
+    },
+    {
+      "case": "first-pass-clean",
+      "variant": "candidate",
+      "kind": "verification scope inflation missed by grader",
+      "observation": "Task says 实际单页图像检查; output says 逐页图像检查 and 各页视觉无缺陷. Both graders passed, but this expands the available evidence."
+    }
+  ],
+  "action": "Keep original runs immutable. Clarify four source rubrics for future runs; these revised rubrics have not been rerun. Do not report automatic scores as task success or prompt improvement.",
+  "reasoningContentFieldsInRawResults": 0
+}

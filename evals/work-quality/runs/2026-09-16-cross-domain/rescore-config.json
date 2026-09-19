@@ -1,0 +1,31 @@
+{
+  "description": "Replay saved outputs with original task for DeepSeek grading; no new generation",
+  "sharing": false,
+  "prompts": [
+    "{{output}}"
+  ],
+  "providers": [
+    "echo"
+  ],
+  "defaultTest": {
+    "options": {
+      "provider": {
+        "id": "deepseek:deepseek-v4-pro",
+        "config": {
+          "showThinking": false,
+          "max_tokens": 2000,
+          "passthrough": {
+            "thinking": {
+              "type": "disabled"
+            }
+          }
+        }
+      }
+    }
+  },
+  "tests": "file://rescore-cases.json",
+  "evaluateOptions": {
+    "maxConcurrency": 3
+  },
+  "outputPath": "rescore-results.json"
+}

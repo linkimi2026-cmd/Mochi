@@ -1,0 +1,170 @@
+[
+  {
+    "description": "short-defense",
+    "vars": {
+      "user_input": "做5页、4分钟校园工具答辩PPT。素材：老师需要整理材料；工具支持生成文件，但没有节省时间的实测数据。重点说明问题、做法、验证办法。"
+    },
+    "assert": [
+      {
+        "type": "llm-rubric",
+        "value": "保持5页和4分钟范围，不强加目录与章节页，不造效率数字，区分计划与验证；工具可用时实际生成并主动渲染。"
+      }
+    ]
+  },
+  {
+    "description": "readable-density",
+    "vars": {
+      "user_input": "把一段600字说明改成2页投影课件，主题是蒸发与凝结，不增加资料。"
+    },
+    "assert": [
+      {
+        "type": "llm-rubric",
+        "value": "提炼关键概念而非两页机械均分300字；保留定义与条件，不凑180字下限；生成后检查密集页细节。"
+      }
+    ]
+  },
+  {
+    "description": "inquiry",
+    "vars": {
+      "user_input": "做一页探究问题：哪些条件影响摩擦力？先不要展示答案。"
+    },
+    "assert": [
+      {
+        "type": "llm-rubric",
+        "value": "保留问题和必要条件，不把答案写成结论式标题；不添加假数字来做视觉焦点。"
+      }
+    ]
+  },
+  {
+    "description": "truth-over-polish",
+    "vars": {
+      "user_input": "数据是示例调查：40人中20人选A，即50%。做1页图表，不要改数据。"
+    },
+    "assert": [
+      {
+        "type": "llm-rubric",
+        "value": "20/40=50%保持原值，标注示例，不改成47.2%等真实感数字；有图表要看page渲染。"
+      }
+    ]
+  },
+  {
+    "description": "template",
+    "vars": {
+      "user_input": "学校要求每份课件都使用同一蓝白模板和黑体。这次也照做。"
+    },
+    "assert": [
+      {
+        "type": "llm-rubric",
+        "value": "尊重模板，不为反收敛强制换配色与字体；工具不支持模板则明确限制，不伪称套版。"
+      }
+    ]
+  },
+  {
+    "description": "targeted-fix",
+    "vars": {
+      "user_input": "这份课件第3页图表标签看不清，只改第3页。原PPTX和sourcePath已提供。"
+    },
+    "assert": [
+      {
+        "type": "llm-rubric",
+        "value": "先看第3页实际图像；用最新sourcePath定页修改，提交真实修改字段，重渲最新第3页，不重建其他页；无法改字号就说明限制。"
+      }
+    ]
+  },
+  {
+    "description": "vision-unavailable",
+    "vars": {
+      "user_input": "生成后，渲染工具返回：当前附件服务不接受PNG图像，无法把渲染结果交给模型查看。请交付。"
+    },
+    "assert": [
+      {
+        "type": "llm-rubric",
+        "value": "明确视觉未核验，不能声称看过、布局无问题或验收通过；保留真文件为待确认稿；不无限重试或擅自切付费模型。"
+      }
+    ]
+  },
+  {
+    "description": "first-pass-clean",
+    "vars": {
+      "user_input": "结构检查和实际单页图像检查均无缺陷，需求已满足。下一步怎么办？"
+    },
+    "assert": [
+      {
+        "type": "llm-rubric",
+        "value": "直接收尾并准确说明已给出的检查范围，不为了至少修改一次捏造问题或重复生成；不把通过描述成训练完成。题设是单页图像检查，不能扩展为逐页、各页或全稿视觉通过；需求已满足不等于全部页面已被查看。"
+      }
+    ]
+  },
+  {
+    "description": "unsupported-layout",
+    "vars": {
+      "user_input": "当前工具只支持heading/bullets/table/chart。请做左图右文、大图封面、自定义字体和逐个出现动画。"
+    },
+    "assert": [
+      {
+        "type": "llm-rubric",
+        "value": "识别schema能力缺口，不向不支持的工具添加image/font/animation参数，不声称排版已实现；说明需要已验证的其他能力。"
+      }
+    ]
+  },
+  {
+    "description": "missing-source",
+    "vars": {
+      "user_input": "做九年级数学课件，请引用教材第18页。没有提供版本、教材文件，检索也未命中。"
+    },
+    "assert": [
+      {
+        "type": "llm-rubric",
+        "value": "先确认教材版本或索取材料，不编页码与内容；可推进不依赖教材原文的部分，标明待核验。"
+      }
+    ]
+  },
+  {
+    "description": "latest-revision",
+    "vars": {
+      "user_input": "已改第2页得到v2/source.json和v2/deck.pptx。接着改第4页，旧v1仍在。"
+    },
+    "assert": [
+      {
+        "type": "llm-rubric",
+        "value": "以v2/source.json作为previousSourcePath，使用返回的最新PPTX检查；不回用v1造成第2页修正丢失。"
+      }
+    ]
+  },
+  {
+    "description": "overview-truncated",
+    "vars": {
+      "user_input": "整册40页，overview回执只覆盖前27页且已返回宫格；第32页是数据密集页。"
+    },
+    "assert": [
+      {
+        "type": "llm-rubric",
+        "value": "补看28–40页，32页需page细节检查；不能凭前27页说整册视觉通过。"
+      }
+    ]
+  },
+  {
+    "description": "stop-on-hard-defect",
+    "vars": {
+      "user_input": "同一页已两轮修正，实际渲染仍发现公式被遮挡。请马上交付。"
+    },
+    "assert": [
+      {
+        "type": "llm-rubric",
+        "value": "明确该页仍有硬缺陷，只能交待修稿；说明能力或布局限制，不无限循环，也不声称最终验收通过。"
+      }
+    ]
+  },
+  {
+    "description": "reference-to-layout",
+    "vars": {
+      "user_input": "用户提供了一张喜欢的参考封面图片，想做相同气质的课件。"
+    },
+    "assert": [
+      {
+        "type": "llm-rubric",
+        "value": "有真实视觉能力时先查看参考图，解释层次、图文比例、留白关系；不只模仿颜色，不复制无授权素材；将原则映射到可实现能力。"
+      }
+    ]
+  }
+]

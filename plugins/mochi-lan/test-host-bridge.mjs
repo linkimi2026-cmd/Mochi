@@ -20,6 +20,9 @@ const lan = {
   async unpairPeer(input) { calls.push(['unpairPeer', input]); return { status: 'unpaired' }; },
   async blockPeer(input) { calls.push(['blockPeer', input]); return { status: 'blocked' }; },
   async markSeen(input) { calls.push(['markSeen', input]); return { status: 'ACKNOWLEDGED' }; },
+  // 两个外发方向分开记：教师通知（走 dispatch 审批）与学生预约（本机直接动作）。
+  async sendMessage(input) { calls.push(['sendMessage', input]); return { messageId: 'notify-1', delivery: 'ACKNOWLEDGED' }; },
+  async sendRequest(input) { calls.push(['sendRequest', input]); return { messageId: 'request-1', delivery: 'ACKNOWLEDGED' }; },
 };
 
 const dispose = installLanHostBridge({
@@ -50,7 +53,15 @@ for (const route of registrations.values()) {
   assert.equal(route.requestBody, 'buffered');
   assert.equal(Array.isArray(route.methods), true);
 }
-assert.equal(Object.values(LAN_HOST_ROUTES).some((route) => /send/u.test(route)), false, '不应存在绕过 dispatch 审批的 HTTP 发送路由');
+// [Mochi 2026-09-18] 原断言查的是「路径里有没有 send」。那个判据有两个毛病：
+// 改个名字就能绕过，而且它会误伤反方向的学生预约——而学生预约本就不该走 dispatch
+// 审批（学生本人就是发起人）。真正要守的不变量是「浏览器不能绕过审批发教师通知」，
+// 所以这里改成查行为：下面会在跑完所有路由后断言 lan.sendMessage 一次都没被调用。
+assert.deepEqual(
+  Object.values(LAN_HOST_ROUTES).filter((route) => route.endsWith('/request/send')),
+  [LAN_HOST_ROUTES.requestSend],
+  '主动外发只允许学生预约这一条路由',
+);
 
 const state = await request(LAN_HOST_ROUTES.state, 'GET');
 assert.equal(state.status, 200);
@@ -94,6 +105,32 @@ for (const [name, input] of calls.filter(([name]) => ['requestPairing', 'acceptP
   assert.equal(input.authorization.source, 'connection-direct', `${name} must receive a DSH-side authorization`);
 }
 
+console.log('④ 学生预约是唯一的外发路由，且不接受浏览器自报角色');
+const sentRequest = await request(LAN_HOST_ROUTES.requestSend, 'POST', {
+  targetEndpointId: 'teacher-1',
+  body: '第三题不太懂，想请老师讲一下。',
+  request: { student: '李明', seat: 3, kind: 'appointment', topic: '二次函数', slot: '第八节晚自习' },
+});
+assert.equal(sentRequest.status, 200);
+const sendRequestCall = calls.find(([name]) => name === 'sendRequest');
+assert.equal(sendRequestCall[1].authorization.source, 'connection-direct');
+assert.equal(sendRequestCall[1].request.student, '李明');
+assert.equal(sendRequestCall[1].request.seat, 3);
+// 本机角色只由独立启动的宿主配置决定：浏览器多塞一个 role 就该被窄 schema 挡下。
+const beforeExtra = calls.length;
+const extraField = await request(LAN_HOST_ROUTES.requestSend, 'POST', {
+  targetEndpointId: 'teacher-1', body: 'x', request: { student: '李明' }, role: 'teacher',
+});
+assert.equal(extraField.status, 400);
+assert.deepEqual(await extraField.json(), { code: 'INVALID_REQUEST' });
+assert.equal(calls.length, beforeExtra);
+const beforeMissing = calls.length;
+const missingRequest = await request(LAN_HOST_ROUTES.requestSend, 'POST', { targetEndpointId: 'teacher-1', body: 'x' });
+assert.equal(missingRequest.status, 400);
+assert.equal(calls.length, beforeMissing);
+// 关键不变量：任何 HTTP 路由都不得直接触发教师通知。
+assert.equal(calls.some(([name]) => name === 'sendMessage'), false, 'HTTP 路由不得绕过 dispatch 审批发教师通知');
+
 dispose();
 assert.equal(registrations.size, 0);
-console.log('host bridge tests passed: fixed authenticated routes, strict schemas, no send bypass');
+console.log('host bridge tests passed: fixed authenticated routes, strict schemas, student requests are the only outbound route, no teacher-notice bypass');

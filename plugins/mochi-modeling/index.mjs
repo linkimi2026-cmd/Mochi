@@ -360,7 +360,7 @@ export function apply(ctx) {
     name: toolName, description, parameters, output, execute,
   }));
 
-  register('mochi_model_create', '生成交互教学数学模型页面（自包含 HTML，可拖动/可核对/离线零依赖）。本期支持 type=conic-tangent：椭圆切线交互模型（可拖切点、切线/焦点/辅助线、参数滑块、结论分步揭示、课堂模式）。', {
+  register('mochi_model_create', '生成前先按mochi技能的建模流程检索GitHub复用方案；本工具不代为搜索。生成交互教学数学模型页面（自包含 HTML，可拖动/可核对/离线零依赖）。本期支持 type=conic-tangent：椭圆切线交互模型（可拖切点、切线/焦点/辅助线、参数滑块、结论分步揭示、课堂模式）。', {
     type: { type: 'string', required: true, description: '模型类型，本期仅 conic-tangent。' },
     a: { type: 'number', required: true, description: '椭圆半长轴（>0 的有限数）。' },
     b: { type: 'number', required: true, description: '椭圆半短轴（>0 的有限数）。' },

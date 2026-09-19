@@ -11,9 +11,16 @@
  *     mochi:prompt:cancel    { promptId }                  取消（SDK 通道暂无 mid-turn cancel，占位）
  *     mochi:approval:respond { requestId, decision }       用户对确认卡的答复
  *     mochi:lan:attention    LanAttentionKind               已认证 LAN 页面请求本机提醒
+ *     mochi:rail:snapshot    RailSnapshot                    常驻条整份快照（教师/教室各自一块屏）
+ *     mochi:rail:attention   RailAttentionPayload            请求弹一次喊人弹窗
  *   main → renderer
  *     mochi:event:stream     DshStreamEvent                 dsh 事件流（状态/思考/工具/文本/最终回答）
  *     mochi:approval:request ApprovalRequest               需要用户确认的工具（Batch 2 后半段由 answerer IPC 化触发）
+ *   main → 常驻条窗口
+ *     mochi:rail:apply       RailSnapshot                    下发当前快照
+ *     mochi:rail:popup       RailAttentionPayload            下发弹窗内容
+ *   常驻条窗口 → main
+ *     mochi:rail:action      RailAction                      用户动作（打开/隐藏/知道了/同步）
  */
 
 /** ExpressiveOrb 的情绪枚举（与 08 §4.2 一致，给事件流做 mood 映射参考）。 */
@@ -117,6 +124,86 @@ export interface ApprovalResponse {
 /** The renderer can request attention only for these fixed, content-free LAN events. */
 export type LanAttentionKind = 'incoming-message' | 'pairing-request';
 
+/* ───────────────────────── 常驻条（悬浮窗）契约 ───────────────────────── */
+
+/**
+ * [Mochi 2026-09-18] 两块常驻显示各自一个 surface：
+ *   teacher-rail     教师私有小横条——学生预约待办（学生 → 老师）
+ *   classroom-board  教室端常驻屏——老师喊谁做什么 + 谁过关/谁不过关（老师 → 学生）
+ *
+ * 数据分工：已认证的 Harness 页面只把**原始 LAN 快照**推给主进程，派生（哪些行、
+ * 哪些要弹窗）全部在主进程的 dsh/rail-model.ts 里做一次。这样做的原因是两端
+ * 都要看到同一份判断——「什么算新待办」「什么值得弹窗」如果页面算一遍、主进程
+ * 再算一遍，迟早会不一致，而那种不一致只会在演示时被看见。
+ */
+export type RailSurface = 'teacher-rail' | 'classroom-board';
+
+/** 一行的色调。仅用于视觉，不含任何业务判断。 */
+export type RailTone = 'neutral' | 'attention' | 'ok' | 'bad';
+
+/**
+ * 常驻条里的一行。两种 surface 共用同一形状，由页面按 surface 决定渲染细节：
+ * 教师端更关心 note（预约了什么）；教室端更关心 badge（过关/不过关）。
+ * 所有字段都是短字符串，长度由主进程按下面的上限裁剪。
+ */
+export interface RailRow {
+  /** 稳定去重键（例如 messageId）。同一 id 重复推送不会重复计数。 */
+  id: string;
+  /** 排序号，1 起。由推送方按自己的业务顺序排好。 */
+  seq: number;
+  /** 主标题：学生姓名 / 名单姓名。 */
+  name: string;
+  /** 副信息：班级 · 类型 之类的短标签。 */
+  meta: string;
+  /** 详情：预约内容 / 不过关原因。 */
+  note: string;
+  /** 状态徽标文案：待处理 / 已看到 / 不过关 …。 */
+  badge: string;
+  tone: RailTone;
+  /** 到达或变更时间（ISO 字符串，仅用于显示与排序稳定性）。 */
+  at: string;
+}
+
+/** 一次完整推送。整份替换，主进程不做增量合并，避免出现两个事实源。 */
+export interface RailSnapshot {
+  surface: RailSurface;
+  /** 条头大标题，例如「学生预约」。 */
+  heading: string;
+  /** 条头副标题，例如「3 条待处理」。 */
+  detail: string;
+  /** 本次推送时间（ISO）。 */
+  updatedAt: string;
+  rows: RailRow[];
+}
+
+/**
+ * 喊人弹窗的一次性内容。刻意与 RailRow 分开：弹窗是瞬态强提醒，需要的是
+ * 「谁 + 干什么」两行大字，不是列表。
+ */
+export interface RailAttentionPayload {
+  /** 去重键；同一 id 在冷却期内只弹一次。 */
+  id: string;
+  kind: 'call' | 'request' | 'pairing';
+  /** 弹窗标题，例如「有人喊你」。 */
+  title: string;
+  /** 弹窗主行，例如「张小明 · 高一（3）班」。 */
+  subject: string;
+  /** 弹窗副行，例如「预约讲题 · 第 3 题」。 */
+  detail: string;
+  at: string;
+}
+
+/** 常驻条窗口给主进程的动作。 */
+export type RailAction =
+  /** 点某一行的「处理」：把主窗口拉起来并聚焦该条。 */
+  | { type: 'open'; id: string }
+  /** 临时隐藏常驻条（托盘菜单可恢复）。 */
+  | { type: 'hide' }
+  /** 弹窗上的「我知道了」。 */
+  | { type: 'acknowledge'; id: string }
+  /** 列出自己当前的期望快照（窗口首帧后主动拉一次）。 */
+  | { type: 'sync' };
+
 /* ───────────────────────── IPC 通道名（命名空间 mochi:*） ───────────────────────── */
 
 export const IPC = {
@@ -134,6 +221,14 @@ export const IPC = {
   approvalRespond: 'mochi:approval:respond',
   /** renderer → main：已认证 LAN 页面请求固定本机提醒。 */
   lanAttention: 'mochi:lan:attention',
+  /** renderer → main：推一份**原始 LAN 快照**（就是 /api/mochi-lan/state 的响应体）。 */
+  railLanState: 'mochi:rail:lan-state',
+  /** main → 常驻条窗口：下发当前快照。 */
+  railApply: 'mochi:rail:apply',
+  /** main → 常驻条窗口：弹窗内容。 */
+  railPopup: 'mochi:rail:popup',
+  /** 常驻条窗口 → main：用户动作。 */
+  railAction: 'mochi:rail:action',
 } as const;
 
 export type IpcChannel = (typeof IPC)[keyof typeof IPC];

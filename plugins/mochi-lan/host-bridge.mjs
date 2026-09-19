@@ -24,6 +24,8 @@ export const LAN_HOST_ROUTES = Object.freeze({
   peerUnpair: `${LAN_HOST_API_BASE}/peer/unpair`,
   peerBlock: `${LAN_HOST_API_BASE}/peer/block`,
   messageSeen: `${LAN_HOST_API_BASE}/message-seen`,
+  // [Mochi 2026-09-18] 反向通道：教室端唯一的外发动作——学生预约。
+  requestSend: `${LAN_HOST_API_BASE}/request/send`,
 });
 
 const MAX_HOST_BODY_BYTES = 16 * 1024;
@@ -187,6 +189,30 @@ export function installLanHostBridge(ctx, lan) {
       const input = await body(request, ['messageId'], ['messageId']);
       if (typeof input.messageId !== 'string') invalid('messageId 必须是文本。');
       return json(await lan.markSeen({ messageId: input.messageId, authorization: connectionAuthorization(lan, 'mark-seen'), signal: request.signal }));
+    })),
+    /**
+     * [Mochi 2026-09-18] 学生预约：教室端唯一的主动外发动作。
+     *
+     * 它和 messageSeen 一样是「已认证的受控路由」而不是模型工具：学生本人在设备
+     * 前面，动作由他自己发起，没有模型介入，所以不需要 dispatch 审批瀑布。
+     * 目标 endpointId 由服务层再用配对表核一遍（不是教师配对直接 PAIRING_REQUIRED），
+     * 浏览器因此无法把预约发到任意地址。
+     *
+     * 刻意不接受 role 之类字段：本机角色只由独立启动的宿主配置决定。
+     */
+    register(LAN_HOST_ROUTES.requestSend, ['POST'], (request) => invoke(async () => {
+      if (request.method !== 'POST') return json({ code: 'NOT_FOUND' }, 404);
+      const input = await body(request, ['targetEndpointId', 'body', 'request', 'messageId'], ['targetEndpointId', 'body', 'request']);
+      if (typeof input.targetEndpointId !== 'string') invalid('targetEndpointId 必须是文本。');
+      if (input.messageId !== undefined && typeof input.messageId !== 'string') invalid('messageId 必须是文本。');
+      return json(await lan.sendRequest({
+        targetEndpointId: input.targetEndpointId,
+        body: input.body,
+        request: input.request,
+        ...(input.messageId === undefined ? {} : { messageId: input.messageId }),
+        authorization: connectionAuthorization(lan, 'send-request'),
+        signal: request.signal,
+      }));
     })),
   ];
   return () => {

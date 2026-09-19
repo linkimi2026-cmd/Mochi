@@ -1,0 +1,138 @@
+{
+  "schema": "mochi-presentation-manifest-v1",
+  "status": "completed",
+  "deckId": "chat-mu2uqybl-casev",
+  "version": 1,
+  "sourceKind": "demonstration",
+  "sourceSlideCount": 5,
+  "renderedPageCount": 5,
+  "slides": [
+    {
+      "id": "slide-1",
+      "version": 1,
+      "layout": "cover",
+      "projection": {
+        "role": "cover",
+        "centered": true,
+        "titleLines": 1,
+        "titleFontSize": 44,
+        "titleTop": 2.45,
+        "titleWidth": 9.2,
+        "titleHeight": 0.79,
+        "bodyLines": 2,
+        "bodyFontSize": 18,
+        "bodyTop": 4.14,
+        "bodyWidth": 8.6,
+        "bodyHeight": 2.76,
+        "accentTitle": false,
+        "accentBody": true
+      },
+      "source": {
+        "label": "水的旅行：自然界的水循环 第 1 页",
+        "reference": "chat:mochi_ppt_create:chat-mu2uqybl-casev:slide-1"
+      },
+      "semanticHash": "361c6eb9640492a1978db73eb8a9c4764c65ba12d5ff53ec3562996b8cccedfc"
+    },
+    {
+      "id": "slide-2",
+      "version": 1,
+      "layout": "title-body",
+      "projection": {
+        "titleLines": 1,
+        "titleFontSize": 34,
+        "titleHeight": 0.65,
+        "bodyLines": 4,
+        "bodyFontSize": 19,
+        "bodyY": 1.4500000000000002,
+        "bodyHeight": 5.45
+      },
+      "source": {
+        "label": "水的旅行：自然界的水循环 第 2 页",
+        "reference": "chat:mochi_ppt_create:chat-mu2uqybl-casev:slide-2"
+      },
+      "semanticHash": "ed003123ed4e70e548ce5de3853f2ff78759e74bc792b03364dada5a71496d07"
+    },
+    {
+      "id": "slide-3",
+      "version": 1,
+      "layout": "title-body",
+      "projection": {
+        "titleLines": 1,
+        "titleFontSize": 34,
+        "titleHeight": 0.65,
+        "bodyLines": 4,
+        "bodyFontSize": 19,
+        "bodyY": 1.4500000000000002,
+        "bodyHeight": 5.45
+      },
+      "source": {
+        "label": "水的旅行：自然界的水循环 第 3 页",
+        "reference": "chat:mochi_ppt_create:chat-mu2uqybl-casev:slide-3"
+      },
+      "semanticHash": "ab9511068453260f84eaab433bd59fefce457e6e41086f53f2de29c79e43db8f"
+    },
+    {
+      "id": "slide-4",
+      "version": 1,
+      "layout": "statement",
+      "projection": {
+        "role": "statement",
+        "centered": false,
+        "titleLines": 1,
+        "titleFontSize": 34,
+        "titleTop": 2.75,
+        "titleWidth": 10.6,
+        "titleHeight": 0.61,
+        "bodyLines": 3,
+        "bodyFontSize": 15,
+        "bodyTop": 4.06,
+        "bodyWidth": 10.6,
+        "bodyHeight": 2.84,
+        "accentTitle": true,
+        "accentBody": false
+      },
+      "source": {
+        "label": "水的旅行：自然界的水循环 第 4 页",
+        "reference": "chat:mochi_ppt_create:chat-mu2uqybl-casev:slide-4"
+      },
+      "semanticHash": "9a384fd35240380467c5abd13ad83bba7e2d5d08c006116a3a090b0d31a2565f"
+    },
+    {
+      "id": "slide-5",
+      "version": 1,
+      "layout": "closing",
+      "projection": {
+        "role": "closing",
+        "centered": false,
+        "titleLines": 1,
+        "titleFontSize": 36,
+        "titleTop": 2.9,
+        "titleWidth": 10.6,
+        "titleHeight": 0.65,
+        "bodyLines": 3,
+        "bodyFontSize": 15,
+        "bodyTop": 4.25,
+        "bodyWidth": 10.6,
+        "bodyHeight": 2.65,
+        "accentTitle": false,
+        "accentBody": true
+      },
+      "source": {
+        "label": "水的旅行：自然界的水循环 第 5 页",
+        "reference": "chat:mochi_ppt_create:chat-mu2uqybl-casev:slide-5"
+      },
+      "semanticHash": "de3cfa269891f237485a9c71cc1075bdf26e2eebed7f54edb84565b9aaba3c58"
+    }
+  ],
+  "files": {
+    "pptx": {
+      "bytes": 82737,
+      "sha256": "3652314ee8711fe0a990659b9e698192f5ca1b2c79f0b1b0d958b23ed6adbe60",
+      "editable": true
+    },
+    "pdf": {
+      "bytes": 6610859,
+      "sha256": "820cea3a80e665a8ecb88a32b5878485ea830cecf97d6b4f3a845fee1207dae2"
+    }
+  }
+}

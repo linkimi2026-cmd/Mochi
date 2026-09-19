@@ -91,7 +91,11 @@ node scripts/check-skill-tools.mjs
 
 ### API
 
-API Origin 优先使用 `MOCHI_CAMPUS_API_URL`，其次使用 `runtime-profile.json` 的 `serviceDefaults.campusApiUrl`。当前配置值为 `null`，所以必须在需要时显式提供。
+API Origin 优先使用 `MOCHI_CAMPUS_API_URL`，其次使用 `runtime-profile.json` 的 `serviceDefaults.campusApiUrl`。
+
+当前随包发行的版本化值为 `https://jyl-campus-health-entry.pages.dev`（内测阶段的生产入口）。这是**有意写进配置的事实**，不是待办：安装包必须开箱即连，否则打包版会静静地回落到 `plugins/mochi-campus/connection.mjs` 的兜底 `http://127.0.0.1:8787`，在老师电脑上表现为"校园功能全部不可用"。环境变量仍然可以覆盖它，用于受控测试或后续换域名。
+
+改动该值后必须重新出包（`extraResources` 把 `resources/mochi-web` 复制成包内 `Contents/Resources/mochi/profile`），只改源码不会影响已安装的应用。
 
 `client-plugins/jxl-campus` 提供校园界面和 `/jxl-api` 同源代理；`plugins/mochi-campus` 提供 Agent 工具。校园账号与模型凭据分开，所有写操作继续由校园权限和人工确认约束。
 
@@ -117,7 +121,7 @@ API Origin 优先使用 `MOCHI_CAMPUS_API_URL`，其次使用 `runtime-profile.j
 
 主要入口：`apps/desktop/scripts/package-desktop.cjs`。Mac arm64 与 x64 构建要求宿主平台和 CPU 架构匹配。Windows 正式包通过原生 Windows CI 生成。
 
-快照清单为 `.github/windows-native-package-inputs.json`。当前本轮检查结果为 496 项、91,963,676 字节、0 缺失、0 不一致。检查命令：
+快照清单为 `.github/windows-native-package-inputs.json`。当前本轮检查结果为 504 项、91,992,954 字节、0 缺失、0 不一致。检查命令：
 
 ```bash
 node scripts/check-snapshot-manifest.mjs --fail

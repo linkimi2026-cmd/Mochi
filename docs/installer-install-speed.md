@@ -1,6 +1,6 @@
 # 安装慢的真因与取证方法（安装包文件数）
 
-**status: 生效中 ｜ last_verified: 2026-09-12 ｜ verified_by: 工具线（本机取证 + 契约测试）**
+**status: 生效中 ｜ last_verified: 2026-09-19 ｜ verified_by: 工具线（本机取证 + 契约测试）**
 
 > 适用范围：任何会改变安装包**文件数量**的改动。
 > 相关文档：`docs/build-standard.md`（出包唯一路径）、`docs/DELIVERY-LEDGER.md`（交付台账）。
@@ -333,3 +333,69 @@ CI 侧（`windows-native-package.yml` 第 9 步）现在**同样**以 `playwrigh
   `Copyright`）—— 留作"万一某天真需要"的取证工具；**别删，也别接回正常流程**。
 - 本机资源根的 `credits.html` 头部注释已同步改正（2026-09-12）。
 - 手工热修包路线已被否决：所有修复走「源码 → CI → 安装包」，见 `docs/build-standard.md`。
+
+### 8.4 🔴 资源根必须干净：多余条目会被**无过滤整目录拷贝**进包（2026-09-19）
+
+§1–§6 讲的是**文件数**导致的安装慢；这里记同一目录引发的另一半问题：**原始体积白涨**。
+
+`stageMochiResources` 对资源根走的是
+
+```js
+copyDirectory(playwrightBrowserResource.sourceRoot, join(working, "playwright"))   // 无 filter
+```
+
+**没有过滤参数**。所以资源根里任何多余的顶层条目都会被原样打进安装包，而且**不报错**。
+
+**出事经过**：本机把「hold 目录」放在资源根**里面**再传进去：
+
+```
+.mochi-package-resources-v1.nosync/playwright/
+├── browsers/  LICENSE  credits.html  credits.txt  metadata.json    ← 应有
+└── mochi-pw-hold-20260912/            ← 上一轮的 hold，1.0 GB
+```
+
+这一轮就把整个 1.0 GB 又拷了一份进包；下一轮若再从这份「已膨胀的资源根」里取 hold，
+就会**再嵌一层** —— 体积**自增**。
+
+| 版本 | dmg 体积 | 说明 |
+|---|---:|---|
+| 2026-09-13 基线 | 733,752,961 B（699.7 MB） | 干净资源根 |
+| 2026-09-18 23:41 | **1,185,118,029 B（1130.2 MB）** | 含嵌套 hold，**无任何报错** |
+| 2026-09-19 重出 | **733,269,757 B（699.3 MB）** | 去掉嵌套，回到基线 |
+
+**差 430.9 MB**，全部是死重量。
+
+**已落的守卫**（`prepare-mochi-resources.cjs`）：
+
+```js
+const PLAYWRIGHT_BROWSER_RESOURCE_ENTRIES = Object.freeze([
+  "LICENSE", "browsers", "credits.html", "credits.txt", "metadata.json",
+]);
+// playwrightBrowserResourceRoot() 里调用；顶层多一个条目就 throw，并说明代价
+assertBrowserResourceLayout(root);
+```
+
+- 守卫已导出，可直接对真实目录跑（判据用真实数据，不用构造样本）：膨胀根被拒、干净根通行。
+- 反向用例在 `test-package-resources.mjs`：造一个多一条目的资源根，断言打包被拒
+  且既有暂存产物未被改动（项目规矩：新断言必须证明它真的会失败）。
+- CI 侧恒真：`windows-native-package.yml` 在 `RUNNER_TEMP` 里**现建**一个干净目录
+  （`browsers/` + 四个声明文件），所以这条严格校验不会误伤 CI。
+
+**取 hold 的正确姿势**：从资源根**只挑上面那 5 项**克隆到干净目录再传，别整目录复制
+（APFS 上 `cp -Rc` 是秒级的写时复制）：
+
+```bash
+cd apps/desktop
+SRC=.mochi-package-resources-v1.nosync/playwright
+mkdir -p /tmp/mochi-pw-clean
+cp -Rc "$SRC"/{metadata.json,LICENSE,credits.html,credits.txt} /tmp/mochi-pw-clean/
+cp -Rc "$SRC/browsers" /tmp/mochi-pw-clean/browsers
+MOCHI_PLAYWRIGHT_BROWSER_RESOURCE_ROOT=/tmp/mochi-pw-clean npm run dist:mac:arm64
+```
+
+**验收判据**（两条都要）：包内 `Contents/Resources/mochi/playwright` 顶层**正好 5 项**；
+dmg 体积回到 **~699 MB** 量级。
+
+> ⚠️ 附带：`apps/desktop/release/*.dmg.sha256` **不由打包脚本生成**，是手工边车文件。
+> 重打包后必须 `shasum -a 256` 重算，否则会留下「旧哈希配新包」——
+> 2026-09-19 就踩到过（边车还是 09-18 的哈希）。交付前用 `shasum -a 256 -c *.dmg.sha256` 复核。

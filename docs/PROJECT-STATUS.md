@@ -11,12 +11,13 @@
 | 应用版本 | 桌面应用版本为 `0.1.0` | `apps/desktop/package.json` |
 | 桌面形态 | Electron 外壳，桌面开发入口在 `apps/desktop` | package scripts 与 Electron 源码 |
 | 角色 | 运行配置包含 `teacher` 和 `classroom` 两个角色配置 | `runtime-profile.json` |
-| 初始模型 | 新配置默认种子为 `mochi-aiaaa / deepseek-v4.1-flash`，支持文字和图像输入 | `settings-defaults.json` |
-| 服务默认值 | `campusApiUrl` 与 `searxngEndpoint` 当前均为 `null` | `runtime-profile.json` |
+| 初始模型 | 新配置默认种子为 `mochi-aiaaa / deepseek-v4.1-flash`，支持文字和图像输入；该路由的 `contextWindow` 声明为 1,000,000、`maxTokens` 为 256,000（实测事实，见 [网关实测事实](gateway-aiaaa-verified-facts.md)），刻意不声明 `reasoningEfforts`（网关忽略该字段） | `settings-defaults.json`、`scripts/seed-packaging-keys.cjs` |
+| 辅助调用配额 | aiaaa 网关思考不可关闭且计入 `max_tokens`，任何辅助调用的输出配额都必须显著高于思考预算：会话标题覆盖为 `maxOutputTokens: 2048`（`patches/core.patch.yml`）；压缩摘要覆盖为 `maxTokens: 16384`，落在**各 preset 自己的压缩组**（宿主面同名行被 `dsh-web-app` 置为 `disabled: true`，写 patch 不生效） | `patches/core.patch.yml`、5 处 `agent.cordis.yml`、`apps/desktop/scripts/test-compaction.mjs` |
+| 服务默认值 | `campusApiUrl` 已版本化为 `https://jyl-campus-health-entry.pages.dev`（安装包开箱即连）；`searxngEndpoint` 仍为 `null`（无可信的随包搜索端点，保持不配置） | `runtime-profile.json` |
 | 校园源码选择 | 显式环境变量优先，其次同级“联动计划”，最后兼容副本 `campus.nosync`；本机当前解析到同级“联动计划” | `scripts/campus-paths.cjs` 及本轮运行结果 |
 | 能力插件 | 当前源码包含课件、文档、文件、表格、视觉、建模、知识库、记忆、搜索、成绩、校园、调度、A2A、局域网、模式与预设等能力 | `plugins/`、`client-plugins/`、`skills/` |
-| 快照清单 | 496 项、91,963,933 字节，当前检查为 0 缺失、0 不一致 | `.github/windows-native-package-inputs.json` 与检查脚本 |
-| 工程质量 | 根 lockfile 可冷安装；核心 lint、首批插件 `checkJs`、依赖边界和五个核心插件 126 个测试已进入 CI 硬门禁 | 根 `package.json`、`.github/workflows/mochi-ci.yml`、`docs/QUALITY-GATES.md` |
+| 快照清单 | 504 项、91,992,954 字节，当前检查为 0 缺失、0 不一致（`check-snapshot-manifest.mjs --fail` 退出码 0） | `.github/windows-native-package-inputs.json` 与检查脚本 |
+| 工程质量 | 根 lockfile 可冷安装；核心 lint、首批插件 `checkJs`、依赖边界和五个核心插件 131 个测试已进入 CI 硬门禁 | 根 `package.json`、`.github/workflows/mochi-ci.yml`、`docs/QUALITY-GATES.md` |
 | 宣传片 | 当前参赛选用 V5，规格为 2560×1440、120 fps、80 秒；另有未选用的 100 秒 V6 导出 | `promo/output/Mochi_80秒_2K120帧_V5.mp4`、`promo/output/Mochi_100秒_2K120帧_V6.mp4` 与媒体探测记录 |
 | 桌面包 | Mac arm64、Mac x64 和 2026-09-13 Windows x64 归档均在磁盘 | 见 `docs/DELIVERY-LEDGER.md` |
 

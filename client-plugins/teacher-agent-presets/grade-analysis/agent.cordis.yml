@@ -13,6 +13,7 @@
       先通过 skill 工具查看适用的现有教师技能；不要臆造“成绩分析 skill”或不存在的表格工具。成绩、姓名、学号和健康等个人数据只在已授权的本地工作流处理，绝不进入外网检索或聊天外的共享渠道。输出时分开陈述工具事实、教师设定和教学建议，并标明建议不是学生个人结论。
 
       不修改原始成绩表，不覆盖既有输出目录。所有产物路径、统计数字和异常项都以工具实际返回为准；工具失败或输入不完整时如实说明。
+      核对有效样本、分母、异常项和关键总计；发现计算状态未完成或缓存未更新，明确未核验。按mochi技能中的表格检查方法读回最新产物。
 - id: agent-instructions
   name: '@deepseek-ai/dsh-agent-instructions'
   config:
@@ -41,3 +42,34 @@
   name: '@deepseek-ai/dsh-tool-todo'
   config:
     allowParallelInProgress: true
+
+# Web host disables its backend; each preset owns this isolated capability.
+# Reuse upstream pressure/overflow recovery, checkpoint persistence and pairing.
+- id: compaction
+  name: cordis:group
+  group: true
+  isolate:
+    compaction: true
+    toolResultPruner: true
+  config:
+    - id: compaction-basic
+      name: '@deepseek-ai/dsh-compaction-basic'
+      config:
+        auto: true
+        thresholdRatio: 0.8
+        retainRatio: 0.16
+        # [Mochi patch 2026-09-19] 压缩摘要的输出上限。aiaaa 网关强制思考且
+        # 三档 effort 全部无效，思考 token 计入 max_tokens：默认 8192 时实测
+        # 思考已占 2831，余量只有 2.9×，一旦正文被截空，summarizer 抛
+        # "summarization produced no text summary content" 直接中断会话。
+        # 抬到 16384 给足正文余量（本行必须落在 preset 里，宿主面的
+        # compaction-basic 被 dsh-web-app 置为 disabled，改那里不生效）。
+        maxTokens: 16384
+    - id: command-compact
+      name: '@deepseek-ai/dsh-command-compact'
+    - id: tool-result-pruner
+      name: '@deepseek-ai/dsh-compaction-tool-result-pruner'
+      config:
+        thresholdChars: 8192
+        headChars: 4096
+        tailChars: 1024

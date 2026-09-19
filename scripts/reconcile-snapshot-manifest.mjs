@@ -22,6 +22,28 @@ const repoRoot = resolve(scriptDir, "..");
 const MANIFEST = join(repoRoot, ".github", "windows-native-package-inputs.json");
 const RESOURCE_SCRIPT = join(repoRoot, "apps", "desktop", "scripts", "prepare-mochi-resources.cjs");
 
+/**
+ * **整目录**纳入快照的源根。
+ *
+ * ⚠️ 2026-09-19 补：运行期整目录加载的内容不能靠逐文件列举。`skills/` 由
+ * `FileSystemSkillProvider` 的 `customSkillDirs` 整目录扫描，而它此前落在本脚本
+ * **所有**自动登记范围之外（插件白名单不管它、vendor tarball 不管它），于是
+ * `classroom-deck`、`classroom-verdict`、`mochi/references/` 三处长期不在清单里
+ * ——包出来就是技能缺失，而 `check-snapshot-manifest` 按设计抓不到：它只证
+ * 「清单 ↔ 磁盘一致」，**不证「清单完整」**。同类根以后照此数组追加即可。
+ *
+ * ⚠️ 同日再补 `apps/desktop/electron`：`npm run build` 就是
+ * `tsc -p tsconfig.node.json`，**整目录编译**，所以该目录下每个文件都是构建输入。
+ * 漏掉 `rail-preload.ts` 的后果尤其隐蔽——它不由 `import` 引用，而是
+ * `main.ts` 里的字符串路径 `join(__dirname, "rail-preload.js")`，
+ * 所以导入闭包扫描同样扫不到；少一个文件不会报编译错，只会让 rail 窗口
+ * **静默地没有 preload 桥**，一路带到安装包里。
+ */
+const SOURCE_DIRECTORIES = Object.freeze([
+  { root: "skills", category: "desktop-source" },
+  { root: "apps/desktop/electron", category: "desktop-source" },
+]);
+
 /** 从打包白名单源码里反解出 [{ id, source, files }]。 */
 function readPluginWhitelist() {
   const source = readFileSync(RESOURCE_SCRIPT, "utf8");
@@ -135,6 +157,20 @@ function main() {
     added.push({ relative, bytes, category });
   }
 
+  // ── 整目录源根（见 SOURCE_DIRECTORIES）：运行期会整目录加载，必须全量登记 ─────
+  for (const { root: sourceRoot, category } of SOURCE_DIRECTORIES) {
+    const absolute = join(repoRoot, sourceRoot);
+    if (!existsSync(absolute)) continue;
+    for (const relative of walkFiles(absolute)) {
+      const repoRelative = `${sourceRoot}/${relative}`;
+      if (byPath.has(repoRelative)) continue;
+      const { bytes, sha256 } = hashFile(join(repoRoot, repoRelative));
+      entries.push({ path: repoRelative, sha256, bytes, categories: [category] });
+      byPath.set(repoRelative, entries[entries.length - 1]);
+      added.push({ relative: repoRelative, bytes, category: `${category}(整目录源根 ${sourceRoot})` });
+    }
+  }
+
   // ── vendor/local-plugins/*.tgz：跟着 package.json 的 file: 依赖走 ─────────────
   //
   // 这段是 2026-09-12 补的，起因是一次真实的出包失败：`@mochi/pdf-layout` 的源码修好了，
@@ -183,6 +219,21 @@ function main() {
   }
 
   // 白名单之外的 staged-plugin 条目：可能是别人正在做的插件，只报告不删。
+  //
+  // 但「不在白名单」且「磁盘上也没了」同时成立时，说明那个插件已经被整体移除
+  // （源码、白名单、快照三处一起走）。这类条目必须剪掉，否则
+  // `check-snapshot-manifest --fail` 会永久红，而且失败原因看起来跟当前改动毫无关系
+  // —— 2026-09-18 删 mochi-workbench 时实测踩到。只满足其中一个条件都保留并提醒。
+  const droppedStagedPlugins = [];
+  for (const entry of [...entries]) {
+    const isStagedPlugin = (entry.categories ?? []).some((category) => category.startsWith("staged-plugin:"));
+    if (!isStagedPlugin || expected.has(entry.path)) continue;
+    if (existsSync(join(repoRoot, entry.path))) continue;
+    droppedStagedPlugins.push(entry.path);
+    entries.splice(entries.indexOf(entry), 1);
+    byPath.delete(entry.path);
+  }
+
   const orphans = entries
     .filter((entry) => (entry.categories ?? []).some((category) => category.startsWith("staged-plugin:")))
     .filter((entry) => !expected.has(entry.path))
@@ -238,6 +289,10 @@ function main() {
   if (orphans.length > 0) {
     process.stdout.write(`[manifest] 白名单外但已登记的 staged-plugin 条目 ${orphans.length} 个（保留，仅提醒）\n`);
     for (const path of orphans) process.stdout.write(`  ? ${path}\n`);
+  }
+  if (droppedStagedPlugins.length > 0) {
+    process.stdout.write(`[manifest] 移除已下线插件的 staged-plugin 条目 ${droppedStagedPlugins.length} 个（不在白名单且磁盘已无）\n`);
+    for (const path of droppedStagedPlugins) process.stdout.write(`  - ${path}\n`);
   }
   if (missing.length > 0) {
     process.stdout.write(`[manifest] 清单登记但磁盘缺失 ${missing.length} 个\n`);

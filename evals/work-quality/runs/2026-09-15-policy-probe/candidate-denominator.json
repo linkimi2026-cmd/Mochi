@@ -1,0 +1,21 @@
+{
+  "scope": "system-fragment policy probe; no tools executed",
+  "variant": "candidate",
+  "testId": "denominator",
+  "model": "mimo-v2.5-pro",
+  "reasoningEffort": "high",
+  "systemSha256": "af3228e111ea1fcbc3a65a33917c382db541d4822a143f5d6bcbcab7a4d933e1",
+  "input": "这是合成测试，无工具可用。班级4人，分数分别为80、0、缺考、100。缺考不计入平均分，零分计入。请给出平均分、分母和缺考人数，保留两位小数。",
+  "output": "平均分：**60.00**  \n分母：**3**  \n缺考人数：**1**\n\n**计算依据**：  \n- 有效分数：80, 0, 100（缺考不计入平均分，零分计入）。  \n- 分母 = 有效分数个数 = 3。  \n- 平均分 = (80 + 0 + 100) ÷ 3 = 180 ÷ 3 = 60，保留两位小数为 60.00。  \n- 缺考人数为 1（总人数4人中，1人缺考）。",
+  "usage": {
+    "inputTokens": 2513,
+    "outputTokens": 539,
+    "totalTokens": 3052,
+    "reasoningTokens": 395
+  },
+  "finish": {
+    "kind": "stop"
+  },
+  "error": null,
+  "latencyMs": 12709
+}

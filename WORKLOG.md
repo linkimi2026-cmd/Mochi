@@ -1,5 +1,152 @@
 # Mochi 工程日志（WORKLOG）
 
+## 2026-09-19 · 补掉清单完整性的第三个来源，Windows 快照 495 → 504 并推出新一轮 CI
+
+- 干了什么：按用户「Windows 端是要打包的」推进全盘打包。过程里发现**两个真缺口**，
+  都是「本机全绿、CI 会收到残缺树」的那一类，且都不是靠现有检查能看见的。
+  - 根因：`reconcile-snapshot-manifest.mjs` 只自动登记两类（`PLUGINS` 白名单、vendored tgz），
+    而**运行期/编译期整目录消费的源根**是第三类，此前落在所有自动范围之外。
+- 改了哪些文件：
+  - `scripts/reconcile-snapshot-manifest.mjs`：新增 `SOURCE_DIRECTORIES` 整目录源根，
+    当前两个成员 `skills/`（`FileSystemSkillProvider` 的 `customSkillDirs` 整目录扫描）
+    与 `apps/desktop/electron`（`tsc -p tsconfig.node.json` 整目录编译）。
+  - `apps/desktop/scripts/test-work-quality.mjs`：`assert.equal(observation.length, 8)`
+    是写死数字，新增 `classroom-verdict` 后整轮 `npm run check` 变红。
+    改成**从磁盘推导期望值**并按目录清单双向比对 —— 顺带让「有目录但缺 SKILL.md」
+    这个真缺陷也能被抓到（原来两个方向都抓不到）。
+  - `.github/windows-native-package-inputs.json`：495 → **504 条 / 91,992,954 B**。
+  - `docs/PROJECT-STATUS.md`、`docs/RUNTIME-FACTS.md`、`docs/DELIVERY-LEDGER.md`：
+    同步 504 / 131 个测试两个数字（这三处是"当前状态"口径，不是历史记录）。
+- 产出/证据：
+  - 🔴 **缺口一：`apps/desktop/electron/rail-preload.ts` 不在清单里。**
+    `main.ts:379` 用 `preload: join(__dirname, "rail-preload.js")` 引用它 —— 这是
+    **字符串路径、不是 `import`**，所以「导入闭包扫描」**扫不到**（实测：闭包扫描报"完整"，
+    真缺口就在那里）。`tsc` 不报错、CI 也不报错，只是 rail 窗口**静默地没有 preload 桥**。
+    同类字符串引用另有一处 `lan-attention-preload.ts`，那个**在**清单里 —— 说明这是一整类风险。
+  - 🔴 **缺口二：`skills/` 漏了 4 个文件**（`classroom-deck`、`classroom-verdict`、
+    `mochi/references/{modeling-reuse,output-checks}.md`）。`classroom-deck` 甚至是 tracked 的，
+    说明清单已漂了很久。包出来就是技能缺失。
+  - 反向的一类：`resources/mochi-web/seeds/*.json` 由 `seed-packaging-keys.cjs` 打包时渲染，
+    **是构建产物、禁止进快照**（缺得对）。判据：**CI 会不会自己生成它？**
+  - 判定"谁是打包输入"的正确口径 = **CI 真正执行的东西**：该 workflow 只跑 6 个 npm 脚本
+    （`test:installer-config`/`test:dsh-host-peers`/`test:runtime-profile`/`test:release-input`/
+    `test:package-resources`/`dist:win:x64`），所以 `test-compaction.mjs`、`test-work-quality.mjs`
+    等**不是**打包输入，不该往清单里塞。
+  - 完整度复核：`skills`/`apps/desktop/electron`/`apps/desktop/build`/`packages`/
+    `.github/windows-native-package-assets` 五个构建输入根**磁盘文件集合 − 清单集合 = 0**；
+    导入闭包扫描 51 个源码文件**完整**；`reconcile --write` → `check --fail` **OK ±0（504 条）**；
+    `npm run check` **EXIT 0**（core-plugins 131/131、prompt-quality 6/6、eval-evidence 5/5、
+    model-transport 2/2、compaction 7/7、lint 0 error）。
+  - 物化：`tools/materialize-snapshot.mjs` → **505 文件（504 + 清单自身）/ 91,992,954 B /
+    0 多余 / 0 缺失 / 0 符号链接**，三重自证全过。
+  - 推送前核对：私有分支 `$pluginLinks` **109 条** 与 `tools/derive-plugin-links.mjs` 推导
+    **双向 0 差异**，11 条 `$requiredLinks` 全覆盖 ⇒ **本轮不需要动 workflow**。
+  - 🔴 **私有 workflow 21,717 B（模板）vs 36,893 B（私有分支），253 行差异，且是"各有独有内容"**：
+    私有版独有 `$pluginLinks`/`setuptools` 垫片/tmpdir 暂存/两个 secrets；
+    模板版独有「把快照搬到同级」步骤。**任何方向的整文件覆盖都会造成损失**；
+    实际执行的是私有版。已把这张对照表写进技能。
+  - ⭐ 方法论改进：把 **`PATCH /git/refs`（唯一有副作用的动作、它触发 CI）挪到全树核对之后** ——
+    `建 blob → 建 tree → 建 commit → 核对 → 才 PATCH`。并给推送脚本加了第 4 条护栏：
+    **`mochi-source` 之外的路径必须与 base 逐条相同**（挡住"顺手改了校园端源码"的整类事故）。
+  - 另修一处脚本隐患：算「远程多出来的文件」时**必须排除清单自身**
+    （快照里它在 `.github/windows-native-package-inputs.json`，不在 `manifest.files` 里），
+    否则会把它从远程删掉 → CI 首步 `missing its input manifest` 直接挂。
+- 动手结果：`codex/mochi-windows-20260919` ← commit `9a935a93aee9`（base `bd83fc9f`），
+  **run `35412334064` → ✅ 全绿**，13 步全过，**13 分 20 秒**。
+  - 逐项硬证据（从 job 日志抽）：`Verified 504 approved Mochi source inputs.`（快照条目数与清单一致）、
+    `plugin dependency links: created 109, pre-existing 0, skipped 0`（与推导的 109 完全吻合）、
+    `credits source: playwright-core/ThirdPartyNotices.txt (70249 chars, 49 Copyright hits)`（过 ≥50000 / ≥10 的判据）、
+    `package resource test passed: 25 plugins, 29 DSH modules, 106 additional modules`
+    （**25 个插件** —— mochi-workbench 下线已正确传导到包内）、
+    `packaging platform=win32 arch=x64 electron=39.8.10`、
+    `building target=nsis file=release\Mochi-Setup-0.1.0-win-x64.exe archs=x64 oneClick=false perMachine=false`；
+    四套测试 `test-installer-config` / `test-dsh-host-peers` / `test-runtime-profile` / `test-release-input` 全 PASS。
+  - 工件：`mochi-windows-x64-35412334064`（artifact id `10575375280`）**462,326,955 B = 440.9 MB**，
+    到期 **2026-10-03**。比 #33 的 462,320,016 B 只多 **6,939 B** —— 增量与新增内容相称（无体积异常）。
+  - `no signing info identified, signing is skipped` 若干次 = **未签名，不是错误**（首次安装会触发 SmartScreen）。
+  - 本机下载链路实测：工件 302 后走 **Azure blob（`productionresultssa9.blob.core.windows.net`）
+    而不是被 502 挡的 `objects.githubusercontent.com`** → **工件可以正常下载**。
+- 遗留/下一步：
+  - **Mac x64 包本机做不了**：`package-desktop.cjs:68-70` 是**设计性拒绝**
+    （`process.arch !== arch` → 直接抛「必须在同架构原生 runner 构建」），本机 arm64。
+    Rosetta 下 `arch -x86_64 node` 确实报 `x64`（`/usr/local/bin/node` 是 universal），
+    但 `sharp`/`node-pty` 是 arm64 原生模块，且本机资源根里是 **arm64-only** 的 Chromium
+    （`lipo -archs` = arm64）→ 强行出包会得到"装得起来、浏览器跑不起来"的包。
+    结论：x64 dmg 仍需原生 Intel Mac 或专门的 macOS x64 runner。
+  - 仍未发布（等 aiaaa 充值后复测通过再发）；Windows 工件保留期 14 天，要留就尽快下载。
+
+## 2026-09-19 · 修掉浏览器资源根被整目录拷贝导致的 431 MB 白涨，重打 Mac arm64 包
+
+- 干了什么：先按用户裁定「保持 DeepSeek 为出厂默认、不切 MiMo、先打包不发布」推进重打，
+  过程中查到上一轮 arm64 安装包体积暴涨的真实原因并落守卫。
+  - 根因：`prepare-mochi-resources.cjs` 的 `stageMochiResources` 对浏览器资源根走
+    `copyDirectory(sourceRoot, …/playwright)` —— **无过滤整目录拷贝**；而本机资源根
+    `.mochi-package-resources-v1.nosync/playwright` 里嵌着上一轮的 hold 目录
+    `mochi-pw-hold-20260912`（**1.0 GB**），被原样打进包。嵌套会**自增**，且**不报错**。
+  - 新增 `assertBrowserResourceLayout()`：资源根顶层只允许
+    `LICENSE`/`browsers`/`credits.html`/`credits.txt`/`metadata.json`，多一个即失败
+    （并导出供直接验证）。CI 侧资源根是 `RUNNER_TEMP` 现建的干净目录，恒真。
+  - `test-package-resources.mjs` 加反向用例：多一条目的资源根必须被拒，且既有暂存产物不被改动。
+  - 顺手修正：`apps/desktop/release/*.dmg.sha256` 不由打包脚本生成（手工边车），
+    重打包后仍是旧哈希，已重算并校验。
+- 产出/证据：
+  - 真实数据判据：导出函数直接跑两个真实目录 → 膨胀根被拒、干净根通行。
+  - 重打（`MOCHI_PLAYWRIGHT_BROWSER_RESOURCE_ROOT=/tmp/mochi-pw-clean npm run dist:mac:arm64`，
+    1 分 33 秒）：`Mochi-0.1.0-mac-arm64.dmg` **1,185,118,029 B → 733,269,757 B
+    （1130.2 MB → 699.3 MB，减少 430.9 MB）**，回到 09-13 基线附近。
+    sha256 `477f28526352b3c5b4f065cb13df5a8bbd47568edadd5c3a090523caf04de3ee`（`shasum -c` OK）。
+  - 挂载 dmg 复核：`Contents/MacOS/Mochi` 可执行存在；包内 5 处 `agent.cordis.yml`
+    各含 1 处 `maxTokens: 16384`（压缩修复确实进包）；包内 `playwright/` 顶层正好 5 项。
+  - `test-compaction` 7/7；`test-package-resources` / `test-runtime-profile` /
+    `test-installer-config` PASS；`verify-presets.mjs` PASS；
+    快照 `reconcile --write` → `check --fail` **OK ±0**（495 条 / **91,921,636** B）。
+  - `docs/DELIVERY-LEDGER.md` 已更新 arm64 行、C 层快照数字，并新增「打包输入的两个硬约束」。
+- 遗留/下一步：
+  - **未发布**（等 aiaaa 充值后复测通过再发）。`https://aiaaa.cc/v1` 复测仍
+    `403 INSUFFICIENT_BALANCE`；MiMo 复测 200 健康。
+  - 未装到本机（删 `~/.mochi-home` 需用户明确确认）。
+  - Windows 包未重出（必须走 CI）。上游 `cordis` preset 的压缩配额仍是默认 8192（已知缺口）。
+
+## 2026-09-19 · 修正压缩配额的真实落点（宿主面死配置 → preset）
+
+- 干了什么：把上一轮误打在宿主面的 `compaction-basic` 覆盖**挪到真正生效的地方**。
+  根因：`dsh-web-app` 已把宿主面的 `compaction-basic` / `command-compact` 置为
+  `disabled: true`（其注释写明「只有读取 token meter 的压缩后端留在宿主面」），而 dsh 的
+  行补丁**只整体替换 `config`、不碰 `disabled`** —— 所以写在 `core.patch.yml` 里是一行
+  **不生效的死配置**。真正的压缩组在**每个 preset 自己**的 `agent.cordis.yml`。
+  判据：`--dump-config` 输出里该行若带 `disabled: true`，就说明又打在了宿主面上。
+- 改了哪些文件：
+  - `client-plugins/teacher-agent-presets/{lesson-planning,materials-assessment,grade-analysis,classroom-coordination}/agent.cordis.yml`
+    与 `apps/desktop/resources/mochi-web/classroom-agent-presets/classroom/agent.cordis.yml`
+    → 压缩组补 `maxTokens: 16384`（默认 8192 时，60 行摘要的思考实测已占 2831，
+    余量仅约 2.9×；输出被截空时 `summarizer.ts` 抛
+    `summarization produced no text summary content`）。
+  - `apps/desktop/resources/mochi-web/patches/core.patch.yml` → **删除**那行死配置，
+    原位留说明（为什么不能放这里 / 真实位置 / 已知缺口）。行数 7 → 6。
+  - `apps/desktop/scripts/test-compaction.mjs` → 加断言 `maxTokens >= 16384`。
+  - `docs/gateway-aiaaa-verified-facts.md` / `docs/PROJECT-STATUS.md` → 修正落点描述与快照数字。
+- 产出/证据：
+  - `test-compaction.mjs` **7/7 PASS**（含 5 个 preset 的真实压缩引擎端到端）；反向对照：
+    真文件通过、把值改回 8192 被断言拦下。
+  - `test-profile-skills.mjs` PASS（自述覆盖「六个 preset 的自动压缩与续接」）；
+    `test-runtime-profile.mjs` PASS；`test-package-resources.mjs` PASS（25 插件）。
+  - `client-plugins/teacher-agent-presets/verify-presets.mjs` PASS（4 教师 preset 在前）。
+  - 快照 `reconcile-snapshot-manifest.mjs --write` → `check-snapshot-manifest.mjs --fail`
+    **OK ±0**：495 条 / **91,918,107** B（原 91,914,400）。
+- 顺带核实：`llm-deepseek`（路由 `deepseek-official`）在**本机** `settings.yaml` 里指向智谱
+  （`ZHIPU_API_KEY` + `open.bigmodel.cn`），但 `ZHIPU_API_KEY` 只出现在 `.nosync` 本地运行态
+  与一个探针脚本中，**出厂资源里完全没有** → 新装包走 base 默认
+  （`DEEPSEEK_API_KEY` + `api.deepseek.com`），不是包缺陷，无需修。
+- 遗留/下一步：
+  - **🔴 阻塞**：`https://aiaaa.cc/v1` 复测仍 `403 INSUFFICIENT_BALANCE` → 新装包首启的
+    默认模型（`mochi-aiaaa / deepseek-v4.1-flash`）直接不可用，违反「每个安装包中的
+    DeepSeek 必须可用」。MiMo 复测 200 健康。需裁定：充值 / 切出厂默认 / 加兜底路由。
+  - 已知缺口：上游 `cordis` preset（教师端「创造模式」）的 `compaction-basic` 无 `config`，
+    仍吃默认 8192；覆盖它要走 vendored 包补丁，未做。
+  - 未做：重新打包 / 安装新版 / 发 GitHub Release（依赖上面的裁定）。
+  - 环境坑：`fs-ext`/`node-pty` 的 ABI 跷跷板仍在（本轮为跑 `test-profile-skills`
+    把两个模块重编到 ABI 127；跑 Electron 探针需 `@electron/rebuild` 回 140）。
+
 ## 2026-09-14 根目录工程治理
 
 - 将完整参赛交付包提升到项目根目录，并增加 `00-参赛入口.md`。

@@ -45,7 +45,7 @@ def timing(slide,events,video_id=None):
   E.SubElement(bld,'{'+P+'}bldP',spid=spid,grpId='0')
  if video_id:
   child.append(xml(f'''<p:video xmlns:p="{P}"><p:cMediaNode vol="80000"><p:cTn id="{count}" fill="hold" display="0"><p:stCondLst><p:cond delay="0"/></p:stCondLst></p:cTn><p:tgtEl><p:spTgt spid="{video_id}"/></p:tgtEl></p:cMediaNode></p:video>'''))
-for i in range(1,6):
+for i in range(1,7):
  key=f'ppt/slides/slide{i}.xml';s=E.fromstring(files[key])
  tr=E.SubElement(s,'{'+P+'}transition',spd='med',advClick='1')
  E.SubElement(tr,'{'+P+'}fade')
@@ -62,12 +62,12 @@ for i in range(1,6):
   events=[]
   for j,sh in enumerate(shapes):
    pr=sh.find('.//p:cNvPr',ns);name=pr.get('name','');id=pr.get('id')
-   if i==5:
-    if name.startswith('final-'):events.append((id,42000,'in'))
-    else:events.append((id,min(j*300,1400),'in'));events.append((id,41350,'out'))
+   if i==6:
+    if name.startswith('final-'):events.append((id,35000,'in'))
+    else:events.append((id,min(j*300,1400),'in'));events.append((id,34350,'out'))
    else:events.append((id,min(j*220,2000),'in'))
   timing(s,events)
  files[key]=dump(s)
 with zipfile.ZipFile(build_root/'candidate.pptx','w',compression=zipfile.ZIP_DEFLATED) as z:
  for n,b in files.items():z.writestr(n,b)
-print(json.dumps({'slides':5,'embeddedVideoBytes':len(video),'embeddedVideoSHA256':hashlib.sha256(video).hexdigest()}))
+print(json.dumps({'slides':6,'embeddedVideoBytes':len(video),'embeddedVideoSHA256':hashlib.sha256(video).hexdigest()}))

@@ -14,7 +14,11 @@
     "typecheck:plugins": "tsc -p tsconfig.plugin-contracts.json",
     "test:core-plugins": "node --test plugins/mochi-modes/test/*.test.mjs plugins/mochi-visuals/test/*.test.mjs plugins/mochi-sheets/test/*.test.mjs plugins/mochi-documents/test/*.test.mjs plugins/mochi-presentations/test/*.test.mjs",
     "check:dependencies": "node scripts/quality/check-dependency-boundaries.mjs",
-    "check": "npm run check:dependencies && npm run lint && npm run format:check && npm run typecheck:plugins && npm run test:core-plugins"
+    "check": "npm run check:dependencies && npm run lint && npm run format:check && npm run typecheck:plugins && npm run test:core-plugins && npm run test:prompt-quality && npm run test:eval-evidence && npm run test:model-transport && npm run test:compaction",
+    "test:prompt-quality": "node --test apps/desktop/scripts/test-work-quality.mjs plugins/mochi-hello/test-shell-env.mjs",
+    "test:eval-evidence": "node --test evals/work-quality/review-evidence.test.mjs",
+    "test:model-transport": "node --test apps/desktop/scripts/test-model-transport.mjs",
+    "test:compaction": "node --test apps/desktop/scripts/test-compaction.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.6",

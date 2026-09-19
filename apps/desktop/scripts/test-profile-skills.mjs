@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 /**
  * Boot an isolated official web profile and prove that its standard Agent sees
- * Mochi's seven user-invocable Skills through the real session skill catalog.
+ * Mochi's eight user-invocable Skills and shared quality policy through the real session skill catalog.
  *
  * This test creates its own DSH_HOME, credentials-free environment, probe
  * package and session. It never reads or writes a developer's live DSH home.
  */
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { spawn } from "node:child_process";
 import {
   existsSync,
@@ -31,6 +32,7 @@ const nodeBin = process.env.MOCHI_DSH_NODE ?? process.execPath;
 const expectedSkills = [
   "class-meeting-prep",
   "classroom-deck",
+  "classroom-verdict",
   "mochi",
   "student-follow-up",
   "student-movement-request",
@@ -43,7 +45,7 @@ function redact(value) {
   return value.replace(/token=[^\s]+/gi, "token=[redacted]");
 }
 
-function runDsh(args, env, timeoutMs = 30_000) {
+function runDsh(args, env, timeoutMs = 180_000) {
   return new Promise((resolve, reject) => {
     const child = spawn(nodeBin, [dshBin, ...args], {
       cwd: workspaceRoot,
@@ -53,12 +55,14 @@ function runDsh(args, env, timeoutMs = 30_000) {
     let output = "";
     const collect = (chunk) => {
       output = (output + chunk.toString()).slice(-32_768);
+      if (process.env.MOCHI_PROBE_DEBUG) process.stderr.write(redact(chunk.toString()));
     };
     child.stdout.on("data", collect);
     child.stderr.on("data", collect);
+    let timedOut = false;
     const timer = setTimeout(() => {
-      child.kill("SIGTERM");
-      reject(new Error(`dsh probe timed out after ${timeoutMs}ms\n${redact(output)}`));
+      timedOut = true;
+      child.kill("SIGKILL");
     }, timeoutMs);
     child.once("error", (error) => {
       clearTimeout(timer);
@@ -66,7 +70,8 @@ function runDsh(args, env, timeoutMs = 30_000) {
     });
     child.once("exit", (code, signal) => {
       clearTimeout(timer);
-      if (code === 0) resolve(output);
+      if (timedOut) reject(new Error(`dsh probe timed out after ${timeoutMs}ms\n${redact(output)}`));
+      else if (code === 0) resolve(output);
       else reject(new Error(`dsh probe exited code=${String(code)} signal=${String(signal)}\n${redact(output)}`));
     });
   });
@@ -74,15 +79,33 @@ function runDsh(args, env, timeoutMs = 30_000) {
 
 function writeProbePackage(dir) {
   mkdirSync(dir, { recursive: true });
+  symlinkSync(join(desktopRoot, "node_modules"), join(dir, "node_modules"), "dir");
   writeFileSync(join(dir, "package.json"), `${JSON.stringify({
     name: "skill-catalog-probe",
+    version: "0.0.0",
     private: true,
     type: "module",
     main: "index.mjs",
   }, null, 2)}\n`);
   writeFileSync(join(dir, "index.mjs"), `
+import { createHash } from "node:crypto";
+import { assembleContextFor } from "@deepseek-ai/dsh-agent";
+import { LlmAdapter, createUserMessage } from "@deepseek-ai/dsh-llm";
+class CompactionFixture extends LlmAdapter {
+  async resolveModel(provider, model) { return { provider, id: model, name: "Offline compaction fixture", context: { contextWindow: 12000 } }; }
+  async *stream(options) {
+    console.log("OFFLINE_MODEL_CALL="+String(options.purpose));
+    const text = options.purpose === "compaction"
+      ? "Original task: preserve requirements. Latest artifact /work/final.pptx, page 2 unchecked; next inspect it. Job send-7 unknown: do not resend."
+      : "Resumed after checkpoint.";
+    yield {type:"block-start",index:0,blockType:"text"};
+    yield {type:"text-delta",index:0,text};
+    yield {type:"block-end",index:0,block:{type:"text",text}};
+    yield {type:"finish",reason:{kind:"stop"}};
+  }
+}
 export const name = "skill-catalog-probe";
-export const inject = ["agents", "sessionController", "sessionSkillCatalog", "skills", "tools"];
+export const inject = ["agents", "sessionController", "sessionSkillCatalog", "skills", "tools", "systemPrompt", "llm"];
 
 export function apply(ctx) {
   const timer = setTimeout(() => {
@@ -110,7 +133,34 @@ export function apply(ctx) {
               cwd: process.env.MOCHI_SKILL_PROBE_CWD,
               scope: agent,
             });
+        if (!agent) throw new Error("Session Agent unavailable");
+        const assembly = await ctx.systemPrompt.assemble(assembleContextFor(agent, new AbortController().signal));
+        const quality = assembly.sections.filter(section => section.name === "mochi:work-quality");
+        ctx.llm.registerAdapter(["deepseek-offline-fixture"], new CompactionFixture());
+        const compactedRoles = [];
+        for (const preset of ["standard", "lesson-planning", "grade-analysis", "materials-assessment", "classroom-coordination", "classroom"]) {
+          console.log("COMPACTION_PRESET="+preset);
+          const entry = await ctx.sessionController.create({cwd:process.env.MOCHI_SKILL_PROBE_CWD,agentPreset:preset});
+          await ctx.sessionController.selectModel({sessionId:entry.sessionId,provider:"deepseek-offline-fixture",model:"fixture"});
+          const subject = ctx.agents.get(entry.sessionId);
+          subject.session.append("request/header",{reason:"initial",header:{config:{provider:"deepseek-offline-fixture",model:"fixture"}}});
+          for (let i=0;i<4;i++) subject.session.append("user/message",createUserMessage({
+            content:[{type:"text",text:"Archived reference material ".repeat(550)}],
+            source:{kind:"plugin",plugin:"compaction-fixture"},
+          }),{surfaceOp:"append"});
+          await ctx.sessionController.prompt({sessionId:entry.sessionId,requestId:"compact-"+preset,content:[{type:"text",text:"Continue the current task."}]},new AbortController().signal);
+          console.log("COMPACTION_PROMPT_ACCEPTED="+preset);
+          await Promise.race([subject.whenIdle(), new Promise((_,reject)=>setTimeout(()=>reject(new Error("Agent wait: "+JSON.stringify({status:subject.status,events:subject.session.snapshotEvents().slice(-8).map(e=>({type:e.type,data:e.type.includes("message")?"message":e.data}))}))),30000))]);
+          const events = subject.session.snapshotEvents();
+          const summaries = events.filter(event=>event.type==="compaction/summary");
+          if(summaries.length!==1 || !events.some(event=>event.type==="assistant/message")) throw new Error(preset+": missing automatic compaction or continuation");
+          if(summaries[0].data.provider!=="deepseek-offline-fixture") throw new Error("Unexpected summary provider");
+          compactedRoles.push(preset);
+        }
         const result = {
+          compactedRoles,
+          qualitySectionCount: quality.length,
+          qualityPolicyHash: createHash("sha256").update(quality[0]?.text || "").digest("hex"),
           preset: created.agentPreset,
           names: catalog.skills.map((skill) => skill.name).sort(),
           standardSkillTool: agent !== undefined && ctx.tools.get("skill", agent) !== undefined,
@@ -147,9 +197,11 @@ function writeProfile(home, probeDir) {
   writeFileSync(join(profileDir, "profile.json"), "{}\n");
   writeFileSync(join(profileDir, "package.json"), `${JSON.stringify({
     name: "mochi-skill-catalog-profile",
+    version: "0.0.0",
     private: true,
     dependencies: {
       "skill-catalog-probe": `link:${probeDir}`,
+      "mochi-hello": `link:${join(workspaceRoot, "plugins", "mochi-hello")}`,
     },
     dsh: {
       profile: {
@@ -159,7 +211,18 @@ function writeProfile(home, probeDir) {
     },
   }, null, 2)}\n`);
   symlinkSync(probeDir, join(nodeModulesDir, "skill-catalog-probe"), "dir");
+  symlinkSync(join(workspaceRoot, "plugins", "mochi-hello"), join(nodeModulesDir, "mochi-hello"), "dir");
   writeFileSync(join(profileDir, "cordis.patch.yml"), `
+- id: agent-presets
+  config:
+    default: standard
+    includeShippedRoot: true
+    includeUserRoot: false
+    roots:
+      - path: ${JSON.stringify(join(workspaceRoot, "client-plugins", "teacher-agent-presets"))}
+        trust: system
+      - path: ${JSON.stringify(join(desktopRoot, "resources", "mochi-web", "classroom-agent-presets"))}
+        trust: system
 - id: skill-filesystem
   disabled: false
   config:
@@ -169,6 +232,8 @@ function writeProfile(home, probeDir) {
       - ${JSON.stringify(join(workspaceRoot, "skills"))}
 
 - insert:
+    - id: mochi-hello
+      name: mochi-hello
     - id: skill-catalog-probe
       name: skill-catalog-probe
 `);
@@ -207,11 +272,15 @@ try {
   assert.match(dump, /customSkillDirs:[\s\S]{0,200}\/skills/);
   const catalog = marker(await runDsh(["--profile", "skill-catalog-probe", "--port", "0", "--no-open"], env));
   assert.equal(catalog.preset, "standard");
+  assert.deepEqual(catalog.compactedRoles, ["standard", "lesson-planning", "grade-analysis", "materials-assessment", "classroom-coordination", "classroom"]);
+  assert.equal(catalog.qualitySectionCount, 1);
+  const policy = readFileSync(join(workspaceRoot, "plugins", "mochi-hello", "work-quality.md"), "utf8").trim();
+  assert.equal(catalog.qualityPolicyHash, createHash("sha256").update(policy).digest("hex"));
   assert.equal(catalog.standardSkillTool, true);
   assert.equal(catalog.loadedTeacherDailyBrief, true);
   assert.equal(catalog.loadedStudentMovementRequest, true);
   for (const name of expectedSkills) assert.ok(catalog.names.includes(name), `missing skill: ${name}`);
-  console.log(`[test-profile-skills] PASS: standard Agent loaded ${expectedSkills.length} Mochi Skills and its native skill tool.`);
+  console.log(`[test-profile-skills] PASS: standard Agent loaded ${expectedSkills.length} Mochi Skills, its native skill tool, the exact shared quality policy, and automatic compaction plus continuation in all six presets (offline adapter).`);
 } finally {
   if (existsSync(home)) rmSync(home, { recursive: true, force: true });
 }

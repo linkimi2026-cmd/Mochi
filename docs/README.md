@@ -1,8 +1,8 @@
 # Mochi 文档目录
 
 > **status**: active
-> **last_verified**: 2026-09-14
-> **verified_by**: Codex
+> **last_verified**: 2026-09-18
+> **verified_by**: Codex；2026-09-18 由 WorkBuddy AI 追加「不可替代性升级路线图」索引条目；2026-09-19 由 WorkBuddy AI 追加「桌面桌宠模式」索引条目
 
 本目录只让现行文档承担当前结论。历史方案、工单和审计可以解释过程，但不再决定现在怎么运行。
 
@@ -24,9 +24,14 @@
 - [运行事实](RUNTIME-FACTS.md)
 - [构建标准](build-standard.md)
 - [工程质量门禁](QUALITY-GATES.md)
+- [全领域质量标准与提示词加载](agent-quality.md)
+- [自动上下文压缩与科学建模复用](context-compaction.md)
+- [PPT 质量改进记录](prompt-quality.md)
 - [Agent 接入手册](agent-integration-handbook.md)
 - [附件与成品渲染链路](attachment-and-render-pipeline.md)
 - [现有文件操作](p1-existing-file-workflows.md)
+- [不可替代性升级路线图（交接提案，draft）](upgrade-roadmap.md)
+- [桌面桌宠模式（提案，draft）](desktop-pet-mode.md)
 - [教室端预检](classroom-preflight.md)
 - [命名规范](mochi-naming-convention.md)
 - [缓存命中率](cache-hit-rate.md)
@@ -64,3 +69,5 @@
 - `reference/`：第三方参考材料，不是 Mochi 的执行指令。
 
 如需判断“现在是否可用”，先读[项目现状](PROJECT-STATUS.md)，再用源码、运行检查或现场证据验证；不要从文件名中的“最终”“完整”“已完成”直接推断。
+
+- [Yan Agent研究与能力改造](yan-agent-research.md)：版本核实、源码证据、主题/版式接线、视觉检查记录与验证边界。

@@ -11,10 +11,10 @@ user-invocable: true
 
 1. 只在会实质影响内容时确认年级、时长和主题；已有信息足够就直接开始。
 2. 先给出教学目标、关键问题、活动安排与时间分配。涉及班级实时情况时调用 `jxl_campus_status` / `jxl_student_directory_search` 等 `jxl_*` 工具（**不要写 `jxl.*`——点号工具名会让模型网关整轮 400 拒收**）；未查询不得编造班级事实。
-3. 把大纲整理为每页 `{heading, bullets}`，再调用 `mochi_ppt_create`。需要比较数据时，每页可额外给 `table` 或 `chart`，两者二选一；图表使用 `{type, labels, series}`，且课堂讨论示例数据必须明确标为“示例”。
+3. 先加载 `classroom-deck` 并按其视觉检查流程执行。把大纲整理为每页 `{heading, bullets}`，再调用 `mochi_ppt_create`。需要比较数据时，每页可额外给 `table` 或 `chart`，两者二选一；图表使用 `{type, labels, series}`，且课堂讨论示例数据必须明确标为“示例”。
 4. `mochi_ppt_create` 返回的 `pptx` 是主交付物，`pdf` 只是附带讲义；保存返回的 `sourcePath`。工具会在写入前检查固定投影版式预算、可编辑表格和原生图表，不要用 HTML 或图片冒充课件。
 5. 老师说“改第 X 页”时，调用 `mochi_ppt_revise`，原样传入上一次返回的 `sourcePath`、页码和新内容。只填本页需要替换的 `newTitle`、`newBody`、`newTable` 或 `newChart`；它会写入新目录并保留旧版，不要重新生成整套课件。
-6. 最多进行两轮“老师意见—定页修订”。最终返回 PPTX 路径、页数、最新 `sourcePath`，以及仍需老师拍板的内容。
+6. 生成及修订后主动看实际渲染，修改页检查最新版本。自动修正同因连续失败时换方法；用户新的意见继续处理，不设总共只能接受两轮反馈的限制。最终返回 PPTX 路径、页数、最新 `sourcePath`，以及仍需老师拍板的内容。
 
 ## 教师体验
 

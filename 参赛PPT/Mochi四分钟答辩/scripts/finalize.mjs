@@ -23,13 +23,13 @@ process.env.RUNTIME_NODE_MODULES ??=path.join(dependencies,'node/node_modules');
 console.log(await finalizePresentation({
   workspaceDir:root,
   candidatePath:path.join(root,'.build/candidate.pptx'),
-  finalPath:path.join(root,'output/Mochi_四分钟答辩_内嵌视频.pptx'),
+  finalPath:path.join(root,'output/Mochi_四分钟答辩_双端互联版.pptx'),
   pythonExecutable:path.join(dependencies,'python/bin/python3'),
   integrityValidatorPath:path.join(skill,'container_tools/inspect_presentation_package_integrity.py'),
   layoutValidatorPath:path.join(skill,'container_tools/inspect_presentation_layout_geometry.py'),
   layoutArgs:['--expected-slide-size-emu','12192000,6858000','--validate-heading-fit'],
-  explicitTotalSlideCount:5,
+  explicitTotalSlideCount:6,
   fontPolicy:{basis:'design',families:['Songti SC','Heiti TC']},
   verifyArtifactToolImport:true,
-  receiptPath:path.join(root,'.build/validation.json'),
+  receiptPath:path.join(root,'.build/validation-dual-end.json'),
 }));

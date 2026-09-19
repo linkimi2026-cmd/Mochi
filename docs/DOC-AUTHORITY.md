@@ -26,6 +26,7 @@
 | `docs/DELIVERY-LEDGER.md` | 磁盘上有哪些交付物，验收到什么层级 |
 | `docs/DECISIONS.md` | 已经拍板且仍影响实现的决定 |
 | `docs/RUNTIME-FACTS.md` | 启动、配置、插件和服务接线的技术事实 |
+| `docs/gateway-aiaaa-verified-facts.md` | 出厂默认模型链背后的第三方网关实测能力事实（模型清单、视觉、思考不可控、配额与思考耦合、上下文上限、缓存、错误形状） |
 | `docs/build-standard.md` | 如何构建、打包和校验 |
 | `docs/QUALITY-GATES.md` | CI、依赖边界、lint、格式和类型检查覆盖 |
 | `参赛材料/*` | 对评委和使用者的现行说明 |

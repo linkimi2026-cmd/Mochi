@@ -1,0 +1,21 @@
+{
+  "scope": "live endpoint image perception; not full Agent execution",
+  "provider": "deepseek",
+  "model": "deepseek-flash",
+  "reasoningEffort": "high",
+  "imageSha256": "0342b067365649b020e5bc94876c189df957da843df98725160682b1d66d2c4f",
+  "input": "仅根据所附幻灯片缩略图，输出第1页标题、第3页的第二条要点、第5页标题。看不清就说看不清，不要猜，不要解释。",
+  "output": "第1页标题：水的旅程\n\n第3页第二条要点：凝结：水蒸气遇冷形成小水滴。\n\n第5页标题：下一次下雨，你会观察什么？",
+  "usage": {
+    "inputTokens": 1096,
+    "outputTokens": 155,
+    "totalTokens": 3555,
+    "cacheReadTokens": 2304,
+    "reasoningTokens": 118
+  },
+  "finish": {
+    "kind": "stop"
+  },
+  "error": null,
+  "latencyMs": 1309
+}

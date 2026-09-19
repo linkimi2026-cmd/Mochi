@@ -13,7 +13,7 @@
 | 参赛源码包 | `release/submission/Mochi-参赛源码包-2026-09-14.zip` | 见同目录 `.summary.json` | 自动排除安装器、PPT、视频、缓存、运行数据和密钥；含逐文件清单；ZIP 完整性、敏感信息和 500 MB 上限由脚本检查 |
 | 完整参赛交付包 | `01-Mochi-参赛交付包-2026-09-14/` | 以 `05-校验/delivery-manifest.json` 为准 | 位于项目根目录，作为评委与现场演示的统一入口 |
 | Windows x64 归档 | `release/2026-09-13-windows/mochi-windows-x64-34728914066.zip` | 462,320,016 B | 文件存在；归档内含 EXE 和校验文件；用户确认 Windows 一体机全部功能实测正常，但本轮未绑定包哈希与设备记录 |
-| macOS arm64 | `apps/desktop/release/Mochi-0.1.0-mac-arm64.dmg` | 733,752,961 B | 文件存在，时间戳 2026-09-13 08:41；本轮未重装验证 |
+| macOS arm64 | `apps/desktop/release/Mochi-0.1.0-mac-arm64.dmg` | 733,269,757 B | **2026-09-19 重出**，sha256 `477f28526352b3c5b4f065cb13df5a8bbd47568edadd5c3a090523caf04de3ee`（`shasum -c` OK）；已挂载复核包内 5 处压缩配额与干净 `playwright/`；**本轮未在全新 Mac 上安装验证**，且出厂默认模型链当前 403（见下） |
 | macOS x64 | `apps/desktop/release/Mochi-0.1.0-mac-x64.dmg` | 737,227,186 B | 文件存在，时间戳 2026-09-13 08:41；本轮未重装验证 |
 | 当前参赛宣传片 | `promo/output/Mochi_80秒_2K120帧_V5.mp4` | 50,792,708 B | 用户于 2026-09-14 指定；已核对为 2560×1440、120 fps、80 秒；纳入当前交付目录 |
 | 宣传片 V6（未入本次交付） | `promo/output/Mochi_100秒_2K120帧_V6.mp4` | 70,406,888 B | 较晚的磁盘导出，规格为 2560×1440、120 fps、100 秒；用户曾反馈约 17 秒处过慢 |
@@ -27,7 +27,7 @@
 |---|---|---|
 | A · 磁盘存在 | 文件路径和大小可以读取 | 上表全部满足 |
 | B · 结构/参数检查 | 归档结构、媒体参数、文档格式可以由工具读取 | V6 参数、Windows 归档结构和打包快照已有记录 |
-| C · 自动化回归 | 与交付物相关的脚本或测试通过 | 快照 496 项为 0 漂移；根质量门禁与五个核心插件 126 个测试通过；不能代替安装验收 |
+| C · 自动化回归 | 与交付物相关的脚本或测试通过 | 快照 504 项为 0 漂移；根质量门禁与五个核心插件 131 个测试通过；`test-compaction` 7/7、`test-package-resources` / `test-runtime-profile` / `test-installer-config` 通过；不能代替安装验收 |
 | D · 用户现场确认 | 用户在真实设备上确认可用 | Windows 一体机全部功能正常，由用户在本次会话确认 |
 | E · 证据完整归档 | 包哈希、设备、系统版本、测试步骤、截图/录屏可以复核 | Windows 一体机尚未达到这一层 |
 
@@ -38,6 +38,26 @@
 - Mac 包当前只能确认文件存在，不能写成本轮已在全新 Mac 上安装通过。
 - 参赛 PPT 的现场 Windows WPS 兼容性尚未实测；当前不把本机验证扩大为所有平台验证。
 - 历史源码 ZIP 不代表当前内容；当前 `2026-09-14` 源码 ZIP 已重新生成并登记。
+- **不能写“安装包开箱即用的默认模型已可用”**：出厂默认链 `mochi-aiaaa`
+  （`https://aiaaa.cc/v1`）2026-09-19 复测为 `403 INSUFFICIENT_BALANCE`。
+  该路由的配置本身正确（模型、能力、上下文声明均已按实测事实校准），
+  但账户余额未恢复前，新装包首启的默认模型不可用。恢复后必须复测并把结论补进本表。
+
+## 打包输入的两个硬约束（2026-09-19 落守卫）
+
+1. **压缩配额只能改 preset，不能改 patch**：`dsh-web-app` 把宿主面的
+   `compaction-basic` 置为 `disabled: true`，而 dsh 行补丁只替换 `config`、不碰
+   `disabled`。判据：`--dump-config` 里该行是否带 `disabled: true`。
+   真实位置 = 各 preset 的 `agent.cordis.yml` 压缩组（守卫：
+   `test-compaction.mjs` 断言 `maxTokens >= 16384`）。
+2. **浏览器资源根必须干净**：`stageMochiResources` 对它走**无过滤整目录拷贝**，
+   多余条目会被原样打进安装包且**不报错**。曾因资源根里嵌了一层 hold 目录
+   （1.0 GB）使 dmg 从 733 MB 涨到 1.13 GB；去掉后回到 699 MB。
+   守卫：`prepare-mochi-resources.cjs` 的 `assertBrowserResourceLayout`
+   （只允许 `LICENSE` / `browsers` / `credits.html` / `credits.txt` / `metadata.json`），
+   反向用例在 `test-package-resources.mjs`。
+3. 附带提醒：`apps/desktop/release/*.dmg.sha256` **不由打包脚本生成**，
+   是手工边车。重打包后必须重算，否则会出现「旧哈希配新包」。
 
 ## 本轮打包决定
 

@@ -16,9 +16,13 @@
 
 **可信度分层（重要）：**
 
-- `Anthropic/official/` 下的文件 = Anthropic 经 API 公开的规范文本快照，**可信度最高**
+- `Anthropic/official/` 只是第三方仓库的目录命名；本轮未逐份对照厂商原文，真实性与时效性未验证，不能据此标为官方。
 - 其余文件 = 社区从线上产品抓包/提取，结构完整但可能滞后线上版本
 - 全部**非厂商正式发布物**，仅作研究与自有 Agent 设计参考
+
+本轮官方仓库核对及固定提交见 [复用审计](../../reuse-audit.md#2026-09-15--提示词ppt-视觉复核与评测)。下面清单沿用历史整理者的命名，不代表当前型号或官方发布事实。
+
+2026-09-15补核：Fable 5.1已直接查到Anthropic官方公开system prompt；GPT-5.6 Sol仍仅作为第三方GitHub快照研究。具体来源与落地见 [全领域质量说明](../../agent-quality.md)。这不等于逐份认证下列历史副本。
 
 ## 文件清单
 
@@ -26,7 +30,7 @@
 
 | 文件 | 体量 | 内容 |
 |---|---|---|
-| `Anthropic/official/2026-09-01-claude-fable-5.1.md` | 28 KB / 226 行 | **官方快照**：产品信息块、拒绝处理、儿童安全条款、版权边界 |
+| `Anthropic/official/2026-09-01-claude-fable-5.1.md` | 28 KB / 226 行 | **第三方标称官方，未验证**：产品信息块、拒绝处理、儿童安全条款、版权边界 |
 | `Anthropic/claude-fable-5.1.md` | 405 KB / 7810 行 | 线上全量版：含全部工具定义（搜索、Artifacts、记忆、代码执行） |
 | `Anthropic/claude-code/claude-code-fable-5.1.md` | 323 KB / 6621 行 | Claude Code 形态：reasoning_effort 档位、工具策略、子代理派发 |
 | `Anthropic/claude-code/claude-code-headless-fable-5.1.md` | 198 KB / 4400 行 | 无头/无人值守形态：审批链、非交互执行 |

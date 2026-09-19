@@ -69,9 +69,9 @@ flowchart LR
 - `MOCHI_CAMPUS_API_URL` 决定真实校园 API Origin。
 - `MOCHI_CAMPUS_STATIC_ROOT` 可以显式指定已构建的校园静态客户端。
 - `MOCHI_CAMPUS_STATE_DIR` 只用于本地开发状态；生产包不应携带本地数据库或个人会话。
-- `runtime-profile.json` 的 `campusApiUrl` 当前为 `null`，所以不能从配置文件推断线上地址。
+- `runtime-profile.json` 的 `serviceDefaults.campusApiUrl` 已版本化为 `https://jyl-campus-health-entry.pages.dev`；打包版据此直连生产后端，不再回落到本机回环。
 
-`mochi-dev-up.sh` 的 `cloud` 默认仍指向历史 Cloudflare Pages/Worker 地址。这是开发启动器的旧默认，不是当前 CloudBase 主入口的自动发现。演示或部署时应显式设置已经核实的 Origin。
+`mochi-dev-up.sh` 的 `cloud` 默认指向 `https://jyl-campus-health-entry.pages.dev`，与随包值一致（2026-09-18 实测 `/api/health` 返回 200，`service` 为“嘉行联 Worker”）。只在需要指到别的上游时才显式设置 `MOCHI_CAMPUS_API_URL` 或 `MOCHI_CAMPUS_MODE`。
 
 ### 打包态
 

@@ -9,6 +9,8 @@ import { defineTool } from '@deepseek-ai/dsh-tools';
 import JSZip from 'jszip';
 import {
   MochiPresentationsError,
+  SUPPORTED_LAYOUTS,
+  THEME_NAMES,
   createInspectPathGuard,
   generatePresentationBundle,
   inspectPresentationFile,
@@ -16,6 +18,7 @@ import {
   revisePresentationBundle,
 } from './index.mjs';
 import { registerPresentationRenderTool } from './render.mjs';
+import { PROCESS_SCHEMA } from './process-layout.mjs';
 
 export const name = 'mochi-presentations';
 export const inject = ['tools'];
@@ -34,7 +37,7 @@ function rethrow(error) {
   const hints = {
     OUTPUT_EXISTS: '输出目录已存在——已确认的旧版本不会被覆盖，请换一个全新的输出目录。',
     INVALID_OUTPUT_DIRECTORY: 'outputDirectory 必须是宿主指定的绝对路径。',
-    INVALID_INPUT: '课件结构不合法：请按每页 ≤6 条要点、每条 ≤140 字精简后重试。',
+    INVALID_INPUT: '课件结构不合法：请按前面的具体原因修正。内容页最多6条且每条≤140字；节奏页受排版后总行数限制，长句换行也计入，可精简副题或换为title-body。',
     INVALID_REVISION: '上次课件的生成源路径不可用或修订目标不存在：请原样使用上次 create/revise 返回的 sourcePath。',
     PPTX_NOT_FOUND: '要检查的 .pptx 不存在：请先用 file_search 找到真实路径再传入，不要凭记忆拼路径。',
     PPTX_NOT_ZIP: '这个文件不是 ZIP 容器，只是扩展名叫 .pptx：它根本不是 PowerPoint 文件。请如实告诉老师，不要描述其中的“幻灯片”。',
@@ -76,8 +79,8 @@ async function assertFreshOutput(outputDirectory) {
   throw new Error('【mochi-presentations】输出目录已存在：为不覆盖老师已确认的版本，请换一个全新的输出目录再试。');
 }
 
-function normalizeBullets(raw, pageLabel) {
-  if (!Array.isArray(raw) || raw.filter((line) => String(line ?? '').trim()).length < 1) {
+function normalizeBullets(raw, pageLabel, allowEmpty = false) {
+  if (!Array.isArray(raw) || (!allowEmpty && raw.filter((line) => String(line ?? '').trim()).length < 1)) {
     throw new Error(`${pageLabel}缺少 bullets：请给出至少 1 条要点。`);
   }
   const bullets = raw.map((line) => String(line ?? '').trim()).filter(Boolean);
@@ -87,16 +90,28 @@ function normalizeBullets(raw, pageLabel) {
   return bullets;
 }
 
-function visualSpec(raw, pageLabel, { tableKey = 'table', chartKey = 'chart' } = {}) {
+function visualSpec(raw, pageLabel, { tableKey = 'table', chartKey = 'chart', processKey = 'process' } = {}) {
   const table = raw?.[tableKey];
   const chart = raw?.[chartKey];
+  const process = raw?.[processKey];
+  if (process !== undefined && (table !== undefined || chart !== undefined)) throw new Error(`${pageLabel}的process不能与table/chart同时填写。`);
   if (table !== undefined && chart !== undefined) throw new Error(`${pageLabel}不能同时放 table 和 chart：一页只保留一种主视觉，避免投影区域拥挤。`);
   if (table !== undefined && (!table || typeof table !== 'object' || Array.isArray(table))) throw new Error(`${pageLabel}的 table 必须是 {headers, rows} 对象。`);
   if (chart !== undefined && (!chart || typeof chart !== 'object' || Array.isArray(chart))) throw new Error(`${pageLabel}的 chart 必须是 {type, labels, series} 对象。`);
   return {
     ...(table === undefined ? {} : { table }),
     ...(chart === undefined ? {} : { chart }),
+    ...(process === undefined ? {} : { process }),
   };
+}
+
+function selectLayout(requested, visual, fallback = 'title-body') {
+  const layout = requested ?? (visual.process ? 'title-process' : visual.chart ? 'title-chart' : visual.table ? 'title-table' : fallback);
+  if (!SUPPORTED_LAYOUTS.includes(layout)) throw new Error(`未知版式：${layout}`);
+  if (visual.process !== undefined && layout !== 'title-process') throw new Error('process 必须使用 title-process 版式。');
+  if (visual.table !== undefined && layout !== 'title-table') throw new Error('table 必须使用 title-table 版式。');
+  if (visual.chart !== undefined && layout !== 'title-chart') throw new Error('chart 必须使用 title-chart 版式。');
+  return layout;
 }
 
 // 用 jszip 重开新旧两份 pptx，逐字节核验未改动页的 slide XML。
@@ -137,16 +152,19 @@ export function apply(ctx, options = {}) {
     return { guard: createInspectPathGuard(entries), source, rejected };
   }
 
-  register('mochi_ppt_create', '根据老师给的大纲生成上课用真 .pptx 课件（pptxgenjs 本地生成，文本、原生表格和原生图表都可在 PowerPoint 中编辑，绝不用 HTML/网页充数）。每页可选一份 table 或 chart 主视觉；工具在生成前按固定投影版式预算拒绝文字或轴标签超量。老师要“新做一份课件”时用本工具。返回产物绝对路径与 sourcePath；之后老师要改第 X 页时，必须用 mochi_ppt_revise 携带该 sourcePath 做定页修改，不要重新生成整套课件（重生成会丢老师已确认的内容）。【排版要求】生成前先读设计规范：skills/classroom-deck/SKILL.md 会给出规范文件族的绝对路径（通用审美法则 / 版式库 / pptxgenjs 硬规则 / 场景分支）。必须按「先定调性 → 选版式合约 → 再动手」的顺序做，并逐条走完绘制前清单；课件每页要有视觉锚点、标题写观点而非分类名、关键数据必须给判断、禁止出现 AI 味破绽（标题下划线加横线、装饰色条、页页同一版式）。生成后必须调用 mochi_ppt_render 渲染回看，确认没有文字裁切、元素重叠、页面偏空，发现问题用 mochi_ppt_revise 修改后再次渲染复验——这是交付前的强制步骤，不能只靠读 OOXML 判断排版；结构完全正确而画面已经坏掉，是最常见的隐性缺陷。', {
+  register('mochi_ppt_create', '生成真实可编辑 .pptx，返回产物路径和 sourcePath。先通过 skill 加载 classroom-deck，按目标准备简短逐页大纲。支持 theme 预设和 layout 版式选择（封面、章节、重点陈述、关键数字、结束页及文字/表格/图表及title-process流程/循环图）；不支持图片、自由坐标、字体或动画参数，不得声称已实现这些设计。输入超量先精简或拆页，不凑最低字数。生成后主动用 ppt_inspect 核对内容，再调用 mochi_ppt_render：overview 看全册、page 看密集页/图表页/疑似缺陷页。实际查看图像附件后才能声称视觉已检；不可用时说明视觉未核验。首次通过不必修改；有证据的问题用 mochi_ppt_revise 定页修改，使用最新 sourcePath 和最新 PPTX 复验，每个问题最多两轮，剩余硬缺陷标为待修稿。不要重做老师已确认的其他页。', {
     title: { type: 'string', required: true, description: '课件标题（≤100 字）。' },
+    theme: { type: 'string', enum: THEME_NAMES, description: '全册配色预设。文史 ink/archive，自然 field，理科 lab，信息 swiss，深色 midnight，艺术 stage，活动 festive，默认 neutral；按内容选，不必每次更换。' },
     slides: {
       type: 'array',
       required: true,
       items: {
         type: 'object',
         properties: {
+          layout: { type: 'string', enum: SUPPORTED_LAYOUTS, description: '可选：cover封面、section章节、statement重点陈述、kpi已核实数字、closing总结；内容页title-body/title-table/title-chart；流程/循环图title-process（必须填process，说明≤1条40字，可为空）。省略则按process/table/chart推断。节奏页只写短副题，允许bullets=[]，不凑要点。' },
+          process: PROCESS_SCHEMA,
           heading: { type: 'string', required: true, description: '页标题（≤100 字；超过两行投影预算会被拒绝）。' },
-          bullets: { type: 'array', required: true, items: { type: 'string' }, description: '本页要点（1-6 条，每条 ≤140 字；表格/图表页最多约 3 行）。' },
+          bullets: { type: 'array', required: true, items: { type: 'string' }, description: '字段名是bullets。本页要点：内容页1-6条，每条≤140字；节奏页可为空，排版后正文总行数cover/statement/closing≤3、section≤2、kpi≤4，长句换行也计入。' },
           table: {
             type: 'object',
             description: '可选。PowerPoint 原生可编辑表格：{headers: [2-5 个短列名], rows: [[...], ...]}；与 chart 二选一。',
@@ -170,7 +188,7 @@ export function apply(ctx, options = {}) {
         },
         additionalProperties: false,
       },
-      description: '每页一项：{heading, bullets, table? | chart?}。表格与图表均写入真 PPTX 的原生 Office 对象。',
+      description: '每页一项：{heading, bullets, layout?, table? | chart? | process?}。表格与图表均写入真 PPTX 的原生 Office 对象。',
     },
     outputDirectory: { type: 'string', required: true, description: '全新的输出目录（绝对路径，必须不存在）。' },
   }, async (args) => {
@@ -187,17 +205,19 @@ export function apply(ctx, options = {}) {
       deckId,
       version: 1,
       title,
+      ...(args.theme === undefined ? {} : { theme: args.theme }),
       slides: args.slides.map((slide, index) => {
         const pageLabel = `第 ${index + 1} 页`;
         const heading = String(slide?.heading || '').trim();
         if (!heading) throw new Error(`${pageLabel}缺少 heading（页标题）。`);
         if (heading.length > MAX_SLIDE_TITLE) throw new Error(`${pageLabel}的 heading 超过 ${MAX_SLIDE_TITLE} 字，请精简。`);
-        const bullets = normalizeBullets(slide?.bullets, pageLabel);
         const visual = visualSpec(slide, pageLabel);
+        const layout = selectLayout(slide?.layout, visual);
+        const bullets = normalizeBullets(slide?.bullets, pageLabel, layout === 'title-process' || !layout.startsWith('title-'));
         return {
           id: `slide-${index + 1}`,
           version: 1,
-          layout: visual.chart ? 'title-chart' : visual.table ? 'title-table' : 'title-body',
+          layout,
           title: heading,
           body: bullets,
           ...visual,
@@ -220,13 +240,15 @@ export function apply(ctx, options = {}) {
     };
   });
 
-  register('mochi_ppt_revise', '老师要改已生成课件的某一页（说“第 X 页改成…”）时用本工具：只重写指定页，其余页的 slide XML 与旧版逐字节一致（生成后用 jszip 重开核验），并写入全新目录——永不覆盖老师已确认的旧版本。previousSourcePath 用上次 create/revise 返回的 sourcePath；instruction 填老师的修改说明；newTitle/newBody/newTable/newChart 填改后的本页内容（至少给一个）。绝不要用 ppt_create 从头重做整套课件。', {
+  register('mochi_ppt_revise', '老师要改已生成课件的某一页（说“第 X 页改成…”）时用本工具：只重写指定页，其余页的 slide XML 与旧版逐字节一致（生成后用 jszip 重开核验），并写入全新目录——永不覆盖老师已确认的旧版本。previousSourcePath 用上次 create/revise 返回的 sourcePath；instruction 填老师的修改说明；newTitle/newBody/newLayout/newTable/newChart 填改后的本页内容或版式（至少给一个）。绝不要用 ppt_create 从头重做整套课件。', {
     previousSourcePath: { type: 'string', required: true, description: '上次课件生成的 sourcePath（绝对路径，原样传入，不得猜测）。' },
     page: { type: 'integer', required: true, description: '要修改的页码（正整数，第 1 页 = 1）。' },
     instruction: { type: 'string', required: true, description: '本页修改说明（老师的原话或归纳）。' },
     outputDirectory: { type: 'string', required: true, description: '全新的输出目录（绝对路径，必须不存在；旧版本原样保留）。' },
+    newLayout: { type: 'string', enum: SUPPORTED_LAYOUTS, description: '可选：只修改本页版式；切换至table/chart时需提供对应数据。其余页保持不变。' },
     newTitle: { type: 'string', description: '改后的本页标题；不改标题则省略。' },
     newBody: { type: 'array', items: { type: 'string' }, description: '改后的本页要点（1-6 条，每条 ≤140 字）；不改要点则省略。' },
+    newProcess: PROCESS_SCHEMA,
     newTable: {
       type: 'object',
       description: '改后的原生表格 {headers, rows}；填入后本页切换为表格版式，不能与 newChart 同时填写。',
@@ -258,11 +280,10 @@ export function apply(ctx, options = {}) {
     await assertFreshOutput(outputDirectory);
     const newTitle = args.newTitle === undefined ? undefined : String(args.newTitle || '').trim();
     if (newTitle !== undefined && newTitle.length > MAX_SLIDE_TITLE) throw new Error(`newTitle 超过 ${MAX_SLIDE_TITLE} 字，请精简。`);
-    const hasBody = Array.isArray(args.newBody) && args.newBody.some((line) => String(line ?? '').trim());
-    const newBody = hasBody ? normalizeBullets(args.newBody, `第 ${page} 页`) : undefined;
-    const visual = visualSpec(args, `第 ${page} 页`, { tableKey: 'newTable', chartKey: 'newChart' });
-    if (!newTitle && !newBody && visual.table === undefined && visual.chart === undefined) {
-      throw new Error('请把老师要改成的结果写进 newTitle / newBody / newTable / newChart（至少给一个）；instruction 只是修改说明，工具不会替你改写内容。');
+    const newBody = args.newBody === undefined ? undefined : normalizeBullets(args.newBody, `第 ${page} 页`, true);
+    const visual = visualSpec(args, `第 ${page} 页`, { tableKey: 'newTable', chartKey: 'newChart', processKey: 'newProcess' });
+    if (!newTitle && !newBody && args.newLayout === undefined && visual.table === undefined && visual.chart === undefined && visual.process === undefined) {
+      throw new Error('请把老师要改成的结果写进 newTitle / newBody / newLayout / newTable / newChart / newProcess（至少给一个）；instruction 只是修改说明，工具不会替你改写内容。');
     }
     let prior;
     try { prior = JSON.parse(await readFile(previousSourcePath, 'utf8')); } catch {
@@ -275,10 +296,12 @@ export function apply(ctx, options = {}) {
     const target = priorSlides[page - 1];
     const revision = {
       slideId: target.id,
+      layout: selectLayout(args.newLayout, visual, target.layout),
       ...(newTitle ? { title: newTitle } : {}),
       ...(newBody ? { body: newBody } : {}),
-      ...(visual.table ? { layout: 'title-table', table: visual.table } : {}),
-      ...(visual.chart ? { layout: 'title-chart', chart: visual.chart } : {}),
+      ...(visual.table ? { table: visual.table } : {}),
+      ...(visual.chart ? { chart: visual.chart } : {}),
+      ...(visual.process ? { process: visual.process } : {}),
     };
     let bundle;
     try { bundle = await revisePresentationBundle({ previousSourcePath, revision, outputDirectory }); } catch (error) { rethrow(error); }

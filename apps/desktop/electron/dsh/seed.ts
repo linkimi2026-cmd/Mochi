@@ -43,6 +43,19 @@ export type MochiSeedSummary = {
 };
 
 type CredentialsSeed = { schemaVersion: 1; refs: Record<string, string> };
+/**
+ * 一个 pi-ai 路由的模型条目。`contextWindow` / `maxTokens` 是**能力事实**，不是偏好：
+ * `mochi-aiaaa` 不在 pi-ai 内置目录里，缺了它们就会落到 pi-ai 的兜底
+ * （262,144 / 32,768），既低估真实能力又不符合网关行为。见
+ * docs/gateway-aiaaa-verified-facts.md 与 core.patch.yml 的 session-title-llm 覆盖。
+ */
+type SettingsSeedModel = {
+  id: string;
+  name: string;
+  contextWindow: number;
+  maxTokens: number;
+  input: string[];
+};
 type SettingsSeed = {
   schemaVersion: 1;
   agentDefaultModel: { provider: string; model: string };
@@ -53,7 +66,7 @@ type SettingsSeed = {
     apiKeyEnv: string;
     api: string;
     baseURL: string;
-    models: Array<{ id: string; name: string; input: string[] }>;
+    models: SettingsSeedModel[];
   };
 };
 
@@ -109,6 +122,14 @@ function readSettingsSeed(resourceRoot: string): SettingsSeed | null {
     if (model.id.includes(FORBIDDEN_MODEL_SUBSTRING)) {
       throw new Error(`视觉模型 ${model.id} 带过期标记，禁止进入默认链`);
     }
+    // 能力事实必须齐全且为正整数：缺了它们插件不会报错，只会静默退到 pi-ai 的
+    // 兜底容量，而那正是要避免的「看起来配好了」。所以在这里 fail loud。
+    for (const field of ["contextWindow", "maxTokens"] as const) {
+      const value = model[field];
+      if (typeof value !== "number" || !Number.isInteger(value) || value <= 0) {
+        throw new Error(`settings-defaults.json 的视觉模型 ${model.id} 的 ${field} 必须是正整数`);
+      }
+    }
   }
   return {
     schemaVersion: 1,
@@ -123,6 +144,8 @@ function readSettingsSeed(resourceRoot: string): SettingsSeed | null {
       models: vision.models.map((model) => ({
         id: String(model.id),
         name: String(model.name),
+        contextWindow: Number(model.contextWindow),
+        maxTokens: Number(model.maxTokens),
         input: (model.input as unknown[]).map((entry: unknown) => String(entry)),
       })),
     },
@@ -187,7 +210,9 @@ function renderSettingsSeedDocument(seed: SettingsSeed, header: string): string 
   const vision = seed.visionProvider;
   const modelLines = vision.models.map((model) => {
     const inputLines = model.input.map((entry) => `            - ${entry}`).join("\n");
-    return `        - id: ${model.id}\n          name: ${model.name}\n          input:\n${inputLines}`;
+    return `        - id: ${model.id}\n          name: ${model.name}`
+      + `\n          contextWindow: ${model.contextWindow}\n          maxTokens: ${model.maxTokens}`
+      + `\n          input:\n${inputLines}`;
   }).join("\n");
   return `${header}agent-default-model:\n  provider: ${seed.agentDefaultModel.provider}\n  model: ${seed.agentDefaultModel.model}\n${vision.settingsNamespace}:\n  providers:\n    ${vision.providerId}:\n      displayName: ${vision.displayName}\n      apiKeyEnv: ${vision.apiKeyEnv}\n      api: ${vision.api}\n      baseURL: ${vision.baseURL}\n      models:\n${modelLines}\n`;
 }

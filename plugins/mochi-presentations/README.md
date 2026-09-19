@@ -57,3 +57,11 @@ The first command emits `presentation.pptx`, `presentation.pdf`, `source.json`, 
 - Adopted: [PptxGenJS v4.0.1, tag `3c9ec1b`](https://github.com/gitbrent/PptxGenJS/releases/tag/v4.0.1), MIT. It is the installed current release and supplies the native editable text, table, chart, and OOXML writer needed here; no version change is justified.
 - Partially adopted as a design reference: [siril9/presentation-skill](https://github.com/siril9/presentation-skill), MIT. Its source-first outline, native chart/table, and visual-QA concepts fit this module; its Python/LibreOffice-oriented stack is not imported.
 - Not adopted: [Presenton](https://github.com/presenton/presenton), Apache-2.0, and [pptx-gen](https://github.com/alfonsograziano/pptx-gen), MIT. Presenton now also has a desktop route, but adopting either would replace the existing generated/edit/packaging chain without a verified compatibility benefit for this deadline. `pptx-gen` is also a small, unreleased project. No product defect is inferred from those projects or their issue trackers.
+
+## 流程与循环图
+
+`mochi_ppt_create.slides[].process`与`mochi_ppt_revise.newProcess`接受`{steps:[{label,detail},...],loopLabel?}`，对应`title-process`版式。支持3–4步，label≤10字、detail≤32字，循环返回说明≤32字；bullets为空或最多1条40字说明。步骤不能同时携带table/chart。普通顺序省略loopLabel；真实循环才画返回箭头。
+
+PPTX用可编辑原生矩形、文字和线箭头，PDF讲义由同一场景几何独立绘制；后者仍不作为PPT视觉验收证据。修订继承已有sourcePath/全新目录纪律，从流程切回其他版式时清除旧process数据。流程图字段不能控制任意坐标、图片或字号。
+
+`node --test plugins/mochi-presentations/test/process-layout.test.mjs`验证生成、语义完整、原生箭头、四步修订、布局退出和未改页保持。

@@ -13,6 +13,7 @@
       试卷先给题目、答案、评分点和覆盖目标的可核对草案。老师上传的资料，宿主会给出一句只读副本路径。按后缀直接调对应工具：.docx 用 doc_read，.pdf 用 pdf_read，表格用 spreadsheet_read，.pptx 用 ppt_inspect，图片用 read_image。这些文件不要用 file_read 去读，它只接受纯文本，一定会拒绝。上传件只读；要改就先复制到工作区再改。只有工具目录真的提供文档或文件能力时才生成相应文件；不存在的 doc、PDF 或题库工具不得虚构调用。绝不向外网查询发送学生姓名、学号、成绩、健康、考勤、处分、家庭信息或可识别附件内容。
 
       只报告工具实际返回的内容。网页、文件或来源无法读取时，说清已覆盖范围与缺口，不把失败改写成“资料不存在”或“已核验”。
+      交付前自行解题，核对答案、题号、总分、评分点和教材引用；用mochi技能对应文档方法检查实际文件，不把题目生成当答案已验证。
 - id: agent-instructions
   name: '@deepseek-ai/dsh-agent-instructions'
   config:
@@ -45,3 +46,34 @@
   name: '@deepseek-ai/dsh-tool-web'
   config:
     fetch: true
+
+# Web host disables its backend; each preset owns this isolated capability.
+# Reuse upstream pressure/overflow recovery, checkpoint persistence and pairing.
+- id: compaction
+  name: cordis:group
+  group: true
+  isolate:
+    compaction: true
+    toolResultPruner: true
+  config:
+    - id: compaction-basic
+      name: '@deepseek-ai/dsh-compaction-basic'
+      config:
+        auto: true
+        thresholdRatio: 0.8
+        retainRatio: 0.16
+        # [Mochi patch 2026-09-19] 压缩摘要的输出上限。aiaaa 网关强制思考且
+        # 三档 effort 全部无效，思考 token 计入 max_tokens：默认 8192 时实测
+        # 思考已占 2831，余量只有 2.9×，一旦正文被截空，summarizer 抛
+        # "summarization produced no text summary content" 直接中断会话。
+        # 抬到 16384 给足正文余量（本行必须落在 preset 里，宿主面的
+        # compaction-basic 被 dsh-web-app 置为 disabled，改那里不生效）。
+        maxTokens: 16384
+    - id: command-compact
+      name: '@deepseek-ai/dsh-command-compact'
+    - id: tool-result-pruner
+      name: '@deepseek-ai/dsh-compaction-tool-result-pruner'
+      config:
+        thresholdChars: 8192
+        headChars: 4096
+        tailChars: 1024

@@ -1,0 +1,23 @@
+{
+  "scope": "system-fragment policy probe; no tools executed",
+  "variant": "baseline",
+  "testId": "unverified-visual",
+  "provider": "deepseek",
+  "model": "deepseek-v4-pro",
+  "reasoningEffort": "high",
+  "systemSha256": "fa487df3367975e657581d5beae69e51792ccaccab55271c0c1c56d79fa46f5d",
+  "input": "这是合成测试，无工具可用。PPT生成器只返回文件路径presentation.pptx，尚未渲染，也没有图片。请用一句话交付，不能遗漏检查状态。",
+  "output": "presentation.pptx 只拿到了路径，尚未渲染、也没有图片，暂时不能确认文件可用。",
+  "usage": {
+    "inputTokens": 86,
+    "outputTokens": 409,
+    "totalTokens": 2543,
+    "cacheReadTokens": 2048,
+    "reasoningTokens": 388
+  },
+  "finish": {
+    "kind": "stop"
+  },
+  "error": null,
+  "latencyMs": 6608
+}

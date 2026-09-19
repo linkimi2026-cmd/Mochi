@@ -53,6 +53,28 @@ const PLAYWRIGHT_CHROMIUM_REVISION = "1187";
 const PLAYWRIGHT_CHROMIUM_VERSION = "140.0.7339.16";
 
 /**
+ * 浏览器资源根**允许出现的顶层条目**，一个不多一个不少。
+ *
+ * 为什么必须校验（2026-09-19 实测）：`stageMochiResources` 对资源根走的是
+ * **无过滤的整目录拷贝**（`copyDirectory(sourceRoot, …/playwright)`）。本机曾经把
+ * 一个「hold 目录」放在资源根**里面**再传进去，于是那一轮把整个 hold 又拷了一份
+ * 进包；下一轮再从这份已膨胀的资源里取 hold —— **每打一次包就多嵌一层**。
+ * 出事时 `.mochi-package-resources-v1.nosync/playwright` 里嵌着
+ * `mochi-pw-hold-20260912`（1.0 GB），安装包从 733 MB 涨到 1.18 GB，
+ * 而**没有任何一步报错**：除了体积和装包时间，症状完全沉默。
+ *
+ * CI 侧是在 `RUNNER_TEMP` 里现建一个干净目录（`browsers/` + 四个声明文件），
+ * 所以这条严格校验对 CI 恒成立。
+ */
+const PLAYWRIGHT_BROWSER_RESOURCE_ENTRIES = Object.freeze([
+  "LICENSE",
+  "browsers",
+  "credits.html",
+  "credits.txt",
+  "metadata.json",
+]);
+
+/**
  * 随包**运行时载荷**的排除规则 —— 只管打包，**不删磁盘上的任何文件**。
  * 覆盖面 = `resources/mochi/node_modules`（逐包复制）、插件的整目录拷贝（如
  * `dsh-better-sidebar/lib`）、以及 electron-builder 那条 `app.asar.unpacked` 路径
@@ -90,14 +112,13 @@ function packagedRuntimePayloadFilter() {
 }
 
 const PLUGINS = Object.freeze([
-  { id: "mochi-hello", source: "plugins/mochi-hello", files: ["index.mjs", "doctor.mjs", "package.json"] },
+  { id: "mochi-hello", source: "plugins/mochi-hello", files: ["index.mjs", "doctor.mjs", "work-quality.mjs", "work-quality.md", "package.json"] },
   { id: "mochi-dispatch", source: "plugins/mochi-dispatch", files: ["index.mjs", "lan-transport.mjs", "store.mjs", "state-machine.mjs", "package.json"] },
   { id: "mochi-campus", source: "plugins/mochi-campus", files: ["index.mjs", "connection.mjs", "package.json"] },
   { id: "mochi-approval", source: "apps/desktop/electron/dsh/mochi-approval", files: ["index.mjs", "package.json"] },
   { id: "jxl-theme", source: "client-plugins/jxl-theme", files: ["index.mjs", "client.js", "package.json"], directories: ["assets"] },
   { id: "jxl-brand", source: "client-plugins/jxl-brand", files: ["index.mjs", "client.js", "package.json"] },
   { id: "jxl-campus", source: "client-plugins/jxl-campus", files: ["index.mjs", "client.js", "static-root.mjs", "package.json"] },
-  { id: "mochi-workbench", source: "client-plugins/mochi-workbench", files: ["index.mjs", "client.js", "package.json"] },
   { id: "mochi-model-presets", source: "client-plugins/mochi-model-presets", files: ["index.mjs", "client.js", "package.json"] },
   {
     id: "mochi-lan",
@@ -124,7 +145,7 @@ const PLUGINS = Object.freeze([
   {
     id: "mochi-presentations",
     source: "plugins/mochi-presentations",
-    files: ["index.mjs", "plugin.mjs", "render.mjs", "package.json"],
+    files: ["index.mjs", "plugin.mjs", "render.mjs", "process-layout.mjs", "package.json"],
     // 设计规范：模型在生成课件前必须读到，缺了它就只能凭"感觉"排版。
     directories: ["references"],
   },
@@ -426,7 +447,29 @@ function playwrightBrowserResourceRoot(env) {
   if (!existsSync(root) || !lstatSync(root).isDirectory() || lstatSync(root).isSymbolicLink()) {
     throw new Error(`Playwright 浏览器资源根目录不可用：${root}`);
   }
+  assertBrowserResourceLayout(root);
   return root;
+}
+
+/**
+ * Reject a browser resource root that carries anything but the declared payload.
+ *
+ * The copy that follows is unfiltered, so an extra entry is not a warning —
+ * it is dead weight in every installer built from this root, and nesting
+ * accumulates once a bloated root is held and passed in again.
+ */
+function assertBrowserResourceLayout(sourceRoot) {
+  const unexpected = readdirSync(sourceRoot).filter(
+    (entry) => !PLAYWRIGHT_BROWSER_RESOURCE_ENTRIES.includes(entry),
+  );
+  if (unexpected.length === 0) return;
+  const sample = unexpected.slice(0, 3).join("、");
+  throw new Error(
+    `Playwright 浏览器资源根只允许 ${PLAYWRIGHT_BROWSER_RESOURCE_ENTRIES.join("、")}，`
+    + `但发现 ${unexpected.length} 个多余条目（例：${sample}）：${sourceRoot}。`
+    + "打包对该目录走无过滤的整目录拷贝，多余条目会被原样打进安装包，"
+    + "显著增大体积与安装时间且不会报错；请把资源放到一个干净目录后再指向它。",
+  );
 }
 
 function requiredRegularFile(path, label) {
@@ -802,6 +845,8 @@ exports.PLUGIN_RUNTIME_MODULES = PLUGIN_RUNTIME_MODULES;
 exports.PLUGIN_RUNTIME_VERSIONS = PLUGIN_RUNTIME_VERSIONS;
 exports.ADDITIONAL_RUNTIME_ENTRY_VERSIONS = ADDITIONAL_RUNTIME_ENTRY_VERSIONS;
 exports.PLAYWRIGHT_BROWSER_RESOURCE_ENV = PLAYWRIGHT_BROWSER_RESOURCE_ENV;
+exports.PLAYWRIGHT_BROWSER_RESOURCE_ENTRIES = PLAYWRIGHT_BROWSER_RESOURCE_ENTRIES;
+exports.assertBrowserResourceLayout = assertBrowserResourceLayout;
 exports.PACKAGED_RUNTIME_PAYLOAD_EXCLUDED_FILE = PACKAGED_RUNTIME_PAYLOAD_EXCLUDED_FILE;
 exports.isExcludedFromPackagedRuntimePayload = isExcludedFromPackagedRuntimePayload;
 exports.TEACHER_PRESET_IDS = TEACHER_PRESET_IDS;

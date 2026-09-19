@@ -1,0 +1,50 @@
+{
+  "description": "Mochi 46 synthetic policy cases; DeepSeek only; not full Agent quality",
+  "sharing": false,
+  "prompts": [
+    {
+      "id": "file://baseline.cjs",
+      "label": "baseline"
+    },
+    {
+      "id": "file://candidate.cjs",
+      "label": "candidate"
+    }
+  ],
+  "providers": [
+    {
+      "id": "deepseek:deepseek-flash",
+      "config": {
+        "showThinking": false,
+        "max_tokens": 4500,
+        "passthrough": {
+          "thinking": {
+            "type": "enabled"
+          },
+          "reasoning_effort": "high"
+        }
+      }
+    }
+  ],
+  "defaultTest": {
+    "options": {
+      "provider": {
+        "id": "deepseek:deepseek-v4-pro",
+        "config": {
+          "showThinking": false,
+          "max_tokens": 2000,
+          "passthrough": {
+            "thinking": {
+              "type": "disabled"
+            }
+          }
+        }
+      }
+    }
+  },
+  "tests": "file://cases.json",
+  "evaluateOptions": {
+    "maxConcurrency": 3
+  },
+  "outputPath": "results.json"
+}

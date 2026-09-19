@@ -1,0 +1,103 @@
+{
+  "schema": "mochi-lesson-presentation-v1",
+  "sourceKind": "demonstration",
+  "deckId": "chat-mu2uqybl-casev",
+  "version": 1,
+  "title": "水的旅行：自然界的水循环",
+  "theme": {
+    "name": "field",
+    "background": "F1F5EA",
+    "surface": "FFFFFF",
+    "primary": "2F5D3A",
+    "accent": "C08A1E",
+    "text": "23301F",
+    "muted": "67785F",
+    "rule": "C9D8BE",
+    "deep": "2F5D3A",
+    "onDeep": "F1F5EA",
+    "chartColors": [
+      "C08A1E",
+      "2F5D3A",
+      "7F762B",
+      "554D1F"
+    ]
+  },
+  "slides": [
+    {
+      "id": "slide-1",
+      "version": 1,
+      "layout": "cover",
+      "title": "水的旅行：自然界的水循环",
+      "body": [
+        "小学四年级科学",
+        "核心问题：天上的水，是从哪里来的？"
+      ],
+      "source": {
+        "label": "水的旅行：自然界的水循环 第 1 页",
+        "reference": "chat:mochi_ppt_create:chat-mu2uqybl-casev:slide-1"
+      }
+    },
+    {
+      "id": "slide-2",
+      "version": 1,
+      "layout": "title-body",
+      "title": "蒸发：水变成水汽，升到空中",
+      "body": [
+        "太阳晒热水面，水会慢慢变成看不见的水汽",
+        "水汽比空气轻，会向上升",
+        "海洋、湖泊、河流和潮湿土壤里的水都会蒸发",
+        "水在任何温度下都会蒸发；天气越热、风越大，蒸发通常越快"
+      ],
+      "source": {
+        "label": "水的旅行：自然界的水循环 第 2 页",
+        "reference": "chat:mochi_ppt_create:chat-mu2uqybl-casev:slide-2"
+      }
+    },
+    {
+      "id": "slide-3",
+      "version": 1,
+      "layout": "title-body",
+      "title": "凝结：水汽遇冷，变成小水滴",
+      "body": [
+        "水汽升到高空，那里温度更低",
+        "水汽遇冷，附着在空气中的微小尘埃上，变成小水滴或小冰晶",
+        "许多小水滴聚在一起，就成了我们看到的云",
+        "凝结的关键条件是：水汽 + 遇冷"
+      ],
+      "source": {
+        "label": "水的旅行：自然界的水循环 第 3 页",
+        "reference": "chat:mochi_ppt_create:chat-mu2uqybl-casev:slide-3"
+      }
+    },
+    {
+      "id": "slide-4",
+      "version": 1,
+      "layout": "statement",
+      "title": "小水滴变大后，落回地面",
+      "body": [
+        "云里的小水滴不断增多、变大",
+        "重到空气托不住时，它们就落下来——这就是降水",
+        "降水把水送回陆地，成为江河、湖泊和地下水的一部分"
+      ],
+      "source": {
+        "label": "水的旅行：自然界的水循环 第 4 页",
+        "reference": "chat:mochi_ppt_create:chat-mu2uqybl-casev:slide-4"
+      }
+    },
+    {
+      "id": "slide-5",
+      "version": 1,
+      "layout": "closing",
+      "title": "观察问题：雨停后，操场上的水洼去哪儿了？",
+      "body": [
+        "先猜一猜：水洼里的水是渗进土里，还是变成了水汽？",
+        "雨停后去看两处水洼：太阳晒得到的和树荫下的",
+        "比较它们变干的速度，把发现记在观察记录本上（答案在下一课揭晓）"
+      ],
+      "source": {
+        "label": "水的旅行：自然界的水循环 第 5 页",
+        "reference": "chat:mochi_ppt_create:chat-mu2uqybl-casev:slide-5"
+      }
+    }
+  ]
+}

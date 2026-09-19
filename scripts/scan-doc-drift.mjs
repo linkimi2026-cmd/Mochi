@@ -68,7 +68,7 @@ const RULES = [
   {
     id: "插件计数",
     pattern: /\b(12|16|19|20|21|24|26)\s*(个)?插件|插件\s*(12|16|19|20|21|24|26)\b|EXPECTED_BUNDLED_PLUGIN_COUNT|白名单\s*\d+\s*→\s*\d+/,
-    note: "打包白名单当前是 26 个插件（2026-09-12）。历史数字必须标成历史。",
+    note: "打包白名单当前是 25 个插件（2026-09-18 起，实读 prepare-mochi-resources.cjs 的 PLUGINS 反解为 25 条）。历史数字必须标成历史。",
   },
   {
     id: "点号工具名",

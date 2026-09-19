@@ -43,6 +43,10 @@ Composer picker/addFiles 或 document drag-drop
 
 `mochi-documents` 与 `mochi-presentations` 也不在当前 `mochi-web` profile 或 `prepare-mochi-resources.cjs` 的生产 plugin 列表，故不能把本地生成器/PPT 代码算作桌面现有预览链。
 
+> **2026-09-18 更正（WorkBuddy AI 静态复核）**：上句前半已过时。实测 [`runtime-profile.json`](../apps/desktop/resources/mochi-web/runtime-profile.json) 与 `apps/desktop/scripts/prepare-mochi-resources.cjs` 的 `PLUGINS` 白名单，`mochi-documents`、`mochi-presentations`、`mochi-sheets`、`mochi-campus` **均已在列**（打包脚本第 125–135 行分别 stage 了 `mochi-presentations` 的 `plugin.mjs`/`render.mjs` 与 `mochi-documents` 的 `document-io.mjs`）。
+> **但上句后半的结论仍然成立，只是理由要换**：两者都**不注册任何 viewer**，产出的 `.pptx`/`.docx` 依旧只能落到 `binary-download`。即——**生成器已是生产链路的一部分，预览仍不是**。不要把"插件在 profile 里"误读成"Office 预览已可用"。
+> 本条修正不影响本文其它结论；`mochi-office` 确实仍不在 profile（`prepare-mochi-resources.cjs` 中 0 命中），§OnlyOffice 一节的判断不变。
+
 ## OnlyOffice / Docker
 
 [`plugins/mochi-office/README.md`](../plugins/mochi-office/README.md) 明确它是“not enabled in Mochi UI or production profile”的 bounded POC；[`docker-compose.yml`](../plugins/mochi-office/docker-compose.yml) 的 `onlyoffice/documentserver:9.4.0.1` 只绑定本地 `127.0.0.1:18080`。当前 profile 与资源打包器均未列 `mochi-office`。因此 **OnlyOffice/Docker 不在当前生产调用链**，也不应被记录为已交付预览能力或本次现成功能的缺陷。

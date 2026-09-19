@@ -6,6 +6,22 @@
 
 Mochi 是面向教师办公和校园协作的 AI Agent 桌面应用。它把对话、文件处理、课件与文档生成、数据整理、可视化、建模、知识库、联网搜索、校园查询和经授权的校园操作放在同一个工作区中。
 
+## 下载安装包（给老师）
+
+**👉 https://github.com/linkimi2026-cmd/Mochi/releases/latest**
+
+选对应平台：
+
+| 平台 | 文件 |
+|---|---|
+| macOS（Apple 芯片 / M 系列） | `Mochi-0.1.0-mac-arm64.dmg` |
+| macOS（Intel） | 需要时另行提供 |
+| Windows 10 / 11（64 位） | `Mochi-Setup-0.1.0-win-x64.exe` |
+
+安装包**不进 Git 仓库**——单个 dmg/exe 在 440 MB 到 1.2 GB，远超 GitHub 单文件 100 MB 硬限，
+`git push` 会被直接拒绝。所以它们以 **Release 资产**发布，下载入口就是上面的链接。
+每个文件旁有同名 `.sha256` 可自行校验。安装步骤见该 Release 页面。
+
 ## 从这里开始
 
 - [参赛入口](00-参赛入口.md)：评委提交、现场演示和最终校验的统一入口。
@@ -44,7 +60,7 @@ Web 开发入口：
 ./mochi-dev-up.sh
 ```
 
-`mochi-dev-up.sh cloud` 的默认地址仍是历史 Cloudflare Origin。接入当前校园后端前，应核实“联动计划”的实际部署地址，并通过 `MOCHI_CAMPUS_API_URL` 显式传入。详见[运行事实](docs/RUNTIME-FACTS.md)。
+`mochi-dev-up.sh cloud`（默认）与打包版都指向内测生产后端 `https://jyl-campus-health-entry.pages.dev`，无需额外配置即可连上。只有要指到别的上游时才用 `MOCHI_CAMPUS_API_URL` 显式覆盖。详见[运行事实](docs/RUNTIME-FACTS.md)。
 
 ## 主要目录
 

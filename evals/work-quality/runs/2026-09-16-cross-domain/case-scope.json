@@ -1,0 +1,232 @@
+[
+  {
+    "id": "fact-empty",
+    "domain": "问答与研究",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "fact-permission",
+    "domain": "问答与研究",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "fact-conflict",
+    "domain": "问答与研究",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "fact-current-name",
+    "domain": "问答与研究",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "source-partial",
+    "domain": "问答与研究",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "source-ocr",
+    "domain": "问答与研究",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "source-injection",
+    "domain": "问答与研究",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "source-viewpoint",
+    "domain": "问答与研究",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "math-denominator",
+    "domain": "数据与表格",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "math-missing",
+    "domain": "数据与表格",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "math-cache",
+    "domain": "数据与表格",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "math-partial",
+    "domain": "数据与表格",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "exam-score",
+    "domain": "试卷",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "exam-ambiguity",
+    "domain": "试卷",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "doc-latest",
+    "domain": "文档",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "doc-block-index",
+    "domain": "文档",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "format-explicit",
+    "domain": "文档",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "workflow-timeout",
+    "domain": "操作与状态",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "workflow-read",
+    "domain": "操作与状态",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "workflow-recovery",
+    "domain": "操作与状态",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "workflow-scope",
+    "domain": "操作与状态",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "workflow-feedback",
+    "domain": "操作与状态",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "code-interaction",
+    "domain": "代码与交互",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "code-failure",
+    "domain": "代码与交互",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "classroom-boundary",
+    "domain": "操作与状态",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "simple-answer",
+    "domain": "简短对话",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "yan-status-not-proof",
+    "domain": "跨领域验证",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "yan-stale-visual",
+    "domain": "跨领域验证",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "yan-vision-declared",
+    "domain": "跨领域验证",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "yan-safe-learning",
+    "domain": "跨领域验证",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "yan-design-wiring",
+    "domain": "跨领域验证",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "delivery-matches-final-artifact",
+    "domain": "跨领域验证",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "short-defense",
+    "domain": "PPT策略",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "readable-density",
+    "domain": "PPT策略",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "inquiry",
+    "domain": "PPT策略",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "truth-over-polish",
+    "domain": "PPT策略",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "template",
+    "domain": "PPT策略",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "targeted-fix",
+    "domain": "PPT策略",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "vision-unavailable",
+    "domain": "PPT策略",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "first-pass-clean",
+    "domain": "PPT策略",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "unsupported-layout",
+    "domain": "PPT策略",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "missing-source",
+    "domain": "PPT策略",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "latest-revision",
+    "domain": "PPT策略",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "overview-truncated",
+    "domain": "PPT策略",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "stop-on-hard-defect",
+    "domain": "PPT策略",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  },
+  {
+    "id": "reference-to-layout",
+    "domain": "PPT策略",
+    "scope": "synthetic policy response; no tools, external files or images supplied"
+  }
+]
