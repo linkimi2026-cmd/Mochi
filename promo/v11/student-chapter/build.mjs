@@ -1,0 +1,16 @@
+import {copyFileSync, mkdirSync, readFileSync, writeFileSync} from 'node:fs';
+import {execFileSync} from 'node:child_process';
+import {createHash} from 'node:crypto';
+import {dirname, resolve} from 'node:path';
+import {fileURLToPath} from 'node:url';
+const dir=dirname(fileURLToPath(import.meta.url)), root=resolve(dir,'../../..');
+execFileSync('node',[resolve(dir,'../export-lan-evidence.mjs')],{stdio:'inherit'});
+mkdirSync(resolve(dir,'assets'),{recursive:true});
+for(const name of ['gsap.min.js','NotoSansCJKsc-Regular.otf','NotoSerifCJKsc-SemiBold.otf']) copyFileSync(resolve(dir,'../../v10/assets',name),resolve(dir,'assets',name));
+for(const name of ['motion.js','motion.css']) copyFileSync(resolve(dir,'..',name),resolve(dir,'assets',name));
+copyFileSync(resolve(root,'client-plugins/mochi-lan/client.js'),resolve(dir,'assets/lan-source.txt'));
+const records=JSON.parse(readFileSync(resolve(dir,'../evidence-private.nosync/lan-records.json'),'utf8'));
+writeFileSync(resolve(dir,'assets/lan-records.json'),JSON.stringify({teacher:{snapshot:records.teacher.snapshot},classroom:{snapshot:records.classroom.snapshot}}));
+execFileSync(resolve(root,'promo/node_modules/.bin/esbuild'),['promo/v11/student-chapter/native.tsx','--bundle','--format=iife','--outfile=promo/v11/student-chapter/assets/native.js','--alias:react=./apps/desktop/runtime-modern/node_modules/react','--jsx=automatic','--alias:react/jsx-runtime=./apps/desktop/runtime-modern/node_modules/react/jsx-runtime.js','--loader:.txt=text','--define:process.env.NODE_ENV="production"','--external:/jxl-assets/*'],{cwd:root,stdio:'inherit'});
+const paths=['client-plugins/mochi-lan/client.js','client-plugins/jxl-theme/styles/jxl-theme-bridge.css','client-plugins/jxl-theme/styles/jxl-paper.css','client-plugins/jxl-theme/styles/mochi-controls.css'];
+writeFileSync(resolve(dir,'source-manifest.json'),JSON.stringify(paths.map(path=>({path,sha256:createHash('sha256').update(readFileSync(resolve(root,path))).digest('hex')})),null,2)+'\n');

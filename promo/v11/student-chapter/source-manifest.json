@@ -1,0 +1,18 @@
+[
+  {
+    "path": "client-plugins/mochi-lan/client.js",
+    "sha256": "fd46c7b06c7d6a663f831cf9c0cb332aedd9e9f6cac405a9d5c69dcb1a794e1e"
+  },
+  {
+    "path": "client-plugins/jxl-theme/styles/jxl-theme-bridge.css",
+    "sha256": "7de57179fbee7f370e12d6779e4031b3be22cbf6e10de95a79395c41216b6258"
+  },
+  {
+    "path": "client-plugins/jxl-theme/styles/jxl-paper.css",
+    "sha256": "1e5d500a5a1a2a884d93e8788123e7afa20cd0d099a742f52175ea6912c4fe53"
+  },
+  {
+    "path": "client-plugins/jxl-theme/styles/mochi-controls.css",
+    "sha256": "c3f1ea274c84970906a7b5bd8e7fb34ee4e806d894e38809f88231d49d0f0189"
+  }
+]
