@@ -4,7 +4,8 @@ import {createHash} from 'node:crypto';
 import {resolve,dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 const dir=dirname(fileURLToPath(import.meta.url)),evidence=resolve(dir,'evidence');mkdirSync(evidence,{recursive:true});
-const file=resolve(dir,'output/Mochi_V11_第二版_Mo贯穿与原生查人_2K120.mp4');
+const current=JSON.parse(readFileSync(resolve(dir,'timeline.json')));
+const file=current.output||resolve(dir,'output/Mochi_V11_第二版_Mo贯穿与原生查人_2K120.mp4');
 const info=JSON.parse(execFileSync('ffprobe',['-v','error','-show_streams','-show_format','-of','json',file],{encoding:'utf8'}));
 const video=info.streams.find(s=>s.codec_type==='video'),audio=info.streams.find(s=>s.codec_type==='audio'),timeline=JSON.parse(readFileSync(resolve(dir,'timeline.json')));
 if(video.width!==2560||video.height!==1440||video.avg_frame_rate!=='120/1'||Number(video.nb_frames)!==Math.round(timeline.duration*120)||!audio)throw Error('Export properties failed');
@@ -15,6 +16,6 @@ const bridgeTimes=timeline.chapters.filter(c=>c.type==='mo-handoff').flatMap(c=>
 const query=timeline.chapters.find(c=>c.type==='chapter'&&c.name==='Mochi原生查人与流转');
 const times=[.8,...bridgeTimes,query.start+4-query.sourceStart,query.start+23-query.sourceStart,timeline.duration-4];
 for(const[i,t]of times.entries())execFileSync('ffmpeg',['-v','error','-ss',String(t),'-i',file,'-frames:v','1','-vf','scale=640:-1','-y',resolve(evidence,`final-${String(i).padStart(2,'0')}.jpg`)]);
-execFileSync('ffmpeg',['-v','error','-framerate','1','-i',resolve(evidence,'final-%02d.jpg'),'-vf','tile=4x6','-frames:v','1','-y',resolve(evidence,'final-contact.jpg')]);
-const result={status:'second-assembly-for-review',fullFeatureCoverage:false,width:video.width,height:video.height,fps:video.avg_frame_rate,durationSeconds:Number(info.format.duration),frames:Number(video.nb_frames),audioCodec:audio.codec_name,audioChannels:audio.channels,bytes:statSync(file).size,decodeExitCode:decoded.status,decodeErrors:decoded.stderr.trim().length,maxPresentationGapSeconds:maxGap,inspectionTimes:times,sha256:createHash('sha256').update(readFileSync(file)).digest('hex')};
+execFileSync('ffmpeg',['-v','error','-framerate','1','-i',resolve(evidence,'final-%02d.jpg'),'-vf',`tile=4x${Math.ceil(times.length/4)}`,'-frames:v','1','-y',resolve(evidence,'final-contact.jpg')]);
+const result={status:`edition-${current.edition||2}-assembly-for-review`,fullFeatureCoverage:false,width:video.width,height:video.height,fps:video.avg_frame_rate,durationSeconds:Number(info.format.duration),frames:Number(video.nb_frames),audioCodec:audio.codec_name,audioChannels:audio.channels,bytes:statSync(file).size,decodeExitCode:decoded.status,decodeErrors:decoded.stderr.trim().length,maxPresentationGapSeconds:maxGap,inspectionTimes:times,sha256:createHash('sha256').update(readFileSync(file)).digest('hex')};
 writeFileSync(resolve(dir,'validation.json'),JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result,null,2));

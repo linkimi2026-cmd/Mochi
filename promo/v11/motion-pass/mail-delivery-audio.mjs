@@ -1,0 +1,13 @@
+import {readFileSync,writeFileSync} from 'node:fs';
+import {execFileSync} from 'node:child_process';
+import {dirname,resolve} from 'node:path';
+import {fileURLToPath} from 'node:url';
+const dir=dirname(fileURLToPath(import.meta.url));
+const timeline=JSON.parse(readFileSync(resolve(dir,'timeline.json')));
+const chapter=timeline.chapters.find(c=>c.type==='chapter'&&c.name==='叮咚与小信箱');
+const at=chapter.start-chapter.sourceStart+1.5;
+const ff=args=>execFileSync('ffmpeg',['-v','error','-nostdin',...args],{stdio:'inherit'});
+const effect=resolve(dir,'assets/mail-ding.wav');
+ff(['-f','lavfi','-i','sine=frequency=1046.5:sample_rate=48000:duration=0.65','-f','lavfi','-i','sine=frequency=783.99:sample_rate=48000:duration=1.0','-filter_complex','[0:a]afade=t=in:d=0.006,afade=t=out:st=0.02:d=0.63,volume=0.7[a];[1:a]afade=t=in:d=0.006,afade=t=out:st=0.02:d=0.98,volume=0.65,adelay=210:all=1[b];[a][b]amix=normalize=0,apad=pad_dur=0.1[c]','-map','[c]','-ac','2','-y',effect]);
+for(const label of ['own','k3'])ff(['-i',resolve(dir,`assets/scores/${label}/final.wav`),'-i',effect,'-filter_complex',`[1:a]adelay=${Math.round(at*1000)}:all=1[d];[0:a][d]amix=inputs=2:normalize=0,alimiter=limit=0.9:level=false:latency=true,atrim=duration=${timeline.duration}[a]`,'-map','[a]','-ar','48000','-ac','2','-y',resolve(dir,`assets/scores/${label}/delivery-final.wav`)]);
+writeFileSync(resolve(dir,'mail-delivery-cues.json'),JSON.stringify({chapter:chapter.name,originalProductUI:true,postProductionProp:'envelope',effects:[{name:'ding-dong',sourceTime:1.5,filmTime:at}],clicksUnchanged:true},null,2)+'\n');

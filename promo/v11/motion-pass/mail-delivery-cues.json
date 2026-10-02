@@ -1,0 +1,13 @@
+{
+  "chapter": "叮咚与小信箱",
+  "originalProductUI": true,
+  "postProductionProp": "envelope",
+  "effects": [
+    {
+      "name": "ding-dong",
+      "sourceTime": 1.5,
+      "filmTime": 106.05
+    }
+  ],
+  "clicksUnchanged": true
+}

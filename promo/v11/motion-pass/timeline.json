@@ -1,8 +1,10 @@
 {
+  "output": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/output/Mochi_V11_第三版_叮咚小信箱与协作接力_2K120.mp4",
+  "edition": 3,
   "width": 2560,
   "height": 1440,
   "fps": 120,
-  "duration": 259.75,
+  "duration": 281.34999999999997,
   "chapters": [
     {
       "type": "chapter",
@@ -24,7 +26,7 @@
       "name": "多Agent与内置配色",
       "start": 22.8,
       "duration": 20.950000000000003,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-chapter/output/team-palette.mp4",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/output/team-dialogue.mp4",
       "sourceStart": 1.2
     },
     {
@@ -59,15 +61,30 @@
     },
     {
       "type": "mo-handoff",
-      "name": "Mo: 交互模型 → 跨端消息与叫人",
+      "name": "Mo: 交互模型 → 叮咚与小信箱",
       "start": 99.75,
       "duration": 6,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/bridges/3/output/bridge.mp4"
     },
     {
       "type": "chapter",
-      "name": "跨端消息与叫人",
+      "name": "叮咚与小信箱",
       "start": 105.75,
+      "duration": 15.600000000000001,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/mailbox-chapter/output/mailbox-review.mp4",
+      "sourceStart": 1.2
+    },
+    {
+      "type": "mo-handoff",
+      "name": "Mo: 叮咚与小信箱 → 跨端消息与叫人",
+      "start": 121.35,
+      "duration": 6,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/bridges/4/output/bridge.mp4"
+    },
+    {
+      "type": "chapter",
+      "name": "跨端消息与叫人",
+      "start": 127.35,
       "duration": 47.599999999999994,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/output/student-chapter-paper-world.mp4",
       "sourceStart": 1.2
@@ -75,14 +92,14 @@
     {
       "type": "mo-handoff",
       "name": "Mo: 跨端消息与叫人 → Mochi原生查人与流转",
-      "start": 153.35,
+      "start": 174.95,
       "duration": 6,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/bridges/4/output/bridge.mp4"
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/bridges/5/output/bridge.mp4"
     },
     {
       "type": "chapter",
       "name": "Mochi原生查人与流转",
-      "start": 159.35,
+      "start": 180.95,
       "duration": 39.599999999999994,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/native-query/output/native-query.mp4",
       "sourceStart": 1.2
@@ -90,14 +107,14 @@
     {
       "type": "mo-handoff",
       "name": "Mo: Mochi原生查人与流转 → 记忆、自动化与结尾",
-      "start": 198.95,
+      "start": 220.54999999999998,
       "duration": 6,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/bridges/5/output/bridge.mp4"
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/bridges/6/output/bridge.mp4"
     },
     {
       "type": "chapter",
       "name": "记忆、自动化与结尾",
-      "start": 204.95,
+      "start": 226.54999999999998,
       "duration": 54.8,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/assets/daily-with-ending.mp4",
       "sourceStart": 1.2

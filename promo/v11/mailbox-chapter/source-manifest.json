@@ -1,0 +1,17 @@
+{
+  "recordedReplay": true,
+  "sources": [
+    {
+      "path": "apps/desktop/electron/dsh/rail-pages.ts",
+      "sha256": "8b0c4206449f2086f2d90bf9d1cd8ea9cf9819688e495d7fc98b52ecfcfa73c9"
+    },
+    {
+      "path": "apps/desktop/electron/dsh/rail-model.ts",
+      "sha256": "ac793ee1bb1e0d8bccc77525367d048534917abf6d1b71c1c32db68feb2f4661"
+    },
+    {
+      "path": "client-plugins/mochi-lan/client.js",
+      "sha256": "fd46c7b06c7d6a663f831cf9c0cb332aedd9e9f6cac405a9d5c69dcb1a794e1e"
+    }
+  ]
+}

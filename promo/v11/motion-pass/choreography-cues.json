@@ -1,0 +1,273 @@
+{
+  "duration": 281.34999999999997,
+  "accents": [
+    {
+      "time": 4.75,
+      "chapter": "首页与需求",
+      "sourceTime": 4.75
+    },
+    {
+      "time": 10.42,
+      "chapter": "首页与需求",
+      "sourceTime": 10.42
+    },
+    {
+      "time": 16.65,
+      "chapter": "首页与需求",
+      "sourceTime": 16.65
+    },
+    {
+      "time": 28.000000000000004,
+      "chapter": "多Agent与内置配色",
+      "sourceTime": 6.4
+    },
+    {
+      "time": 34.449999999999996,
+      "chapter": "多Agent与内置配色",
+      "sourceTime": 12.85
+    },
+    {
+      "time": 41.5,
+      "chapter": "多Agent与内置配色",
+      "sourceTime": 19.9
+    },
+    {
+      "time": 45.65,
+      "chapter": "Mo 场景接力",
+      "sourceTime": 1.9
+    },
+    {
+      "time": 50.349999999999994,
+      "chapter": "真实课件与教学成果",
+      "sourceTime": 1.8
+    },
+    {
+      "time": 55.75,
+      "chapter": "真实课件与教学成果",
+      "sourceTime": 7.2
+    },
+    {
+      "time": 61.15,
+      "chapter": "真实课件与教学成果",
+      "sourceTime": 12.6
+    },
+    {
+      "time": 71.25,
+      "chapter": "Mo 场景接力",
+      "sourceTime": 1.9
+    },
+    {
+      "time": 77.35,
+      "chapter": "交互模型",
+      "sourceTime": 3.2
+    },
+    {
+      "time": 84.6,
+      "chapter": "交互模型",
+      "sourceTime": 10.45
+    },
+    {
+      "time": 89.44999999999999,
+      "chapter": "交互模型",
+      "sourceTime": 15.3
+    },
+    {
+      "time": 94.44999999999999,
+      "chapter": "交互模型",
+      "sourceTime": 20.3
+    },
+    {
+      "time": 101.65,
+      "chapter": "Mo 场景接力",
+      "sourceTime": 1.9
+    },
+    {
+      "time": 106.45,
+      "chapter": "叮咚与小信箱",
+      "sourceTime": 1.9
+    },
+    {
+      "time": 109.7,
+      "chapter": "叮咚与小信箱",
+      "sourceTime": 5.15
+    },
+    {
+      "time": 119.89999999999999,
+      "chapter": "叮咚与小信箱",
+      "sourceTime": 15.35
+    },
+    {
+      "time": 123.25,
+      "chapter": "Mo 场景接力",
+      "sourceTime": 1.9
+    },
+    {
+      "time": 127.55,
+      "chapter": "跨端消息与叫人",
+      "sourceTime": 1.4
+    },
+    {
+      "time": 133.82,
+      "chapter": "跨端消息与叫人",
+      "sourceTime": 7.67
+    },
+    {
+      "time": 141.65,
+      "chapter": "跨端消息与叫人",
+      "sourceTime": 15.5
+    },
+    {
+      "time": 146.75,
+      "chapter": "跨端消息与叫人",
+      "sourceTime": 20.6
+    },
+    {
+      "time": 151.45000000000002,
+      "chapter": "跨端消息与叫人",
+      "sourceTime": 25.3
+    },
+    {
+      "time": 158.8,
+      "chapter": "跨端消息与叫人",
+      "sourceTime": 32.65
+    },
+    {
+      "time": 163.7,
+      "chapter": "跨端消息与叫人",
+      "sourceTime": 37.55
+    },
+    {
+      "time": 170.55,
+      "chapter": "跨端消息与叫人",
+      "sourceTime": 44.4
+    },
+    {
+      "time": 176.85,
+      "chapter": "Mo 场景接力",
+      "sourceTime": 1.9
+    },
+    {
+      "time": 182.45,
+      "chapter": "Mochi原生查人与流转",
+      "sourceTime": 2.7
+    },
+    {
+      "time": 187.55,
+      "chapter": "Mochi原生查人与流转",
+      "sourceTime": 7.8
+    },
+    {
+      "time": 193.7,
+      "chapter": "Mochi原生查人与流转",
+      "sourceTime": 13.95
+    },
+    {
+      "time": 200.8,
+      "chapter": "Mochi原生查人与流转",
+      "sourceTime": 21.05
+    },
+    {
+      "time": 213.55,
+      "chapter": "Mochi原生查人与流转",
+      "sourceTime": 33.8
+    },
+    {
+      "time": 222.45,
+      "chapter": "Mo 场景接力",
+      "sourceTime": 1.9
+    },
+    {
+      "time": 228.35,
+      "chapter": "记忆、自动化与结尾",
+      "sourceTime": 3
+    },
+    {
+      "time": 240.35,
+      "chapter": "记忆、自动化与结尾",
+      "sourceTime": 15
+    },
+    {
+      "time": 252.35,
+      "chapter": "记忆、自动化与结尾",
+      "sourceTime": 27
+    },
+    {
+      "time": 264.34999999999997,
+      "chapter": "记忆、自动化与结尾",
+      "sourceTime": 39
+    },
+    {
+      "time": 276.34999999999997,
+      "chapter": "记忆、自动化与结尾",
+      "sourceTime": 51
+    }
+  ],
+  "clicks": [
+    {
+      "time": 4.75,
+      "chapter": "首页与需求",
+      "sourceTime": 4.75
+    },
+    {
+      "time": 10.42,
+      "chapter": "首页与需求",
+      "sourceTime": 10.42
+    },
+    {
+      "time": 16.65,
+      "chapter": "首页与需求",
+      "sourceTime": 16.65
+    },
+    {
+      "time": 28.000000000000004,
+      "chapter": "多Agent与内置配色",
+      "sourceTime": 6.4
+    },
+    {
+      "time": 36.3,
+      "chapter": "多Agent与内置配色",
+      "sourceTime": 14.7
+    },
+    {
+      "time": 77.35,
+      "chapter": "交互模型",
+      "sourceTime": 3.2
+    },
+    {
+      "time": 89.44999999999999,
+      "chapter": "交互模型",
+      "sourceTime": 15.3
+    },
+    {
+      "time": 91.64999999999999,
+      "chapter": "交互模型",
+      "sourceTime": 17.5
+    },
+    {
+      "time": 94.44999999999999,
+      "chapter": "交互模型",
+      "sourceTime": 20.3
+    },
+    {
+      "time": 109.7,
+      "chapter": "叮咚与小信箱",
+      "sourceTime": 5.15
+    },
+    {
+      "time": 155.25,
+      "chapter": "跨端消息与叫人",
+      "sourceTime": 29.1
+    },
+    {
+      "time": 157.35,
+      "chapter": "跨端消息与叫人",
+      "sourceTime": 31.2
+    },
+    {
+      "time": 182.45,
+      "chapter": "Mochi原生查人与流转",
+      "sourceTime": 2.7
+    }
+  ],
+  "clickSource": "client-plugins/jxl-theme/scripts/mechanical-audio.mjs"
+}

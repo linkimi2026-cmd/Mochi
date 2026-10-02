@@ -1,0 +1,7 @@
+# 多 Agent：真实会话接力
+
+依据 ../Kimi-K2系列-多Agent叙事研究.md。用户确认只改变影片表达，不改软件UI。
+
+复用 team-chapter 的已核实窗口原片、原生成员与Mo配色。教案会话看完后缩到外围，课件会话进入同一空间，保留各自身份。没有新增虚构聊天气泡、进度或实时执行状态。当前只有教案和课件的完整独立历史；data-analyst仍在成员栏，不将它冒充本轮成功并发。
+
+构建：node promo/v11/team-dialogue/build.mjs。源媒体和原组件清单沿用 ../team-chapter/source-manifest.json。新镜头先检查再合入长片；此目录存在不代表已经渲染验收。

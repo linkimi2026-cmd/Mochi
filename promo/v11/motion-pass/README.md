@@ -27,10 +27,26 @@
 4. 生成查询章节后再执行build（或`--media-only-last`），补齐4、5素材，再render 4 5。
 5. `node promo/v11/motion-pass/render.mjs ending`、`node promo/v11/motion-pass/finish-ending.mjs` 替换旧结尾的第一版字样，再执行 `node promo/v11/motion-pass/assemble.mjs` 统一所有分段时基和音频，导出完整影片。
 
-`build.mjs --html-only`只重新生成编舞，不改媒体；`--media-only-last`只补最后两处媒体。原组件路径与内容证据见原章节source-manifest及本目录native-query/source-manifest。配乐沿用获许可的Mixkit Tech House vibes，不提取Kimi音乐。
+`build.mjs --html-only`只重新生成编舞，不改媒体；`--media-only-last`只补最后两处媒体。原组件路径与内容证据见原章节source-manifest及本目录native-query/source-manifest。第二版配乐沿用获许可的Mixkit Tech House vibes；第三版按用户要求另导出本地K3参考音轨版。
 
 抽帧检查已修正入场变换被恢复为原尺寸、发送片段截在点击之前、流转段误选到空白退场三个问题。最终实渲及全片解码结果写入validation.json；不把自动通过等同于用户审美验收。
 
 逐帧回放另查出看向目标的补间时长被设为零，导致时间零点出现NaN。已改为原引擎默认补间；5041个帧时点全部为有限几何，8个乱序seek结果一致。修正后原生查询章节lint/runtime/layout均零错误零警告，31项文字对比通过。Mo进场与让开镜头的透明度补间已消除重叠。
 
 最终输出核验：259.75秒，2560×1440，120fps，31170帧，AAC双声道，437.8MiB。全片解码零错误，最大相邻显示时间差0.008334秒。22个关键时点抽帧已复核；两处转场旧界面下移，避开主标题。音轨测得均值−17.7dB、峰值−4.2dBFS。SHA256见validation.json。
+
+## 第三版增补
+
+加入18秒原生“叮咚”与“小信箱”；多Agent改为真实成员会话接力，旧会话退到外围，下一位成员的会话进入。参考片辨析见../Kimi-K2系列-多Agent叙事研究.md。用户确认群聊只是影片表达，不修改软件界面。三处衔接标题使用逐字打字，其余保留弹性字形入退，避免所有标题同一种动作。
+
+新总时长281.35秒，原第二版MP4保留。双音轨版本须用同一视频码流导出，逐包哈希验证画面相同；K3源音轨未分离音乐，原片音效可能一并保留。配乐依次prepare-scores、sync-scores、measure-sync；首次测量后可--refine一次。原生点击声按choreography-cues中的明确点击时点混入。节拍及能量起音只是可复核时序证据，不代表已完成听感审美验收。脚本不能把候选重音当作所有音乐学意义上的强拍。
+
+全部检查红框仅存在于私有诊断截图。对外交付预览只从MP4抽帧；任何snapshots目录不得作为影片输入。
+
+双音轨同步补充：40个主要动作锚点、13个明确鼠标点击。现有配乐的分段速度修正最大约4.5%，K3约9.1%，保留音高。依据导出能量起音再进行局部250ms交叉混合，对齐实际瞬态；部分时点附近存在多个更强的起音，测量结果不支持“每一个强拍都逐帧完全一致”的说法，继续保留听审未验证标志。两版均混入原机械声press/release，不给自动展开伪造鼠标声。
+
+连续接信修订：mailbox-chapter新增信封投递→信箱轻弹/双音叮咚→原Mo弹至中央接信→展开原生通知。bridge3的入场素材改为前置定帧，飞行发生在镜头进入后，并与章节1.2秒处接续；移除这一转场的重复Mo。bridge4标题移至上部空区，Mo移至两窗间隙。字幕“叮咚，小信封来了”属于影片叙事。
+
+音轨重建完整次序：prepare-scores → sync-scores → measure-sync → 可选sync-scores --refine及measure-sync → finish-score-attacks → measure-sync → mail-delivery-audio → music-variants。禁止对已处理的音轨重复叠加；delivery-final始终从final.wav重新生成。实际提示声落点见mail-delivery-cues.json。
+
+本轮最终导出已完成：两份281.35秒、2560×1440、120fps、33762帧的完整审片版，编码后视频码流SHA256相同，两份全片解码均零错误。新增18秒接信动作短片仅供快速检查，不能替代完整影片。仍未将功能覆盖待验表中的未完成事项标记为完成。

@@ -10,7 +10,7 @@
     },
     {
       "name": "多Agent与内置配色",
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-chapter/output/team-palette.mp4",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/output/team-dialogue.mp4",
       "start": 0,
       "duration": 23.35
     },
@@ -25,6 +25,12 @@
       "source": "/Users/a1379/Documents/Mochi/promo/v11/model-chapter/output/model-journey.mp4",
       "start": 0,
       "duration": 26.8
+    },
+    {
+      "name": "叮咚与小信箱",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/mailbox-chapter/output/mailbox-review.mp4",
+      "start": 0,
+      "duration": 18
     },
     {
       "name": "跨端消息与叫人",
@@ -45,5 +51,5 @@
       "duration": 56
     }
   ],
-  "duration": 259.75
+  "duration": 281.34999999999997
 }

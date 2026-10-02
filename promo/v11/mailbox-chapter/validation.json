@@ -1,0 +1,35 @@
+{
+  "composition": "mochi-mailbox",
+  "duration": 18,
+  "width": 2560,
+  "height": 1440,
+  "fps": 120,
+  "sampleTimes": [
+    0.6,
+    1.55,
+    2.65,
+    3.95,
+    8,
+    15
+  ],
+  "checks": {
+    "lint": {
+      "ok": true,
+      "errorCount": 0,
+      "warningCount": 0
+    },
+    "runtime": {
+      "ok": true,
+      "errorCount": 0,
+      "warningCount": 0
+    },
+    "layout": {
+      "ok": true,
+      "errorCount": 0,
+      "warningCount": 0
+    }
+  },
+  "visualInspection": "Actual encoded frames inspected; no QA annotation layers used.",
+  "audio": "Post-production two-note chime at 1.5 seconds; original click at 5.15 seconds.",
+  "fullFeatureAcceptance": false
+}
