@@ -1,0 +1,96 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><title>Mochi · 教学成果连续展示</title>
+<script src="assets/gsap.min.js"></script><script src="assets/motion.js"></script><script src="assets/paper-transfer.js"></script><script src="assets/paper-world.js"></script><script src="assets/grade.js"></script>
+<link rel="stylesheet" href="assets/motion.css"><link rel="stylesheet" href="assets/paper-transfer.css"><link rel="stylesheet" href="assets/paper-world.css">
+<style>
+@font-face{font-family:MoSans;src:url('assets/NotoSansCJKsc-Regular.otf')}
+@font-face{font-family:MoSans;src:url('assets/NotoSansCJKsc-Bold.otf');font-weight:700 900}
+@font-face{font-family:MoSerif;src:url('assets/NotoSerifCJKsc-SemiBold.otf')}
+*{box-sizing:border-box}body{margin:0;color:#263f37;font-family:MoSans}#film{width:2560px;height:1440px;position:relative;overflow:hidden;background:#f5efe2;perspective:2600px}
+.sheet{position:absolute;left:0;top:0;width:2560px;height:1440px;transform-origin:0 0;box-shadow:0 36px 96px #233d2f26;background:#f5f7fa;backface-visibility:hidden;overflow:hidden}
+.sheet img{position:absolute;inset:0;width:2560px;height:1440px;object-fit:contain}
+#cover{transform:translate(500px,1550px) scale(.66) rotate(12deg)}
+#process{transform:translate(1300px,1550px) scale(.6) rotate(12deg)}
+#old-page{transform:translate(2700px,750px) scale(.64) rotate(8deg)}
+#new-page{opacity:0;visibility:hidden}
+#page-state{opacity:0}
+#new-page .fragment{position:absolute;inset:0;transform-origin:0 0}
+#new-title{clip-path:inset(0 0 69% 0)}#new-chart{clip-path:inset(32% 94% 7% 0)}#new-footer{opacity:0;clip-path:inset(93% 0 0 0)}
+#gallery{position:absolute;inset:0;visibility:hidden;clip-path:inset(345px 0 110px 0)}
+.column{position:absolute;top:315px;width:720px;transform-origin:0 0;will-change:transform}
+.column .paper{display:block;width:720px;height:auto;margin-bottom:42px;box-shadow:0 22px 60px #243e2c1c;background:white}
+#col-left{left:100px}#col-middle{left:920px}#col-right{left:1740px}
+#grade-native{width:760px;background:white;box-shadow:0 22px 60px #243e2c1c;transform-origin:0 0}
+#grade-native svg{display:block;width:760px;height:460px}
+#grade-native text{font-family:MoSans,sans-serif}
+#grade-native [fill="#777777"],#grade-native [fill="#999999"]{fill:#555e57}
+#right-ppt{margin-top:48px}
+.copy{position:absolute;left:0;top:0;width:2560px;height:1440px;pointer-events:none;visibility:hidden}
+h1{position:absolute;margin:0;font:900 108px/1.2 MoSans;letter-spacing:-5px;white-space:nowrap}.glyph{display:inline-block;opacity:0}.sub{opacity:0;position:absolute;font:34px/1.5 MoSans;max-width:1200px}
+#copy-a h1{left:130px;top:125px}#copy-a .sub{left:140px;top:275px}
+#copy-b h1{left:130px;top:105px;font-size:88px}#copy-b .sub{left:140px;top:225px}
+#copy-c h1{right:130px;top:110px;font-size:92px}#copy-c .sub{right:135px;top:245px;text-align:right}
+#copy-d h1{left:160px;top:180px;font:102px/1.3 MoSerif;letter-spacing:-3px}#copy-d .sub{left:166px;top:345px}
+#source-note{position:absolute;left:90px;bottom:35px;font:23px MoSans;background:#fffdf3eb;padding:10px 20px;border-radius:6px}
+#page-state{position:absolute;right:125px;top:245px;font:28px MoSans}
+#labels{position:absolute;top:282px;left:0;width:2560px;display:flex;justify-content:space-around;font:26px MoSans;visibility:hidden}
+#delivery-shadow{position:absolute;left:1980px;top:560px;width:400px;height:540px;background:#f9fcf7;border:1px solid #bbcbb6;opacity:0;transform:rotate(8deg)}
+</style></head><body><main id="film" data-composition-id="mochi-teaching" data-width="2560" data-height="1440" data-duration="25" data-fps="120">
+<div id="cover" class="sheet" data-layout-allow-overflow><img src="assets/lesson-revised-1.png"></div>
+<div id="process" class="sheet" data-layout-allow-overflow><img src="assets/lesson-revised-3.png"></div>
+<div id="old-page" class="sheet" data-layout-allow-overflow><img src="assets/lesson-2.png"></div>
+<div id="new-page" class="sheet" data-layout-allow-overflow><div id="new-title" class="fragment"><img src="assets/lesson-revised-2.png"></div><div id="new-chart" class="fragment"><img src="assets/lesson-revised-2.png"></div><div id="new-footer" class="fragment"><img src="assets/lesson-revised-2.png"></div></div>
+<div id="gallery"><div id="col-left" class="column" data-layout-allow-overflow><img class="paper" src="assets/lesson-revised-4.png"><img class="paper" src="assets/lesson-revised-5.png"><img class="paper" src="assets/lesson-revised-3.png"></div><div id="col-middle" class="column" data-layout-allow-overflow><img class="paper" src="assets/worksheet-1.png"><img class="paper" src="assets/worksheet-2.png"></div><div id="col-right" class="column" data-layout-allow-overflow><div id="grade-native"></div><img id="right-ppt" class="paper" src="assets/lesson-revised-2.png"></div></div>
+
+<section id="copy-a" class="copy"><h1>一堂课，有了形状。</h1><div class="sub">从教学材料，到可编辑的课堂成果。</div></section>
+<section id="copy-b" class="copy"><h1>还可以，再改得清楚一点。</h1><div class="sub">把文字页，改成一张图表。</div></section>
+<section id="copy-c" class="copy"><h1>每一种成果，都能接着用。</h1><div class="sub">可编辑课件 · 教案 PDF / Word · 成绩图表</div></section>
+<section id="copy-d" class="copy"><h1>准备好了，就送到教室。</h1><div class="sub">同一份成果，继续它的旅程。</div></section>
+<div id="page-state"></div><div id="source-note">Mochi 实际工具产物 · 成果动效展示</div><div id="delivery-shadow"></div>
+<audio id="teaching-music" src="assets/music-review.wav" data-start="0" data-duration="25" data-track-index="9"></audio></main><script>
+window.mountGrade();const tl=gsap.timeline({paused:true});window.__timelines={'mochi-teaching':tl};
+const M=window.MochiMotion,stage=document.querySelector('#film');const world=window.MochiWorld.create(stage,tl);
+world.travel(.15,0,8);world.travel(.5,9,5);world.travel(1,20,4);
+function place(id,from,to,at,duration=1.05,ease='power3.inOut'){M.place(tl,id,from,to,at,duration,ease)}
+function copy(id,at,out){const el=document.querySelector(id),h=el.querySelector('h1'),text=h.textContent;h.textContent='';for(const c of text){const s=document.createElement('span');s.className='glyph';s.textContent=c;h.append(s)}
+ tl.set(el,{autoAlpha:0},0);tl.set(el,{autoAlpha:1},at);tl.fromTo(h.children,{y:95,rotation:3,opacity:0},{y:0,rotation:0,opacity:1,stagger:.024,duration:.65,ease:'back.out(1.12)',immediateRender:false},at);
+ tl.fromTo(el.querySelectorAll('.sub'),{y:30,opacity:0},{y:0,opacity:1,duration:.6,immediateRender:false},at+.7);tl.to(el,{y:-80,autoAlpha:0,duration:.5,ease:'power2.in'},out);}
+copy('#copy-a',0,3.7);copy('#copy-b',4.25,10.7);copy('#copy-c',12.35,20);copy('#copy-d',21.5,24.5);
+tl.set('#page-state',{textContent:'',opacity:0},0);tl.set('#new-page',{autoAlpha:0},0);
+tl.set('#old-page',{x:2700,y:750,scale:.64,rotation:8},0);
+const hero={x:380,y:345,scale:.70,rotation:0};
+place('#cover',{x:500,y:1550,scale:.66,rotation:12},{x:260,y:385,scale:.66,rotation:-5},0,1.3,'back.out(1.1)');
+place('#process',{x:1300,y:1550,scale:.6,rotation:12},{x:1580,y:1030,scale:.38,rotation:7},.25,1.4,'back.out(1.1)');
+place('#old-page',{x:2700,y:750,scale:.64,rotation:8},hero,3.9,1.15);
+place('#cover',{x:260,y:385,scale:.66,rotation:-5},{x:-1300,y:160,scale:.45,rotation:-14},3.8,1.2);
+place('#process',{x:1580,y:1030,scale:.38,rotation:7},{x:2100,y:-850,scale:.4,rotation:15},3.8,1.2);
+tl.set('#page-state',{textContent:'修订前',opacity:1},5.1);
+// Turn the same page. Final geometry and every glyph match the actual exported PPTX.
+place('#old-page',hero,{...hero,rotationY:-88,autoAlpha:0},6.1,.65,'power2.in');
+place('#new-page',{...hero,rotationY:88,autoAlpha:0},{...hero,rotationY:0,autoAlpha:1},6.65,.75,'power2.out');
+tl.fromTo('#new-title',{y:32,opacity:0},{y:0,opacity:1,duration:.55,ease:'power3.out',immediateRender:false},6.65);
+tl.fromTo('#new-chart',{clipPath:'inset(32% 94% 7% 0)'},{clipPath:'inset(32% 0% 7% 0)',duration:1.5,ease:'power2.inOut',immediateRender:false},7.1);
+tl.fromTo('#new-footer',{opacity:0},{opacity:1,duration:.4,immediateRender:false},8.2);
+tl.set('#page-state',{textContent:'修订后 · 原生可编辑图表'},7);
+tl.to('#page-state',{opacity:0,duration:.35},10.6);
+// Continue the same artefact into the left stream while the other real outputs enter.
+place('#new-page',hero,{x:100,y:-450,scale:.28125,rotation:0},10.9,1.35);
+tl.set('#gallery',{autoAlpha:1},11.05);
+place('#col-left',{y:1500},{y:150},11.05,1.2,'back.out(1.08)');
+place('#col-middle',{y:-1950},{y:-370},11.18,1.25,'power3.out');
+place('#col-right',{y:1500},{y:50},11.3,1.3,'back.out(1.08)');
+// Alternating vertical movement: left up, middle down, right up. No fake UI cards.
+tl.fromTo('#col-left',{y:150},{y:-560,duration:6.8,ease:'none',immediateRender:false},12.4);
+tl.fromTo('#col-middle',{y:-370},{y:160,duration:6.8,ease:'none',immediateRender:false},12.45);
+tl.fromTo('#col-right',{y:50},{y:-220,duration:6.7,ease:'none',immediateRender:false},12.6);
+tl.set('#grade-native',{scale:720/760},0);
+const bars=document.querySelectorAll('#grade-native rect[width="100"]');
+for(const [i,bar] of [...bars].entries())tl.fromTo(bar,{scaleY:0,svgOrigin:`${bar.getAttribute('x')} 400`},{scaleY:1,duration:.95,ease:'power3.out',immediateRender:false},12.65+i*.13);
+// The lesson page survives the montage and becomes the physical outgoing paper.
+place('#new-page',{x:100,y:-450,scale:.28125,rotation:0},{x:850,y:690,scale:.42,rotation:-6},19.8,1.2,'power3.inOut');
+tl.to('#gallery',{y:-1550,autoAlpha:0,duration:1.4,ease:'power3.inOut'},20);
+
+window.MochiPaper.transfer(tl,{stage,source:document.querySelector('#new-page'),at:21.55,from:{x:1380,y:890},to:{x:2780,y:490},duration:1.6});
+tl.to('#new-page',{autoAlpha:0,scale:.25,duration:.65,ease:'power2.in'},22.05);
+tl.to('#source-note',{opacity:0,duration:.6},23.8);
+tl.to({clock:0},{clock:25,duration:25,ease:'none'},0);window.seekFilm=t=>tl.seek(t);
+</script></body></html>

@@ -1,0 +1,46 @@
+{
+  "method": "Mochi actual revisePresentationBundle; direct local product tool invocation, not a recorded chat",
+  "previousSourcePath": "/Users/a1379/Documents/Mochi/promo/v9/demo-workspace/pptx-output/source.json",
+  "revision": {
+    "slideId": "slide-2",
+    "layout": "title-chart",
+    "title": "打印页数增加，费用怎样变化？",
+    "body": [
+      "基础费 2 元，每页 0.5 元：y = 0.5x + 2",
+      "先观察数据点，再解释直线的起点和升降。"
+    ],
+    "chart": {
+      "type": "line",
+      "title": "页数与费用（元）",
+      "labels": [
+        "0 页",
+        "5 页",
+        "10 页",
+        "15 页",
+        "20 页"
+      ],
+      "series": [
+        {
+          "name": "费用（元）",
+          "values": [
+            2,
+            4.5,
+            7,
+            9.5,
+            12
+          ]
+        }
+      ]
+    },
+    "source": {
+      "label": "课例材料.txt · 按 y=0.5x+2 计算，演示课例"
+    }
+  },
+  "outputDirectory": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/private.nosync/lesson-revised",
+  "outputs": {
+    "pptx": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/private.nosync/lesson-revised/presentation.pptx",
+    "pdf": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/private.nosync/lesson-revised/presentation.pdf",
+    "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/private.nosync/lesson-revised/source.json",
+    "manifest": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/private.nosync/lesson-revised/manifest.json"
+  }
+}

@@ -1,0 +1,11 @@
+--- a/promo/v9/record-window.swift
++++ b/promo/v9/record-window.swift
+@@ -109,7 +109,7 @@
+         configuration.scalesToFit = true
+         configuration.minimumFrameInterval = CMTime(value: 1, timescale: 120)
+         configuration.capturesAudio = false
+-        configuration.showsCursor = true
++        configuration.showsCursor = ProcessInfo.processInfo.environment["MOCHI_RECORD_CURSOR"] != "0"
+         configuration.ignoreShadowsSingleWindow = true
+         // Set pixel format an color space, see CVPixelBuffer.h
+         switch mode {

@@ -1,0 +1,18 @@
+[
+  {
+    "path": "../../v9/demo-workspace/pptx-output/presentation-preview.pdf",
+    "sha256": "c388e383aa1946c435178b24ed7171d20a1d90cac9feb2f07cc98fe34c51b3eb"
+  },
+  {
+    "path": "private.nosync/lesson-revised/presentation-preview.pdf",
+    "sha256": "eace84b7a07a7422f6435b64e7d01133c3635e675227dda5e1ab90490f9724b9"
+  },
+  {
+    "path": "../../v9/demo-workspace/grade-output/charts/各科平均分对比-v2.svg",
+    "sha256": "13d79692e0d49857ab8c903424861df62320ae04d898d84854665a9548763d62"
+  },
+  {
+    "path": "../../../Mochi Documents/document-bed40cb7-1f90-4460-adae-3e036babe5e4/document.pdf",
+    "sha256": "e4beed70c8f644d9023a96cbd47702bf5d1489c9c0c7663e1fdcd551ed2b67c3"
+  }
+]
