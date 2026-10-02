@@ -1,0 +1,33 @@
+.film-pointer-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 1000;
+  pointer-events: none;
+  overflow: hidden;
+}
+.film-pointer-layer > .film-pointer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: block;
+  width: 48px !important;
+  height: 60px !important;
+  min-width: 48px;
+  min-height: 60px;
+  max-width: none;
+  max-height: none;
+  object-fit: contain;
+  opacity: 0;
+  transform-origin: 0 0;
+  filter: drop-shadow(0 2px 3px #17291a33);
+}
+.film-pointer-ring {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 80px;
+  height: 80px;
+  border: 3px solid #6a8763;
+  border-radius: 50%;
+  opacity: 0;
+}

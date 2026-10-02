@@ -1,0 +1,23 @@
+{
+  "scope": "Persisted isolated demo records, not new recording or current network health",
+  "verified": [
+    {
+      "messageId": "4ba670b0-9fa1-4730-b400-867fae226fb0",
+      "kind": "appointment-response",
+      "sentAcknowledged": true,
+      "matchingReceiver": true,
+      "bodyMatches": true,
+      "receiverSeen": true,
+      "matchingSeenReceipt": true
+    },
+    {
+      "messageId": "lan-f183b7932292e3e6fe2799f9c6a0ea51",
+      "kind": "student-call",
+      "sentAcknowledged": true,
+      "matchingReceiver": true,
+      "bodyMatches": true,
+      "receiverSeen": true,
+      "matchingSeenReceipt": true
+    }
+  ]
+}
