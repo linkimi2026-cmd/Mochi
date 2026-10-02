@@ -641,3 +641,12 @@ Promptfoo实际接入结果：临时安装0.123.0，常规安装解析可选依�
 延续本轮完整HyperFrames框架和GSAP生态检索、固定版本/许可证，不新增依赖。转场由统一6秒改为2.8/3.2/3.0/4.4/3.4/2.6/3.2秒；按各自内容量设时长，原录屏保持正常时间。只重定时后期动画，音轨锚点另算。
 
 双端演示直接复用plugins/mochi-lan/lan-service.mjs和客户端PairingCard/InboxCard/normalizeSnapshot，维护成本局限于离线镜头适配；没有复制业务协议。实际随机回环端口执行配对、传输PPTX、接收ACK、已读回执成功，WPS仅确认启动请求，未验证窗口加载。细节与边界记录于promo/v11/feature-proof和delivery-chapter。
+
+
+#### V11 功能补齐：学生完整流转与教师A2A
+
+2026-10-02，先检索完整工程 `site:github.com/heygen-com/hyperframes-launches k3-promo`，再检索组件生态 `site:github.com/deepseek-ai/deepseek-harness ui-approval ui-primitives`。成功找到 https://github.com/heygen-com/hyperframes-launches 与 https://github.com/deepseek-ai/deepseek-harness ，采用现有HyperFrames0.8.36/GSAP3.15.0而不另建引擎。沿用前文固定版本与许可核对。原生组件实际读取本地0.2.0-rc.2/MIT包，哈希和具体依赖见promo/v11/collaboration-chapter/source-manifest.json与reuse-audit.md。
+
+直接使用原UserStyleBubble、ApprovalFlow、MarkdownText和设计token，提取边界检查阻止源码变动后静默变形。原基础组件缺少的构建依赖仅补入影片隔离目录：simple-icons16.31.0/CC0-1.0、zustand4.4.7/MIT、immer10.1.1/MIT；符合上游依赖范围，npm许可已核，保留独立lock，不改变桌面软件依赖。
+
+通过当前原工具、真实隔离demo后台完成问询/委托/寻物投递回应，以及DEMO003申请→放行→到达→离开→返班CLOSED。审批由已授权演示脚本确认，不能冒充人工点击实录。寻物应答结束不等于物品找到，委托接办不等于工作完成。影片复用已保存结果，不在重建时再次发送。维护成本限定原组件适配与剪辑，未改产品业务代码。30秒补段的运行、布局和96项文字对比检查通过；一项循环动画静态重叠提示仍需结合时间轴/实际输出检查。全功能验收仍未完成。

@@ -4,11 +4,11 @@
   "width": 2560,
   "height": 1440,
   "fps": "120/1",
-  "durationSeconds": 277.95,
-  "frames": 33354,
+  "durationSeconds": 295.95,
+  "frames": 35514,
   "audioCodec": "aac",
   "audioChannels": 2,
-  "bytes": 493690838,
+  "bytes": 531928661,
   "decodeExitCode": 0,
   "decodeErrors": 0,
   "maxPresentationGapSeconds": 0.00833400000001916,
@@ -32,12 +32,15 @@
     177.77,
     178.8758,
     180.29999999999998,
-    219.97,
-    221.3356,
-    223.09999999999997,
+    237.97,
+    239.3356,
+    241.09999999999997,
     183.15,
     202.15,
-    273.95
+    216.15,
+    226.15,
+    237.15,
+    291.95
   ],
-  "sha256": "0399fe8d1ce5590ba2baefced15e792aca97d1ef3cde0c878f3eb52844940796"
+  "sha256": "c722a22f63c6c71bcf837e168cee0e520256082be33d3a359d17e05b920799b4"
 }

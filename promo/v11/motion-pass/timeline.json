@@ -4,7 +4,7 @@
   "width": 2560,
   "height": 1440,
   "fps": 120,
-  "duration": 277.95,
+  "duration": 295.95,
   "chapters": [
     {
       "type": "chapter",
@@ -91,30 +91,30 @@
     },
     {
       "type": "mo-handoff",
-      "name": "Mo: 跨端消息与叫人 → Mochi原生查人与流转",
+      "name": "Mo: 跨端消息与叫人 → Mochi原生查人、流转与教师协作",
       "start": 177.75,
       "duration": 2.6,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/bridges/5/output/bridge.mp4"
     },
     {
       "type": "chapter",
-      "name": "Mochi原生查人与流转",
+      "name": "Mochi原生查人、流转与教师协作",
       "start": 180.35,
-      "duration": 39.599999999999994,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/native-query/output/native-query.mp4",
+      "duration": 57.599999999999994,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/collaboration-chapter/output/query-movement-a2a.mp4",
       "sourceStart": 1.2
     },
     {
       "type": "mo-handoff",
-      "name": "Mo: Mochi原生查人与流转 → 记忆、自动化与结尾",
-      "start": 219.95,
+      "name": "Mo: Mochi原生查人、流转与教师协作 → 记忆、自动化与结尾",
+      "start": 237.95,
       "duration": 3.2,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/bridges/6/output/bridge.mp4"
     },
     {
       "type": "chapter",
       "name": "记忆、自动化与结尾",
-      "start": 223.14999999999998,
+      "start": 241.14999999999998,
       "duration": 54.8,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/assets/daily-with-ending.mp4",
       "sourceStart": 1.2

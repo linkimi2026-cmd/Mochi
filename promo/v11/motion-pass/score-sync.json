@@ -1,6 +1,6 @@
 {
-  "duration": 277.95,
-  "accentCount": 42,
+  "duration": 295.95,
+  "accentCount": 46,
   "clickCount": 13,
   "reports": [
     {
@@ -201,71 +201,95 @@
           "target": 181.85,
           "source": 182.037,
           "strength": 0.628,
-          "chapter": "Mochi原生查人与流转"
+          "chapter": "Mochi原生查人、流转与教师协作"
         },
         {
           "target": 186.95000000000002,
           "source": 187.072,
           "strength": 0.378,
-          "chapter": "Mochi原生查人与流转"
+          "chapter": "Mochi原生查人、流转与教师协作"
         },
         {
           "target": 193.1,
           "source": 193.227,
           "strength": 0.221,
-          "chapter": "Mochi原生查人与流转"
+          "chapter": "Mochi原生查人、流转与教师协作"
         },
         {
           "target": 200.20000000000002,
           "source": 200.48,
           "strength": 0.545,
-          "chapter": "Mochi原生查人与流转"
+          "chapter": "Mochi原生查人、流转与教师协作"
         },
         {
-          "target": 212.95,
-          "source": 213.301,
-          "strength": 0.957,
-          "chapter": "Mochi原生查人与流转"
+          "target": 209.95000000000002,
+          "source": 210.315,
+          "strength": 0.504,
+          "chapter": "Mochi原生查人、流转与教师协作"
         },
         {
-          "target": 220.9633333333333,
-          "source": 221.141,
-          "strength": 0.78,
+          "target": 218.95,
+          "source": 219.2,
+          "strength": 0.898,
+          "chapter": "Mochi原生查人、流转与教师协作"
+        },
+        {
+          "target": 223.35000000000002,
+          "source": 223.595,
+          "strength": 0.693,
+          "chapter": "Mochi原生查人、流转与教师协作"
+        },
+        {
+          "target": 229.15,
+          "source": 229.515,
+          "strength": 0.755,
+          "chapter": "Mochi原生查人、流转与教师协作"
+        },
+        {
+          "target": 233.95,
+          "source": 234.304,
+          "strength": 0.764,
+          "chapter": "Mochi原生查人、流转与教师协作"
+        },
+        {
+          "target": 238.9633333333333,
+          "source": 239.339,
+          "strength": 0.739,
           "chapter": "Mo 场景接力"
         },
         {
-          "target": 224.95,
-          "source": 225.12,
-          "strength": 0.865,
+          "target": 242.95,
+          "source": 243.264,
+          "strength": 0.807,
           "chapter": "记忆、自动化与结尾"
         },
         {
-          "target": 236.95,
-          "source": 236.875,
-          "strength": 0.691,
+          "target": 254.95,
+          "source": 255.029,
+          "strength": 0.674,
           "chapter": "记忆、自动化与结尾"
         },
         {
-          "target": 248.95,
-          "source": 248.672,
-          "strength": 0.709,
+          "target": 266.95,
+          "source": 266.869,
+          "strength": 0.657,
           "chapter": "记忆、自动化与结尾"
         },
         {
-          "target": 260.95,
-          "source": 260.48,
-          "strength": 0.774,
+          "target": 278.95,
+          "source": 278.677,
+          "strength": 0.31,
           "chapter": "记忆、自动化与结尾"
         },
         {
-          "target": 272.95,
-          "source": 272.288,
-          "strength": 0.68,
+          "target": 290.95,
+          "source": 290.485,
+          "strength": 0.741,
           "chapter": "记忆、自动化与结尾"
         },
         {
-          "target": 277.95,
-          "source": 277.28800000000007,
+          "target": 295.95,
+          "source": 295.48499999999996,
           "strength": 0
         }
       ],
@@ -480,49 +504,73 @@
           "cueSeconds": 200.20000000000002,
           "nearbyAttackSeconds": 200.2,
           "offsetMs": -0.0,
-          "rise": 0.09059353172779083
+          "rise": 0.06970611214637756
         },
         {
-          "cueSeconds": 212.95,
-          "nearbyAttackSeconds": 212.95,
+          "cueSeconds": 209.95000000000002,
+          "nearbyAttackSeconds": 209.95,
+          "offsetMs": -0.0,
+          "rise": 0.08507053554058075
+        },
+        {
+          "cueSeconds": 218.95,
+          "nearbyAttackSeconds": 218.95,
           "offsetMs": 0.0,
-          "rise": 0.17505675554275513
+          "rise": 0.16307857260107994
         },
         {
-          "cueSeconds": 220.9633333333333,
-          "nearbyAttackSeconds": 221.02,
-          "offsetMs": 56.67,
-          "rise": 0.0946633517742157
+          "cueSeconds": 223.35000000000002,
+          "nearbyAttackSeconds": 223.35,
+          "offsetMs": -0.0,
+          "rise": 0.05132032930850983
         },
         {
-          "cueSeconds": 224.95,
-          "nearbyAttackSeconds": 224.88,
+          "cueSeconds": 229.15,
+          "nearbyAttackSeconds": 229.15,
+          "offsetMs": 0.0,
+          "rise": 0.05752928555011749
+        },
+        {
+          "cueSeconds": 233.95,
+          "nearbyAttackSeconds": 233.95,
+          "offsetMs": 0.0,
+          "rise": 0.06385862827301025
+        },
+        {
+          "cueSeconds": 238.9633333333333,
+          "nearbyAttackSeconds": 238.975,
+          "offsetMs": 11.67,
+          "rise": 0.052637964487075806
+        },
+        {
+          "cueSeconds": 242.95,
+          "nearbyAttackSeconds": 242.95,
+          "offsetMs": 0.0,
+          "rise": 0.056893862783908844
+        },
+        {
+          "cueSeconds": 254.95,
+          "nearbyAttackSeconds": 254.95,
+          "offsetMs": 0.0,
+          "rise": 0.13349680602550507
+        },
+        {
+          "cueSeconds": 266.95,
+          "nearbyAttackSeconds": 266.875,
+          "offsetMs": -75.0,
+          "rise": 0.058392852544784546
+        },
+        {
+          "cueSeconds": 278.95,
+          "nearbyAttackSeconds": 278.95,
+          "offsetMs": 0.0,
+          "rise": 0.12259821593761444
+        },
+        {
+          "cueSeconds": 290.95,
+          "nearbyAttackSeconds": 290.88,
           "offsetMs": -70.0,
-          "rise": 0.18293597176671028
-        },
-        {
-          "cueSeconds": 236.95,
-          "nearbyAttackSeconds": 236.95,
-          "offsetMs": 0.0,
-          "rise": 0.24847374856472015
-        },
-        {
-          "cueSeconds": 248.95,
-          "nearbyAttackSeconds": 248.915,
-          "offsetMs": -35.0,
-          "rise": 0.10457725822925568
-        },
-        {
-          "cueSeconds": 260.95,
-          "nearbyAttackSeconds": 260.95,
-          "offsetMs": 0.0,
-          "rise": 0.29186296463012695
-        },
-        {
-          "cueSeconds": 272.95,
-          "nearbyAttackSeconds": 272.95,
-          "offsetMs": 0.0,
-          "rise": 0.2682841680943966
+          "rise": 0.02699883282184601
         }
       ],
       "maxMeasuredLocalOffsetMs": 80.0,
@@ -738,44 +786,68 @@
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 212.95,
-          "sourceShiftMs": 50.0,
+          "time": 209.95000000000002,
+          "sourceShiftMs": 65.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 220.9633333333333,
-          "sourceShiftMs": -3.33,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 224.95,
+          "time": 218.95,
           "sourceShiftMs": -80.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 236.95,
-          "sourceShiftMs": -35.0,
+          "time": 223.35000000000002,
+          "sourceShiftMs": 55.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 248.95,
-          "sourceShiftMs": -75.0,
+          "time": 229.15,
+          "sourceShiftMs": 60.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 260.95,
-          "sourceShiftMs": 75.0,
+          "time": 233.95,
+          "sourceShiftMs": 50.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 272.95,
-          "sourceShiftMs": 30.0,
+          "time": 238.9633333333333,
+          "sourceShiftMs": 81.67,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 242.95,
+          "sourceShiftMs": 25.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 254.95,
+          "sourceShiftMs": -55.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 266.95,
+          "sourceShiftMs": -70.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 278.95,
+          "sourceShiftMs": 45.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 290.95,
+          "sourceShiftMs": -20.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         }
@@ -979,71 +1051,95 @@
           "target": 181.85,
           "source": 183.189,
           "strength": 0.128,
-          "chapter": "Mochi原生查人与流转"
+          "chapter": "Mochi原生查人、流转与教师协作"
         },
         {
           "target": 186.95000000000002,
           "source": 188.139,
           "strength": 0.71,
-          "chapter": "Mochi原生查人与流转"
+          "chapter": "Mochi原生查人、流转与教师协作"
         },
         {
           "target": 193.1,
           "source": 194.272,
           "strength": 0.283,
-          "chapter": "Mochi原生查人与流转"
+          "chapter": "Mochi原生查人、流转与教师协作"
         },
         {
           "target": 200.20000000000002,
           "source": 201.408,
           "strength": 0.658,
-          "chapter": "Mochi原生查人与流转"
+          "chapter": "Mochi原生查人、流转与教师协作"
         },
         {
-          "target": 212.95,
-          "source": 213.995,
-          "strength": 0.48,
-          "chapter": "Mochi原生查人与流转"
+          "target": 209.95000000000002,
+          "source": 211.019,
+          "strength": 0.787,
+          "chapter": "Mochi原生查人、流转与教师协作"
         },
         {
-          "target": 220.9633333333333,
-          "source": 221.877,
-          "strength": 0.198,
+          "target": 218.95,
+          "source": 219.339,
+          "strength": 0.302,
+          "chapter": "Mochi原生查人、流转与教师协作"
+        },
+        {
+          "target": 223.35000000000002,
+          "source": 223.648,
+          "strength": 0.349,
+          "chapter": "Mochi原生查人、流转与教师协作"
+        },
+        {
+          "target": 229.15,
+          "source": 229.621,
+          "strength": 0.242,
+          "chapter": "Mochi原生查人、流转与教师协作"
+        },
+        {
+          "target": 233.95,
+          "source": 234.347,
+          "strength": 0.167,
+          "chapter": "Mochi原生查人、流转与教师协作"
+        },
+        {
+          "target": 238.9633333333333,
+          "source": 239.541,
+          "strength": 0.16,
           "chapter": "Mo 场景接力"
         },
         {
-          "target": 224.95,
-          "source": 225.952,
-          "strength": 0.364,
+          "target": 242.95,
+          "source": 243.403,
+          "strength": 0.413,
           "chapter": "记忆、自动化与结尾"
         },
         {
-          "target": 236.95,
-          "source": 238.037,
-          "strength": 0.185,
+          "target": 254.95,
+          "source": 255.531,
+          "strength": 0.412,
           "chapter": "记忆、自动化与结尾"
         },
         {
-          "target": 248.95,
-          "source": 249.963,
-          "strength": 0.359,
+          "target": 266.95,
+          "source": 267.488,
+          "strength": 0.523,
           "chapter": "记忆、自动化与结尾"
         },
         {
-          "target": 260.95,
-          "source": 262.421,
-          "strength": 0.97,
+          "target": 278.95,
+          "source": 279.435,
+          "strength": 0.325,
           "chapter": "记忆、自动化与结尾"
         },
         {
-          "target": 272.95,
-          "source": 274.037,
-          "strength": 0.298,
+          "target": 290.95,
+          "source": 291.381,
+          "strength": 0.149,
           "chapter": "记忆、自动化与结尾"
         },
         {
-          "target": 277.95,
-          "source": 279.037,
+          "target": 295.95,
+          "source": 296.3809999999999,
           "strength": 0
         }
       ],
@@ -1258,52 +1354,76 @@
           "cueSeconds": 200.20000000000002,
           "nearbyAttackSeconds": 200.2,
           "offsetMs": -0.0,
-          "rise": 0.08291596919298172
+          "rise": 0.08327962458133698
         },
         {
-          "cueSeconds": 212.95,
-          "nearbyAttackSeconds": 212.95,
+          "cueSeconds": 209.95000000000002,
+          "nearbyAttackSeconds": 209.97,
+          "offsetMs": 20.0,
+          "rise": 0.05590398609638214
+        },
+        {
+          "cueSeconds": 218.95,
+          "nearbyAttackSeconds": 218.89,
+          "offsetMs": -60.0,
+          "rise": 0.10056166350841522
+        },
+        {
+          "cueSeconds": 223.35000000000002,
+          "nearbyAttackSeconds": 223.35,
+          "offsetMs": -0.0,
+          "rise": 0.03689160943031311
+        },
+        {
+          "cueSeconds": 229.15,
+          "nearbyAttackSeconds": 229.1,
+          "offsetMs": -50.0,
+          "rise": 0.07089443504810333
+        },
+        {
+          "cueSeconds": 233.95,
+          "nearbyAttackSeconds": 233.95,
           "offsetMs": 0.0,
-          "rise": 0.02050066739320755
+          "rise": 0.048983342945575714
         },
         {
-          "cueSeconds": 220.9633333333333,
-          "nearbyAttackSeconds": 221.045,
-          "offsetMs": 81.67,
-          "rise": 0.1282019019126892
+          "cueSeconds": 238.9633333333333,
+          "nearbyAttackSeconds": 239.03,
+          "offsetMs": 66.67,
+          "rise": 0.09593886137008667
         },
         {
-          "cueSeconds": 224.95,
-          "nearbyAttackSeconds": 225.02,
+          "cueSeconds": 242.95,
+          "nearbyAttackSeconds": 243.02,
           "offsetMs": 70.0,
-          "rise": 0.11303336173295975
+          "rise": 0.08296465873718262
         },
         {
-          "cueSeconds": 236.95,
-          "nearbyAttackSeconds": 236.95,
+          "cueSeconds": 254.95,
+          "nearbyAttackSeconds": 254.95,
           "offsetMs": 0.0,
-          "rise": 0.023285653442144394
+          "rise": 0.06267789751291275
         },
         {
-          "cueSeconds": 248.95,
-          "nearbyAttackSeconds": 248.95,
+          "cueSeconds": 266.95,
+          "nearbyAttackSeconds": 266.95,
           "offsetMs": 0.0,
-          "rise": 0.042013660073280334
+          "rise": 0.017510637640953064
         },
         {
-          "cueSeconds": 260.95,
-          "nearbyAttackSeconds": 260.95,
+          "cueSeconds": 278.95,
+          "nearbyAttackSeconds": 278.95,
           "offsetMs": 0.0,
-          "rise": 0.14298611879348755
+          "rise": 0.0922570675611496
         },
         {
-          "cueSeconds": 272.95,
-          "nearbyAttackSeconds": 272.95,
+          "cueSeconds": 290.95,
+          "nearbyAttackSeconds": 290.95,
           "offsetMs": 0.0,
-          "rise": 0.10959692299365997
+          "rise": 0.03290220722556114
         }
       ],
-      "maxMeasuredLocalOffsetMs": 81.67,
+      "maxMeasuredLocalOffsetMs": 75.0,
       "attackEdits": [
         {
           "time": 4.75,
@@ -1511,49 +1631,73 @@
         },
         {
           "time": 200.20000000000002,
-          "sourceShiftMs": 20.0,
+          "sourceShiftMs": 25.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 212.95,
-          "sourceShiftMs": -60.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 220.9633333333333,
-          "sourceShiftMs": 76.67,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 224.95,
-          "sourceShiftMs": 75.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 236.95,
-          "sourceShiftMs": -15.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 248.95,
+          "time": 209.95000000000002,
           "sourceShiftMs": 70.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 260.95,
+          "time": 218.95,
+          "sourceShiftMs": -65.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 223.35000000000002,
           "sourceShiftMs": 50.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 272.95,
+          "time": 229.15,
           "sourceShiftMs": -80.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 233.95,
+          "sourceShiftMs": -70.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 238.9633333333333,
+          "sourceShiftMs": 36.67,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 242.95,
+          "sourceShiftMs": 35.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 254.95,
+          "sourceShiftMs": -15.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 266.95,
+          "sourceShiftMs": 40.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 278.95,
+          "sourceShiftMs": 60.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 290.95,
+          "sourceShiftMs": -60.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         }

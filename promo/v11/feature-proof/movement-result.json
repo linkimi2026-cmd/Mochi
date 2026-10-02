@@ -1,0 +1,430 @@
+{
+  "run": "/Users/a1379/Documents/Mochi/promo/v11/feature-proof/private.nosync/movement-2026-10-02T12-50-13.241Z",
+  "actualProductTools": true,
+  "actualLocalDemoBackend": true,
+  "student": {
+    "id": 3,
+    "code": "DEMO003",
+    "name": "陈言蹊",
+    "gender": "女",
+    "grade": "七年级",
+    "className": "七年级1班",
+    "visitCount": 1
+  },
+  "reference": "mov_0498cac8f859481eb35bb4220330b8d9",
+  "steps": [
+    {
+      "account": "林清老师",
+      "tool": "jxl_student_directory_search",
+      "args": {
+        "keyword": "DEMO003",
+        "limit": 10
+      },
+      "result": {
+        "source": "http://127.0.0.1:49340",
+        "dataMode": "cloud-demo",
+        "account": {
+          "id": 2,
+          "name": "林清老师",
+          "role": "HEAD_TEACHER"
+        },
+        "result": {
+          "items": [
+            {
+              "id": 3,
+              "code": "DEMO003",
+              "name": "陈言蹊",
+              "gender": "女",
+              "grade": "七年级",
+              "className": "七年级1班",
+              "visitCount": 1
+            }
+          ],
+          "page": 1,
+          "limit": 10,
+          "hasMore": false
+        },
+        "workflow": {
+          "fact": "这是学生目录结果，不是放行申请。",
+          "requiredNextToolWhenCreating": "jxl_movement_request_create",
+          "approvalRule": "必须实际调用创建工具才会出现原生确认卡；不得用Markdown或文字按钮替代。"
+        }
+      }
+    },
+    {
+      "account": "林清老师",
+      "tool": "jxl_movement_request_list",
+      "args": {},
+      "result": {
+        "source": "http://127.0.0.1:49340",
+        "dataMode": "cloud-demo",
+        "account": {
+          "id": 2,
+          "name": "林清老师",
+          "role": "HEAD_TEACHER"
+        },
+        "result": {
+          "items": []
+        }
+      }
+    },
+    {
+      "account": "林清老师",
+      "tool": "jxl_movement_request_create",
+      "args": {
+        "studentId": 3,
+        "destination": "DORMITORY",
+        "reasonCategory": "取物",
+        "expectedArrivalMinutes": 10,
+        "idempotencyKey": "c1f491d3-237b-4111-af35-1b8c6f35a1ac"
+      },
+      "result": {
+        "source": "http://127.0.0.1:49340",
+        "dataMode": "cloud-demo",
+        "account": {
+          "id": 2,
+          "name": "林清老师",
+          "role": "HEAD_TEACHER"
+        },
+        "result": {
+          "request": {
+            "id": 2,
+            "publicReference": "mreq_0ec1003267404dfb9696354742236f6c",
+            "studentId": 3,
+            "studentName": "陈言蹊",
+            "studentCode": "DEMO003",
+            "className": "七年级1班",
+            "destination": "DORMITORY",
+            "reasonCategory": "取物",
+            "expectedArrivalMinutes": 10,
+            "status": "PENDING",
+            "requestedBy": 2,
+            "requestedByName": "林清老师",
+            "requestOrigin": "TEACHER_RECORDED",
+            "decidedBy": null,
+            "decidedByName": null,
+            "rejectionReason": null,
+            "movementId": null,
+            "decisionIdempotencyKey": null,
+            "decisionAction": null,
+            "version": 1,
+            "createdAt": "2026-10-02 12:50:13",
+            "updatedAt": "2026-10-02 12:50:13"
+          },
+          "replayed": false
+        }
+      }
+    },
+    {
+      "account": "林清老师",
+      "tool": "jxl_movement_request_decide",
+      "args": {
+        "reference": "mreq_0ec1003267404dfb9696354742236f6c",
+        "action": "approve",
+        "expectedVersion": 1,
+        "idempotencyKey": "f17b518b-a738-4b9e-8018-ec5f69c2cd2f"
+      },
+      "result": {
+        "source": "http://127.0.0.1:49340",
+        "dataMode": "cloud-demo",
+        "account": {
+          "id": 2,
+          "name": "林清老师",
+          "role": "HEAD_TEACHER"
+        },
+        "result": {
+          "request": {
+            "id": 2,
+            "publicReference": "mreq_0ec1003267404dfb9696354742236f6c",
+            "studentId": 3,
+            "studentName": "陈言蹊",
+            "studentCode": "DEMO003",
+            "className": "七年级1班",
+            "destination": "DORMITORY",
+            "reasonCategory": "取物",
+            "expectedArrivalMinutes": 10,
+            "status": "APPROVED",
+            "requestedBy": 2,
+            "requestedByName": "林清老师",
+            "requestOrigin": "TEACHER_RECORDED",
+            "decidedBy": 2,
+            "decidedByName": "林清老师",
+            "rejectionReason": null,
+            "movementId": 2,
+            "decisionIdempotencyKey": "f17b518b-a738-4b9e-8018-ec5f69c2cd2f",
+            "decisionAction": "APPROVE",
+            "version": 2,
+            "createdAt": "2026-10-02 12:50:13",
+            "updatedAt": "2026-10-02 12:50:13"
+          },
+          "movementReference": "mov_0498cac8f859481eb35bb4220330b8d9",
+          "replayed": false
+        }
+      }
+    },
+    {
+      "account": "宿舍值班老师",
+      "tool": "jxl_movement_transition",
+      "args": {
+        "reference": "mov_0498cac8f859481eb35bb4220330b8d9",
+        "action": "arrive",
+        "expectedVersion": 1,
+        "idempotencyKey": "221dafb8-114a-4969-8464-e49ad6c8fbb7"
+      },
+      "result": {
+        "source": "http://127.0.0.1:49340",
+        "dataMode": "cloud-demo",
+        "account": {
+          "id": 7,
+          "name": "宿舍值班老师",
+          "role": "DORM_STAFF"
+        },
+        "result": {
+          "movement": {
+            "id": 2,
+            "publicReference": "mov_0498cac8f859481eb35bb4220330b8d9",
+            "studentId": 3,
+            "studentName": "陈言蹊",
+            "studentCode": "DEMO003",
+            "className": "七年级1班",
+            "grade": "七年级",
+            "origin": "CLASSROOM",
+            "destination": "DORMITORY",
+            "status": "ARRIVED",
+            "reasonCategory": "取物",
+            "approvedBy": 2,
+            "approvedByName": "林清老师",
+            "approvedAt": "2026-10-02 12:50:13",
+            "departedAt": "2026-10-02 12:50:13",
+            "expectedArrivalAt": "2026-10-02 13:00:13",
+            "arrivedAt": "2026-10-02 12:50:13",
+            "leftDestinationAt": null,
+            "expectedReturnAt": null,
+            "returnedAt": null,
+            "arrivalOverdueAt": null,
+            "returnOverdueAt": null,
+            "medicalEventId": null,
+            "cancellationReason": null,
+            "lastActionKey": "action:ARRIVE:221dafb8-114a-4969-8464-e49ad6c8fbb7",
+            "version": 2,
+            "updatedAt": "2026-10-02 12:50:13"
+          },
+          "replayed": false
+        }
+      }
+    },
+    {
+      "account": "宿舍值班老师",
+      "tool": "jxl_movement_transition",
+      "args": {
+        "reference": "mov_0498cac8f859481eb35bb4220330b8d9",
+        "action": "leave",
+        "expectedVersion": 2,
+        "idempotencyKey": "030dd141-5388-4b71-be0d-e9d5daa71754"
+      },
+      "result": {
+        "source": "http://127.0.0.1:49340",
+        "dataMode": "cloud-demo",
+        "account": {
+          "id": 7,
+          "name": "宿舍值班老师",
+          "role": "DORM_STAFF"
+        },
+        "result": {
+          "movement": {
+            "id": 2,
+            "publicReference": "mov_0498cac8f859481eb35bb4220330b8d9",
+            "studentId": 3,
+            "studentName": "陈言蹊",
+            "studentCode": "DEMO003",
+            "className": "七年级1班",
+            "grade": "七年级",
+            "origin": "CLASSROOM",
+            "destination": "DORMITORY",
+            "status": "RETURNING",
+            "reasonCategory": "取物",
+            "approvedBy": 2,
+            "approvedByName": "林清老师",
+            "approvedAt": "2026-10-02 12:50:13",
+            "departedAt": "2026-10-02 12:50:13",
+            "expectedArrivalAt": "2026-10-02 13:00:13",
+            "arrivedAt": "2026-10-02 12:50:13",
+            "leftDestinationAt": "2026-10-02 12:50:13",
+            "expectedReturnAt": "2026-10-02 13:05:13",
+            "returnedAt": null,
+            "arrivalOverdueAt": null,
+            "returnOverdueAt": null,
+            "medicalEventId": null,
+            "cancellationReason": null,
+            "lastActionKey": "action:LEAVE:030dd141-5388-4b71-be0d-e9d5daa71754",
+            "version": 3,
+            "updatedAt": "2026-10-02 12:50:13"
+          },
+          "replayed": false
+        }
+      }
+    },
+    {
+      "account": "林清老师",
+      "tool": "jxl_movement_transition",
+      "args": {
+        "reference": "mov_0498cac8f859481eb35bb4220330b8d9",
+        "action": "confirm-return",
+        "expectedVersion": 3,
+        "idempotencyKey": "d1f6fc2a-7fb8-41bf-ba2d-94f833169775"
+      },
+      "result": {
+        "source": "http://127.0.0.1:49340",
+        "dataMode": "cloud-demo",
+        "account": {
+          "id": 2,
+          "name": "林清老师",
+          "role": "HEAD_TEACHER"
+        },
+        "result": {
+          "movement": {
+            "id": 2,
+            "publicReference": "mov_0498cac8f859481eb35bb4220330b8d9",
+            "studentId": 3,
+            "studentName": "陈言蹊",
+            "studentCode": "DEMO003",
+            "className": "七年级1班",
+            "grade": "七年级",
+            "origin": "CLASSROOM",
+            "destination": "DORMITORY",
+            "status": "CLOSED",
+            "reasonCategory": "取物",
+            "approvedBy": 2,
+            "approvedByName": "林清老师",
+            "approvedAt": "2026-10-02 12:50:13",
+            "departedAt": "2026-10-02 12:50:13",
+            "expectedArrivalAt": "2026-10-02 13:00:13",
+            "arrivedAt": "2026-10-02 12:50:13",
+            "leftDestinationAt": "2026-10-02 12:50:13",
+            "expectedReturnAt": "2026-10-02 13:05:13",
+            "returnedAt": "2026-10-02 12:50:13",
+            "arrivalOverdueAt": null,
+            "returnOverdueAt": null,
+            "medicalEventId": null,
+            "cancellationReason": null,
+            "lastActionKey": "action:CONFIRM_RETURN:d1f6fc2a-7fb8-41bf-ba2d-94f833169775",
+            "version": 4,
+            "updatedAt": "2026-10-02 12:50:13"
+          },
+          "replayed": false
+        }
+      }
+    }
+  ],
+  "approvals": [
+    {
+      "account": "林清老师",
+      "tool": "jxl_movement_request_create",
+      "reason": "林清老师 将代学生登记放行申请：\n\n学生：陈言蹊（七年级1班）\n申请来源：林清老师 代录\n目的地：宿舍\n事由：取物\n预计到达：10 分钟\n当前状态：尚未创建\n\n确认后仅进入待审批，不代表已经放行。",
+      "decision": "allowed-once",
+      "source": "Authorized isolated demonstration harness; not a human click recording"
+    },
+    {
+      "account": "林清老师",
+      "tool": "jxl_movement_request_decide",
+      "reason": "林清老师 将批准并正式放行这条待审批申请：\n\n学生：陈言蹊（七年级1班）\n申请来源：林清老师 代学生登记\n目的地：宿舍\n事由：取物\n预计到达：10 分钟\n申请编号：mreq_0ec1003267404dfb9696354742236f6c\n当前状态：待审批",
+      "decision": "allowed-once",
+      "source": "Authorized isolated demonstration harness; not a human click recording"
+    },
+    {
+      "account": "宿舍值班老师",
+      "tool": "jxl_movement_transition",
+      "reason": "宿舍值班老师 将确认学生已到达：\n\n学生：陈言蹊（七年级1班）\n流动单：mov_0498cac8f859481eb35bb4220330b8d9\n当前状态：OUTBOUND\n当前版本：1",
+      "decision": "allowed-once",
+      "source": "Authorized isolated demonstration harness; not a human click recording"
+    },
+    {
+      "account": "宿舍值班老师",
+      "tool": "jxl_movement_transition",
+      "reason": "宿舍值班老师 将确认学生已离开目的地并开始返班：\n\n学生：陈言蹊（七年级1班）\n流动单：mov_0498cac8f859481eb35bb4220330b8d9\n当前状态：ARRIVED\n当前版本：2",
+      "decision": "allowed-once",
+      "source": "Authorized isolated demonstration harness; not a human click recording"
+    },
+    {
+      "account": "林清老师",
+      "tool": "jxl_movement_transition",
+      "reason": "林清老师 将确认学生已经返班：\n\n学生：陈言蹊（七年级1班）\n流动单：mov_0498cac8f859481eb35bb4220330b8d9\n当前状态：RETURNING\n当前版本：3",
+      "decision": "allowed-once",
+      "source": "Authorized isolated demonstration harness; not a human click recording"
+    }
+  ],
+  "final": {
+    "source": "http://127.0.0.1:49340",
+    "dataMode": "cloud-demo",
+    "account": {
+      "id": 2,
+      "name": "林清老师",
+      "role": "HEAD_TEACHER"
+    },
+    "result": {
+      "movement": {
+        "id": 2,
+        "publicReference": "mov_0498cac8f859481eb35bb4220330b8d9",
+        "studentId": 3,
+        "studentName": "陈言蹊",
+        "studentCode": "DEMO003",
+        "className": "七年级1班",
+        "grade": "七年级",
+        "origin": "CLASSROOM",
+        "destination": "DORMITORY",
+        "status": "CLOSED",
+        "reasonCategory": "取物",
+        "approvedBy": 2,
+        "approvedByName": "林清老师",
+        "approvedAt": "2026-10-02 12:50:13",
+        "departedAt": "2026-10-02 12:50:13",
+        "expectedArrivalAt": "2026-10-02 13:00:13",
+        "arrivedAt": "2026-10-02 12:50:13",
+        "leftDestinationAt": "2026-10-02 12:50:13",
+        "expectedReturnAt": "2026-10-02 13:05:13",
+        "returnedAt": "2026-10-02 12:50:13",
+        "arrivalOverdueAt": null,
+        "returnOverdueAt": null,
+        "medicalEventId": null,
+        "cancellationReason": null,
+        "lastActionKey": "action:CONFIRM_RETURN:d1f6fc2a-7fb8-41bf-ba2d-94f833169775",
+        "version": 4,
+        "updatedAt": "2026-10-02 12:50:13"
+      },
+      "events": [
+        {
+          "eventType": "APPROVED",
+          "actorRole": "HEAD_TEACHER",
+          "fromStatus": null,
+          "toStatus": "OUTBOUND",
+          "note": "取物",
+          "occurredAt": "2026-10-02 12:50:13"
+        },
+        {
+          "eventType": "ARRIVED",
+          "actorRole": "DORM_STAFF",
+          "fromStatus": "OUTBOUND",
+          "toStatus": "ARRIVED",
+          "note": "",
+          "occurredAt": "2026-10-02 12:50:13"
+        },
+        {
+          "eventType": "LEFT_DESTINATION",
+          "actorRole": "DORM_STAFF",
+          "fromStatus": "ARRIVED",
+          "toStatus": "RETURNING",
+          "note": "",
+          "occurredAt": "2026-10-02 12:50:13"
+        },
+        {
+          "eventType": "RETURN_CONFIRMED",
+          "actorRole": "HEAD_TEACHER",
+          "fromStatus": "RETURNING",
+          "toStatus": "CLOSED",
+          "note": "",
+          "occurredAt": "2026-10-02 12:50:13"
+        }
+      ]
+    }
+  }
+}

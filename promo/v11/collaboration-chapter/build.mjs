@@ -1,0 +1,28 @@
+import {readFileSync,writeFileSync,mkdirSync,copyFileSync} from 'node:fs';
+import {execFileSync} from 'node:child_process';
+import {resolve} from 'node:path';
+import {createHash} from 'node:crypto';
+const dir=resolve('promo/v11/collaboration-chapter'),assets=resolve(dir,'assets');
+mkdirSync(assets,{recursive:true});
+const runtime=resolve('apps/desktop/runtime-modern/node_modules');
+const theme=readFileSync(resolve(runtime,'@deepseek-ai/dsh-client-ui-theme/lib/client.js'),'utf8');
+const themeMatch=theme.match(/var design_platform_css_default = ("(?:[^"\\]|\\.)*");/);
+if(!themeMatch)throw Error('Original design token boundary changed');
+writeFileSync(resolve(assets,'product-tokens.css'),JSON.parse(themeMatch[1]));
+const chat=readFileSync(resolve(runtime,'@deepseek-ai/dsh-client-ui-chat/lib/client.js'),'utf8');
+function section(start,end){const a=chat.indexOf(start),b=chat.indexOf(end,a);if(a<0||b<0)throw Error('Original component extraction boundary changed');return chat.slice(a,b)}
+const css=section('const css$17 =','//#endregion');
+const parts=section('function contentParts(content)','function retrySeconds');
+const bubble=section('function UserStyleBubble(', '/**\n\t\t* Render one Host-authoritative');
+writeFileSync(resolve(assets,'user-source.js'),`import * as react from 'react';import * as react_jsx_runtime from 'react/jsx-runtime';import * as _deepseek_ai_dsh_client_ui_primitives from '@deepseek-ai/dsh-client-ui-primitives';\n${css}\n${parts}\n${bubble}\nexport {UserStyleBubble};`);
+const approval=readFileSync(resolve(runtime,'@deepseek-ai/dsh-client-ui-approval/lib/client.js'),'utf8');
+if(!approval.includes('exports.apply = apply;'))throw Error('Approval export boundary changed');
+writeFileSync(resolve(assets,'approval-source.txt'),approval.replace('exports.apply = apply;','exports.PromoApprovalFlow = ApprovalFlow; exports.PromoZh = zh; exports.apply = apply;'));
+const a2a=JSON.parse(readFileSync('promo/v11/feature-proof/a2a-result.json'));
+const movement=JSON.parse(readFileSync('promo/v11/feature-proof/movement-result.json'));
+const captured=JSON.parse(readFileSync(resolve(a2a.run,'results.json')));
+writeFileSync(resolve(assets,'records.json'),JSON.stringify({a2a,captured,movement}));
+for(const n of ['gsap.min.js','NotoSansCJKsc-Regular.otf','NotoSansCJKsc-Bold.otf','NotoSerifCJKsc-SemiBold.otf'])copyFileSync('promo/v10/assets/'+n,resolve(assets,n));
+for(const [a,b] of [['native.js','mo.js'],['native.css','mo.css'],['palettes.css','palettes.css']])copyFileSync('promo/v11/motion-pass/assets/'+a,resolve(assets,b));
+execFileSync('promo/node_modules/.bin/esbuild',[resolve(dir,'native.tsx'),'--bundle','--format=iife','--outfile='+resolve(assets,'native.js'),'--alias:react='+resolve(runtime,'react'),'--alias:react/jsx-runtime='+resolve(runtime,'react/jsx-runtime.js'),'--alias:@deepseek-ai/dsh-client-ui-primitives='+resolve(runtime,'@deepseek-ai/dsh-client-ui-primitives/lib/index.js'),...['simple-icons','zustand','immer'].map(n=>'--alias:'+n+'='+resolve(assets,'deps/node_modules',n)),'--jsx=automatic','--external:/jxl-assets/*','--loader:.txt=text','--loader:.ttf=file','--loader:.woff=file','--loader:.woff2=file','--define:process.env.NODE_ENV="production"'],{stdio:'inherit'});
+writeFileSync(resolve(dir,'source-manifest.json'),JSON.stringify({version:'0.2.0-rc.2',license:'MIT',chatSha256:createHash('sha256').update(chat).digest('hex'),approvalSha256:createHash('sha256').update(approval).digest('hex'),originalFunctions:['UserStyleBubble','ApprovalFlow','MarkdownText'],proofs:['../feature-proof/a2a-result.json','../feature-proof/movement-result.json'],humanClickRecording:false,productCodeModified:false},null,2)+'\n');

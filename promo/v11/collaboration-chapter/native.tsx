@@ -1,0 +1,31 @@
+import React from '../../../apps/desktop/runtime-modern/node_modules/react';
+import * as jsx from '../../../apps/desktop/runtime-modern/node_modules/react/jsx-runtime';
+import {renderToStaticMarkup} from '../../../apps/desktop/runtime-modern/node_modules/react-dom/server.browser';
+import * as primitives from '@deepseek-ai/dsh-client-ui-primitives';
+import {UserStyleBubble} from './assets/user-source';
+import approvalSource from './assets/approval-source.txt';
+import records from './assets/records.json';
+import './assets/product-tokens.css';
+import '../../../client-plugins/jxl-theme/styles/jxl-theme-bridge.css';
+import '../../../client-plugins/jxl-theme/styles/jxl-paper.css';
+import '../../../client-plugins/jxl-theme/styles/mochi-controls.css';
+(window as any).initCollaboration=()=>{
+ let approval:any;
+ (window as any).__ModuleLoader__={load:({factory}:any)=>{approval=factory((name:string)=>({'react':React,'react/jsx-runtime':jsx,'@deepseek-ai/dsh-client-ui-primitives':primitives}[name]))}};
+ new Function(approvalSource)();
+ const t=(key:string)=>approval.PromoZh[key]||key;
+ const mount=(id:string,node:any)=>document.getElementById(id)!.innerHTML=renderToStaticMarkup(node);
+ const flow=(record:any)=>React.createElement(approval.PromoApprovalFlow,{pending:{key:record.tool,toolName:record.tool,answerable:true,answer:()=>Promise.resolve()},reason:record.reason,detail:null,t});
+ const move=records.movement.approvals.find((r:any)=>r.tool.includes('decide'));
+ if(!move)throw Error('Missing actual movement decision');
+ mount('movement-approval',flow(move));
+ records.movement.approvals.slice(2).forEach((r:any,i:number)=>mount('movement-next-'+i,flow(r)));
+ const labels={code:{copyLabel:'复制',copiedLabel:'已复制'},footnotes:'来源'};
+ records.a2a.results.forEach((r:any,i:number)=>{
+   const task=r.final['已派出的任务'].find((x:any)=>x.taskId===r.sent.taskId);
+   if(!task?.['回话'])throw Error('Missing confirmed peer response');
+   mount('request-'+i,React.createElement(UserStyleBubble,{content:[{type:'text',text:r.args.goal||r.args.item}],renderMessageImages:()=>null,t}));
+   mount('reply-'+i,React.createElement(primitives.MarkdownText,{text:task['回话'],labels}));
+ });
+ mount('a2a-approval',flow(records.captured.approvals[0]));
+};

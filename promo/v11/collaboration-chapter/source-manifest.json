@@ -1,0 +1,17 @@
+{
+  "version": "0.2.0-rc.2",
+  "license": "MIT",
+  "chatSha256": "575de08018f49053a58680fbd62d5b9832a93aafc385217cc4331d5fed6d0dc0",
+  "approvalSha256": "d5ae6ff6ebdef5bfa1ef76e3c10024095ed5b6c51ce793abb9e8af3781a9eae4",
+  "originalFunctions": [
+    "UserStyleBubble",
+    "ApprovalFlow",
+    "MarkdownText"
+  ],
+  "proofs": [
+    "../feature-proof/a2a-result.json",
+    "../feature-proof/movement-result.json"
+  ],
+  "humanClickRecording": false,
+  "productCodeModified": false
+}

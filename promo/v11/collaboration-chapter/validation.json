@@ -1,0 +1,487 @@
+{
+  "ok": true,
+  "strict": false,
+  "lint": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 1,
+    "infoCount": 0,
+    "findings": [
+      {
+        "code": "overlapping_gsap_tweens",
+        "severity": "warning",
+        "message": "GSAP tweens overlap on \"#envelope\" for x, y, scale, rotation, opacity between 15.30s and 15.75s.",
+        "selector": "#envelope",
+        "dataAttributes": {},
+        "sourceFile": "/Users/a1379/Documents/Mochi/promo/v11/collaboration-chapter/index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0,
+        "fixHint": "Shorten the earlier tween, move the later tween, or add `overwrite: \"auto\"`."
+      }
+    ],
+    "filesScanned": 1
+  },
+  "runtime": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": []
+  },
+  "layout": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 13,
+    "findings": [
+      {
+        "code": "content_overlap",
+        "severity": "info",
+        "time": 4.25,
+        "selector": "#movement-title > span:nth-of-type(2)",
+        "message": "Two text blocks overlap and may render unreadable.",
+        "rect": {
+          "left": 234,
+          "top": 86,
+          "right": 323,
+          "bottom": 219,
+          "width": 89,
+          "height": 133
+        },
+        "containerSelector": "#movement-approval > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1)",
+        "text": "行",
+        "fixHint": "Give each block its own zone, or mark intentional layering with data-layout-allow-overlap.",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 234,
+          "y": 86,
+          "width": 89,
+          "height": 133
+        },
+        "firstSeen": 4.25,
+        "lastSeen": 4.25,
+        "occurrences": 1,
+        "heldMs": 0
+      },
+      {
+        "code": "content_overlap",
+        "severity": "info",
+        "time": 4.25,
+        "selector": "#movement-approval > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1)",
+        "message": "Two text blocks overlap and may render unreadable.",
+        "rect": {
+          "left": 229.45,
+          "top": 274.38,
+          "right": 857.46,
+          "bottom": 625.83,
+          "width": 628.01,
+          "height": 351.45
+        },
+        "containerSelector": "#movement-next-0 > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1)",
+        "text": "林清老师 将批准并正式放行这条待审批申请： 学生：陈言蹊（七年级1班） 申请来源：林清老师 代学生登记 目的地：宿舍 事由：取物 预计到达：10 分钟 申请编号：mreq_0ec1003267404dfb9696354742236f6c 当前状态：待审批",
+        "fixHint": "Give each block its own zone, or mark intentional layering with data-layout-allow-overlap.",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 229.45,
+          "y": 274.38,
+          "width": 628.01,
+          "height": 351.45
+        },
+        "firstSeen": 4.25,
+        "lastSeen": 4.25,
+        "occurrences": 1,
+        "heldMs": 0
+      },
+      {
+        "code": "content_overlap",
+        "severity": "info",
+        "time": 5.75,
+        "selector": "#movement-title > span:nth-of-type(2)",
+        "message": "Two text blocks overlap and may render unreadable.",
+        "rect": {
+          "left": 234,
+          "top": 86,
+          "right": 323,
+          "bottom": 219,
+          "width": 89,
+          "height": 133
+        },
+        "containerSelector": "#movement-next-0 > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1)",
+        "text": "行",
+        "fixHint": "Give each block its own zone, or mark intentional layering with data-layout-allow-overlap.",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 234,
+          "y": 86,
+          "width": 89,
+          "height": 133
+        },
+        "firstSeen": 5.75,
+        "lastSeen": 5.75,
+        "occurrences": 1,
+        "heldMs": 0
+      },
+      {
+        "code": "content_overlap",
+        "severity": "info",
+        "time": 5.75,
+        "selector": "#movement-title > span:nth-of-type(3)",
+        "message": "Two text blocks overlap and may render unreadable.",
+        "rect": {
+          "left": 323,
+          "top": 86,
+          "right": 412,
+          "bottom": 219,
+          "width": 89,
+          "height": 133
+        },
+        "containerSelector": "#movement-next-0 > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1)",
+        "text": "有",
+        "fixHint": "Give each block its own zone, or mark intentional layering with data-layout-allow-overlap.",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 323,
+          "y": 86,
+          "width": 89,
+          "height": 133
+        },
+        "firstSeen": 5.75,
+        "lastSeen": 5.75,
+        "occurrences": 1,
+        "heldMs": 0
+      },
+      {
+        "code": "content_overlap",
+        "severity": "info",
+        "time": 14.125,
+        "selector": "#a2a-approval > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1)",
+        "message": "Two text blocks overlap and may render unreadable.",
+        "rect": {
+          "left": 242.53,
+          "top": 1230.65,
+          "right": 311.2,
+          "bottom": 1255.74,
+          "width": 68.67,
+          "height": 25.09
+        },
+        "containerSelector": "#label",
+        "text": "等待审批",
+        "fixHint": "Give each block its own zone, or mark intentional layering with data-layout-allow-overlap.",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 242.53,
+          "y": 1230.65,
+          "width": 68.67,
+          "height": 25.09
+        },
+        "firstSeen": 14.125,
+        "lastSeen": 14.125,
+        "occurrences": 1,
+        "heldMs": 0
+      },
+      {
+        "code": "content_overlap",
+        "severity": "info",
+        "time": 14.125,
+        "selector": "#a2a-approval > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1)",
+        "message": "Two text blocks overlap and may render unreadable.",
+        "rect": {
+          "left": 218.75,
+          "top": 1286.11,
+          "right": 851.99,
+          "bottom": 1440,
+          "width": 633.24,
+          "height": 153.89
+        },
+        "containerSelector": "#note",
+        "text": "以 林清老师 的 Mochi 名义，给「顾言老师」的 Mochi 派一个问询任务： 明天下午可以一起核对一次函数课件吗？ （服务器只投递这一句话；对方答不答应由对方决定。）",
+        "fixHint": "Give each block its own zone, or mark intentional layering with data-layout-allow-overlap.",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 218.75,
+          "y": 1286.11,
+          "width": 633.24,
+          "height": 153.89
+        },
+        "firstSeen": 14.125,
+        "lastSeen": 14.125,
+        "occurrences": 1,
+        "heldMs": 0
+      },
+      {
+        "code": "content_overlap",
+        "severity": "info",
+        "time": 19.375,
+        "selector": "#a2a-approval > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div:nth-of-type(1)",
+        "message": "Two text blocks overlap and may render unreadable.",
+        "rect": {
+          "left": 184.55,
+          "top": 1168.1,
+          "right": 831.83,
+          "bottom": 1326.05,
+          "width": 647.28,
+          "height": 157.95
+        },
+        "containerSelector": "#label",
+        "text": "以 林清老师 的 Mochi 名义，给「顾言老师」的 Mochi 派一个问询任务： 明天下午可以一起核对一次函数课件吗？ （服务器只投递这一句话；对方答不答应由对方决定。）",
+        "fixHint": "Give each block its own zone, or mark intentional layering with data-layout-allow-overlap.",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 184.55,
+          "y": 1168.1,
+          "width": 647.28,
+          "height": 157.95
+        },
+        "firstSeen": 19.375,
+        "lastSeen": 19.375,
+        "occurrences": 1,
+        "heldMs": 0
+      },
+      {
+        "code": "content_overlap",
+        "severity": "info",
+        "time": 19.5,
+        "selector": "#a2a-approval > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1)",
+        "message": "Two text blocks overlap and may render unreadable.",
+        "rect": {
+          "left": 208.85,
+          "top": 1348.68,
+          "right": 279.05,
+          "bottom": 1374.33,
+          "width": 70.2,
+          "height": 25.65
+        },
+        "containerSelector": "#note",
+        "text": "等待审批",
+        "fixHint": "Give each block its own zone, or mark intentional layering with data-layout-allow-overlap.",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 208.85,
+          "y": 1348.68,
+          "width": 70.2,
+          "height": 25.65
+        },
+        "firstSeen": 19.5,
+        "lastSeen": 19.5,
+        "occurrences": 1,
+        "heldMs": 0
+      },
+      {
+        "code": "content_overlap",
+        "severity": "info",
+        "time": 24.5,
+        "selector": "#reply-1 > div:nth-of-type(1) > p:nth-of-type(1)",
+        "message": "Two text blocks overlap and may render unreadable.",
+        "rect": {
+          "left": 1406.46,
+          "top": 361.46,
+          "right": 1810.12,
+          "bottom": 394.87,
+          "width": 403.66,
+          "height": 33.41
+        },
+        "containerSelector": "#reply-label",
+        "text": "我来检查第二题，修改后再发给你确认。",
+        "fixHint": "Give each block its own zone, or mark intentional layering with data-layout-allow-overlap.",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 1406.46,
+          "y": 361.46,
+          "width": 403.66,
+          "height": 33.41
+        },
+        "firstSeen": 24.5,
+        "lastSeen": 24.5,
+        "occurrences": 1,
+        "heldMs": 0
+      },
+      {
+        "code": "content_overlap",
+        "severity": "info",
+        "time": 24.625,
+        "selector": "#a2a-title > span:nth-of-type(9)",
+        "message": "Two text blocks overlap and may render unreadable.",
+        "rect": {
+          "left": 857,
+          "top": 86,
+          "right": 946,
+          "bottom": 219,
+          "width": 89,
+          "height": 133
+        },
+        "containerSelector": "#request-1 > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > span:nth-of-type(1)",
+        "text": "默",
+        "fixHint": "Give each block its own zone, or mark intentional layering with data-layout-allow-overlap.",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 857,
+          "y": 86,
+          "width": 89,
+          "height": 133
+        },
+        "firstSeen": 24.625,
+        "lastSeen": 24.625,
+        "occurrences": 1,
+        "heldMs": 0
+      },
+      {
+        "code": "content_overlap",
+        "severity": "info",
+        "time": 24.625,
+        "selector": "#a2a-title > span:nth-of-type(10)",
+        "message": "Two text blocks overlap and may render unreadable.",
+        "rect": {
+          "left": 946,
+          "top": 86,
+          "right": 1035,
+          "bottom": 219,
+          "width": 89,
+          "height": 133
+        },
+        "containerSelector": "#request-1 > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > span:nth-of-type(1)",
+        "text": "契",
+        "fixHint": "Give each block its own zone, or mark intentional layering with data-layout-allow-overlap.",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 946,
+          "y": 86,
+          "width": 89,
+          "height": 133
+        },
+        "firstSeen": 24.625,
+        "lastSeen": 24.625,
+        "occurrences": 1,
+        "heldMs": 0
+      },
+      {
+        "code": "content_overlap",
+        "severity": "info",
+        "time": 24.625,
+        "selector": "#a2a-title > span:nth-of-type(11)",
+        "message": "Two text blocks overlap and may render unreadable.",
+        "rect": {
+          "left": 1035,
+          "top": 86,
+          "right": 1124,
+          "bottom": 219,
+          "width": 89,
+          "height": 133
+        },
+        "containerSelector": "#request-1 > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > span:nth-of-type(1)",
+        "text": "。",
+        "fixHint": "Give each block its own zone, or mark intentional layering with data-layout-allow-overlap.",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 1035,
+          "y": 86,
+          "width": 89,
+          "height": 133
+        },
+        "firstSeen": 24.625,
+        "lastSeen": 24.625,
+        "occurrences": 1,
+        "heldMs": 0
+      },
+      {
+        "code": "content_overlap",
+        "severity": "info",
+        "time": 29.625,
+        "selector": "#reply-2 > div:nth-of-type(1) > p:nth-of-type(1)",
+        "message": "Two text blocks overlap and may render unreadable.",
+        "rect": {
+          "left": 1406.46,
+          "top": 361.46,
+          "right": 1832.54,
+          "bottom": 394.87,
+          "width": 426.08,
+          "height": 33.41
+        },
+        "containerSelector": "#reply-label",
+        "text": "我会先查看数学备课室，找到后再联系你。",
+        "fixHint": "Give each block its own zone, or mark intentional layering with data-layout-allow-overlap.",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 1406.46,
+          "y": 361.46,
+          "width": 426.08,
+          "height": 33.41
+        },
+        "firstSeen": 29.625,
+        "lastSeen": 29.625,
+        "occurrences": 1,
+        "heldMs": 0
+      }
+    ],
+    "duration": 30,
+    "samples": [
+      2,
+      5,
+      7,
+      9,
+      11,
+      17,
+      22,
+      28
+    ],
+    "transitionSamples": [],
+    "transitionSamplesDropped": 0,
+    "tolerance": 2,
+    "totalIssueCount": 13,
+    "truncated": false
+  },
+  "motion": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": [],
+    "enabled": false,
+    "samples": 0
+  },
+  "contrast": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": [],
+    "enabled": true,
+    "samples": [
+      2,
+      5,
+      9,
+      17,
+      28
+    ],
+    "checked": 96,
+    "passed": 96
+  },
+  "snapshots": {
+    "enabled": false,
+    "files": [],
+    "times": [],
+    "findingFiles": []
+  },
+  "_meta": {
+    "version": "0.8.36",
+    "latestVersion": "0.8.105",
+    "updateAvailable": true
+  }
+}

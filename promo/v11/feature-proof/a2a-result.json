@@ -1,0 +1,328 @@
+{
+  "run": "/Users/a1379/Documents/Mochi/promo/v11/feature-proof/private.nosync/a2a-2026-10-02T12-44-27.070Z",
+  "actualProductTools": true,
+  "actualLocalDemoBackend": true,
+  "accounts": [
+    "林清老师",
+    "顾言老师"
+  ],
+  "approvals": [
+    {
+      "account": "林清老师",
+      "tool": "mochi.ask",
+      "decision": "allowed-once",
+      "source": "User-authorized isolated demonstration harness; not a recording of human clicking"
+    },
+    {
+      "account": "顾言老师",
+      "tool": "mochi_respond",
+      "decision": "allowed-once",
+      "source": "User-authorized isolated demonstration harness; not a recording of human clicking"
+    },
+    {
+      "account": "林清老师",
+      "tool": "mochi.request",
+      "decision": "allowed-once",
+      "source": "User-authorized isolated demonstration harness; not a recording of human clicking"
+    },
+    {
+      "account": "顾言老师",
+      "tool": "mochi_respond",
+      "decision": "allowed-once",
+      "source": "User-authorized isolated demonstration harness; not a recording of human clicking"
+    },
+    {
+      "account": "林清老师",
+      "tool": "mochi.find",
+      "decision": "allowed-once",
+      "source": "User-authorized isolated demonstration harness; not a recording of human clicking"
+    },
+    {
+      "account": "顾言老师",
+      "tool": "mochi_respond",
+      "decision": "allowed-once",
+      "source": "User-authorized isolated demonstration harness; not a recording of human clicking"
+    }
+  ],
+  "results": [
+    {
+      "tool": "mochi_ask",
+      "args": {
+        "goal": "明天下午可以一起核对一次函数课件吗？"
+      },
+      "sent": {
+        "taskId": 1,
+        "peer": {
+          "id": 3,
+          "name": "顾言老师",
+          "role": "任课教师"
+        },
+        "transport": "relay",
+        "relayMessageId": 1,
+        "taskType": "ASK",
+        "status": "DELIVERED",
+        "任务类型": "问询",
+        "方向": "发给「顾言老师」",
+        "目标": "明天下午可以一起核对一次函数课件吗？",
+        "状态": "DELIVERED",
+        "任务卡": "进行中（RUNNING）",
+        "correlationId": "8fb25ef2-1c82-470b-9a99-2d00d9de5b48",
+        "attemptNo": 1,
+        "投递结果": "已确认投递"
+      },
+      "response": {
+        "taskId": 1,
+        "taskType": "ASK",
+        "status": "COMPLETED",
+        "任务类型": "问询",
+        "方向": "来自「林清老师」",
+        "目标": "【问询】明天下午可以一起核对一次函数课件吗？",
+        "状态": "COMPLETED",
+        "transport": "relay",
+        "任务卡": "已完成（COMPLETED）",
+        "correlationId": "relay-in:3:1",
+        "attemptNo": 1,
+        "投递结果": "已确认投递",
+        "回话": "可以，明天下午一起核对课件。",
+        "relayMessageId": 1
+      },
+      "final": {
+        "source": "mochi-dispatch",
+        "摘要": "没有等你决定的任务。",
+        "campus": {
+          "available": true,
+          "userId": 2,
+          "relaySync": {
+            "status": "synchronized"
+          }
+        },
+        "lan": {
+          "available": false,
+          "reason": "本机 LAN 身份尚未启动或配置，无法查询局域网任务。"
+        },
+        "等我回应": [],
+        "已派出的任务": [
+          {
+            "taskId": 1,
+            "taskType": "ASK",
+            "status": "COMPLETED",
+            "任务类型": "问询",
+            "方向": "发给「顾言老师」",
+            "目标": "明天下午可以一起核对一次函数课件吗？",
+            "状态": "COMPLETED",
+            "transport": "relay",
+            "任务卡": "已完成（COMPLETED）",
+            "correlationId": "8fb25ef2-1c82-470b-9a99-2d00d9de5b48",
+            "attemptNo": 1,
+            "投递结果": "已确认投递",
+            "回话": "可以，明天下午一起核对课件。",
+            "relayMessageId": 1
+          }
+        ],
+        "收到的任务": []
+      }
+    },
+    {
+      "tool": "mochi_request",
+      "args": {
+        "goal": "请帮忙检查一次函数练习第二题的表述。"
+      },
+      "sent": {
+        "taskId": 2,
+        "peer": {
+          "id": 3,
+          "name": "顾言老师",
+          "role": "任课教师"
+        },
+        "transport": "relay",
+        "relayMessageId": 2,
+        "taskType": "REQUEST",
+        "status": "DELIVERED",
+        "任务类型": "请求",
+        "方向": "发给「顾言老师」",
+        "目标": "请帮忙检查一次函数练习第二题的表述。",
+        "状态": "DELIVERED",
+        "任务卡": "进行中（RUNNING）",
+        "correlationId": "3c820603-1013-4cb0-a010-56672b84f921",
+        "attemptNo": 1,
+        "投递结果": "已确认投递"
+      },
+      "response": {
+        "taskId": 2,
+        "taskType": "ASK",
+        "status": "COMPLETED",
+        "任务类型": "问询",
+        "方向": "来自「林清老师」",
+        "目标": "【请求】请帮忙检查一次函数练习第二题的表述。",
+        "状态": "COMPLETED",
+        "transport": "relay",
+        "任务卡": "已完成（COMPLETED）",
+        "correlationId": "relay-in:3:2",
+        "attemptNo": 1,
+        "投递结果": "已确认投递",
+        "回话": "我来检查第二题，修改后再发给你确认。",
+        "relayMessageId": 2
+      },
+      "final": {
+        "source": "mochi-dispatch",
+        "摘要": "没有等你决定的任务。",
+        "campus": {
+          "available": true,
+          "userId": 2,
+          "relaySync": {
+            "status": "synchronized"
+          }
+        },
+        "lan": {
+          "available": false,
+          "reason": "本机 LAN 身份尚未启动或配置，无法查询局域网任务。"
+        },
+        "等我回应": [],
+        "已派出的任务": [
+          {
+            "taskId": 2,
+            "taskType": "REQUEST",
+            "status": "COMPLETED",
+            "任务类型": "请求",
+            "方向": "发给「顾言老师」",
+            "目标": "请帮忙检查一次函数练习第二题的表述。",
+            "状态": "COMPLETED",
+            "transport": "relay",
+            "任务卡": "已完成（COMPLETED）",
+            "correlationId": "3c820603-1013-4cb0-a010-56672b84f921",
+            "attemptNo": 1,
+            "投递结果": "已确认投递",
+            "回话": "我来检查第二题，修改后再发给你确认。",
+            "relayMessageId": 2
+          },
+          {
+            "taskId": 1,
+            "taskType": "ASK",
+            "status": "COMPLETED",
+            "任务类型": "问询",
+            "方向": "发给「顾言老师」",
+            "目标": "明天下午可以一起核对一次函数课件吗？",
+            "状态": "COMPLETED",
+            "transport": "relay",
+            "任务卡": "已完成（COMPLETED）",
+            "correlationId": "8fb25ef2-1c82-470b-9a99-2d00d9de5b48",
+            "attemptNo": 1,
+            "投递结果": "已确认投递",
+            "回话": "可以，明天下午一起核对课件。",
+            "relayMessageId": 1
+          }
+        ],
+        "收到的任务": []
+      }
+    },
+    {
+      "tool": "mochi_find",
+      "args": {
+        "item": "一次函数磁吸坐标板（演示）"
+      },
+      "sent": {
+        "taskId": 3,
+        "peer": {
+          "id": 3,
+          "name": "顾言老师",
+          "role": "任课教师"
+        },
+        "transport": "relay",
+        "relayMessageId": 3,
+        "taskType": "FIND",
+        "status": "DELIVERED",
+        "任务类型": "寻物",
+        "方向": "发给「顾言老师」",
+        "目标": "找「一次函数磁吸坐标板（演示）」",
+        "状态": "DELIVERED",
+        "任务卡": "进行中（RUNNING）",
+        "correlationId": "05080786-2258-4cc1-b968-e00cce14f89a",
+        "attemptNo": 1,
+        "投递结果": "已确认投递"
+      },
+      "response": {
+        "taskId": 3,
+        "taskType": "FIND",
+        "status": "COMPLETED",
+        "任务类型": "寻物",
+        "方向": "来自「林清老师」",
+        "目标": "一次函数磁吸坐标板（演示）",
+        "状态": "COMPLETED",
+        "transport": "relay",
+        "任务卡": "已完成（COMPLETED）",
+        "correlationId": "relay-in:3:3",
+        "attemptNo": 1,
+        "投递结果": "已确认投递",
+        "回话": "我会先查看数学备课室，找到后再联系你。",
+        "relayMessageId": 3
+      },
+      "final": {
+        "source": "mochi-dispatch",
+        "摘要": "没有等你决定的任务。",
+        "campus": {
+          "available": true,
+          "userId": 2,
+          "relaySync": {
+            "status": "synchronized"
+          }
+        },
+        "lan": {
+          "available": false,
+          "reason": "本机 LAN 身份尚未启动或配置，无法查询局域网任务。"
+        },
+        "等我回应": [],
+        "已派出的任务": [
+          {
+            "taskId": 3,
+            "taskType": "FIND",
+            "status": "COMPLETED",
+            "任务类型": "寻物",
+            "方向": "发给「顾言老师」",
+            "目标": "找「一次函数磁吸坐标板（演示）」",
+            "状态": "COMPLETED",
+            "transport": "relay",
+            "任务卡": "已完成（COMPLETED）",
+            "correlationId": "05080786-2258-4cc1-b968-e00cce14f89a",
+            "attemptNo": 1,
+            "投递结果": "已确认投递",
+            "回话": "我会先查看数学备课室，找到后再联系你。",
+            "relayMessageId": 3
+          },
+          {
+            "taskId": 2,
+            "taskType": "REQUEST",
+            "status": "COMPLETED",
+            "任务类型": "请求",
+            "方向": "发给「顾言老师」",
+            "目标": "请帮忙检查一次函数练习第二题的表述。",
+            "状态": "COMPLETED",
+            "transport": "relay",
+            "任务卡": "已完成（COMPLETED）",
+            "correlationId": "3c820603-1013-4cb0-a010-56672b84f921",
+            "attemptNo": 1,
+            "投递结果": "已确认投递",
+            "回话": "我来检查第二题，修改后再发给你确认。",
+            "relayMessageId": 2
+          },
+          {
+            "taskId": 1,
+            "taskType": "ASK",
+            "status": "COMPLETED",
+            "任务类型": "问询",
+            "方向": "发给「顾言老师」",
+            "目标": "明天下午可以一起核对一次函数课件吗？",
+            "状态": "COMPLETED",
+            "transport": "relay",
+            "任务卡": "已完成（COMPLETED）",
+            "correlationId": "8fb25ef2-1c82-470b-9a99-2d00d9de5b48",
+            "attemptNo": 1,
+            "投递结果": "已确认投递",
+            "回话": "可以，明天下午一起核对课件。",
+            "relayMessageId": 1
+          }
+        ],
+        "收到的任务": []
+      }
+    }
+  ]
+}

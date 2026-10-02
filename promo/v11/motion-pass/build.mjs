@@ -18,7 +18,7 @@ const chapters=[
  ['交互模型','../model-chapter/output/model-journey.mp4',0,26.8],
  ['叮咚与小信箱','../mailbox-chapter/output/mailbox-review.mp4',0,18],
  ['跨端消息与叫人','../student-chapter/output/student-chapter-paper-world.mp4',0,50],
- ['Mochi原生查人与流转','native-query/output/native-query.mp4',0,42],
+ ['Mochi原生查人、流转与教师协作','../collaboration-chapter/output/query-movement-a2a.mp4',0,60],
  ['记忆、自动化与结尾','../master-preview/supplement/output/continuation.mp4',36,56],
 ].map(([name,path,start,duration])=>({name,source:resolve(dir,path),start,duration}));
 const bridgeDurations=[2.8,3.2,3,4.4,3.4,2.6,3.2];
@@ -53,8 +53,8 @@ for(let i=process.argv.includes('--media-only-last')?4:0;i<directions.length;i++
  for(const [side,ch,at,pad]of[['out',chapters[i],chapters[i].start+chapters[i].duration-1.2,'stop'],['in',chapters[i+1],chapters[i+1].start,'stop']]){
   if(!existsSync(ch.source)){console.log('pending bridge media',i,side);continue}
   if(!process.argv.includes('--html-only')){
-   ff(['-ss',String(at),'-i',ch.source,'-t','1.2','-an','-vf','fps=120,setsar=1','-c:v','h264_videotoolbox','-b:v','22000000','-y',resolve(assets,side+'-short.mp4')]);
-   ff(['-i',resolve(assets,side+'-short.mp4'),'-vf',`tpad=${side==='in'?'start':pad}_mode=clone:${side==='in'?'start':pad}_duration=${seconds-1.2},fps=120`,'-an','-c:v','h264_videotoolbox','-b:v','22000000','-t',String(seconds),'-y',resolve(assets,side+'.mp4')]);
+   ff(['-ss',String(at),'-i',ch.source,'-t','1.2','-an','-vf','fps=120,setsar=1','-c:v','h264_videotoolbox','-allow_sw','1','-profile:v','high','-level:v','5.2','-b:v','22000000','-y',resolve(assets,side+'-short.mp4')]);
+   ff(['-i',resolve(assets,side+'-short.mp4'),'-vf',`tpad=${side==='in'?'start':pad}_mode=clone:${side==='in'?'start':pad}_duration=${seconds-1.2},fps=120`,'-an','-c:v','h264_videotoolbox','-allow_sw','1','-profile:v','high','-level:v','5.2','-b:v','22000000','-t',String(seconds),'-y',resolve(assets,side+'.mp4')]);
   }
  }
  const to=v=>({x:v.x,y:v.y,z:v.z,rotationX:v.rx,rotationY:v.ry,scale:.66});

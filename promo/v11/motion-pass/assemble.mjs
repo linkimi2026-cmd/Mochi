@@ -4,7 +4,7 @@ import {dirname,resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 const dir=dirname(fileURLToPath(import.meta.url)),assets=resolve(dir,'assets'),out=resolve(dir,'output');mkdirSync(out,{recursive:true});
 const plan=JSON.parse(readFileSync(resolve(dir,'plan.json'))),chapters=plan.chapters,h=plan.handleSeconds;
-const enc=['-an','-c:v','h264_videotoolbox','-b:v','18000000','-profile:v','high','-level:v','5.2','-pix_fmt','yuv420p','-colorspace','bt709','-color_primaries','bt709','-color_trc','bt709','-color_range','tv','-g','120','-video_track_timescale','15360'];
+const enc=['-an','-c:v','h264_videotoolbox','-allow_sw','1','-b:v','18000000','-profile:v','high','-level:v','5.2','-pix_fmt','yuv420p','-colorspace','bt709','-color_primaries','bt709','-color_trc','bt709','-color_range','tv','-g','120','-video_track_timescale','15360'];
 function ff(args){execFileSync('ffmpeg',['-v','error','-nostdin',...args],{stdio:'inherit'})}
 function probe(path){return JSON.parse(execFileSync('ffprobe',['-v','error','-show_streams','-show_format','-of','json',path],{encoding:'utf8'}))}
 chapters[chapters.length-1]={...chapters.at(-1),source:resolve(assets,'daily-with-ending.mp4'),start:0};

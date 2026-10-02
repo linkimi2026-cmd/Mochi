@@ -13,8 +13,9 @@ const decoded=spawnSync('ffmpeg',['-v','error','-i',file,'-f','null','-'],{encod
 const packets=execFileSync('ffprobe',['-v','error','-select_streams','v:0','-show_entries','packet=pts_time','-of','csv=p=0',file],{encoding:'utf8',maxBuffer:8*1024*1024}).trim().split('\n').map(Number).sort((a,b)=>a-b);let maxGap=0;
 for(let i=1;i<packets.length;i++)maxGap=Math.max(maxGap,packets[i]-packets[i-1]);if(maxGap>1/120+.00001)throw Error('Timeline gap '+maxGap);
 const bridgeTimes=timeline.chapters.filter(c=>c.type==='mo-handoff').flatMap(c=>[c.start+.02,c.start+c.duration*.433,c.start+c.duration-.05]);
-const query=timeline.chapters.find(c=>c.type==='chapter'&&c.name==='Mochi原生查人与流转');
-const times=[.8,...bridgeTimes,query.start+4-query.sourceStart,query.start+23-query.sourceStart,timeline.duration-4];
+const query=timeline.chapters.find(c=>c.type==='chapter'&&c.name.startsWith('Mochi原生查人'));
+if(!query)throw Error('Missing native campus chapter');
+const times=[.8,...bridgeTimes,...[4,23,37,47,58].filter(t=>t<query.duration+query.sourceStart).map(t=>query.start+t-query.sourceStart),timeline.duration-4];
 for(const[i,t]of times.entries())execFileSync('ffmpeg',['-v','error','-ss',String(t),'-i',file,'-frames:v','1','-vf','scale=640:-1','-y',resolve(evidence,`final-${String(i).padStart(2,'0')}.jpg`)]);
 execFileSync('ffmpeg',['-v','error','-framerate','1','-i',resolve(evidence,'final-%02d.jpg'),'-vf',`tile=4x${Math.ceil(times.length/4)}`,'-frames:v','1','-y',resolve(evidence,'final-contact.jpg')]);
 const result={status:`edition-${current.edition||2}-assembly-for-review`,fullFeatureCoverage:false,width:video.width,height:video.height,fps:video.avg_frame_rate,durationSeconds:Number(info.format.duration),frames:Number(video.nb_frames),audioCodec:audio.codec_name,audioChannels:audio.channels,bytes:statSync(file).size,decodeExitCode:decoded.status,decodeErrors:decoded.stderr.trim().length,maxPresentationGapSeconds:maxGap,inspectionTimes:times,sha256:createHash('sha256').update(readFileSync(file)).digest('hex')};
