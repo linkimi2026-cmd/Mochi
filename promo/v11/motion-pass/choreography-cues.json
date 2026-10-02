@@ -1,5 +1,5 @@
 {
-  "duration": 281.34999999999997,
+  "duration": 277.95,
   "accents": [
     {
       "time": 4.75,
@@ -17,187 +17,197 @@
       "sourceTime": 16.65
     },
     {
-      "time": 28.000000000000004,
+      "time": 24.8,
       "chapter": "多Agent与内置配色",
       "sourceTime": 6.4
     },
     {
-      "time": 34.449999999999996,
+      "time": 31.250000000000004,
       "chapter": "多Agent与内置配色",
       "sourceTime": 12.85
     },
     {
-      "time": 41.5,
+      "time": 38.3,
       "chapter": "多Agent与内置配色",
       "sourceTime": 19.9
     },
     {
-      "time": 45.65,
+      "time": 41.56333333333334,
       "chapter": "Mo 场景接力",
       "sourceTime": 1.9
     },
     {
-      "time": 50.349999999999994,
+      "time": 44.35,
       "chapter": "真实课件与教学成果",
       "sourceTime": 1.8
     },
     {
-      "time": 55.75,
+      "time": 49.75000000000001,
       "chapter": "真实课件与教学成果",
       "sourceTime": 7.2
     },
     {
-      "time": 61.15,
+      "time": 55.150000000000006,
       "chapter": "真实课件与教学成果",
       "sourceTime": 12.6
     },
     {
-      "time": 71.25,
+      "time": 63.55,
+      "chapter": "真实课件与教学成果",
+      "sourceTime": 21
+    },
+    {
+      "time": 71.35000000000001,
+      "chapter": "真实课件与教学成果",
+      "sourceTime": 28.8
+    },
+    {
+      "time": 74.45,
+      "chapter": "真实课件与教学成果",
+      "sourceTime": 31.9
+    },
+    {
+      "time": 80.3,
       "chapter": "Mo 场景接力",
       "sourceTime": 1.9
     },
     {
-      "time": 77.35,
+      "time": 84.35,
       "chapter": "交互模型",
       "sourceTime": 3.2
     },
     {
-      "time": 84.6,
+      "time": 91.6,
       "chapter": "交互模型",
       "sourceTime": 10.45
     },
     {
-      "time": 89.44999999999999,
+      "time": 96.44999999999999,
       "chapter": "交互模型",
       "sourceTime": 15.3
     },
     {
-      "time": 94.44999999999999,
+      "time": 101.44999999999999,
       "chapter": "交互模型",
       "sourceTime": 20.3
     },
     {
-      "time": 101.65,
+      "time": 108.14333333333333,
       "chapter": "Mo 场景接力",
       "sourceTime": 1.9
     },
     {
-      "time": 106.45,
+      "time": 111.45,
       "chapter": "叮咚与小信箱",
-      "sourceTime": 1.9
+      "sourceTime": 1.5
     },
     {
-      "time": 109.7,
+      "time": 115.10000000000001,
       "chapter": "叮咚与小信箱",
       "sourceTime": 5.15
     },
     {
-      "time": 119.89999999999999,
+      "time": 125.3,
       "chapter": "叮咚与小信箱",
       "sourceTime": 15.35
     },
     {
-      "time": 123.25,
-      "chapter": "Mo 场景接力",
-      "sourceTime": 1.9
-    },
-    {
-      "time": 127.55,
+      "time": 130.35000000000002,
       "chapter": "跨端消息与叫人",
       "sourceTime": 1.4
     },
     {
-      "time": 133.82,
+      "time": 136.62,
       "chapter": "跨端消息与叫人",
       "sourceTime": 7.67
     },
     {
-      "time": 141.65,
+      "time": 144.45000000000002,
       "chapter": "跨端消息与叫人",
       "sourceTime": 15.5
     },
     {
-      "time": 146.75,
+      "time": 149.55,
       "chapter": "跨端消息与叫人",
       "sourceTime": 20.6
     },
     {
-      "time": 151.45000000000002,
+      "time": 154.25000000000003,
       "chapter": "跨端消息与叫人",
       "sourceTime": 25.3
     },
     {
-      "time": 158.8,
+      "time": 161.60000000000002,
       "chapter": "跨端消息与叫人",
       "sourceTime": 32.65
     },
     {
-      "time": 163.7,
+      "time": 166.5,
       "chapter": "跨端消息与叫人",
       "sourceTime": 37.55
     },
     {
-      "time": 170.55,
+      "time": 173.35000000000002,
       "chapter": "跨端消息与叫人",
       "sourceTime": 44.4
     },
     {
-      "time": 176.85,
+      "time": 178.57333333333332,
       "chapter": "Mo 场景接力",
       "sourceTime": 1.9
     },
     {
-      "time": 182.45,
+      "time": 181.85,
       "chapter": "Mochi原生查人与流转",
       "sourceTime": 2.7
     },
     {
-      "time": 187.55,
+      "time": 186.95000000000002,
       "chapter": "Mochi原生查人与流转",
       "sourceTime": 7.8
     },
     {
-      "time": 193.7,
+      "time": 193.1,
       "chapter": "Mochi原生查人与流转",
       "sourceTime": 13.95
     },
     {
-      "time": 200.8,
+      "time": 200.20000000000002,
       "chapter": "Mochi原生查人与流转",
       "sourceTime": 21.05
     },
     {
-      "time": 213.55,
+      "time": 212.95,
       "chapter": "Mochi原生查人与流转",
       "sourceTime": 33.8
     },
     {
-      "time": 222.45,
+      "time": 220.9633333333333,
       "chapter": "Mo 场景接力",
       "sourceTime": 1.9
     },
     {
-      "time": 228.35,
+      "time": 224.95,
       "chapter": "记忆、自动化与结尾",
       "sourceTime": 3
     },
     {
-      "time": 240.35,
+      "time": 236.95,
       "chapter": "记忆、自动化与结尾",
       "sourceTime": 15
     },
     {
-      "time": 252.35,
+      "time": 248.95,
       "chapter": "记忆、自动化与结尾",
       "sourceTime": 27
     },
     {
-      "time": 264.34999999999997,
+      "time": 260.95,
       "chapter": "记忆、自动化与结尾",
       "sourceTime": 39
     },
     {
-      "time": 276.34999999999997,
+      "time": 272.95,
       "chapter": "记忆、自动化与结尾",
       "sourceTime": 51
     }
@@ -219,52 +229,52 @@
       "sourceTime": 16.65
     },
     {
-      "time": 28.000000000000004,
+      "time": 24.8,
       "chapter": "多Agent与内置配色",
       "sourceTime": 6.4
     },
     {
-      "time": 36.3,
+      "time": 33.099999999999994,
       "chapter": "多Agent与内置配色",
       "sourceTime": 14.7
     },
     {
-      "time": 77.35,
+      "time": 84.35,
       "chapter": "交互模型",
       "sourceTime": 3.2
     },
     {
-      "time": 89.44999999999999,
+      "time": 96.44999999999999,
       "chapter": "交互模型",
       "sourceTime": 15.3
     },
     {
-      "time": 91.64999999999999,
+      "time": 98.64999999999999,
       "chapter": "交互模型",
       "sourceTime": 17.5
     },
     {
-      "time": 94.44999999999999,
+      "time": 101.44999999999999,
       "chapter": "交互模型",
       "sourceTime": 20.3
     },
     {
-      "time": 109.7,
+      "time": 115.10000000000001,
       "chapter": "叮咚与小信箱",
       "sourceTime": 5.15
     },
     {
-      "time": 155.25,
+      "time": 158.05,
       "chapter": "跨端消息与叫人",
       "sourceTime": 29.1
     },
     {
-      "time": 157.35,
+      "time": 160.15,
       "chapter": "跨端消息与叫人",
       "sourceTime": 31.2
     },
     {
-      "time": 182.45,
+      "time": 181.85,
       "chapter": "Mochi原生查人与流转",
       "sourceTime": 2.7
     }

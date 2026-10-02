@@ -1,6 +1,6 @@
 {
-  "duration": 281.34999999999997,
-  "accentCount": 40,
+  "duration": 277.95,
+  "accentCount": 42,
   "clickCount": 13,
   "reports": [
     {
@@ -13,492 +13,516 @@
         },
         {
           "target": 4.75,
-          "source": 4.700131578947368,
+          "source": 4.725,
           "strength": 0.479,
           "chapter": "首页与需求"
         },
         {
           "target": 10.42,
-          "source": 10.339112874779541,
+          "source": 10.379,
           "strength": 0.489,
           "chapter": "首页与需求"
         },
         {
           "target": 16.65,
-          "source": 16.531238362760835,
+          "source": 16.576,
           "strength": 0.907,
           "chapter": "首页与需求"
         },
         {
-          "target": 28.000000000000004,
-          "source": 28.074859911894276,
-          "strength": 0.69,
+          "target": 24.8,
+          "source": 24.651,
+          "strength": 0.854,
           "chapter": "多Agent与内置配色"
         },
         {
-          "target": 34.449999999999996,
-          "source": 34.430426356589145,
-          "strength": 0.767,
+          "target": 31.250000000000004,
+          "source": 31.04,
+          "strength": 0.785,
           "chapter": "多Agent与内置配色"
         },
         {
-          "target": 41.5,
-          "source": 41.312465957446804,
+          "target": 38.3,
+          "source": 37.92,
+          "strength": 0.662,
+          "chapter": "多Agent与内置配色"
+        },
+        {
+          "target": 41.56333333333334,
+          "source": 41.376,
           "strength": 0.68,
-          "chapter": "多Agent与内置配色"
-        },
-        {
-          "target": 45.65,
-          "source": 45.27735542168675,
-          "strength": 0.736,
           "chapter": "Mo 场景接力"
         },
         {
-          "target": 50.349999999999994,
-          "source": 49.9242170212766,
-          "strength": 0.403,
+          "target": 44.35,
+          "source": 44.32,
+          "strength": 0.728,
           "chapter": "真实课件与教学成果"
         },
         {
-          "target": 55.75,
-          "source": 55.202785185185185,
+          "target": 49.75000000000001,
+          "source": 49.728,
+          "strength": 0.649,
+          "chapter": "真实课件与教学成果"
+        },
+        {
+          "target": 55.150000000000006,
+          "source": 55.136,
           "strength": 0.674,
           "chapter": "真实课件与教学成果"
         },
         {
-          "target": 61.15,
-          "source": 60.483911111111105,
-          "strength": 0.708,
+          "target": 63.55,
+          "source": 63.499,
+          "strength": 0.66,
           "chapter": "真实课件与教学成果"
         },
         {
-          "target": 71.25,
-          "source": 70.3449183168317,
-          "strength": 0.749,
+          "target": 71.35000000000001,
+          "source": 71.371,
+          "strength": 0.697,
+          "chapter": "真实课件与教学成果"
+        },
+        {
+          "target": 74.45,
+          "source": 74.315,
+          "strength": 0.646,
+          "chapter": "真实课件与教学成果"
+        },
+        {
+          "target": 80.3,
+          "source": 80.213,
+          "strength": 0.437,
           "chapter": "Mo 场景接力"
         },
         {
-          "target": 77.35,
-          "source": 76.32190409836065,
-          "strength": 0.68,
+          "target": 84.35,
+          "source": 84.299,
+          "strength": 0.436,
           "chapter": "交互模型"
         },
         {
-          "target": 84.6,
-          "source": 83.58808620689655,
-          "strength": 0.54,
+          "target": 91.6,
+          "source": 91.531,
+          "strength": 0.332,
           "chapter": "交互模型"
         },
         {
-          "target": 89.44999999999999,
-          "source": 88.58633608247422,
-          "strength": 0.313,
+          "target": 96.44999999999999,
+          "source": 96.405,
+          "strength": 0.129,
           "chapter": "交互模型"
         },
         {
-          "target": 94.44999999999999,
-          "source": 93.720763,
-          "strength": 0.563,
+          "target": 101.44999999999999,
+          "source": 101.483,
+          "strength": 0.712,
           "chapter": "交互模型"
         },
         {
-          "target": 101.65,
-          "source": 100.7615138888889,
-          "strength": 0.701,
+          "target": 108.14333333333333,
+          "source": 108.139,
+          "strength": 0.198,
           "chapter": "Mo 场景接力"
         },
         {
-          "target": 106.45,
-          "source": 105.67564583333333,
-          "strength": 0.364,
+          "target": 111.45,
+          "source": 111.328,
+          "strength": 0.636,
           "chapter": "叮咚与小信箱"
         },
         {
-          "target": 109.7,
-          "source": 108.91904307692307,
-          "strength": 0.546,
+          "target": 115.10000000000001,
+          "source": 114.773,
+          "strength": 0.88,
           "chapter": "叮咚与小信箱"
         },
         {
-          "target": 119.89999999999999,
-          "source": 119.22011960784315,
-          "strength": 0.734,
+          "target": 125.3,
+          "source": 124.992,
+          "strength": 0.708,
           "chapter": "叮咚与小信箱"
         },
         {
-          "target": 123.25,
-          "source": 122.645,
-          "strength": 0.822,
+          "target": 130.35000000000002,
+          "source": 130.027,
+          "strength": 0.709,
+          "chapter": "跨端消息与叫人"
+        },
+        {
+          "target": 136.62,
+          "source": 136.309,
+          "strength": 0.759,
+          "chapter": "跨端消息与叫人"
+        },
+        {
+          "target": 144.45000000000002,
+          "source": 144.277,
+          "strength": 0.609,
+          "chapter": "跨端消息与叫人"
+        },
+        {
+          "target": 149.55,
+          "source": 149.248,
+          "strength": 0.785,
+          "chapter": "跨端消息与叫人"
+        },
+        {
+          "target": 154.25000000000003,
+          "source": 154.123,
+          "strength": 0.779,
+          "chapter": "跨端消息与叫人"
+        },
+        {
+          "target": 161.60000000000002,
+          "source": 161.493,
+          "strength": 0.64,
+          "chapter": "跨端消息与叫人"
+        },
+        {
+          "target": 166.5,
+          "source": 166.411,
+          "strength": 0.727,
+          "chapter": "跨端消息与叫人"
+        },
+        {
+          "target": 173.35000000000002,
+          "source": 173.301,
+          "strength": 0.646,
+          "chapter": "跨端消息与叫人"
+        },
+        {
+          "target": 178.57333333333332,
+          "source": 178.709,
+          "strength": 0.325,
           "chapter": "Mo 场景接力"
         },
         {
-          "target": 127.55,
-          "source": 126.98509302325581,
-          "strength": 0.662,
-          "chapter": "跨端消息与叫人"
-        },
-        {
-          "target": 133.82,
-          "source": 133.283341307815,
-          "strength": 0.644,
-          "chapter": "跨端消息与叫人"
-        },
-        {
-          "target": 141.65,
-          "source": 141.20269540229884,
-          "strength": 0.645,
-          "chapter": "跨端消息与叫人"
-        },
-        {
-          "target": 146.75,
-          "source": 146.32457352941177,
-          "strength": 0.668,
-          "chapter": "跨端消息与叫人"
-        },
-        {
-          "target": 151.45000000000002,
-          "source": 151.19938510638298,
-          "strength": 0.76,
-          "chapter": "跨端消息与叫人"
-        },
-        {
-          "target": 158.8,
-          "source": 158.6092530612245,
-          "strength": 0.713,
-          "chapter": "跨端消息与叫人"
-        },
-        {
-          "target": 163.7,
-          "source": 163.5272204081633,
-          "strength": 0.65,
-          "chapter": "跨端消息与叫人"
-        },
-        {
-          "target": 170.55,
-          "source": 170.41232116788322,
-          "strength": 0.747,
-          "chapter": "跨端消息与叫人"
-        },
-        {
-          "target": 176.85,
-          "source": 176.661,
-          "strength": 0.671,
-          "chapter": "Mo 场景接力"
-        },
-        {
-          "target": 182.45,
-          "source": 182.293,
-          "strength": 0.438,
+          "target": 181.85,
+          "source": 182.037,
+          "strength": 0.628,
           "chapter": "Mochi原生查人与流转"
         },
         {
-          "target": 187.55,
-          "source": 187.34404313725489,
-          "strength": 0.755,
+          "target": 186.95000000000002,
+          "source": 187.072,
+          "strength": 0.378,
           "chapter": "Mochi原生查人与流转"
         },
         {
-          "target": 193.7,
-          "source": 193.42893902439025,
-          "strength": 0.195,
+          "target": 193.1,
+          "source": 193.227,
+          "strength": 0.221,
           "chapter": "Mochi原生查人与流转"
         },
         {
-          "target": 200.8,
-          "source": 200.44069859154928,
+          "target": 200.20000000000002,
+          "source": 200.48,
           "strength": 0.545,
           "chapter": "Mochi原生查人与流转"
         },
         {
-          "target": 213.55,
-          "source": 213.321111372549,
+          "target": 212.95,
+          "source": 213.301,
           "strength": 0.957,
           "chapter": "Mochi原生查人与流转"
         },
         {
-          "target": 222.45,
-          "source": 222.08830674157304,
-          "strength": 0.716,
+          "target": 220.9633333333333,
+          "source": 221.141,
+          "strength": 0.78,
           "chapter": "Mo 场景接力"
         },
         {
-          "target": 228.35,
-          "source": 228.03599491525424,
-          "strength": 0.674,
+          "target": 224.95,
+          "source": 225.12,
+          "strength": 0.865,
           "chapter": "记忆、自动化与结尾"
         },
         {
-          "target": 240.35,
-          "source": 239.84868,
-          "strength": 0.684,
+          "target": 236.95,
+          "source": 236.875,
+          "strength": 0.691,
           "chapter": "记忆、自动化与结尾"
         },
         {
-          "target": 252.35,
-          "source": 251.55817833333333,
-          "strength": 0.651,
+          "target": 248.95,
+          "source": 248.672,
+          "strength": 0.709,
           "chapter": "记忆、自动化与结尾"
         },
         {
-          "target": 264.34999999999997,
-          "source": 263.50388,
-          "strength": 0.661,
+          "target": 260.95,
+          "source": 260.48,
+          "strength": 0.774,
           "chapter": "记忆、自动化与结尾"
         },
         {
-          "target": 276.34999999999997,
-          "source": 275.44782333333336,
-          "strength": 0.355,
+          "target": 272.95,
+          "source": 272.288,
+          "strength": 0.68,
           "chapter": "记忆、自动化与结尾"
         },
         {
-          "target": 281.34999999999997,
-          "source": 280.44782333333336,
+          "target": 277.95,
+          "source": 277.28800000000007,
           "strength": 0
         }
       ],
-      "maxTempoChange": 0.04460494837591644,
+      "maxTempoChange": 0.05903983656792233,
       "method": "Original beat landmarks, bounded pitch-preserving atempo, four-ms edge fades; listening review still required.",
       "renderedAttackChecks": [
         {
           "cueSeconds": 4.75,
           "nearbyAttackSeconds": 4.75,
           "offsetMs": 0.0,
-          "rise": 0.19272081553936005
+          "rise": 0.17682111263275146
         },
         {
           "cueSeconds": 10.42,
           "nearbyAttackSeconds": 10.42,
           "offsetMs": 0.0,
-          "rise": 0.12170928716659546
+          "rise": 0.16447053849697113
         },
         {
           "cueSeconds": 16.65,
-          "nearbyAttackSeconds": 16.58,
-          "offsetMs": -70.0,
-          "rise": 0.17656242474913597
-        },
-        {
-          "cueSeconds": 28.000000000000004,
-          "nearbyAttackSeconds": 27.935,
-          "offsetMs": -65.0,
-          "rise": 0.3411600589752197
-        },
-        {
-          "cueSeconds": 34.449999999999996,
-          "nearbyAttackSeconds": 34.45,
+          "nearbyAttackSeconds": 16.65,
           "offsetMs": 0.0,
-          "rise": 0.08953072875738144
+          "rise": 0.145437091588974
         },
         {
-          "cueSeconds": 41.5,
-          "nearbyAttackSeconds": 41.5,
+          "cueSeconds": 24.8,
+          "nearbyAttackSeconds": 24.8,
           "offsetMs": 0.0,
-          "rise": 0.024051470682024956
+          "rise": 0.20500358939170837
         },
         {
-          "cueSeconds": 45.65,
-          "nearbyAttackSeconds": 45.65,
-          "offsetMs": 0.0,
-          "rise": 0.2548532895743847
-        },
-        {
-          "cueSeconds": 50.349999999999994,
-          "nearbyAttackSeconds": 50.35,
-          "offsetMs": 0.0,
-          "rise": 0.049065664410591125
-        },
-        {
-          "cueSeconds": 55.75,
-          "nearbyAttackSeconds": 55.75,
-          "offsetMs": 0.0,
-          "rise": 0.08922674506902695
-        },
-        {
-          "cueSeconds": 61.15,
-          "nearbyAttackSeconds": 61.15,
-          "offsetMs": 0.0,
-          "rise": 0.03611637465655804
-        },
-        {
-          "cueSeconds": 71.25,
-          "nearbyAttackSeconds": 71.25,
-          "offsetMs": 0.0,
-          "rise": 0.19372035562992096
-        },
-        {
-          "cueSeconds": 77.35,
-          "nearbyAttackSeconds": 77.28,
-          "offsetMs": -70.0,
-          "rise": 0.06951477378606796
-        },
-        {
-          "cueSeconds": 84.6,
-          "nearbyAttackSeconds": 84.6,
-          "offsetMs": 0.0,
-          "rise": 0.025348518043756485
-        },
-        {
-          "cueSeconds": 89.44999999999999,
-          "nearbyAttackSeconds": 89.45,
-          "offsetMs": 0.0,
-          "rise": 0.0709676444530487
-        },
-        {
-          "cueSeconds": 94.44999999999999,
-          "nearbyAttackSeconds": 94.45,
-          "offsetMs": 0.0,
-          "rise": 0.04442663490772247
-        },
-        {
-          "cueSeconds": 101.65,
-          "nearbyAttackSeconds": 101.59,
-          "offsetMs": -60.0,
-          "rise": 0.06457248143851757
-        },
-        {
-          "cueSeconds": 106.45,
-          "nearbyAttackSeconds": 106.45,
-          "offsetMs": 0.0,
-          "rise": 0.07951383292675018
-        },
-        {
-          "cueSeconds": 109.7,
-          "nearbyAttackSeconds": 109.7,
-          "offsetMs": 0.0,
-          "rise": 0.18432511389255524
-        },
-        {
-          "cueSeconds": 119.89999999999999,
-          "nearbyAttackSeconds": 119.945,
-          "offsetMs": 45.0,
-          "rise": 0.18667174875736237
-        },
-        {
-          "cueSeconds": 123.25,
-          "nearbyAttackSeconds": 123.25,
-          "offsetMs": 0.0,
-          "rise": 0.2587713673710823
-        },
-        {
-          "cueSeconds": 127.55,
-          "nearbyAttackSeconds": 127.55,
-          "offsetMs": 0.0,
-          "rise": 0.16294957883656025
-        },
-        {
-          "cueSeconds": 133.82,
-          "nearbyAttackSeconds": 133.785,
-          "offsetMs": -35.0,
-          "rise": 0.1613413468003273
-        },
-        {
-          "cueSeconds": 141.65,
-          "nearbyAttackSeconds": 141.635,
-          "offsetMs": -15.0,
-          "rise": 0.20856881886720657
-        },
-        {
-          "cueSeconds": 146.75,
-          "nearbyAttackSeconds": 146.75,
-          "offsetMs": 0.0,
-          "rise": 0.1579749882221222
-        },
-        {
-          "cueSeconds": 151.45000000000002,
-          "nearbyAttackSeconds": 151.45,
+          "cueSeconds": 31.250000000000004,
+          "nearbyAttackSeconds": 31.25,
           "offsetMs": -0.0,
-          "rise": 0.19627118110656738
+          "rise": 0.2963794283568859
         },
         {
-          "cueSeconds": 158.8,
-          "nearbyAttackSeconds": 158.82,
-          "offsetMs": 20.0,
-          "rise": 0.18696673214435577
-        },
-        {
-          "cueSeconds": 163.7,
-          "nearbyAttackSeconds": 163.7,
+          "cueSeconds": 38.3,
+          "nearbyAttackSeconds": 38.3,
           "offsetMs": 0.0,
-          "rise": 0.24789972603321075
+          "rise": 0.17345298826694489
         },
         {
-          "cueSeconds": 170.55,
-          "nearbyAttackSeconds": 170.55,
+          "cueSeconds": 41.56333333333334,
+          "nearbyAttackSeconds": 41.565,
+          "offsetMs": 1.67,
+          "rise": 0.19712143763899803
+        },
+        {
+          "cueSeconds": 44.35,
+          "nearbyAttackSeconds": 44.35,
           "offsetMs": 0.0,
-          "rise": 0.133620485663414
+          "rise": 0.057302623987197876
         },
         {
-          "cueSeconds": 176.85,
-          "nearbyAttackSeconds": 176.895,
-          "offsetMs": 45.0,
-          "rise": 0.09523971378803253
+          "cueSeconds": 49.75000000000001,
+          "nearbyAttackSeconds": 49.775,
+          "offsetMs": 25.0,
+          "rise": 0.2131970450282097
         },
         {
-          "cueSeconds": 182.45,
-          "nearbyAttackSeconds": 182.45,
+          "cueSeconds": 55.150000000000006,
+          "nearbyAttackSeconds": 55.15,
+          "offsetMs": -0.0,
+          "rise": 0.05179556459188461
+        },
+        {
+          "cueSeconds": 63.55,
+          "nearbyAttackSeconds": 63.55,
           "offsetMs": 0.0,
-          "rise": 0.09894928336143494
+          "rise": 0.1616932824254036
         },
         {
-          "cueSeconds": 187.55,
-          "nearbyAttackSeconds": 187.55,
+          "cueSeconds": 71.35000000000001,
+          "nearbyAttackSeconds": 71.43,
+          "offsetMs": 80.0,
+          "rise": 0.21381289511919022
+        },
+        {
+          "cueSeconds": 74.45,
+          "nearbyAttackSeconds": 74.45,
           "offsetMs": 0.0,
-          "rise": 0.01060958206653595
+          "rise": 0.1715981587767601
         },
         {
-          "cueSeconds": 193.7,
-          "nearbyAttackSeconds": 193.7,
+          "cueSeconds": 80.3,
+          "nearbyAttackSeconds": 80.3,
           "offsetMs": 0.0,
-          "rise": 0.04432297311723232
+          "rise": 0.1509617194533348
         },
         {
-          "cueSeconds": 200.8,
-          "nearbyAttackSeconds": 200.735,
+          "cueSeconds": 84.35,
+          "nearbyAttackSeconds": 84.35,
+          "offsetMs": 0.0,
+          "rise": 0.035848475992679596
+        },
+        {
+          "cueSeconds": 91.6,
+          "nearbyAttackSeconds": 91.6,
+          "offsetMs": 0.0,
+          "rise": 0.113888218998909
+        },
+        {
+          "cueSeconds": 96.44999999999999,
+          "nearbyAttackSeconds": 96.45,
+          "offsetMs": 0.0,
+          "rise": 0.04563000798225403
+        },
+        {
+          "cueSeconds": 101.44999999999999,
+          "nearbyAttackSeconds": 101.44,
+          "offsetMs": -10.0,
+          "rise": 0.27966301515698433
+        },
+        {
+          "cueSeconds": 108.14333333333333,
+          "nearbyAttackSeconds": 108.075,
+          "offsetMs": -68.33,
+          "rise": 0.1264141947031021
+        },
+        {
+          "cueSeconds": 111.45,
+          "nearbyAttackSeconds": 111.45,
+          "offsetMs": 0.0,
+          "rise": 0.02342601865530014
+        },
+        {
+          "cueSeconds": 115.10000000000001,
+          "nearbyAttackSeconds": 115.1,
+          "offsetMs": -0.0,
+          "rise": 0.25497641414403915
+        },
+        {
+          "cueSeconds": 125.3,
+          "nearbyAttackSeconds": 125.38,
+          "offsetMs": 80.0,
+          "rise": 0.23518853820860386
+        },
+        {
+          "cueSeconds": 130.35000000000002,
+          "nearbyAttackSeconds": 130.35,
+          "offsetMs": -0.0,
+          "rise": 0.16026388853788376
+        },
+        {
+          "cueSeconds": 136.62,
+          "nearbyAttackSeconds": 136.62,
+          "offsetMs": 0.0,
+          "rise": 0.038880035281181335
+        },
+        {
+          "cueSeconds": 144.45000000000002,
+          "nearbyAttackSeconds": 144.45,
+          "offsetMs": -0.0,
+          "rise": 0.1556607335805893
+        },
+        {
+          "cueSeconds": 149.55,
+          "nearbyAttackSeconds": 149.55,
+          "offsetMs": 0.0,
+          "rise": 0.1956179514527321
+        },
+        {
+          "cueSeconds": 154.25000000000003,
+          "nearbyAttackSeconds": 154.185,
           "offsetMs": -65.0,
-          "rise": 0.17200214229524136
+          "rise": 0.22642932459712029
         },
         {
-          "cueSeconds": 213.55,
-          "nearbyAttackSeconds": 213.55,
-          "offsetMs": 0.0,
-          "rise": 0.12889131158590317
+          "cueSeconds": 161.60000000000002,
+          "nearbyAttackSeconds": 161.6,
+          "offsetMs": -0.0,
+          "rise": 0.14333176612854004
         },
         {
-          "cueSeconds": 222.45,
-          "nearbyAttackSeconds": 222.37,
+          "cueSeconds": 166.5,
+          "nearbyAttackSeconds": 166.435,
+          "offsetMs": -65.0,
+          "rise": 0.31833179481327534
+        },
+        {
+          "cueSeconds": 173.35000000000002,
+          "nearbyAttackSeconds": 173.27,
           "offsetMs": -80.0,
-          "rise": 0.07965024374425411
+          "rise": 0.27999962866306305
         },
         {
-          "cueSeconds": 228.35,
-          "nearbyAttackSeconds": 228.35,
+          "cueSeconds": 178.57333333333332,
+          "nearbyAttackSeconds": 178.5,
+          "offsetMs": -73.33,
+          "rise": 0.13194025307893753
+        },
+        {
+          "cueSeconds": 181.85,
+          "nearbyAttackSeconds": 181.85,
           "offsetMs": 0.0,
-          "rise": 0.05790158733725548
+          "rise": 0.08389440923929214
         },
         {
-          "cueSeconds": 240.35,
-          "nearbyAttackSeconds": 240.41,
-          "offsetMs": 60.0,
-          "rise": 0.20901785790920258
+          "cueSeconds": 186.95000000000002,
+          "nearbyAttackSeconds": 186.95,
+          "offsetMs": -0.0,
+          "rise": 0.01651974394917488
         },
         {
-          "cueSeconds": 252.35,
-          "nearbyAttackSeconds": 252.35,
+          "cueSeconds": 193.1,
+          "nearbyAttackSeconds": 193.1,
           "offsetMs": 0.0,
-          "rise": 0.1436600349843502
+          "rise": 0.029969878494739532
         },
         {
-          "cueSeconds": 264.34999999999997,
-          "nearbyAttackSeconds": 264.415,
-          "offsetMs": 65.0,
-          "rise": 0.23866450786590576
+          "cueSeconds": 200.20000000000002,
+          "nearbyAttackSeconds": 200.2,
+          "offsetMs": -0.0,
+          "rise": 0.09059353172779083
         },
         {
-          "cueSeconds": 276.34999999999997,
-          "nearbyAttackSeconds": 276.27,
-          "offsetMs": -80.0,
-          "rise": 0.16013642773032188
+          "cueSeconds": 212.95,
+          "nearbyAttackSeconds": 212.95,
+          "offsetMs": 0.0,
+          "rise": 0.17505675554275513
+        },
+        {
+          "cueSeconds": 220.9633333333333,
+          "nearbyAttackSeconds": 221.02,
+          "offsetMs": 56.67,
+          "rise": 0.0946633517742157
+        },
+        {
+          "cueSeconds": 224.95,
+          "nearbyAttackSeconds": 224.88,
+          "offsetMs": -70.0,
+          "rise": 0.18293597176671028
+        },
+        {
+          "cueSeconds": 236.95,
+          "nearbyAttackSeconds": 236.95,
+          "offsetMs": 0.0,
+          "rise": 0.24847374856472015
+        },
+        {
+          "cueSeconds": 248.95,
+          "nearbyAttackSeconds": 248.915,
+          "offsetMs": -35.0,
+          "rise": 0.10457725822925568
+        },
+        {
+          "cueSeconds": 260.95,
+          "nearbyAttackSeconds": 260.95,
+          "offsetMs": 0.0,
+          "rise": 0.29186296463012695
+        },
+        {
+          "cueSeconds": 272.95,
+          "nearbyAttackSeconds": 272.95,
+          "offsetMs": 0.0,
+          "rise": 0.2682841680943966
         }
       ],
       "maxMeasuredLocalOffsetMs": 80.0,
@@ -511,7 +535,7 @@
         },
         {
           "time": 10.42,
-          "sourceShiftMs": -35.0,
+          "sourceShiftMs": -40.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
@@ -522,224 +546,236 @@
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 28.000000000000004,
-          "sourceShiftMs": -45.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 34.449999999999996,
-          "sourceShiftMs": 15.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 41.5,
-          "sourceShiftMs": 50.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 45.65,
-          "sourceShiftMs": -60.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 50.349999999999994,
-          "sourceShiftMs": 30.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 55.75,
+          "time": 24.8,
           "sourceShiftMs": 25.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 61.15,
-          "sourceShiftMs": 75.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 71.25,
-          "sourceShiftMs": 15.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 77.35,
-          "sourceShiftMs": -35.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 84.6,
-          "sourceShiftMs": 10.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 89.44999999999999,
-          "sourceShiftMs": 10.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 94.44999999999999,
-          "sourceShiftMs": 25.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 101.65,
-          "sourceShiftMs": -25.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 106.45,
+          "time": 31.250000000000004,
           "sourceShiftMs": 30.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 109.7,
-          "sourceShiftMs": 35.0,
+          "time": 38.3,
+          "sourceShiftMs": -5.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 119.89999999999999,
-          "sourceShiftMs": 60.0,
+          "time": 41.56333333333334,
+          "sourceShiftMs": 81.67,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 123.25,
+          "time": 44.35,
+          "sourceShiftMs": -15.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 49.75000000000001,
           "sourceShiftMs": 80.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 127.55,
-          "sourceShiftMs": -80.0,
+          "time": 55.150000000000006,
+          "sourceShiftMs": -10.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 133.82,
-          "sourceShiftMs": -60.0,
+          "time": 63.55,
+          "sourceShiftMs": 0.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 141.65,
-          "sourceShiftMs": -75.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 146.75,
-          "sourceShiftMs": -30.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 151.45000000000002,
-          "sourceShiftMs": 5.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 158.8,
-          "sourceShiftMs": 65.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 163.7,
-          "sourceShiftMs": 20.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 170.55,
-          "sourceShiftMs": -35.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 176.85,
+          "time": 71.35000000000001,
           "sourceShiftMs": 70.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 182.45,
-          "sourceShiftMs": -40.0,
+          "time": 74.45,
+          "sourceShiftMs": -5.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 187.55,
-          "sourceShiftMs": -20.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 193.7,
-          "sourceShiftMs": 75.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 200.8,
+          "time": 80.3,
           "sourceShiftMs": -80.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 213.55,
+          "time": 84.35,
           "sourceShiftMs": -25.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 222.45,
-          "sourceShiftMs": -70.0,
+          "time": 91.6,
+          "sourceShiftMs": -50.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 228.35,
-          "sourceShiftMs": 75.0,
+          "time": 96.44999999999999,
+          "sourceShiftMs": 55.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 240.35,
-          "sourceShiftMs": 35.0,
+          "time": 101.44999999999999,
+          "sourceShiftMs": -80.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 252.35,
+          "time": 108.14333333333333,
+          "sourceShiftMs": 21.67,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 111.45,
+          "sourceShiftMs": 45.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 115.10000000000001,
           "sourceShiftMs": 30.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 264.34999999999997,
+          "time": 125.3,
+          "sourceShiftMs": 55.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 130.35000000000002,
+          "sourceShiftMs": 55.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 136.62,
+          "sourceShiftMs": 10.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 144.45000000000002,
+          "sourceShiftMs": 15.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 149.55,
+          "sourceShiftMs": -35.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 154.25000000000003,
+          "sourceShiftMs": -55.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 161.60000000000002,
+          "sourceShiftMs": -45.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 166.5,
+          "sourceShiftMs": -50.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 173.35000000000002,
+          "sourceShiftMs": -65.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 178.57333333333332,
+          "sourceShiftMs": -43.33,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 181.85,
+          "sourceShiftMs": 5.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 186.95000000000002,
           "sourceShiftMs": 80.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 276.34999999999997,
-          "sourceShiftMs": -40.0,
+          "time": 193.1,
+          "sourceShiftMs": 35.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 200.20000000000002,
+          "sourceShiftMs": -30.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 212.95,
+          "sourceShiftMs": 50.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 220.9633333333333,
+          "sourceShiftMs": -3.33,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 224.95,
+          "sourceShiftMs": -80.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 236.95,
+          "sourceShiftMs": -35.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 248.95,
+          "sourceShiftMs": -75.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 260.95,
+          "sourceShiftMs": 75.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 272.95,
+          "sourceShiftMs": 30.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         }
@@ -755,733 +791,769 @@
         },
         {
           "target": 4.75,
-          "source": 4.837086315789474,
+          "source": 4.832,
           "strength": 0.349,
           "chapter": "首页与需求"
         },
         {
           "target": 10.42,
-          "source": 10.231885361552028,
+          "source": 10.251,
           "strength": 0.259,
           "chapter": "首页与需求"
         },
         {
           "target": 16.65,
-          "source": 16.44091974317817,
+          "source": 16.491,
           "strength": 0.124,
           "chapter": "首页与需求"
         },
         {
-          "target": 28.000000000000004,
-          "source": 27.91405550660793,
-          "strength": 0.293,
+          "target": 24.8,
+          "source": 24.587,
+          "strength": 0.413,
           "chapter": "多Agent与内置配色"
         },
         {
-          "target": 34.449999999999996,
-          "source": 34.32493953488372,
-          "strength": 0.21,
+          "target": 31.250000000000004,
+          "source": 31.147,
+          "strength": 0.359,
           "chapter": "多Agent与内置配色"
         },
         {
-          "target": 41.5,
-          "source": 41.476304964539004,
+          "target": 38.3,
+          "source": 38.123,
+          "strength": 0.578,
+          "chapter": "多Agent与内置配色"
+        },
+        {
+          "target": 41.56333333333334,
+          "source": 41.451,
           "strength": 0.849,
-          "chapter": "多Agent与内置配色"
-        },
-        {
-          "target": 45.65,
-          "source": 45.43573493975904,
-          "strength": 0.635,
           "chapter": "Mo 场景接力"
         },
         {
-          "target": 50.349999999999994,
-          "source": 49.92152765957447,
-          "strength": 0.522,
+          "target": 44.35,
+          "source": 44.267,
+          "strength": 0.654,
           "chapter": "真实课件与教学成果"
         },
         {
-          "target": 55.75,
-          "source": 55.279666666666664,
+          "target": 49.75000000000001,
+          "source": 49.717,
+          "strength": 0.433,
+          "chapter": "真实课件与教学成果"
+        },
+        {
+          "target": 55.150000000000006,
+          "source": 55.221,
           "strength": 0.298,
           "chapter": "真实课件与教学成果"
         },
         {
-          "target": 61.15,
-          "source": 60.56901851851852,
-          "strength": 0.325,
+          "target": 63.55,
+          "source": 63.605,
+          "strength": 0.357,
           "chapter": "真实课件与教学成果"
         },
         {
-          "target": 71.25,
-          "source": 70.776299009901,
-          "strength": 0.178,
-          "chapter": "Mo 场景接力"
+          "target": 71.35000000000001,
+          "source": 71.403,
+          "strength": 0.141,
+          "chapter": "真实课件与教学成果"
         },
         {
-          "target": 77.35,
-          "source": 76.85776885245902,
-          "strength": 0.225,
-          "chapter": "交互模型"
-        },
-        {
-          "target": 84.6,
-          "source": 83.91244827586208,
-          "strength": 0.64,
-          "chapter": "交互模型"
-        },
-        {
-          "target": 89.44999999999999,
-          "source": 88.76485154639175,
-          "strength": 0.185,
-          "chapter": "交互模型"
-        },
-        {
-          "target": 94.44999999999999,
-          "source": 93.925768,
-          "strength": 0.823,
-          "chapter": "交互模型"
-        },
-        {
-          "target": 101.65,
-          "source": 101.04389583333334,
-          "strength": 0.943,
-          "chapter": "Mo 场景接力"
-        },
-        {
-          "target": 106.45,
-          "source": 105.40780000000001,
-          "strength": 0.502,
-          "chapter": "叮咚与小信箱"
-        },
-        {
-          "target": 109.7,
-          "source": 108.71687076923077,
-          "strength": 0.188,
-          "chapter": "叮咚与小信箱"
-        },
-        {
-          "target": 119.89999999999999,
-          "source": 119.01504705882353,
-          "strength": 0.285,
-          "chapter": "叮咚与小信箱"
-        },
-        {
-          "target": 123.25,
-          "source": 122.13876119402985,
+          "target": 74.45,
+          "source": 74.613,
           "strength": 0.273,
+          "chapter": "真实课件与教学成果"
+        },
+        {
+          "target": 80.3,
+          "source": 80.608,
+          "strength": 0.292,
           "chapter": "Mo 场景接力"
         },
         {
-          "target": 127.55,
-          "source": 126.39437441860466,
-          "strength": 0.146,
+          "target": 84.35,
+          "source": 84.864,
+          "strength": 0.283,
+          "chapter": "交互模型"
+        },
+        {
+          "target": 91.6,
+          "source": 92.149,
+          "strength": 0.559,
+          "chapter": "交互模型"
+        },
+        {
+          "target": 96.44999999999999,
+          "source": 97.259,
+          "strength": 0.983,
+          "chapter": "交互模型"
+        },
+        {
+          "target": 101.44999999999999,
+          "source": 102.197,
+          "strength": 0.533,
+          "chapter": "交互模型"
+        },
+        {
+          "target": 108.14333333333333,
+          "source": 108.853,
+          "strength": 0.203,
+          "chapter": "Mo 场景接力"
+        },
+        {
+          "target": 111.45,
+          "source": 112.021,
+          "strength": 0.499,
+          "chapter": "叮咚与小信箱"
+        },
+        {
+          "target": 115.10000000000001,
+          "source": 115.637,
+          "strength": 0.21,
+          "chapter": "叮咚与小信箱"
+        },
+        {
+          "target": 125.3,
+          "source": 125.899,
+          "strength": 0.124,
+          "chapter": "叮咚与小信箱"
+        },
+        {
+          "target": 130.35000000000002,
+          "source": 131.413,
+          "strength": 0.175,
           "chapter": "跨端消息与叫人"
         },
         {
-          "target": 133.82,
-          "source": 132.811,
-          "strength": 0.49,
+          "target": 136.62,
+          "source": 137.888,
+          "strength": 0.264,
           "chapter": "跨端消息与叫人"
         },
         {
-          "target": 141.65,
-          "source": 140.62917624521074,
-          "strength": 0.359,
-          "chapter": "跨端消息与叫人"
-        },
-        {
-          "target": 146.75,
-          "source": 145.5838588235294,
+          "target": 144.45000000000002,
+          "source": 145.664,
           "strength": 0.376,
           "chapter": "跨端消息与叫人"
         },
         {
-          "target": 151.45000000000002,
-          "source": 150.2952085106383,
-          "strength": 0.44,
+          "target": 149.55,
+          "source": 150.859,
+          "strength": 0.849,
           "chapter": "跨端消息与叫人"
         },
         {
-          "target": 158.8,
-          "source": 157.8115768707483,
-          "strength": 0.373,
+          "target": 154.25000000000003,
+          "source": 155.68,
+          "strength": 0.959,
           "chapter": "跨端消息与叫人"
         },
         {
-          "target": 163.7,
-          "source": 162.84861632653062,
+          "target": 161.60000000000002,
+          "source": 162.859,
           "strength": 0.168,
           "chapter": "跨端消息与叫人"
         },
         {
-          "target": 170.55,
-          "source": 169.56872262773723,
-          "strength": 0.387,
+          "target": 166.5,
+          "source": 167.776,
+          "strength": 0.145,
           "chapter": "跨端消息与叫人"
         },
         {
-          "target": 176.85,
-          "source": 175.89270238095236,
-          "strength": 0.268,
+          "target": 173.35000000000002,
+          "source": 174.805,
+          "strength": 0.237,
+          "chapter": "跨端消息与叫人"
+        },
+        {
+          "target": 178.57333333333332,
+          "source": 179.915,
+          "strength": 0.142,
           "chapter": "Mo 场景接力"
         },
         {
-          "target": 182.45,
-          "source": 181.32429017857143,
-          "strength": 0.227,
+          "target": 181.85,
+          "source": 183.189,
+          "strength": 0.128,
           "chapter": "Mochi原生查人与流转"
         },
         {
-          "target": 187.55,
-          "source": 186.7041980392157,
-          "strength": 0.371,
+          "target": 186.95000000000002,
+          "source": 188.139,
+          "strength": 0.71,
           "chapter": "Mochi原生查人与流转"
         },
         {
-          "target": 193.7,
-          "source": 192.55827804878047,
-          "strength": 0.256,
+          "target": 193.1,
+          "source": 194.272,
+          "strength": 0.283,
           "chapter": "Mochi原生查人与流转"
         },
         {
-          "target": 200.8,
-          "source": 199.1453049295775,
-          "strength": 0.643,
+          "target": 200.20000000000002,
+          "source": 201.408,
+          "strength": 0.658,
           "chapter": "Mochi原生查人与流转"
         },
         {
-          "target": 213.55,
-          "source": 211.86198588235297,
-          "strength": 0.444,
+          "target": 212.95,
+          "source": 213.995,
+          "strength": 0.48,
           "chapter": "Mochi原生查人与流转"
         },
         {
-          "target": 222.45,
-          "source": 220.82442134831462,
-          "strength": 0.345,
+          "target": 220.9633333333333,
+          "source": 221.877,
+          "strength": 0.198,
           "chapter": "Mo 场景接力"
         },
         {
-          "target": 228.35,
-          "source": 226.80790847457627,
-          "strength": 0.311,
+          "target": 224.95,
+          "source": 225.952,
+          "strength": 0.364,
           "chapter": "记忆、自动化与结尾"
         },
         {
-          "target": 240.35,
-          "source": 238.76982083333334,
-          "strength": 0.268,
+          "target": 236.95,
+          "source": 238.037,
+          "strength": 0.185,
           "chapter": "记忆、自动化与结尾"
         },
         {
-          "target": 252.35,
-          "source": 250.74601375,
-          "strength": 0.21,
+          "target": 248.95,
+          "source": 249.963,
+          "strength": 0.359,
           "chapter": "记忆、自动化与结尾"
         },
         {
-          "target": 264.34999999999997,
-          "source": 262.69691,
-          "strength": 0.906,
+          "target": 260.95,
+          "source": 262.421,
+          "strength": 0.97,
           "chapter": "记忆、自动化与结尾"
         },
         {
-          "target": 276.34999999999997,
-          "source": 273.9849333333333,
+          "target": 272.95,
+          "source": 274.037,
           "strength": 0.298,
           "chapter": "记忆、自动化与结尾"
         },
         {
-          "target": 281.34999999999997,
-          "source": 278.98493333333334,
+          "target": 277.95,
+          "source": 279.037,
           "strength": 0
         }
       ],
-      "maxTempoChange": 0.09085329861110958,
+      "maxTempoChange": 0.09188118811880841,
       "method": "Original beat landmarks, bounded pitch-preserving atempo, four-ms edge fades; listening review still required.",
       "renderedAttackChecks": [
         {
           "cueSeconds": 4.75,
           "nearbyAttackSeconds": 4.75,
           "offsetMs": 0.0,
-          "rise": 0.14615315571427345
+          "rise": 0.15610533580183983
         },
         {
           "cueSeconds": 10.42,
-          "nearbyAttackSeconds": 10.34,
-          "offsetMs": -80.0,
-          "rise": 0.06340763717889786
+          "nearbyAttackSeconds": 10.42,
+          "offsetMs": 0.0,
+          "rise": 0.052272628992795944
         },
         {
           "cueSeconds": 16.65,
           "nearbyAttackSeconds": 16.65,
           "offsetMs": 0.0,
-          "rise": 0.045882150530815125
+          "rise": 0.047332651913166046
         },
         {
-          "cueSeconds": 28.000000000000004,
-          "nearbyAttackSeconds": 28.0,
+          "cueSeconds": 24.8,
+          "nearbyAttackSeconds": 24.8,
+          "offsetMs": 0.0,
+          "rise": 0.10595192387700081
+        },
+        {
+          "cueSeconds": 31.250000000000004,
+          "nearbyAttackSeconds": 31.25,
           "offsetMs": -0.0,
-          "rise": 0.025644659996032715
+          "rise": 0.12222792208194733
         },
         {
-          "cueSeconds": 34.449999999999996,
-          "nearbyAttackSeconds": 34.45,
+          "cueSeconds": 38.3,
+          "nearbyAttackSeconds": 38.3,
           "offsetMs": 0.0,
-          "rise": 0.023197513073682785
+          "rise": 0.10382246971130371
         },
         {
-          "cueSeconds": 41.5,
-          "nearbyAttackSeconds": 41.5,
+          "cueSeconds": 41.56333333333334,
+          "nearbyAttackSeconds": 41.56,
+          "offsetMs": -3.33,
+          "rise": 0.08392412960529327
+        },
+        {
+          "cueSeconds": 44.35,
+          "nearbyAttackSeconds": 44.35,
           "offsetMs": 0.0,
-          "rise": 0.12830784916877747
+          "rise": 0.14472705125808716
         },
         {
-          "cueSeconds": 45.65,
-          "nearbyAttackSeconds": 45.65,
+          "cueSeconds": 49.75000000000001,
+          "nearbyAttackSeconds": 49.81,
+          "offsetMs": 60.0,
+          "rise": 0.05928239971399307
+        },
+        {
+          "cueSeconds": 55.150000000000006,
+          "nearbyAttackSeconds": 55.15,
+          "offsetMs": -0.0,
+          "rise": 0.05972853675484657
+        },
+        {
+          "cueSeconds": 63.55,
+          "nearbyAttackSeconds": 63.55,
           "offsetMs": 0.0,
-          "rise": 0.15572887286543846
+          "rise": 0.05250786058604717
         },
         {
-          "cueSeconds": 50.349999999999994,
-          "nearbyAttackSeconds": 50.35,
+          "cueSeconds": 71.35000000000001,
+          "nearbyAttackSeconds": 71.35,
+          "offsetMs": -0.0,
+          "rise": 0.06701488606631756
+        },
+        {
+          "cueSeconds": 74.45,
+          "nearbyAttackSeconds": 74.45,
           "offsetMs": 0.0,
-          "rise": 0.09573787450790405
+          "rise": 0.030435070395469666
         },
         {
-          "cueSeconds": 55.75,
-          "nearbyAttackSeconds": 55.75,
+          "cueSeconds": 80.3,
+          "nearbyAttackSeconds": 80.375,
+          "offsetMs": 75.0,
+          "rise": 0.11255843937397003
+        },
+        {
+          "cueSeconds": 84.35,
+          "nearbyAttackSeconds": 84.35,
           "offsetMs": 0.0,
-          "rise": 0.05471523478627205
+          "rise": 0.022965218871831894
         },
         {
-          "cueSeconds": 61.15,
-          "nearbyAttackSeconds": 61.15,
+          "cueSeconds": 91.6,
+          "nearbyAttackSeconds": 91.6,
           "offsetMs": 0.0,
-          "rise": 0.07175619900226593
+          "rise": 0.08145330101251602
         },
         {
-          "cueSeconds": 71.25,
-          "nearbyAttackSeconds": 71.26,
-          "offsetMs": 10.0,
-          "rise": 0.056516753509640694
-        },
-        {
-          "cueSeconds": 77.35,
-          "nearbyAttackSeconds": 77.27,
-          "offsetMs": -80.0,
-          "rise": 0.09063905477523804
-        },
-        {
-          "cueSeconds": 84.6,
-          "nearbyAttackSeconds": 84.6,
+          "cueSeconds": 96.44999999999999,
+          "nearbyAttackSeconds": 96.45,
           "offsetMs": 0.0,
-          "rise": 0.016853831708431244
+          "rise": 0.04784184694290161
         },
         {
-          "cueSeconds": 89.44999999999999,
-          "nearbyAttackSeconds": 89.45,
+          "cueSeconds": 101.44999999999999,
+          "nearbyAttackSeconds": 101.45,
           "offsetMs": 0.0,
-          "rise": 0.08956004679203033
+          "rise": 0.0538746640086174
         },
         {
-          "cueSeconds": 94.44999999999999,
-          "nearbyAttackSeconds": 94.45,
+          "cueSeconds": 108.14333333333333,
+          "nearbyAttackSeconds": 108.19,
+          "offsetMs": 46.67,
+          "rise": 0.03837667405605316
+        },
+        {
+          "cueSeconds": 111.45,
+          "nearbyAttackSeconds": 111.45,
           "offsetMs": 0.0,
-          "rise": 0.09494607895612717
+          "rise": 0.036668743938207626
         },
         {
-          "cueSeconds": 101.65,
-          "nearbyAttackSeconds": 101.65,
+          "cueSeconds": 115.10000000000001,
+          "nearbyAttackSeconds": 115.06,
+          "offsetMs": -40.0,
+          "rise": 0.06620971858501434
+        },
+        {
+          "cueSeconds": 125.3,
+          "nearbyAttackSeconds": 125.3,
           "offsetMs": 0.0,
-          "rise": 0.0760236382484436
+          "rise": 0.1107271034270525
         },
         {
-          "cueSeconds": 106.45,
-          "nearbyAttackSeconds": 106.39,
-          "offsetMs": -60.0,
-          "rise": 0.03828204795718193
+          "cueSeconds": 130.35000000000002,
+          "nearbyAttackSeconds": 130.35,
+          "offsetMs": -0.0,
+          "rise": 0.09388411045074463
         },
         {
-          "cueSeconds": 109.7,
-          "nearbyAttackSeconds": 109.675,
-          "offsetMs": -25.0,
-          "rise": 0.051137905567884445
-        },
-        {
-          "cueSeconds": 119.89999999999999,
-          "nearbyAttackSeconds": 119.9,
+          "cueSeconds": 136.62,
+          "nearbyAttackSeconds": 136.62,
           "offsetMs": 0.0,
-          "rise": 0.0913667157292366
+          "rise": 0.12602422386407852
         },
         {
-          "cueSeconds": 123.25,
-          "nearbyAttackSeconds": 123.25,
+          "cueSeconds": 144.45000000000002,
+          "nearbyAttackSeconds": 144.45,
+          "offsetMs": -0.0,
+          "rise": 0.0948491096496582
+        },
+        {
+          "cueSeconds": 149.55,
+          "nearbyAttackSeconds": 149.55,
           "offsetMs": 0.0,
-          "rise": 0.046131670475006104
+          "rise": 0.07368023693561554
         },
         {
-          "cueSeconds": 127.55,
-          "nearbyAttackSeconds": 127.55,
+          "cueSeconds": 154.25000000000003,
+          "nearbyAttackSeconds": 154.25,
+          "offsetMs": -0.0,
+          "rise": 0.07882077246904373
+        },
+        {
+          "cueSeconds": 161.60000000000002,
+          "nearbyAttackSeconds": 161.6,
+          "offsetMs": -0.0,
+          "rise": 0.023336052894592285
+        },
+        {
+          "cueSeconds": 166.5,
+          "nearbyAttackSeconds": 166.5,
           "offsetMs": 0.0,
-          "rise": 0.09501198306679726
+          "rise": 0.11978805810213089
         },
         {
-          "cueSeconds": 133.82,
-          "nearbyAttackSeconds": 133.82,
-          "offsetMs": 0.0,
-          "rise": 0.08437676727771759
+          "cueSeconds": 173.35000000000002,
+          "nearbyAttackSeconds": 173.35,
+          "offsetMs": -0.0,
+          "rise": 0.06975005567073822
         },
         {
-          "cueSeconds": 141.65,
-          "nearbyAttackSeconds": 141.65,
-          "offsetMs": 0.0,
-          "rise": 0.10483840107917786
+          "cueSeconds": 178.57333333333332,
+          "nearbyAttackSeconds": 178.58,
+          "offsetMs": 6.67,
+          "rise": 0.008139722049236298
         },
         {
-          "cueSeconds": 146.75,
-          "nearbyAttackSeconds": 146.75,
-          "offsetMs": 0.0,
-          "rise": 0.08075368404388428
-        },
-        {
-          "cueSeconds": 151.45000000000002,
-          "nearbyAttackSeconds": 151.455,
-          "offsetMs": 5.0,
-          "rise": 0.0522722452878952
-        },
-        {
-          "cueSeconds": 158.8,
-          "nearbyAttackSeconds": 158.8,
-          "offsetMs": 0.0,
-          "rise": 0.12902594357728958
-        },
-        {
-          "cueSeconds": 163.7,
-          "nearbyAttackSeconds": 163.7,
-          "offsetMs": 0.0,
-          "rise": 0.06224193796515465
-        },
-        {
-          "cueSeconds": 170.55,
-          "nearbyAttackSeconds": 170.55,
-          "offsetMs": 0.0,
-          "rise": 0.09553053230047226
-        },
-        {
-          "cueSeconds": 176.85,
-          "nearbyAttackSeconds": 176.85,
-          "offsetMs": 0.0,
-          "rise": 0.06025288999080658
-        },
-        {
-          "cueSeconds": 182.45,
-          "nearbyAttackSeconds": 182.45,
-          "offsetMs": 0.0,
-          "rise": 0.07589276880025864
-        },
-        {
-          "cueSeconds": 187.55,
-          "nearbyAttackSeconds": 187.55,
-          "offsetMs": 0.0,
-          "rise": 0.08903152495622635
-        },
-        {
-          "cueSeconds": 193.7,
-          "nearbyAttackSeconds": 193.7,
-          "offsetMs": 0.0,
-          "rise": 0.026395097374916077
-        },
-        {
-          "cueSeconds": 200.8,
-          "nearbyAttackSeconds": 200.8,
-          "offsetMs": 0.0,
-          "rise": 0.09448772668838501
-        },
-        {
-          "cueSeconds": 213.55,
-          "nearbyAttackSeconds": 213.475,
-          "offsetMs": -75.0,
-          "rise": 0.055887386202812195
-        },
-        {
-          "cueSeconds": 222.45,
-          "nearbyAttackSeconds": 222.385,
+          "cueSeconds": 181.85,
+          "nearbyAttackSeconds": 181.785,
           "offsetMs": -65.0,
-          "rise": 0.1173042580485344
+          "rise": 0.07023248076438904
         },
         {
-          "cueSeconds": 228.35,
-          "nearbyAttackSeconds": 228.35,
+          "cueSeconds": 186.95000000000002,
+          "nearbyAttackSeconds": 186.95,
+          "offsetMs": -0.0,
+          "rise": 0.08510011434555054
+        },
+        {
+          "cueSeconds": 193.1,
+          "nearbyAttackSeconds": 193.1,
           "offsetMs": 0.0,
-          "rise": 0.10692412406206131
+          "rise": 0.020041033625602722
         },
         {
-          "cueSeconds": 240.35,
-          "nearbyAttackSeconds": 240.35,
+          "cueSeconds": 200.20000000000002,
+          "nearbyAttackSeconds": 200.2,
+          "offsetMs": -0.0,
+          "rise": 0.08291596919298172
+        },
+        {
+          "cueSeconds": 212.95,
+          "nearbyAttackSeconds": 212.95,
           "offsetMs": 0.0,
-          "rise": 0.07520582526922226
+          "rise": 0.02050066739320755
         },
         {
-          "cueSeconds": 252.35,
-          "nearbyAttackSeconds": 252.35,
+          "cueSeconds": 220.9633333333333,
+          "nearbyAttackSeconds": 221.045,
+          "offsetMs": 81.67,
+          "rise": 0.1282019019126892
+        },
+        {
+          "cueSeconds": 224.95,
+          "nearbyAttackSeconds": 225.02,
+          "offsetMs": 70.0,
+          "rise": 0.11303336173295975
+        },
+        {
+          "cueSeconds": 236.95,
+          "nearbyAttackSeconds": 236.95,
           "offsetMs": 0.0,
-          "rise": 0.048956163227558136
+          "rise": 0.023285653442144394
         },
         {
-          "cueSeconds": 264.34999999999997,
-          "nearbyAttackSeconds": 264.35,
+          "cueSeconds": 248.95,
+          "nearbyAttackSeconds": 248.95,
           "offsetMs": 0.0,
-          "rise": 0.06063173711299896
+          "rise": 0.042013660073280334
         },
         {
-          "cueSeconds": 276.34999999999997,
-          "nearbyAttackSeconds": 276.29,
-          "offsetMs": -60.0,
-          "rise": 0.11630318313837051
+          "cueSeconds": 260.95,
+          "nearbyAttackSeconds": 260.95,
+          "offsetMs": 0.0,
+          "rise": 0.14298611879348755
+        },
+        {
+          "cueSeconds": 272.95,
+          "nearbyAttackSeconds": 272.95,
+          "offsetMs": 0.0,
+          "rise": 0.10959692299365997
         }
       ],
-      "maxMeasuredLocalOffsetMs": 80.0,
+      "maxMeasuredLocalOffsetMs": 81.67,
       "attackEdits": [
         {
           "time": 4.75,
-          "sourceShiftMs": 0.0,
+          "sourceShiftMs": 5.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
           "time": 10.42,
-          "sourceShiftMs": -75.0,
+          "sourceShiftMs": -20.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
           "time": 16.65,
-          "sourceShiftMs": -45.0,
+          "sourceShiftMs": -50.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 28.000000000000004,
-          "sourceShiftMs": -45.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 34.449999999999996,
-          "sourceShiftMs": -45.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 41.5,
-          "sourceShiftMs": -55.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 45.65,
-          "sourceShiftMs": 15.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 50.349999999999994,
-          "sourceShiftMs": 40.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 55.75,
-          "sourceShiftMs": 25.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 61.15,
-          "sourceShiftMs": 25.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 71.25,
-          "sourceShiftMs": 80.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 77.35,
-          "sourceShiftMs": -45.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 84.6,
-          "sourceShiftMs": -40.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 89.44999999999999,
-          "sourceShiftMs": -5.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 94.44999999999999,
-          "sourceShiftMs": -35.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 101.65,
-          "sourceShiftMs": -45.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 106.45,
-          "sourceShiftMs": -55.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 109.7,
-          "sourceShiftMs": -80.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 119.89999999999999,
-          "sourceShiftMs": -15.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 123.25,
-          "sourceShiftMs": 45.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 127.55,
-          "sourceShiftMs": 40.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 133.82,
-          "sourceShiftMs": 55.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 141.65,
-          "sourceShiftMs": -65.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 146.75,
-          "sourceShiftMs": 40.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 151.45000000000002,
-          "sourceShiftMs": 80.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 158.8,
-          "sourceShiftMs": -35.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 163.7,
+          "time": 24.8,
           "sourceShiftMs": 70.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 170.55,
-          "sourceShiftMs": -60.0,
+          "time": 31.250000000000004,
+          "sourceShiftMs": 60.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 176.85,
-          "sourceShiftMs": -30.0,
+          "time": 38.3,
+          "sourceShiftMs": 5.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 182.45,
-          "sourceShiftMs": -25.0,
+          "time": 41.56333333333334,
+          "sourceShiftMs": -73.33,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 187.55,
-          "sourceShiftMs": -70.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 193.7,
-          "sourceShiftMs": -25.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 200.8,
-          "sourceShiftMs": -65.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 213.55,
-          "sourceShiftMs": -40.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 222.45,
-          "sourceShiftMs": -35.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 228.35,
-          "sourceShiftMs": -60.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 240.35,
-          "sourceShiftMs": -5.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 252.35,
-          "sourceShiftMs": 0.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 264.34999999999997,
+          "time": 44.35,
           "sourceShiftMs": 35.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 276.34999999999997,
+          "time": 49.75000000000001,
+          "sourceShiftMs": 55.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 55.150000000000006,
+          "sourceShiftMs": -15.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 63.55,
+          "sourceShiftMs": 30.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 71.35000000000001,
+          "sourceShiftMs": -40.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 74.45,
+          "sourceShiftMs": -55.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 80.3,
+          "sourceShiftMs": 15.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 84.35,
+          "sourceShiftMs": 60.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 91.6,
+          "sourceShiftMs": 40.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 96.44999999999999,
+          "sourceShiftMs": 5.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 101.44999999999999,
+          "sourceShiftMs": -5.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 108.14333333333333,
+          "sourceShiftMs": -3.33,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 111.45,
+          "sourceShiftMs": -25.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 115.10000000000001,
           "sourceShiftMs": -75.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 125.3,
+          "sourceShiftMs": 60.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 130.35000000000002,
+          "sourceShiftMs": -15.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 136.62,
+          "sourceShiftMs": 35.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 144.45000000000002,
+          "sourceShiftMs": 70.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 149.55,
+          "sourceShiftMs": 45.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 154.25000000000003,
+          "sourceShiftMs": 45.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 161.60000000000002,
+          "sourceShiftMs": -15.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 166.5,
+          "sourceShiftMs": 60.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 173.35000000000002,
+          "sourceShiftMs": -70.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 178.57333333333332,
+          "sourceShiftMs": 26.67,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 181.85,
+          "sourceShiftMs": -75.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 186.95000000000002,
+          "sourceShiftMs": -5.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 193.1,
+          "sourceShiftMs": -5.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 200.20000000000002,
+          "sourceShiftMs": 20.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 212.95,
+          "sourceShiftMs": -60.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 220.9633333333333,
+          "sourceShiftMs": 76.67,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 224.95,
+          "sourceShiftMs": 75.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 236.95,
+          "sourceShiftMs": -15.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 248.95,
+          "sourceShiftMs": 70.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 260.95,
+          "sourceShiftMs": 50.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 272.95,
+          "sourceShiftMs": -80.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         }
@@ -1489,7 +1561,7 @@
     }
   ],
   "listenVerified": false,
-  "refinedFromRenderedAttacks": true,
+  "refinedFromRenderedAttacks": false,
   "measurement": "Largest positive RMS attack within +/-80ms, 5ms resolution. This is a bounded local measurement, not proof of musical downbeat or listening approval.",
   "localAttackEdits": true
 }

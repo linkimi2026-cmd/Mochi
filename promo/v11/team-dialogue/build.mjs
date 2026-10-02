@@ -12,6 +12,6 @@ html=html.replace('id="plan-video" class="clip" src="assets/plan.mp4" muted data
 html=html.replace("tl.to('#plan-camera',{y:-980,rotation:-4,opacity:0,duration:.75,ease:'power3.in'},11.25);tl.set('#plan-camera',{opacity:0},12);", "tl.to('#plan-camera',{x:145,y:815,scale:.28,rotation:-3,opacity:.72,duration:1.05,ease:'power3.inOut'},11.25);tl.to('#plan-camera',{y:1600,opacity:0,duration:.8,ease:'power3.in'},18.2);");
 html=html.replace("{x:1070,y:1480,scale:.75},{x:920,y:215,scale:.7},11.75,.8", "{x:2450,y:460,scale:.35,rotation:7},{x:950,y:310,scale:.68,rotation:0},11.65,1.2,'back.out(1.1)'");
 // Pointer uses revised camera geometry at the original recorded expansion time.
-html=html.replace('{x:1275,y:745}','{x:1295,y:825}');
+html=html.replaceAll('{x:1275,y:745}','{x:1295,y:825}');
 html=html.replace('真实协作历史 · 三位子 Agent · 当前均已停止运行','真实协作历史回放 · 原成员会话 · 并非新增群聊界面');
 writeFileSync(resolve(dir,'index.html'),html);

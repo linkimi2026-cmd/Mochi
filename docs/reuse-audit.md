@@ -627,3 +627,17 @@ Promptfoo实际接入结果：临时安装0.123.0，常规安装解析可选依�
 #### V11 信封投递接信动作
 
 执行完整框架检索 `site:github.com heygen-com hyperframes gsap video`，再查 `site:github.com greensock GSAP motionPath timeline`。成功找到上述完整框架、launch-video 和官方 timeline adapter。沿用已锁定版本与许可证，使用现有 GSAP Timeline 与原 Mo 组件，不引入外部图标库。信封为后期矢量道具，接收端为真实 LanPanel，最终展开原生 popup。动画时钟可 seek；代码只位于 promo，维护与产品运行隔离。新增双音提示由 FFmpeg 正弦声源合成，属于后期音效，不宣称产品原始提示音。
+
+
+#### V11 全片鼠标比例与点击落点复核
+
+2026-10-02：先检索完整框架 `site:github.com heygen-com hyperframes video cursor`，再检索组件生态 `site:github.com greensock GSAP timeline transform scale`。搜索成功，复用 https://github.com/heygen-com/hyperframes 官方 cursor-click-ripple 规则与 https://github.com/greensock/GSAP 的既有时间轴。沿用前轮已核 HyperFrames0.8.36/Apache-2.0和GSAP3.15.0/Standard no charge，版本提交与依赖未变，不迁移或新增依赖。现有Puppeteer执行本地章节逐帧几何检查，不新建视频框架。
+
+确认team-dialogue构建脚本的String.replace只替换第一处坐标，造成新鼠标位置与旧光环中心错位；改为replaceAll并重建实际章节。检查范围明确限于独立鼠标覆盖层，不能推断录屏内部光标也已无变形。结果见promo/v11/cursor-audit.json。
+
+
+#### V11 功能优先：真实双端投递与转场节奏
+
+延续本轮完整HyperFrames框架和GSAP生态检索、固定版本/许可证，不新增依赖。转场由统一6秒改为2.8/3.2/3.0/4.4/3.4/2.6/3.2秒；按各自内容量设时长，原录屏保持正常时间。只重定时后期动画，音轨锚点另算。
+
+双端演示直接复用plugins/mochi-lan/lan-service.mjs和客户端PairingCard/InboxCard/normalizeSnapshot，维护成本局限于离线镜头适配；没有复制业务协议。实际随机回环端口执行配对、传输PPTX、接收ACK、已读回执成功，WPS仅确认启动请求，未验证窗口加载。细节与边界记录于promo/v11/feature-proof和delivery-chapter。

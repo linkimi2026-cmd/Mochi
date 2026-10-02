@@ -1,0 +1,12 @@
+import {readFileSync,writeFileSync,mkdirSync,copyFileSync} from 'node:fs';
+import {execFileSync} from 'node:child_process';
+import {resolve} from 'node:path';
+const dir=resolve('promo/v11/delivery-chapter'),assets=resolve(dir,'assets');mkdirSync(assets,{recursive:true});
+const proof=JSON.parse(readFileSync('promo/v11/feature-proof/delivery-result.json'));
+const states={request:'02-pair-request',paired:'03-paired',received:'04-received',receipt:'05-receipt'};
+const sanitize=value=>Array.isArray(value)?value.map(sanitize):value&&typeof value==='object'?Object.fromEntries(Object.entries(value).filter(([k])=>!/(private|secret|signature|publicKey|authorization)/i.test(k)).map(([k,v])=>[k,sanitize(v)])):value;
+writeFileSync(resolve(assets,'records.json'),JSON.stringify(sanitize(Object.fromEntries(Object.entries(states).map(([key,name])=>[key,JSON.parse(readFileSync(resolve(proof.run,name+'.json')))])))));
+copyFileSync('client-plugins/mochi-lan/client.js',resolve(assets,'lan-source.txt'));
+for(const n of ['gsap.min.js','NotoSansCJKsc-Regular.otf','NotoSansCJKsc-Bold.otf','NotoSerifCJKsc-SemiBold.otf'])copyFileSync('promo/v10/assets/'+n,resolve(assets,n));
+execFileSync('promo/node_modules/.bin/esbuild',[resolve(dir,'native.tsx'),'--bundle','--format=iife','--outfile='+resolve(assets,'native.js'),'--alias:react='+resolve('apps/desktop/runtime-modern/node_modules/react'),'--jsx=automatic','--alias:react/jsx-runtime='+resolve('apps/desktop/runtime-modern/node_modules/react/jsx-runtime.js'),'--external:/jxl-assets/*','--loader:.txt=text','--define:process.env.NODE_ENV="production"'],{stdio:'inherit'});
+writeFileSync(resolve(dir,'evidence.json'),JSON.stringify({productComponent:'mochi-lan original PairingCard / InboxCard',proof:'../feature-proof/delivery-result.json',actualTransport:true,historicalReplay:true,wpsLoadedClaim:false},null,2)+'\n');

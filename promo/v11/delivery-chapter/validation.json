@@ -1,0 +1,29 @@
+{
+  "duration": 16,
+  "size": [
+    2560,
+    1440
+  ],
+  "fps": 120,
+  "check": {
+    "lint": {
+      "ok": true,
+      "errorCount": 0,
+      "warningCount": 0
+    },
+    "runtime": {
+      "ok": true,
+      "errorCount": 0,
+      "warningCount": 0
+    },
+    "layout": {
+      "ok": true,
+      "errorCount": 0,
+      "warningCount": 0
+    }
+  },
+  "actualFramesViewed": [
+    8
+  ],
+  "fullFeatureAcceptance": false
+}

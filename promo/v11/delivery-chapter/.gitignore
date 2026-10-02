@@ -1,0 +1,6 @@
+assets/
+output/
+evidence/
+export.generated.mjs
+
+snapshots/

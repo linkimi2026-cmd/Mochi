@@ -1,0 +1,7 @@
+{
+  "productComponent": "mochi-lan original PairingCard / InboxCard",
+  "proof": "../feature-proof/delivery-result.json",
+  "actualTransport": true,
+  "historicalReplay": true,
+  "wpsLoadedClaim": false
+}

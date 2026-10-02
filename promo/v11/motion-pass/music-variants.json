@@ -5,24 +5,24 @@
   "k3Audio": "Original local reference audio, looped and aligned to measured beats; not an isolated music stem; may include original sound effects.",
   "clicks": "Same original Mochi press/release sounds in both variants; see choreography-cues.json",
   "syncReport": "score-sync.json",
-  "duration": 281.34999999999997,
+  "duration": 277.95,
   "outputs": [
     {
       "label": "现有配乐版",
       "path": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/output/Mochi_V11_第三版_现有配乐版_2K120.mp4",
-      "bytes": 495977486,
-      "duration": 281.35,
-      "frames": 33762,
-      "videoBitstreamHash": "SHA256=261fd3206c895916afe5e49481a881a468afea0ffb51f6bf0cbd13d06f8a597b",
+      "bytes": 493582698,
+      "duration": 277.95,
+      "frames": 33354,
+      "videoBitstreamHash": "SHA256=1751454bc3ea7d0b3355a0c80a46fade74ee1672a7c7ac0f26fa76ddadd815ce",
       "decodeErrors": 0
     },
     {
       "label": "K3参考音轨版",
       "path": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/output/Mochi_V11_第三版_K3参考音轨版_2K120.mp4",
-      "bytes": 495805693,
-      "duration": 281.35,
-      "frames": 33762,
-      "videoBitstreamHash": "SHA256=261fd3206c895916afe5e49481a881a468afea0ffb51f6bf0cbd13d06f8a597b",
+      "bytes": 493481902,
+      "duration": 277.95,
+      "frames": 33354,
+      "videoBitstreamHash": "SHA256=1751454bc3ea7d0b3355a0c80a46fade74ee1672a7c7ac0f26fa76ddadd815ce",
       "decodeErrors": 0
     }
   ]

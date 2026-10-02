@@ -1,0 +1,22 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><script src="assets/gsap.min.js"></script><script src="assets/native.js"></script><link rel="stylesheet" href="assets/native.css"><style>@font-face{font-family:'PingFang SC';src:local('PingFangSC-Regular')}
+@font-face{font-family:'Microsoft YaHei';src:local('Microsoft YaHei')}
+@font-face{font-family:'Songti SC';src:local('Songti SC')}
+@font-face{font-family:'STSong';src:local('STSong')}
+@font-face{font-family:'Source Han Serif SC';src:local('Source Han Serif SC')}
+@font-face{font-family:'Noto Sans CJK SC';src:url('assets/NotoSansCJKsc-Regular.otf')}
+@font-face{font-family:'Noto Serif CJK SC';src:url('assets/NotoSerifCJKsc-SemiBold.otf')}
+@font-face{font-family:MoSans;src:url('assets/NotoSansCJKsc-Regular.otf')}@font-face{font-family:MoSans;src:url('assets/NotoSansCJKsc-Bold.otf');font-weight:700}*{box-sizing:border-box}body{margin:0}#film{width:2560px;height:1440px;position:relative;overflow:hidden;background:#f5f2e6;color:#294235;font-family:MoSans;perspective:2400px}#light{position:absolute;inset:-30%;background:radial-gradient(ellipse at 75% 30%,#d9e8cc,transparent 60%),radial-gradient(ellipse at 20% 70%,#edddbb,transparent 55%)}h1{position:absolute;left:140px;top:70px;font:700 100px/1.2 MoSans;margin:0}#second-title{opacity:0}.native{position:absolute;width:800px;left:0;top:0;transform-origin:0 0;background:#faf8ef;border-radius:22px;padding:24px;box-shadow:0 36px 80px #38473418;opacity:0}.native *{animation:none!important}#note{position:absolute;left:100px;bottom:32px;font:25px MoSans;color:#61715d}#sent-label,#received-label{position:absolute;font:700 40px MoSans;top:280px;opacity:0}#sent-label{left:210px}#received-label{left:1530px}#file{position:absolute;left:0;top:0;padding:32px 42px;background:#fcf9ef;border:2px solid #a9b799;border-radius:20px;box-shadow:0 22px 32px #364b3528;font:700 40px MoSans;opacity:0}#file small{display:block;font:26px MoSans;margin-top:15px}
+</style></head><body><main id="film" data-composition-id="mochi-delivery" data-width="2560" data-height="1440" data-duration="16" data-fps="120"><div id="light"></div><h1 id="first-title">连接教室，从双方确认开始。</h1><h1 id="second-title">做好的课件，送到课堂。</h1><div id="pair-request" class="native"></div><div id="pair-ready" class="native"></div><div id="file-sent" class="native"></div><div id="file-received" class="native"></div><div id="file-read" class="native"></div><div id="file">一次函数课件<small>PPTX · 真实文件投递</small></div><div id="sent-label">教师端</div><div id="received-label">教室端</div><div id="note">真实签名传输记录 · 原产品组件重放 · 已送达 / 已读状态分别展示</div></main><script>
+initDelivery();const tl=gsap.timeline({paused:true});window.__timelines={'mochi-delivery':tl};
+tl.fromTo('#pair-request',{x:260,y:450,scale:.7,rotation:-4,opacity:0},{x:230,y:380,scale:1.1,rotation:0,opacity:1,duration:.8,ease:'back.out(1.2)',immediateRender:false},0);
+tl.fromTo('#pair-ready',{x:2200,y:490,scale:.7,opacity:0},{x:1450,y:380,scale:1.1,opacity:1,duration:.9,ease:'back.out(1.15)',immediateRender:false},1.5);
+tl.to('#pair-request',{y:1600,rotation:8,opacity:0,duration:.65,ease:'power3.in'},4.2);tl.to('#pair-ready',{y:-1000,rotation:-6,opacity:0,duration:.65,ease:'power3.in'},4.35);
+tl.to('#first-title',{y:-140,opacity:0,duration:.5},4.1);tl.fromTo('#second-title',{y:70,opacity:0},{y:0,opacity:1,duration:.65,ease:'back.out(1.2)',immediateRender:false},4.55);
+tl.fromTo('#file-sent',{x:-900,y:370,scale:1.08,opacity:0},{x:150,y:370,scale:1.08,opacity:1,duration:.8,ease:'power3.out',immediateRender:false},4.7);
+tl.fromTo('#file-received',{x:2670,y:370,scale:1.08,opacity:0},{x:1450,y:370,scale:1.08,opacity:1,duration:.8,ease:'power3.out',immediateRender:false},5.4);
+tl.to('#sent-label,#received-label',{opacity:1,duration:.4},5.4);
+tl.fromTo('#file',{x:640,y:940,scale:.6,rotation:-10,opacity:0},{x:1060,y:700,scale:1,rotation:0,opacity:1,duration:.6,ease:'back.out(1.2)',immediateRender:false},5.8);tl.to('#file',{x:1740,y:540,scale:.3,rotation:8,opacity:0,duration:.7,ease:'power3.inOut'},6.8);
+tl.to('#file-sent',{y:395,scale:1.04,duration:.18},9.7);tl.to('#file-sent',{opacity:0,duration:.12},9.88);
+tl.fromTo('#file-read',{x:150,y:395,scale:1.04,opacity:0},{x:150,y:370,scale:1.08,opacity:1,duration:.3,ease:'back.out(1.3)',immediateRender:false},9.9);
+tl.to('#light',{x:180,y:-70,duration:16,ease:'sine.inOut'},0);tl.to({}, {duration:.01},15.99);
+</script></body></html>

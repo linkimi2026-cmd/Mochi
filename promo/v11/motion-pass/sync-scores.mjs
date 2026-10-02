@@ -7,9 +7,9 @@ const dir=dirname(fileURLToPath(import.meta.url)),plan=JSON.parse(readFileSync(r
 const choreography=[
  {clicks:[4.75,10.42,16.65],accents:[4.75,10.42,16.65]},
  {clicks:[6.4,14.7],accents:[6.4,12.85,19.9]},
- {clicks:[],accents:[1.8,7.2,12.6,21]},
+ {clicks:[],accents:[1.8,7.2,12.6,21,23.5,28.8,31.9]},
  {clicks:[3.2,15.3,17.5,20.3],accents:[3.2,10.45,15.3,20.3]},
- {clicks:[5.15],accents:[1.9,5.15,7.45,15.35]},
+ {clicks:[5.15],accents:[1.5,3.3,5.15,7.45,15.35]},
  {clicks:[29.1,31.2],accents:[1.4,7.67,15.5,20.6,25.3,32.65,37.55,44.4]},
  {clicks:[2.7],accents:[2.7,7.8,13.95,21.05,33.8]},
  {clicks:[],accents:[3,15,27,39,51]},
@@ -19,7 +19,7 @@ for(const [i,ch]of plan.chapters.entries()){
  const skip=i?h:0,length=ch.duration-skip-(i<plan.chapters.length-1?h:0);
  for(const kind of ['clicks','accents'])for(const t of choreography[i][kind])if(t>=skip&&t<skip+length)(kind==='clicks'?clicks:candidates).push({time:time+t-skip,chapter:ch.name,sourceTime:t});
  time+=length;
- if(i<plan.chapters.length-1){candidates.push({time:time+1.9,chapter:'Mo 场景接力',sourceTime:1.9});time+=plan.bridgeSeconds}
+ if(i<plan.chapters.length-1){const duration=plan.bridgeDurations?.[i]??plan.bridgeSeconds;candidates.push({time:time+1.9*duration/6,chapter:'Mo 场景接力',sourceTime:1.9});time+=duration}
 }
 // Closely spaced clicks keep their SFX; music anchors leave enough phrase to stretch naturally.
 const accents=[];for(const x of candidates.sort((a,b)=>a.time-b.time))if(!accents.length||x.time-accents.at(-1).time>=2.7)accents.push(x);

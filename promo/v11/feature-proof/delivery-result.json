@@ -1,0 +1,38 @@
+{
+  "run": "/Users/a1379/Documents/Mochi/promo/v11/feature-proof/private.nosync/2026-10-02T12-22-58.456Z",
+  "syntheticData": true,
+  "actualSignedTransport": true,
+  "sourceSha256": "c493808d1311000e9354097d408be5fadc854ae7ab8b4c37b5ca777fa0171056",
+  "paired": true,
+  "delivery": {
+    "file": {
+      "fileId": "aed5cf1c-1099-4860-88f6-d7d66fe89300",
+      "direction": "outgoing",
+      "status": "AVAILABLE",
+      "filename": "presentation.pptx",
+      "contentType": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "byteLength": 133815,
+      "sha256": "c493808d1311000e9354097d408be5fadc854ae7ab8b4c37b5ca777fa0171056",
+      "endpointId": "6667e502-cf4d-408a-9661-0e96affad93a",
+      "schoolId": "mochi-promo-proof",
+      "classId": "demo-class-1",
+      "createdAt": "2026-10-02T12:22:58.509Z",
+      "updatedAt": "2026-10-02T12:22:58.566Z",
+      "completedAt": "2026-10-02T12:22:58.566Z"
+    },
+    "message": {
+      "messageId": "a9f8961d-a6af-43a0-b842-2f024b44d9b4",
+      "delivery": "ACKNOWLEDGED",
+      "ack": {
+        "receivedAt": "2026-10-02T12:22:58.570Z",
+        "duplicate": false
+      }
+    }
+  },
+  "receiverSeen": true,
+  "openResult": {
+    "status": "LAUNCH_REQUESTED",
+    "detail": "已交给 WPS 打开；尚未确认幻灯片窗口完成加载。"
+  },
+  "wpsWindowVisuallyVerified": false
+}

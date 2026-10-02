@@ -16,8 +16,8 @@ for(let i=0;i<chapters.length;i++){
  const c=chapters[i],skip=i?h:0,duration=c.duration-skip-(i<chapters.length-1?h:0),body=resolve(assets,`body-${i}.mp4`);
  if(!reuse||refreshBodies.has(i)||!existsSync(body))ff(['-ss',String(c.start+skip),'-i',c.source,'-t',String(duration),'-vf','fps=120,setsar=1',...enc,'-y',body]);
  parts.push(body);timeline.push({type:'chapter',name:c.name,start:cursor,duration,source:c.source,sourceStart:c.start+skip});cursor+=duration;console.log('body',i,duration);
- if(i<chapters.length-1){const bridge=resolve(dir,'bridges',String(i),'output/bridge.mp4'),normalized=resolve(assets,`bridge-${i}.mp4`);const p=probe(bridge),v=p.streams.find(s=>s.codec_type==='video');if(v.width!==2560||v.height!==1440||v.avg_frame_rate!=='120/1'||Math.abs(Number(p.format.duration)-6)>.02)throw Error('bad bridge '+i);
- if(!reuse||refresh.has(i)||!existsSync(normalized))ff(['-i',bridge,'-t','6','-vf','fps=120,setsar=1',...enc,'-y',normalized]);parts.push(normalized);timeline.push({type:'mo-handoff',name:`Mo: ${c.name} → ${chapters[i+1].name}`,start:cursor,duration:6,source:bridge});cursor+=6;console.log('bridge',i);}
+ if(i<chapters.length-1){const seconds=plan.bridgeDurations?.[i]??plan.bridgeSeconds;const bridge=resolve(dir,'bridges',String(i),'output/bridge.mp4'),normalized=resolve(assets,`bridge-${i}.mp4`);const p=probe(bridge),v=p.streams.find(s=>s.codec_type==='video');if(v.width!==2560||v.height!==1440||v.avg_frame_rate!=='120/1'||Math.abs(Number(p.format.duration)-seconds)>.02)throw Error('bad bridge '+i);
+ if(!reuse||refresh.has(i)||!existsSync(normalized))ff(['-i',bridge,'-t',String(seconds),'-vf','fps=120,setsar=1',...enc,'-y',normalized]);parts.push(normalized);timeline.push({type:'mo-handoff',name:`Mo: ${c.name} → ${chapters[i+1].name}`,start:cursor,duration:seconds,source:bridge});cursor+=seconds;console.log('bridge',i);}
 }
 writeFileSync(resolve(assets,'concat.txt'),parts.map(p=>`file '${p.replaceAll("'","'\\''")}'`).join('\n')+'\n');
 ff(['-f','concat','-safe','0','-i',resolve(assets,'concat.txt'),'-an','-c:v','copy','-movflags','+faststart','-y',resolve(assets,'picture.mp4')]);

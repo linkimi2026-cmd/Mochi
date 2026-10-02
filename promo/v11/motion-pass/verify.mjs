@@ -12,7 +12,7 @@ if(video.width!==2560||video.height!==1440||video.avg_frame_rate!=='120/1'||Numb
 const decoded=spawnSync('ffmpeg',['-v','error','-i',file,'-f','null','-'],{encoding:'utf8'});writeFileSync(resolve(evidence,'full-decode.log'),decoded.stderr);if(decoded.status||decoded.stderr.trim())throw Error('Decode errors');
 const packets=execFileSync('ffprobe',['-v','error','-select_streams','v:0','-show_entries','packet=pts_time','-of','csv=p=0',file],{encoding:'utf8',maxBuffer:8*1024*1024}).trim().split('\n').map(Number).sort((a,b)=>a-b);let maxGap=0;
 for(let i=1;i<packets.length;i++)maxGap=Math.max(maxGap,packets[i]-packets[i-1]);if(maxGap>1/120+.00001)throw Error('Timeline gap '+maxGap);
-const bridgeTimes=timeline.chapters.filter(c=>c.type==='mo-handoff').flatMap(c=>[c.start+.02,c.start+2.6,c.start+5.95]);
+const bridgeTimes=timeline.chapters.filter(c=>c.type==='mo-handoff').flatMap(c=>[c.start+.02,c.start+c.duration*.433,c.start+c.duration-.05]);
 const query=timeline.chapters.find(c=>c.type==='chapter'&&c.name==='Mochi原生查人与流转');
 const times=[.8,...bridgeTimes,query.start+4-query.sourceStart,query.start+23-query.sourceStart,timeline.duration-4];
 for(const[i,t]of times.entries())execFileSync('ffmpeg',['-v','error','-ss',String(t),'-i',file,'-frames:v','1','-vf','scale=640:-1','-y',resolve(evidence,`final-${String(i).padStart(2,'0')}.jpg`)]);

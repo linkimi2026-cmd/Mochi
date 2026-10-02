@@ -1,0 +1,86 @@
+{
+  "scope": "Synthetic overlay pointers only; embedded recording cursors require visual inspection.",
+  "fps": 120,
+  "reports": [
+    {
+      "chapter": "opening-chapter",
+      "duration": 18,
+      "cursorCount": 1,
+      "visibleSamples": 807,
+      "failures": [],
+      "failureCount": 0,
+      "clickOffsets": [],
+      "clickOffsetCount": 0
+    },
+    {
+      "chapter": "team-dialogue",
+      "duration": 24,
+      "cursorCount": 1,
+      "visibleSamples": 333,
+      "failures": [],
+      "failureCount": 0,
+      "clickOffsets": [],
+      "clickOffsetCount": 0
+    },
+    {
+      "chapter": "teaching-chapter",
+      "duration": 25,
+      "cursorCount": 0,
+      "visibleSamples": 0,
+      "failures": [],
+      "failureCount": 0,
+      "clickOffsets": [],
+      "clickOffsetCount": 0
+    },
+    {
+      "chapter": "model-chapter",
+      "duration": 28,
+      "cursorCount": 1,
+      "visibleSamples": 1053,
+      "failures": [],
+      "failureCount": 0,
+      "clickOffsets": [],
+      "clickOffsetCount": 0
+    },
+    {
+      "chapter": "mailbox-chapter",
+      "duration": 18,
+      "cursorCount": 1,
+      "visibleSamples": 168,
+      "failures": [],
+      "failureCount": 0,
+      "clickOffsets": [],
+      "clickOffsetCount": 0
+    },
+    {
+      "chapter": "student-chapter",
+      "duration": 50,
+      "cursorCount": 1,
+      "visibleSamples": 427,
+      "failures": [],
+      "failureCount": 0,
+      "clickOffsets": [],
+      "clickOffsetCount": 0
+    },
+    {
+      "chapter": "motion-pass/native-query",
+      "duration": 42,
+      "cursorCount": 1,
+      "visibleSamples": 247,
+      "failures": [],
+      "failureCount": 0,
+      "clickOffsets": [],
+      "clickOffsetCount": 0
+    },
+    {
+      "chapter": "master-preview/supplement",
+      "duration": 92,
+      "cursorCount": 0,
+      "visibleSamples": 0,
+      "failures": [],
+      "failureCount": 0,
+      "clickOffsets": [],
+      "clickOffsetCount": 0
+    }
+  ]
+}

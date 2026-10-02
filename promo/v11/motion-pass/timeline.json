@@ -4,7 +4,7 @@
   "width": 2560,
   "height": 1440,
   "fps": 120,
-  "duration": 281.34999999999997,
+  "duration": 277.95,
   "chapters": [
     {
       "type": "chapter",
@@ -18,13 +18,13 @@
       "type": "mo-handoff",
       "name": "Mo: 首页与需求 → 多Agent与内置配色",
       "start": 16.8,
-      "duration": 6,
+      "duration": 2.8,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/bridges/0/output/bridge.mp4"
     },
     {
       "type": "chapter",
       "name": "多Agent与内置配色",
-      "start": 22.8,
+      "start": 19.6,
       "duration": 20.950000000000003,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/output/team-dialogue.mp4",
       "sourceStart": 1.2
@@ -32,29 +32,29 @@
     {
       "type": "mo-handoff",
       "name": "Mo: 多Agent与内置配色 → 真实课件与教学成果",
-      "start": 43.75,
-      "duration": 6,
+      "start": 40.550000000000004,
+      "duration": 3.2,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/bridges/1/output/bridge.mp4"
     },
     {
       "type": "chapter",
       "name": "真实课件与教学成果",
-      "start": 49.75,
-      "duration": 19.6,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/output/teaching-artefacts.mp4",
+      "start": 43.75000000000001,
+      "duration": 35.599999999999994,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/delivery-chapter/output/teaching-and-delivery.mp4",
       "sourceStart": 1.2
     },
     {
       "type": "mo-handoff",
       "name": "Mo: 真实课件与教学成果 → 交互模型",
-      "start": 69.35,
-      "duration": 6,
+      "start": 79.35,
+      "duration": 3,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/bridges/2/output/bridge.mp4"
     },
     {
       "type": "chapter",
       "name": "交互模型",
-      "start": 75.35,
+      "start": 82.35,
       "duration": 24.400000000000002,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/model-chapter/output/model-journey.mp4",
       "sourceStart": 1.2
@@ -62,14 +62,14 @@
     {
       "type": "mo-handoff",
       "name": "Mo: 交互模型 → 叮咚与小信箱",
-      "start": 99.75,
-      "duration": 6,
+      "start": 106.75,
+      "duration": 4.4,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/bridges/3/output/bridge.mp4"
     },
     {
       "type": "chapter",
       "name": "叮咚与小信箱",
-      "start": 105.75,
+      "start": 111.15,
       "duration": 15.600000000000001,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/mailbox-chapter/output/mailbox-review.mp4",
       "sourceStart": 1.2
@@ -77,14 +77,14 @@
     {
       "type": "mo-handoff",
       "name": "Mo: 叮咚与小信箱 → 跨端消息与叫人",
-      "start": 121.35,
-      "duration": 6,
+      "start": 126.75,
+      "duration": 3.4,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/bridges/4/output/bridge.mp4"
     },
     {
       "type": "chapter",
       "name": "跨端消息与叫人",
-      "start": 127.35,
+      "start": 130.15,
       "duration": 47.599999999999994,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/output/student-chapter-paper-world.mp4",
       "sourceStart": 1.2
@@ -92,14 +92,14 @@
     {
       "type": "mo-handoff",
       "name": "Mo: 跨端消息与叫人 → Mochi原生查人与流转",
-      "start": 174.95,
-      "duration": 6,
+      "start": 177.75,
+      "duration": 2.6,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/bridges/5/output/bridge.mp4"
     },
     {
       "type": "chapter",
       "name": "Mochi原生查人与流转",
-      "start": 180.95,
+      "start": 180.35,
       "duration": 39.599999999999994,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/native-query/output/native-query.mp4",
       "sourceStart": 1.2
@@ -107,14 +107,14 @@
     {
       "type": "mo-handoff",
       "name": "Mo: Mochi原生查人与流转 → 记忆、自动化与结尾",
-      "start": 220.54999999999998,
-      "duration": 6,
+      "start": 219.95,
+      "duration": 3.2,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/bridges/6/output/bridge.mp4"
     },
     {
       "type": "chapter",
       "name": "记忆、自动化与结尾",
-      "start": 226.54999999999998,
+      "start": 223.14999999999998,
       "duration": 54.8,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/assets/daily-with-ending.mp4",
       "sourceStart": 1.2

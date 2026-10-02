@@ -14,7 +14,7 @@ M.place(tl,'#roster',{x:160,y:810,scale:2.35},{x:160,y:225,scale:1.1},4.1,.9);tl
 M.place(tl,'#plan-camera',{x:160,y:225,scale:.84},{x:120,y:235,scale:.62},5,1);tl.set('#plan-camera',{opacity:1},5);tl.to('#plan-camera',{x:35,y:160,scale:.75,duration:2.3,ease:'power1.inOut'},8.5);tl.to('#plan-camera',{x:145,y:815,scale:.28,rotation:-3,opacity:.72,duration:1.05,ease:'power3.inOut'},11.25);tl.to('#plan-camera',{y:1600,opacity:0,duration:.8,ease:'power3.in'},18.2);
 M.place(tl,'#deck-camera',{x:2450,y:460,scale:.35,rotation:7},{x:950,y:310,scale:.68,rotation:0},11.65,1.2,'back.out(1.1)');tl.set('#deck-camera',{opacity:1},11.75);tl.to('#deck-camera',{y:-1000,rotation:4,opacity:0,duration:.8,ease:'power3.in'},18.2);
 M.movePointer(tl,p,{x:2400,y:1080},{x:793,y:278},5.8,.6);M.click(tl,p,{x:793,y:278},6.4);tl.to(p.cursor,{opacity:0,duration:.15},6.9);
-M.movePointer(tl,p,{x:1800,y:1150},{x:1295,y:825},14,.65);M.click(tl,p,{x:1275,y:745},14.7);tl.to(p.cursor,{opacity:0,duration:.2},15.4);
+M.movePointer(tl,p,{x:1800,y:1150},{x:1295,y:825},14,.65);M.click(tl,p,{x:1295,y:825},14.7);tl.to(p.cursor,{opacity:0,duration:.2},15.4);
 tl.set('#characters',{opacity:1},18.8).fromTo('.character',{y:1050,rotation:8,scale:.6},{y:0,rotation:0,scale:1.25,stagger:.12,duration:1.1,ease:'back.out(1.2)',immediateRender:false},18.8).fromTo('#colors-sub',{y:20,opacity:0},{y:0,opacity:1,duration:.4,immediateRender:false},19.9);
 let filmTime=0;const clock={get time(){return filmTime},set time(t){filmTime=t;window.paintCharacters(t)}};tl.to(clock,{time:24,duration:24,ease:'none'},0);tl.to('#note',{opacity:0,duration:.2},18.6);tl.to('#characters',{y:200,opacity:0,duration:.45},23.55);tl.to('#colors-sub',{opacity:0,duration:.25},23.55);
 </script></body></html>
