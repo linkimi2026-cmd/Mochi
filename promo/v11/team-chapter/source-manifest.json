@@ -1,0 +1,61 @@
+{
+  "shots": [
+    {
+      "name": "roster",
+      "start": 8,
+      "duration": 5,
+      "crop": "920:100:530:6"
+    },
+    {
+      "name": "plan",
+      "start": 12,
+      "duration": 7,
+      "crop": "2160:1376:0:0"
+    },
+    {
+      "name": "deck",
+      "start": 47,
+      "duration": 7,
+      "crop": "2160:1376:0:0"
+    }
+  ],
+  "sources": [
+    {
+      "path": "/Users/a1379/Documents/Mochi/promo/v11/capture-private.nosync/team-members-clean.mov",
+      "sha256": "c8e350b1323e4dcbda601e94f555cf067a671e7200d56a649ad95ad6fe873063"
+    },
+    {
+      "path": "/Users/a1379/Documents/Mochi/client-plugins/jxl-brand/src/OrbCompanion.tsx",
+      "sha256": "dbc2502ea13b4eaf008584f286f654e5f02b272728e51d58bf549f3d1de148be"
+    },
+    {
+      "path": "/Users/a1379/Documents/Mochi/client-plugins/jxl-brand/src/bloub-motion.ts",
+      "sha256": "fe8b1f5d607e8de20e39ad6170a1c578c7652600a8dba2325f82364c413c2f50"
+    },
+    {
+      "path": "/Users/a1379/Documents/Mochi/client-plugins/jxl-theme/assets/mochi-palettes.json",
+      "sha256": "ca17020d8d51dfb34a73ed184973a202f2e820403a7c2c12e18ad6847a689275"
+    },
+    {
+      "path": "/Users/a1379/Documents/Mochi/client-plugins/jxl-theme/scripts/pet-palettes.mjs",
+      "sha256": "82449f66c5a7ba9faf37afe4bc235cd487efa7248ebf088cdeb45b991ff47052"
+    },
+    {
+      "path": "/Users/a1379/Documents/Mochi/client-plugins/jxl-brand/src/ExpressiveOrb.tsx",
+      "sha256": "03218956a4a2c3b67a874017e53fa436618903df57666111ef602c7ed944435b"
+    },
+    {
+      "path": "/Users/a1379/Documents/Mochi/client-plugins/jxl-brand/src/ExpressiveOrb.css",
+      "sha256": "dd8ac52d109e33efc941d7f801d3b43ac2ead417c7a9bff2e0f527ba2167e99c"
+    },
+    {
+      "path": "/Users/a1379/Documents/Mochi/client-plugins/jxl-brand/src/OrbCompanion.css",
+      "sha256": "b58bf2219447bfea3e59c5b69f742db76c99bf8c2f72f4968906ece94014266e"
+    },
+    {
+      "path": "/Users/a1379/Documents/Mochi/client-plugins/jxl-brand/src/vendor/bloub/engine.ts",
+      "sha256": "d824c715b6ec38b241fc61ae2ac516d7c1623f9603f88942b4585cdd9307e638"
+    }
+  ],
+  "historyReplay": true
+}

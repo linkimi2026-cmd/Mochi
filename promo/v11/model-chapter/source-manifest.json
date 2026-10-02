@@ -1,0 +1,42 @@
+{
+  "shots": [
+    {
+      "name": "request",
+      "start": 88,
+      "duration": 3.4,
+      "crop": "1540:390:600:700"
+    },
+    {
+      "name": "sent",
+      "start": 106,
+      "duration": 2.6,
+      "crop": "1540:580:600:100"
+    },
+    {
+      "name": "process",
+      "start": 127,
+      "duration": 8,
+      "crop": "1540:800:600:100",
+      "speed": 2
+    }
+  ],
+  "sources": [
+    {
+      "path": "/Users/a1379/Documents/Mochi/promo/v10/private.nosync/teacher-ui-02.mov",
+      "sha256": "727a25d820c2515dcd55fb82073068fe56a1446e7015d94ea80d513bfd3ef2ee"
+    },
+    {
+      "path": "/Users/a1379/Documents/Mochi/Mochi Models/椭圆切线交互模型-高一复习/model-before-inline.html",
+      "sha256": "2af40a1a9f7d99a7fccc45cb4f8a2a1c1240c96eabd7b92bca144c6693df58a4"
+    },
+    {
+      "path": "/Users/a1379/Documents/Mochi/Mochi Models/椭圆切线交互模型-高一复习/assets/jsxgraphcore.js",
+      "sha256": "4e196b10dc77e22ec0eda897e0271636edf8dadd91d76cc2cf2e136c61c35537"
+    },
+    {
+      "path": "/Users/a1379/Documents/Mochi/plugins/mochi-modeling/conic.mjs",
+      "sha256": "c951ff649b3d3ca815eb25c00b42f6f13c11d825a66d0229a66e2c95ed4df9d5"
+    }
+  ],
+  "renderOnlyAdapter": true
+}

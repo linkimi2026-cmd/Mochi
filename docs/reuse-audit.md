@@ -559,3 +559,19 @@ Promptfoo实际接入结果：临时安装0.123.0，常规安装解析可选依�
 部分采用框架媒体时序和 GSAP 等比变换：视频播放与逐帧定位由 HyperFrames 管理，不在回调中自行 seek；不将 video 放在有 data-start 的普通父层中。鼠标用原有独立屏幕层，避免随镜头缩放变形。没有重写录制或动画引擎。新增代码仅为剪辑入出点、镜头编排和标题，不改变产品布局。输入示例点击仅表示填入草稿，不能剪成发送或成功生成。
 
 实际接入验收另见 README；源码存在与文档支持不代替实渲结果。
+
+
+#### V11 建模输入与原成果动态演示
+
+先检索完整框架 `site:github.com/heygen-com/hyperframes video compositions GSAP camera transition`，再检索组件 `site:github.com/greensock/GSAP timeline video scale`。实际命中 HyperFrames core、GSAP适配器、媒体时序及 greensock/gsap-skills 时间轴文档。沿用 https://github.com/heygen-com/hyperframes @d4756f597c0dbb66310c2add699de6767b23f11b / 本机0.8.36 Apache-2.0 和 https://github.com/greensock/GSAP @13e2b790546426a1a2e0e9b409f3f8dc6d6611f2 / 本机3.15.0 Standard no charge；未升级。采用现成媒体管理与等比时间轴，不重写引擎。
+
+继续搜 `site:github.com/jsxgraph/jsxgraph v1.13.3 moveTo update board`，成功命中官方CHANGELOG、仓库与工作流。本机vendor文件头确为1.13.3，已读 plugins/mochi-modeling/assets/LICENSE.MIT。原产物metadata记7c2176d479ae256cb9d38265bce81fa18709d01f；官方工作流把1.13.3发布列在99d8c9f，不能将前者误称release tag。只复用本机已生成模型及固定vendor，不取网络最新版。
+
+原始 model-before-inline.html 已包含全部数学函数、参数、推导、原样式。构建仅将原先相对依赖内联到素材副本，追加确定性取样适配；原产品/模型文件不修改。适配调用原P.moveTo、slider事件、setStage及原推导节点，不另写几何公式、不新增自动播放产品能力。iframe保持原CSS作用域，避免把成果排版覆盖成宣传片主题。需要实渲验证字体、参数联动、乱序seek和各浏览器worker初始化，源码存在不表示适配通过。
+
+
+#### V11 多 Agent 与内置配色
+
+开工实际先搜完整框架 `site:github.com/heygen-com/hyperframes nested compositions video`，再组件 `site:github.com/greensock/GSAP timeline stagger colors`。命中官方html-schema、composition-patterns、variables-and-media和greensock/gsap-skills。采用已有HyperFrames 0.8.36（Apache-2.0，d4756f597c0dbb66310c2add699de6767b23f11b）与GSAP 3.15.0（Standard no charge，13e2b790546426a1a2e0e9b409f3f8dc6d6611f2），仓库https://github.com/heygen-com/hyperframes 和 https://github.com/greensock/GSAP 。没有升级或新增依赖。
+
+继续直接复用本项目OrbCompanion、bloub原引擎和mochi-palettes.json四款配色，不另绘吉祥物。只在影片舞台上改变其位置、等比大小；真实UI用新窗口录屏，不重新设计团队页面。实际核对主Mochi/deck-maker/plan-writer/data-analyst四会话，成员当前均待命，不标成正在执行。任务完成历史与当前运行明确区分。主题设置仅改变Mochi，不声称整套界面主题。长期维护限现有组件接口与源码SHA；逐帧采样使用既有原引擎。实渲结果另见README。

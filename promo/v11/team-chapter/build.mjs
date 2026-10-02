@@ -1,0 +1,16 @@
+import {copyFileSync,mkdirSync,readFileSync,writeFileSync} from 'node:fs';
+import {execFileSync} from 'node:child_process';
+import {dirname,resolve} from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {petPaletteCss} from '../../../client-plugins/jxl-theme/scripts/pet-palettes.mjs';
+import {createHash} from 'node:crypto';
+const dir=dirname(fileURLToPath(import.meta.url)),root=resolve(dir,'../../..'),assets=resolve(dir,'assets');mkdirSync(assets,{recursive:true});
+for(const n of ['gsap.min.js','NotoSansCJKsc-Regular.otf','NotoSansCJKsc-Bold.otf','NotoSerifCJKsc-SemiBold.otf'])copyFileSync(resolve(dir,'../../v10/assets',n),resolve(assets,n));
+for(const n of ['motion.js','motion.css'])copyFileSync(resolve(dir,'..',n),resolve(assets,n));
+writeFileSync(resolve(assets,'palettes.css'),petPaletteCss);
+const source=resolve(dir,'../capture-private.nosync/team-members-clean.mov');
+const shots=[{name:'roster',start:8,duration:5,crop:'920:100:530:6'},{name:'plan',start:12,duration:7,crop:'2160:1376:0:0'},{name:'deck',start:47,duration:7,crop:'2160:1376:0:0'}];
+for(const s of shots)execFileSync('ffmpeg',['-v','error','-ss',String(s.start),'-i',source,'-t',String(s.duration),'-vf',`crop=2160:1376:0:64,crop=${s.crop},fps=60,setsar=1`,'-an','-c:v','libx264','-crf','17','-preset','fast','-g','30','-y',resolve(assets,s.name+'.mp4')],{stdio:'inherit'});
+execFileSync(resolve(root,'promo/node_modules/.bin/esbuild'),['promo/v11/team-chapter/native.tsx','--bundle','--format=iife','--outfile=promo/v11/team-chapter/assets/native.js','--alias:react=./apps/desktop/runtime-modern/node_modules/react','--jsx=automatic','--alias:react/jsx-runtime=./apps/desktop/runtime-modern/node_modules/react/jsx-runtime.js','--define:process.env.NODE_ENV="production"'],{cwd:root,stdio:'inherit'});
+execFileSync('ffmpeg',['-v','error','-ss','46','-i',resolve(dir,'../../v8/assets/music.wav'),'-t','24','-af','afade=t=in:d=0.15,afade=t=out:st=23.5:d=0.5,loudnorm=I=-17:TP=-1.5:LRA=8','-ar','48000','-ac','2','-y',resolve(assets,'music-review.wav')],{stdio:'inherit'});
+const sources=[source,resolve(root,'client-plugins/jxl-brand/src/OrbCompanion.tsx'),resolve(root,'client-plugins/jxl-brand/src/bloub-motion.ts'),...['client-plugins/jxl-theme/assets/mochi-palettes.json','client-plugins/jxl-theme/scripts/pet-palettes.mjs','client-plugins/jxl-brand/src/ExpressiveOrb.tsx','client-plugins/jxl-brand/src/ExpressiveOrb.css','client-plugins/jxl-brand/src/OrbCompanion.css','client-plugins/jxl-brand/src/vendor/bloub/engine.ts'].map(p=>resolve(root,p))];writeFileSync(resolve(dir,'source-manifest.json'),JSON.stringify({shots,sources:sources.map(path=>({path,sha256:createHash('sha256').update(readFileSync(path)).digest('hex')})),historyReplay:true},null,2)+'\n');

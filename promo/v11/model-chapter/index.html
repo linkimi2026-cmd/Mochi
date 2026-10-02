@@ -1,0 +1,47 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><title>Mochi · 从输入到可探索的模型</title><script src="assets/gsap.min.js"></script><script src="assets/motion.js"></script><link rel="stylesheet" href="assets/motion.css"><style>
+@font-face{font-family:MoSans;src:url('assets/NotoSansCJKsc-Regular.otf')}@font-face{font-family:MoSans;src:url('assets/NotoSansCJKsc-Bold.otf');font-weight:700 900}@font-face{font-family:MoSerif;src:url('assets/NotoSerifCJKsc-SemiBold.otf')}
+*{box-sizing:border-box}body{margin:0;font-family:MoSans;color:#263e35}#film{position:relative;width:2560px;height:1440px;overflow:hidden;background:#eef3eb;perspective:2200px}
+.shot{position:absolute;left:0;top:0;transform-origin:0 0;overflow:hidden;box-shadow:0 28px 80px #213a2520;border-radius:22px;background:#f3efe6}.shot video{display:block;width:1540px}.clip{position:absolute;left:0;top:0}
+#request{width:1540px;height:390px;transform:translate(240px,600px) scale(1.35)}#sent{width:1540px;height:580px;transform:translate(240px,430px) scale(1.35);opacity:0}#process{width:1540px;height:800px;transform:translate(240px,300px) scale(1.35);opacity:0}
+#model{position:absolute;width:1440px;height:820px;left:0;top:0;transform-origin:0 0;opacity:0;overflow:hidden;border-radius:14px;box-shadow:0 34px 100px #233d2624;background:white}#model iframe{display:block;width:1440px;height:820px;border:0;background:white}
+.headline{position:absolute;left:170px;top:140px;opacity:0;pointer-events:none}h1{font:900 96px/1.3 MoSans;letter-spacing:-3px;margin:0}.glyph{display:inline-block;opacity:0}#title-b{top:70px;left:250px}#title-b h1{font-size:72px}#title-c{left:1580px;top:590px;width:840px}#title-c h1{font:84px/1.35 MoSerif}.sub{opacity:0;font:33px/1.6 MoSans;margin-top:20px}
+#note{position:absolute;left:80px;bottom:25px;font:23px MoSans;color:#536354;background:#f4f6edf0;padding:8px 16px;border-radius:5px}#speed{position:absolute;right:95px;top:90px;opacity:0;font:30px MoSans}#wash{position:absolute;inset:0;background:#f8f9f3;opacity:0;pointer-events:none}
+</style></head><body><main id="film" data-composition-id="mochi-model" data-width="2560" data-height="1440" data-duration="28" data-fps="120">
+<div id="request" class="shot"><video id="request-video" class="clip" src="assets/request.mp4" data-start="0" data-duration="3.4" data-track-index="1" muted playsinline></video></div>
+<div id="sent" class="shot"><video id="sent-video" class="clip" src="assets/sent.mp4" data-start="3.4" data-duration="2.6" data-track-index="1" muted playsinline></video></div>
+<div id="process" class="shot"><video id="process-video" class="clip" src="assets/process.mp4" data-start="6" data-duration="4" data-track-index="1" muted playsinline></video></div>
+<div id="model"><iframe id="native-model" src="assets/actual-model.html" title="Mochi实际生成的椭圆切线模型"></iframe></div>
+<section id="title-a" class="headline"><h1>一个想法，<br>变成可以探索的模型。</h1></section>
+<section id="title-b" class="headline"><h1>拖动，观察。再问一个为什么。</h1></section>
+<section id="title-c" class="headline"><h1>让知识，<br>在眼前发生。</h1><div class="sub">切点 · 辅助线 · 参数 · 分步推导</div></section>
+<div id="note">真实建模请求 · 已剪去等待</div><div id="speed">执行过程 2×</div><div id="wash"></div>
+<audio id="model-music" src="assets/music-review.wav" data-start="0" data-duration="28" data-track-index="9"></audio></main><script>
+const tl=gsap.timeline({paused:true});window.__timelines={'mochi-model':tl};const M=window.MochiMotion,p=M.createCursor(document.querySelector('#film')),frame=document.querySelector('#native-model');
+function title(id,at,out){const e=document.querySelector(id),h=e.querySelector('h1');for(const n of [...h.childNodes]){if(n.nodeType!==3)continue;const frag=document.createDocumentFragment();for(const c of n.textContent){const s=document.createElement('span');s.className='glyph';s.textContent=c;frag.append(s)}n.replaceWith(frag)}tl.set(e,{opacity:1},at);tl.fromTo(e.querySelectorAll('.glyph'),{y:65,rotation:2,opacity:0},{y:0,rotation:0,opacity:1,stagger:.025,duration:.7,ease:'back.out(1.2)',immediateRender:false},at);const sub=e.querySelector('.sub');if(sub)tl.fromTo(sub,{y:25,opacity:0},{y:0,opacity:1,duration:.5,immediateRender:false},at+.8);tl.to(e,{y:-75,opacity:0,duration:.5,ease:'power2.in'},out)}
+title('#title-a',.1,2.5);title('#title-b',10,22.6);title('#title-c',24.2,27.3);
+M.movePointer(tl,p,{x:1730,y:1110},{x:2144,y:979},2.1,.55);M.click(tl,p,{x:2144,y:979},3.2);tl.to(p.cursor,{opacity:0,duration:.12},3.38);
+M.place(tl,'#request',{x:240,y:600,scale:1.35,opacity:1},{x:470,y:260,scale:1.04,opacity:0},3.05,.35);
+M.place(tl,'#sent',{x:470,y:260,scale:1.04,opacity:0},{x:240,y:430,scale:1.35,opacity:1},3.4,.65,'power3.out');
+tl.to('#sent',{opacity:0,duration:.1},5.9);tl.set('#sent',{opacity:0},6);tl.set('#process',{opacity:1},6);tl.set('#speed',{opacity:1},6);tl.fromTo('#process',{x:240,y:300,scale:1.35},{x:240,y:230,scale:1.35,duration:3.2,ease:'none',immediateRender:false},6);
+tl.fromTo('#process',{x:240,y:230,scale:1.35,rotation:0,opacity:1},{x:-1850,y:230,scale:1.35,rotation:-4,opacity:0,duration:.85,ease:'power3.inOut',immediateRender:false},9.2);tl.to('#speed',{opacity:0,duration:.3},9.35);
+M.place(tl,'#model',{x:2280,y:700,scale:.55,rotation:8,opacity:0},{x:272,y:230,scale:1.4,rotation:0,opacity:1},9.35,1.1,'back.out(1.08)');
+tl.set('#note',{textContent:'实际生成模型 · 修复依赖后，以原源码渲染演示'},9.35);
+let modelTime=0;function paint(){
+ if(!frame.contentWindow?.renderMochiModel)return;
+ const state=frame.contentWindow.renderMochiModel(modelTime);window.modelFrameEvidence=state;
+ const r=frame.getBoundingClientRect(),t=modelTime;let target=null,alpha=1;
+ if(t>=.5&&t<=4.1)target=state.point;
+ else if(t>=4.35&&t<=5.1)target=state.controls.aux;
+ else if(t>=6.7&&t<=9.05)target=state.controls.slider;
+ else if(t>=9.35&&t<=10.05)target=state.controls.derive;
+ if(target){alpha=Math.min(1,Math.max(0,t<4.2?(t-.5)*8:t<5.2?(t-4.35)*8:t<9.1?(t-6.7)*8:(t-9.35)*8));gsap.set(p.cursor,{x:r.left+target.x*r.width/1440-4.5,y:r.top+target.y*r.height/820-3,opacity:alpha});}
+ else gsap.set(p.cursor,{opacity:0});
+ const pulse=t>=4.8&&t<5.2?{time:t-4.8,at:state.controls.aux}:t>=7&&t<7.4?{time:t-7,at:state.controls.slider}:t>=9.8&&t<10.2?{time:t-9.8,at:state.controls.derive}:null;
+ if(pulse)gsap.set(p.ring,{x:r.left+pulse.at.x*r.width/1440-40,y:r.top+pulse.at.y*r.height/820-40,scale:.2+pulse.time*2.5,opacity:.7*(1-pulse.time/.4)});else gsap.set(p.ring,{opacity:0});
+}
+window.addEventListener('message',event=>{if(event.source===frame.contentWindow&&event.data?.type==='mochi-model-render-ready')paint()});
+tl.to('#model',{keyframes:[{x:55,y:220,scale:1.7,duration:1.3,ease:'power2.inOut'},{duration:2.1},{x:272,y:230,scale:1.4,duration:.8,ease:'power2.inOut'}]},10.5);
+const clock={};Object.defineProperty(clock,'time',{get:()=>modelTime,set:v=>{modelTime=v;paint()}});tl.fromTo(clock,{time:0},{time:17.5,duration:17.5,ease:'none'},10.5);
+M.place(tl,'#model',{x:272,y:230,scale:1.4,rotation:0},{x:110,y:455,scale:.88,rotation:-3},23.15,1.25,'power3.inOut');
+tl.to('#model',{x:-1460,y:160,rotation:-9,opacity:0,duration:1.05,ease:'power3.inOut'},26.9);tl.to('#note',{opacity:0,duration:.4},27.3);tl.to({}, {duration:.01},27.99);
+</script></body></html>
