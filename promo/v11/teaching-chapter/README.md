@@ -27,5 +27,5 @@
 
 - `../capture-private.nosync/home-presets-clean.mov`：95秒，仅最后部分收起了侧栏；主要可用作短祝语与Mo动态。不要把它当成完整预设操作记录。
 - `../capture-private.nosync/presets-controls.mov`：50秒原片经回看，末段拍到实际场景列表；其后的示例、思考档位和工作区操作发生在录制结束后，因此不计为已录到。
-- `../capture-private.nosync/examples-expanded.mov`：专门补录三条示例展开与师生沟通示例填入，原片需要独立回看并选择入出点。三条示例是输入建议，不是三个不同Agent；没有发送，无生成成功声明。
+- `../capture-private.nosync/examples-expanded.mov`：65秒专门补录，已回看每5秒抽帧：约45–55秒三条示例展开，约60秒师生沟通示例已填入。入出点仍需按帧细选。三条示例是输入建议，不是三个不同Agent；没有发送，无生成成功声明。
 - 两次模型自动播放修订均已停止。第一个请求只完成按钮样式及切线色等部分修改；第二次短会话显示 Request timed out。用户明确要求“不管这个”，不继续排查模型连接，也不把自动播放写为已完成。保留先前已验证的实际模型交互素材。
