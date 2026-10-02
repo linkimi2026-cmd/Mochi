@@ -1,0 +1,5 @@
+import puppeteer from 'puppeteer-core';
+import {resolve} from 'node:path';
+import {pathToFileURL} from 'node:url';
+const browser=await puppeteer.launch({executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless:true,args:['--allow-file-access-from-files','--disable-gpu'],protocolTimeout:20000});
+try{console.log('launched');const page=await browser.newPage();console.log('page');await page.setViewport({width:2560,height:1440});page.on('pageerror',e=>console.error(e.message));await page.goto(pathToFileURL(resolve('promo/v11/greeting-chapter/index.html')).href,{waitUntil:'load'});console.log('loaded');await page.evaluate(()=>Promise.race([document.fonts.ready,new Promise(r=>setTimeout(r,5000))]));console.log('fonts');for(const t of [1.8,3.5,4.5]){await page.evaluate(t=>{window.__timelines['mochi-greeting'].seek(t);},t);console.log(t,await page.evaluate(()=>document.querySelector('#hello').textContent));await page.screenshot({path:`/tmp/mochi-greeting-${t}.png`,timeout:10000})}}finally{await browser.close()}

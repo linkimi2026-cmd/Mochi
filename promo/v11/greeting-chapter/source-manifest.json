@@ -1,0 +1,8 @@
+{
+  "character": "Original Mochi ExpressiveOrb; laptop is a separate original component and is not part of the rolling orb",
+  "source": "client-plugins/jxl-brand/src/ExpressiveOrb.tsx",
+  "sha256": "03218956a4a2c3b67a874017e53fa436618903df57666111ef602c7ed944435b",
+  "greeting": "哈喽，我是 Mochi。",
+  "additionalDuration": 4,
+  "sourceUi": "../opening-chapter/output/opening-presets.mp4"
+}

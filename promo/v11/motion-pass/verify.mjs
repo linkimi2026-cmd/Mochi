@@ -15,7 +15,8 @@ for(let i=1;i<packets.length;i++)maxGap=Math.max(maxGap,packets[i]-packets[i-1])
 const bridgeTimes=timeline.chapters.filter(c=>c.type==='mo-handoff').flatMap(c=>[c.start+.02,c.start+c.duration*.433,c.start+c.duration-.05]);
 const query=timeline.chapters.find(c=>c.type==='chapter'&&c.name.startsWith('Mochi原生查人'));
 if(!query)throw Error('Missing native campus chapter');
-const times=[.8,...bridgeTimes,...[4,23,37,47,58].filter(t=>t<query.duration+query.sourceStart).map(t=>query.start+t-query.sourceStart),timeline.duration-4];
+const openingTimes=current.edition===4?[.3,1.8,3.55,4.5,5.02]:[.8];
+const times=[...openingTimes,...bridgeTimes,...[4,23,30.3,37,47,58].filter(t=>t<query.duration+query.sourceStart).map(t=>query.start+t-query.sourceStart),timeline.duration-4];
 for(const[i,t]of times.entries())execFileSync('ffmpeg',['-v','error','-ss',String(t),'-i',file,'-frames:v','1','-vf','scale=640:-1','-y',resolve(evidence,`final-${String(i).padStart(2,'0')}.jpg`)]);
 execFileSync('ffmpeg',['-v','error','-framerate','1','-i',resolve(evidence,'final-%02d.jpg'),'-vf',`tile=4x${Math.ceil(times.length/4)}`,'-frames:v','1','-y',resolve(evidence,'final-contact.jpg')]);
 const result={status:`edition-${current.edition||2}-assembly-for-review`,fullFeatureCoverage:false,width:video.width,height:video.height,fps:video.avg_frame_rate,durationSeconds:Number(info.format.duration),frames:Number(video.nb_frames),audioCodec:audio.codec_name,audioChannels:audio.channels,bytes:statSync(file).size,decodeExitCode:decoded.status,decodeErrors:decoded.stderr.trim().length,maxPresentationGapSeconds:maxGap,inspectionTimes:times,sha256:createHash('sha256').update(readFileSync(file)).digest('hex')};

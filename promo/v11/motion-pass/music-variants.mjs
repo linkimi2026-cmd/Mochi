@@ -8,9 +8,10 @@ const ff=args=>execFileSync('ffmpeg',['-v','error','-nostdin',...args],{stdio:'i
 const probe=p=>JSON.parse(execFileSync('ffprobe',['-v','error','-show_streams','-show_format','-of','json',p],{encoding:'utf8'}));
 const k3Score=resolve(dir,'assets/scores/k3/delivery-final.wav');
 const outputs=[];
+const editionName=timeline.edition===4?'第四版':'第三版';
 for(const [label,audio]of [['现有配乐版',resolve(dir,'assets/scores/own/delivery-final.wav')],['K3参考音轨版',k3Score]]){
- const output=resolve(dir,`output/Mochi_V11_第三版_${label}_2K120.mp4`);
- ff(['-i',source,'-i',audio,'-map','0:v:0','-map','1:a:0','-c:v','copy','-c:a','aac','-b:a','256k','-t',String(duration),'-movflags','+faststart','-metadata',`title=Mochi · 第三版 · ${label}`,'-y',output]);
+ const output=resolve(dir,`output/Mochi_V11_${editionName}_${label}_2K120.mp4`);
+ ff(['-i',source,'-i',audio,'-map','0:v:0','-map','1:a:0','-c:v','copy','-c:a','aac','-b:a','256k','-t',String(duration),'-movflags','+faststart','-metadata',`title=Mochi · ${editionName} · ${label}`,'-y',output]);
  const p=probe(output),v=p.streams.find(s=>s.codec_type==='video');
  if(v.width!==2560||v.height!==1440||v.avg_frame_rate!=='120/1'||Number(v.nb_frames)!==Math.round(duration*120))throw Error('Invalid variant '+label);
  const hash=execFileSync('ffmpeg',['-v','error','-i',output,'-map','0:v:0','-c:v','copy','-f','hash','-hash','sha256','-'],{encoding:'utf8'}).trim();

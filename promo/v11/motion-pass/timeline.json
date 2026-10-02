@@ -1,30 +1,30 @@
 {
-  "output": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/output/Mochi_V11_第三版_叮咚小信箱与协作接力_2K120.mp4",
-  "edition": 3,
+  "output": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/output/Mochi_V11_第四版_完整精修_2K120.mp4",
+  "edition": 4,
   "width": 2560,
   "height": 1440,
   "fps": 120,
-  "duration": 295.95,
+  "duration": 299.95,
   "chapters": [
     {
       "type": "chapter",
-      "name": "首页与需求",
+      "name": "Mo问候、首页与需求",
       "start": 0,
-      "duration": 16.8,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/output/opening-presets.mp4",
+      "duration": 20.8,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/greeting-chapter/output/greeting-and-opening.mp4",
       "sourceStart": 0
     },
     {
       "type": "mo-handoff",
-      "name": "Mo: 首页与需求 → 多Agent与内置配色",
-      "start": 16.8,
+      "name": "Mo: Mo问候、首页与需求 → 多Agent与内置配色",
+      "start": 20.8,
       "duration": 2.8,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/bridges/0/output/bridge.mp4"
     },
     {
       "type": "chapter",
       "name": "多Agent与内置配色",
-      "start": 19.6,
+      "start": 23.6,
       "duration": 20.950000000000003,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/output/team-dialogue.mp4",
       "sourceStart": 1.2
@@ -32,14 +32,14 @@
     {
       "type": "mo-handoff",
       "name": "Mo: 多Agent与内置配色 → 真实课件与教学成果",
-      "start": 40.550000000000004,
+      "start": 44.550000000000004,
       "duration": 3.2,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/bridges/1/output/bridge.mp4"
     },
     {
       "type": "chapter",
       "name": "真实课件与教学成果",
-      "start": 43.75000000000001,
+      "start": 47.75000000000001,
       "duration": 35.599999999999994,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/delivery-chapter/output/teaching-and-delivery.mp4",
       "sourceStart": 1.2
@@ -47,14 +47,14 @@
     {
       "type": "mo-handoff",
       "name": "Mo: 真实课件与教学成果 → 交互模型",
-      "start": 79.35,
+      "start": 83.35,
       "duration": 3,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/bridges/2/output/bridge.mp4"
     },
     {
       "type": "chapter",
       "name": "交互模型",
-      "start": 82.35,
+      "start": 86.35,
       "duration": 24.400000000000002,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/model-chapter/output/model-journey.mp4",
       "sourceStart": 1.2
@@ -62,14 +62,14 @@
     {
       "type": "mo-handoff",
       "name": "Mo: 交互模型 → 叮咚与小信箱",
-      "start": 106.75,
+      "start": 110.75,
       "duration": 4.4,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/bridges/3/output/bridge.mp4"
     },
     {
       "type": "chapter",
       "name": "叮咚与小信箱",
-      "start": 111.15,
+      "start": 115.15,
       "duration": 15.600000000000001,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/mailbox-chapter/output/mailbox-review.mp4",
       "sourceStart": 1.2
@@ -77,14 +77,14 @@
     {
       "type": "mo-handoff",
       "name": "Mo: 叮咚与小信箱 → 跨端消息与叫人",
-      "start": 126.75,
+      "start": 130.75,
       "duration": 3.4,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/bridges/4/output/bridge.mp4"
     },
     {
       "type": "chapter",
       "name": "跨端消息与叫人",
-      "start": 130.15,
+      "start": 134.15,
       "duration": 47.599999999999994,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/output/student-chapter-paper-world.mp4",
       "sourceStart": 1.2
@@ -92,14 +92,14 @@
     {
       "type": "mo-handoff",
       "name": "Mo: 跨端消息与叫人 → Mochi原生查人、流转与教师协作",
-      "start": 177.75,
+      "start": 181.75,
       "duration": 2.6,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/bridges/5/output/bridge.mp4"
     },
     {
       "type": "chapter",
       "name": "Mochi原生查人、流转与教师协作",
-      "start": 180.35,
+      "start": 184.35,
       "duration": 57.599999999999994,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/collaboration-chapter/output/query-movement-a2a.mp4",
       "sourceStart": 1.2
@@ -107,14 +107,14 @@
     {
       "type": "mo-handoff",
       "name": "Mo: Mochi原生查人、流转与教师协作 → 记忆、自动化与结尾",
-      "start": 237.95,
+      "start": 241.95,
       "duration": 3.2,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/bridges/6/output/bridge.mp4"
     },
     {
       "type": "chapter",
       "name": "记忆、自动化与结尾",
-      "start": 241.14999999999998,
+      "start": 245.14999999999998,
       "duration": 54.8,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/assets/daily-with-ending.mp4",
       "sourceStart": 1.2

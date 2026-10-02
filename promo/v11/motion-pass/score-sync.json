@@ -1,10 +1,11 @@
 {
-  "duration": 295.95,
-  "accentCount": 46,
+  "duration": 299.95,
+  "accentCount": 48,
   "clickCount": 13,
   "reports": [
     {
       "label": "own",
+      "openingTrim": 0,
       "mapping": [
         {
           "target": 0,
@@ -12,841 +13,877 @@
           "strength": 0
         },
         {
-          "target": 4.75,
-          "source": 4.725,
-          "strength": 0.479,
-          "chapter": "首页与需求"
+          "target": 1.15,
+          "source": 1.269,
+          "strength": 0.905,
+          "chapter": "Mo问候、首页与需求"
         },
         {
-          "target": 10.42,
-          "source": 10.379,
-          "strength": 0.489,
-          "chapter": "首页与需求"
+          "target": 4.05,
+          "source": 4.235,
+          "strength": 0.132,
+          "chapter": "Mo问候、首页与需求"
         },
         {
-          "target": 16.65,
-          "source": 16.576,
-          "strength": 0.907,
-          "chapter": "首页与需求"
+          "target": 8.75,
+          "source": 9.088,
+          "strength": 0.635,
+          "chapter": "Mo问候、首页与需求"
         },
         {
-          "target": 24.8,
-          "source": 24.651,
-          "strength": 0.854,
+          "target": 14.42,
+          "source": 14.805,
+          "strength": 0.743,
+          "chapter": "Mo问候、首页与需求"
+        },
+        {
+          "target": 20.65,
+          "source": 20.96,
+          "strength": 0.762,
+          "chapter": "Mo问候、首页与需求"
+        },
+        {
+          "target": 28.8,
+          "source": 29.12,
+          "strength": 0.865,
           "chapter": "多Agent与内置配色"
         },
         {
-          "target": 31.250000000000004,
-          "source": 31.04,
-          "strength": 0.785,
+          "target": 35.25,
+          "source": 35.499,
+          "strength": 0.811,
           "chapter": "多Agent与内置配色"
         },
         {
-          "target": 38.3,
-          "source": 37.92,
-          "strength": 0.662,
+          "target": 42.3,
+          "source": 42.528,
+          "strength": 0.607,
           "chapter": "多Agent与内置配色"
         },
         {
-          "target": 41.56333333333334,
-          "source": 41.376,
-          "strength": 0.68,
+          "target": 45.56333333333334,
+          "source": 45.792,
+          "strength": 0.659,
           "chapter": "Mo 场景接力"
         },
         {
-          "target": 44.35,
-          "source": 44.32,
-          "strength": 0.728,
+          "target": 48.35,
+          "source": 48.747,
+          "strength": 0.696,
           "chapter": "真实课件与教学成果"
         },
         {
-          "target": 49.75000000000001,
-          "source": 49.728,
-          "strength": 0.649,
+          "target": 53.75000000000001,
+          "source": 54.155,
+          "strength": 0.701,
           "chapter": "真实课件与教学成果"
         },
         {
-          "target": 55.150000000000006,
-          "source": 55.136,
-          "strength": 0.674,
-          "chapter": "真实课件与教学成果"
-        },
-        {
-          "target": 63.55,
-          "source": 63.499,
-          "strength": 0.66,
-          "chapter": "真实课件与教学成果"
-        },
-        {
-          "target": 71.35000000000001,
-          "source": 71.371,
-          "strength": 0.697,
-          "chapter": "真实课件与教学成果"
-        },
-        {
-          "target": 74.45,
-          "source": 74.315,
+          "target": 59.150000000000006,
+          "source": 59.563,
           "strength": 0.646,
           "chapter": "真实课件与教学成果"
         },
         {
-          "target": 80.3,
-          "source": 80.213,
-          "strength": 0.437,
+          "target": 67.55,
+          "source": 67.925,
+          "strength": 0.751,
+          "chapter": "真实课件与教学成果"
+        },
+        {
+          "target": 75.35000000000001,
+          "source": 75.787,
+          "strength": 0.743,
+          "chapter": "真实课件与教学成果"
+        },
+        {
+          "target": 78.45,
+          "source": 78.987,
+          "strength": 0.283,
+          "chapter": "真实课件与教学成果"
+        },
+        {
+          "target": 84.3,
+          "source": 84.64,
+          "strength": 0.344,
           "chapter": "Mo 场景接力"
         },
         {
-          "target": 84.35,
-          "source": 84.299,
-          "strength": 0.436,
+          "target": 88.35,
+          "source": 88.576,
+          "strength": 0.313,
           "chapter": "交互模型"
         },
         {
-          "target": 91.6,
-          "source": 91.531,
-          "strength": 0.332,
+          "target": 95.6,
+          "source": 95.744,
+          "strength": 0.164,
           "chapter": "交互模型"
         },
         {
-          "target": 96.44999999999999,
-          "source": 96.405,
-          "strength": 0.129,
+          "target": 100.44999999999999,
+          "source": 100.512,
+          "strength": 0.505,
           "chapter": "交互模型"
         },
         {
-          "target": 101.44999999999999,
-          "source": 101.483,
-          "strength": 0.712,
+          "target": 105.44999999999999,
+          "source": 105.429,
+          "strength": 0.629,
           "chapter": "交互模型"
         },
         {
-          "target": 108.14333333333333,
-          "source": 108.139,
-          "strength": 0.198,
+          "target": 112.14333333333333,
+          "source": 112.075,
+          "strength": 0.156,
           "chapter": "Mo 场景接力"
         },
         {
-          "target": 111.45,
-          "source": 111.328,
-          "strength": 0.636,
+          "target": 115.45,
+          "source": 115.264,
+          "strength": 0.882,
           "chapter": "叮咚与小信箱"
         },
         {
-          "target": 115.10000000000001,
-          "source": 114.773,
-          "strength": 0.88,
+          "target": 119.10000000000001,
+          "source": 118.955,
+          "strength": 0.75,
           "chapter": "叮咚与小信箱"
         },
         {
-          "target": 125.3,
-          "source": 124.992,
-          "strength": 0.708,
+          "target": 129.3,
+          "source": 129.035,
+          "strength": 0.775,
           "chapter": "叮咚与小信箱"
         },
         {
-          "target": 130.35000000000002,
-          "source": 130.027,
-          "strength": 0.709,
+          "target": 134.35000000000002,
+          "source": 133.952,
+          "strength": 0.667,
           "chapter": "跨端消息与叫人"
         },
         {
-          "target": 136.62,
-          "source": 136.309,
-          "strength": 0.759,
+          "target": 140.62,
+          "source": 140.341,
+          "strength": 0.782,
           "chapter": "跨端消息与叫人"
         },
         {
-          "target": 144.45000000000002,
-          "source": 144.277,
-          "strength": 0.609,
+          "target": 148.45000000000002,
+          "source": 148.224,
+          "strength": 0.737,
           "chapter": "跨端消息与叫人"
         },
         {
-          "target": 149.55,
-          "source": 149.248,
-          "strength": 0.785,
+          "target": 153.55,
+          "source": 153.141,
+          "strength": 0.711,
           "chapter": "跨端消息与叫人"
         },
         {
-          "target": 154.25000000000003,
-          "source": 154.123,
-          "strength": 0.779,
+          "target": 158.25000000000003,
+          "source": 157.813,
+          "strength": 0.357,
           "chapter": "跨端消息与叫人"
         },
         {
-          "target": 161.60000000000002,
-          "source": 161.493,
-          "strength": 0.64,
+          "target": 165.60000000000002,
+          "source": 164.939,
+          "strength": 0.63,
           "chapter": "跨端消息与叫人"
         },
         {
-          "target": 166.5,
-          "source": 166.411,
-          "strength": 0.727,
+          "target": 170.5,
+          "source": 169.856,
+          "strength": 0.655,
           "chapter": "跨端消息与叫人"
         },
         {
-          "target": 173.35000000000002,
-          "source": 173.301,
-          "strength": 0.646,
+          "target": 177.35000000000002,
+          "source": 176.661,
+          "strength": 0.671,
           "chapter": "跨端消息与叫人"
         },
         {
-          "target": 178.57333333333332,
-          "source": 178.709,
-          "strength": 0.325,
-          "chapter": "Mo 场景接力"
-        },
-        {
-          "target": 181.85,
+          "target": 182.57333333333332,
           "source": 182.037,
           "strength": 0.628,
-          "chapter": "Mochi原生查人、流转与教师协作"
-        },
-        {
-          "target": 186.95000000000002,
-          "source": 187.072,
-          "strength": 0.378,
-          "chapter": "Mochi原生查人、流转与教师协作"
-        },
-        {
-          "target": 193.1,
-          "source": 193.227,
-          "strength": 0.221,
-          "chapter": "Mochi原生查人、流转与教师协作"
-        },
-        {
-          "target": 200.20000000000002,
-          "source": 200.48,
-          "strength": 0.545,
-          "chapter": "Mochi原生查人、流转与教师协作"
-        },
-        {
-          "target": 209.95000000000002,
-          "source": 210.315,
-          "strength": 0.504,
-          "chapter": "Mochi原生查人、流转与教师协作"
-        },
-        {
-          "target": 218.95,
-          "source": 219.2,
-          "strength": 0.898,
-          "chapter": "Mochi原生查人、流转与教师协作"
-        },
-        {
-          "target": 223.35000000000002,
-          "source": 223.595,
-          "strength": 0.693,
-          "chapter": "Mochi原生查人、流转与教师协作"
-        },
-        {
-          "target": 229.15,
-          "source": 229.515,
-          "strength": 0.755,
-          "chapter": "Mochi原生查人、流转与教师协作"
-        },
-        {
-          "target": 233.95,
-          "source": 234.304,
-          "strength": 0.764,
-          "chapter": "Mochi原生查人、流转与教师协作"
-        },
-        {
-          "target": 238.9633333333333,
-          "source": 239.339,
-          "strength": 0.739,
           "chapter": "Mo 场景接力"
         },
         {
-          "target": 242.95,
-          "source": 243.264,
-          "strength": 0.807,
+          "target": 185.85,
+          "source": 185.44,
+          "strength": 0.608,
+          "chapter": "Mochi原生查人、流转与教师协作"
+        },
+        {
+          "target": 190.95000000000002,
+          "source": 190.507,
+          "strength": 0.405,
+          "chapter": "Mochi原生查人、流转与教师协作"
+        },
+        {
+          "target": 197.1,
+          "source": 196.544,
+          "strength": 0.239,
+          "chapter": "Mochi原生查人、流转与教师协作"
+        },
+        {
+          "target": 204.20000000000002,
+          "source": 203.701,
+          "strength": 0.371,
+          "chapter": "Mochi原生查人、流转与教师协作"
+        },
+        {
+          "target": 213.95000000000002,
+          "source": 213.301,
+          "strength": 0.957,
+          "chapter": "Mochi原生查人、流转与教师协作"
+        },
+        {
+          "target": 222.95,
+          "source": 222.123,
+          "strength": 0.716,
+          "chapter": "Mochi原生查人、流转与教师协作"
+        },
+        {
+          "target": 227.35000000000002,
+          "source": 226.549,
+          "strength": 0.746,
+          "chapter": "Mochi原生查人、流转与教师协作"
+        },
+        {
+          "target": 233.15,
+          "source": 232.448,
+          "strength": 0.76,
+          "chapter": "Mochi原生查人、流转与教师协作"
+        },
+        {
+          "target": 237.95,
+          "source": 237.376,
+          "strength": 0.68,
+          "chapter": "Mochi原生查人、流转与教师协作"
+        },
+        {
+          "target": 242.9633333333333,
+          "source": 242.283,
+          "strength": 0.636,
+          "chapter": "Mo 场景接力"
+        },
+        {
+          "target": 246.95,
+          "source": 246.219,
+          "strength": 0.692,
           "chapter": "记忆、自动化与结尾"
         },
         {
-          "target": 254.95,
-          "source": 255.029,
-          "strength": 0.674,
+          "target": 258.95,
+          "source": 258.016,
+          "strength": 0.706,
           "chapter": "记忆、自动化与结尾"
         },
         {
-          "target": 266.95,
-          "source": 266.869,
-          "strength": 0.657,
+          "target": 270.95,
+          "source": 269.824,
+          "strength": 0.673,
           "chapter": "记忆、自动化与结尾"
         },
         {
-          "target": 278.95,
-          "source": 278.677,
-          "strength": 0.31,
+          "target": 282.95,
+          "source": 281.867,
+          "strength": 0.56,
           "chapter": "记忆、自动化与结尾"
         },
         {
-          "target": 290.95,
-          "source": 290.485,
-          "strength": 0.741,
+          "target": 294.95,
+          "source": 294.549,
+          "strength": 0.245,
           "chapter": "记忆、自动化与结尾"
         },
         {
-          "target": 295.95,
-          "source": 295.48499999999996,
+          "target": 299.95,
+          "source": 299.54900000000004,
           "strength": 0
         }
       ],
-      "maxTempoChange": 0.05903983656792233,
-      "method": "Original beat landmarks, bounded pitch-preserving atempo, four-ms edge fades; listening review still required.",
+      "maxTempoChange": 0.10347826086956524,
+      "method": "Original beat landmarks, optional opening trim, bounded pitch-preserving atempo, four-ms edge fades; listening review still required.",
       "renderedAttackChecks": [
         {
-          "cueSeconds": 4.75,
-          "nearbyAttackSeconds": 4.75,
+          "cueSeconds": 1.15,
+          "nearbyAttackSeconds": 1.15,
           "offsetMs": 0.0,
-          "rise": 0.17682111263275146
+          "rise": 0.06739333271980286
         },
         {
-          "cueSeconds": 10.42,
-          "nearbyAttackSeconds": 10.42,
+          "cueSeconds": 4.05,
+          "nearbyAttackSeconds": 4.05,
           "offsetMs": 0.0,
-          "rise": 0.16447053849697113
+          "rise": 0.021715179085731506
         },
         {
-          "cueSeconds": 16.65,
-          "nearbyAttackSeconds": 16.65,
+          "cueSeconds": 8.75,
+          "nearbyAttackSeconds": 8.75,
           "offsetMs": 0.0,
-          "rise": 0.145437091588974
+          "rise": 0.1314575970172882
         },
         {
-          "cueSeconds": 24.8,
-          "nearbyAttackSeconds": 24.8,
+          "cueSeconds": 14.42,
+          "nearbyAttackSeconds": 14.42,
           "offsetMs": 0.0,
-          "rise": 0.20500358939170837
+          "rise": 0.12606105208396912
         },
         {
-          "cueSeconds": 31.250000000000004,
-          "nearbyAttackSeconds": 31.25,
-          "offsetMs": -0.0,
-          "rise": 0.2963794283568859
+          "cueSeconds": 20.65,
+          "nearbyAttackSeconds": 20.615,
+          "offsetMs": -35.0,
+          "rise": 0.1776653677225113
         },
         {
-          "cueSeconds": 38.3,
-          "nearbyAttackSeconds": 38.3,
+          "cueSeconds": 28.8,
+          "nearbyAttackSeconds": 28.8,
           "offsetMs": 0.0,
-          "rise": 0.17345298826694489
+          "rise": 0.2638089954853058
         },
         {
-          "cueSeconds": 41.56333333333334,
-          "nearbyAttackSeconds": 41.565,
+          "cueSeconds": 35.25,
+          "nearbyAttackSeconds": 35.25,
+          "offsetMs": 0.0,
+          "rise": 0.11780871823430061
+        },
+        {
+          "cueSeconds": 42.3,
+          "nearbyAttackSeconds": 42.3,
+          "offsetMs": 0.0,
+          "rise": 0.05148498713970184
+        },
+        {
+          "cueSeconds": 45.56333333333334,
+          "nearbyAttackSeconds": 45.565,
           "offsetMs": 1.67,
-          "rise": 0.19712143763899803
+          "rise": 0.11254088580608368
         },
         {
-          "cueSeconds": 44.35,
-          "nearbyAttackSeconds": 44.35,
-          "offsetMs": 0.0,
-          "rise": 0.057302623987197876
+          "cueSeconds": 48.35,
+          "nearbyAttackSeconds": 48.29,
+          "offsetMs": -60.0,
+          "rise": 0.2092631310224533
         },
         {
-          "cueSeconds": 49.75000000000001,
-          "nearbyAttackSeconds": 49.775,
-          "offsetMs": 25.0,
-          "rise": 0.2131970450282097
-        },
-        {
-          "cueSeconds": 55.150000000000006,
-          "nearbyAttackSeconds": 55.15,
+          "cueSeconds": 53.75000000000001,
+          "nearbyAttackSeconds": 53.75,
           "offsetMs": -0.0,
-          "rise": 0.05179556459188461
+          "rise": 0.11240850389003754
         },
         {
-          "cueSeconds": 63.55,
-          "nearbyAttackSeconds": 63.55,
-          "offsetMs": 0.0,
-          "rise": 0.1616932824254036
-        },
-        {
-          "cueSeconds": 71.35000000000001,
-          "nearbyAttackSeconds": 71.43,
-          "offsetMs": 80.0,
-          "rise": 0.21381289511919022
-        },
-        {
-          "cueSeconds": 74.45,
-          "nearbyAttackSeconds": 74.45,
-          "offsetMs": 0.0,
-          "rise": 0.1715981587767601
-        },
-        {
-          "cueSeconds": 80.3,
-          "nearbyAttackSeconds": 80.3,
-          "offsetMs": 0.0,
-          "rise": 0.1509617194533348
-        },
-        {
-          "cueSeconds": 84.35,
-          "nearbyAttackSeconds": 84.35,
-          "offsetMs": 0.0,
-          "rise": 0.035848475992679596
-        },
-        {
-          "cueSeconds": 91.6,
-          "nearbyAttackSeconds": 91.6,
-          "offsetMs": 0.0,
-          "rise": 0.113888218998909
-        },
-        {
-          "cueSeconds": 96.44999999999999,
-          "nearbyAttackSeconds": 96.45,
-          "offsetMs": 0.0,
-          "rise": 0.04563000798225403
-        },
-        {
-          "cueSeconds": 101.44999999999999,
-          "nearbyAttackSeconds": 101.44,
-          "offsetMs": -10.0,
-          "rise": 0.27966301515698433
-        },
-        {
-          "cueSeconds": 108.14333333333333,
-          "nearbyAttackSeconds": 108.075,
-          "offsetMs": -68.33,
-          "rise": 0.1264141947031021
-        },
-        {
-          "cueSeconds": 111.45,
-          "nearbyAttackSeconds": 111.45,
-          "offsetMs": 0.0,
-          "rise": 0.02342601865530014
-        },
-        {
-          "cueSeconds": 115.10000000000001,
-          "nearbyAttackSeconds": 115.1,
+          "cueSeconds": 59.150000000000006,
+          "nearbyAttackSeconds": 59.15,
           "offsetMs": -0.0,
-          "rise": 0.25497641414403915
+          "rise": 0.10993361659348011
         },
         {
-          "cueSeconds": 125.3,
-          "nearbyAttackSeconds": 125.38,
-          "offsetMs": 80.0,
-          "rise": 0.23518853820860386
-        },
-        {
-          "cueSeconds": 130.35000000000002,
-          "nearbyAttackSeconds": 130.35,
-          "offsetMs": -0.0,
-          "rise": 0.16026388853788376
-        },
-        {
-          "cueSeconds": 136.62,
-          "nearbyAttackSeconds": 136.62,
-          "offsetMs": 0.0,
-          "rise": 0.038880035281181335
-        },
-        {
-          "cueSeconds": 144.45000000000002,
-          "nearbyAttackSeconds": 144.45,
-          "offsetMs": -0.0,
-          "rise": 0.1556607335805893
-        },
-        {
-          "cueSeconds": 149.55,
-          "nearbyAttackSeconds": 149.55,
-          "offsetMs": 0.0,
-          "rise": 0.1956179514527321
-        },
-        {
-          "cueSeconds": 154.25000000000003,
-          "nearbyAttackSeconds": 154.185,
-          "offsetMs": -65.0,
-          "rise": 0.22642932459712029
-        },
-        {
-          "cueSeconds": 161.60000000000002,
-          "nearbyAttackSeconds": 161.6,
-          "offsetMs": -0.0,
-          "rise": 0.14333176612854004
-        },
-        {
-          "cueSeconds": 166.5,
-          "nearbyAttackSeconds": 166.435,
-          "offsetMs": -65.0,
-          "rise": 0.31833179481327534
-        },
-        {
-          "cueSeconds": 173.35000000000002,
-          "nearbyAttackSeconds": 173.27,
-          "offsetMs": -80.0,
-          "rise": 0.27999962866306305
-        },
-        {
-          "cueSeconds": 178.57333333333332,
-          "nearbyAttackSeconds": 178.5,
-          "offsetMs": -73.33,
-          "rise": 0.13194025307893753
-        },
-        {
-          "cueSeconds": 181.85,
-          "nearbyAttackSeconds": 181.85,
-          "offsetMs": 0.0,
-          "rise": 0.08389440923929214
-        },
-        {
-          "cueSeconds": 186.95000000000002,
-          "nearbyAttackSeconds": 186.95,
-          "offsetMs": -0.0,
-          "rise": 0.01651974394917488
-        },
-        {
-          "cueSeconds": 193.1,
-          "nearbyAttackSeconds": 193.1,
-          "offsetMs": 0.0,
-          "rise": 0.029969878494739532
-        },
-        {
-          "cueSeconds": 200.20000000000002,
-          "nearbyAttackSeconds": 200.2,
-          "offsetMs": -0.0,
-          "rise": 0.06970611214637756
-        },
-        {
-          "cueSeconds": 209.95000000000002,
-          "nearbyAttackSeconds": 209.95,
-          "offsetMs": -0.0,
-          "rise": 0.08507053554058075
-        },
-        {
-          "cueSeconds": 218.95,
-          "nearbyAttackSeconds": 218.95,
-          "offsetMs": 0.0,
-          "rise": 0.16307857260107994
-        },
-        {
-          "cueSeconds": 223.35000000000002,
-          "nearbyAttackSeconds": 223.35,
-          "offsetMs": -0.0,
-          "rise": 0.05132032930850983
-        },
-        {
-          "cueSeconds": 229.15,
-          "nearbyAttackSeconds": 229.15,
-          "offsetMs": 0.0,
-          "rise": 0.05752928555011749
-        },
-        {
-          "cueSeconds": 233.95,
-          "nearbyAttackSeconds": 233.95,
-          "offsetMs": 0.0,
-          "rise": 0.06385862827301025
-        },
-        {
-          "cueSeconds": 238.9633333333333,
-          "nearbyAttackSeconds": 238.975,
-          "offsetMs": 11.67,
-          "rise": 0.052637964487075806
-        },
-        {
-          "cueSeconds": 242.95,
-          "nearbyAttackSeconds": 242.95,
-          "offsetMs": 0.0,
-          "rise": 0.056893862783908844
-        },
-        {
-          "cueSeconds": 254.95,
-          "nearbyAttackSeconds": 254.95,
-          "offsetMs": 0.0,
-          "rise": 0.13349680602550507
-        },
-        {
-          "cueSeconds": 266.95,
-          "nearbyAttackSeconds": 266.875,
+          "cueSeconds": 67.55,
+          "nearbyAttackSeconds": 67.475,
           "offsetMs": -75.0,
-          "rise": 0.058392852544784546
+          "rise": 0.13721421360969543
         },
         {
-          "cueSeconds": 278.95,
-          "nearbyAttackSeconds": 278.95,
+          "cueSeconds": 75.35000000000001,
+          "nearbyAttackSeconds": 75.35,
+          "offsetMs": -0.0,
+          "rise": 0.11617673933506012
+        },
+        {
+          "cueSeconds": 78.45,
+          "nearbyAttackSeconds": 78.45,
           "offsetMs": 0.0,
-          "rise": 0.12259821593761444
+          "rise": 0.08045194298028946
         },
         {
-          "cueSeconds": 290.95,
-          "nearbyAttackSeconds": 290.88,
+          "cueSeconds": 84.3,
+          "nearbyAttackSeconds": 84.3,
+          "offsetMs": 0.0,
+          "rise": 0.029800690710544586
+        },
+        {
+          "cueSeconds": 88.35,
+          "nearbyAttackSeconds": 88.35,
+          "offsetMs": 0.0,
+          "rise": 0.16825272887945175
+        },
+        {
+          "cueSeconds": 95.6,
+          "nearbyAttackSeconds": 95.6,
+          "offsetMs": 0.0,
+          "rise": 0.03705151192843914
+        },
+        {
+          "cueSeconds": 100.44999999999999,
+          "nearbyAttackSeconds": 100.45,
+          "offsetMs": 0.0,
+          "rise": 0.05221128463745117
+        },
+        {
+          "cueSeconds": 105.44999999999999,
+          "nearbyAttackSeconds": 105.505,
+          "offsetMs": 55.0,
+          "rise": 0.07037052512168884
+        },
+        {
+          "cueSeconds": 112.14333333333333,
+          "nearbyAttackSeconds": 112.115,
+          "offsetMs": -28.33,
+          "rise": 0.17369990050792694
+        },
+        {
+          "cueSeconds": 115.45,
+          "nearbyAttackSeconds": 115.505,
+          "offsetMs": 55.0,
+          "rise": 0.23906104266643524
+        },
+        {
+          "cueSeconds": 119.10000000000001,
+          "nearbyAttackSeconds": 119.025,
+          "offsetMs": -75.0,
+          "rise": 0.2574318200349808
+        },
+        {
+          "cueSeconds": 129.3,
+          "nearbyAttackSeconds": 129.3,
+          "offsetMs": 0.0,
+          "rise": 0.1859123334288597
+        },
+        {
+          "cueSeconds": 134.35000000000002,
+          "nearbyAttackSeconds": 134.28,
           "offsetMs": -70.0,
-          "rise": 0.02699883282184601
+          "rise": 0.1702730804681778
+        },
+        {
+          "cueSeconds": 140.62,
+          "nearbyAttackSeconds": 140.62,
+          "offsetMs": 0.0,
+          "rise": 0.1228441633284092
+        },
+        {
+          "cueSeconds": 148.45000000000002,
+          "nearbyAttackSeconds": 148.375,
+          "offsetMs": -75.0,
+          "rise": 0.22134362161159515
+        },
+        {
+          "cueSeconds": 153.55,
+          "nearbyAttackSeconds": 153.55,
+          "offsetMs": 0.0,
+          "rise": 0.05503647029399872
+        },
+        {
+          "cueSeconds": 158.25000000000003,
+          "nearbyAttackSeconds": 158.25,
+          "offsetMs": -0.0,
+          "rise": 0.21789246797561646
+        },
+        {
+          "cueSeconds": 165.60000000000002,
+          "nearbyAttackSeconds": 165.6,
+          "offsetMs": -0.0,
+          "rise": 0.19935166835784912
+        },
+        {
+          "cueSeconds": 170.5,
+          "nearbyAttackSeconds": 170.5,
+          "offsetMs": 0.0,
+          "rise": 0.17607440054416656
+        },
+        {
+          "cueSeconds": 177.35000000000002,
+          "nearbyAttackSeconds": 177.35,
+          "offsetMs": -0.0,
+          "rise": 0.021099090576171875
+        },
+        {
+          "cueSeconds": 182.57333333333332,
+          "nearbyAttackSeconds": 182.575,
+          "offsetMs": 1.67,
+          "rise": 0.1505170315504074
+        },
+        {
+          "cueSeconds": 185.85,
+          "nearbyAttackSeconds": 185.85,
+          "offsetMs": 0.0,
+          "rise": 0.1388431005179882
+        },
+        {
+          "cueSeconds": 190.95000000000002,
+          "nearbyAttackSeconds": 190.95,
+          "offsetMs": -0.0,
+          "rise": 0.0978093147277832
+        },
+        {
+          "cueSeconds": 197.1,
+          "nearbyAttackSeconds": 197.1,
+          "offsetMs": 0.0,
+          "rise": 0.04522665590047836
+        },
+        {
+          "cueSeconds": 204.20000000000002,
+          "nearbyAttackSeconds": 204.185,
+          "offsetMs": -15.0,
+          "rise": 0.0811113715171814
+        },
+        {
+          "cueSeconds": 213.95000000000002,
+          "nearbyAttackSeconds": 213.975,
+          "offsetMs": 25.0,
+          "rise": 0.21873554587364197
+        },
+        {
+          "cueSeconds": 222.95,
+          "nearbyAttackSeconds": 222.875,
+          "offsetMs": -75.0,
+          "rise": 0.18604837357997894
+        },
+        {
+          "cueSeconds": 227.35000000000002,
+          "nearbyAttackSeconds": 227.275,
+          "offsetMs": -75.0,
+          "rise": 0.13257652521133423
+        },
+        {
+          "cueSeconds": 233.15,
+          "nearbyAttackSeconds": 233.15,
+          "offsetMs": 0.0,
+          "rise": 0.07306419312953949
+        },
+        {
+          "cueSeconds": 237.95,
+          "nearbyAttackSeconds": 237.935,
+          "offsetMs": -15.0,
+          "rise": 0.2489323616027832
+        },
+        {
+          "cueSeconds": 242.9633333333333,
+          "nearbyAttackSeconds": 242.89,
+          "offsetMs": -73.33,
+          "rise": 0.15911860018968582
+        },
+        {
+          "cueSeconds": 246.95,
+          "nearbyAttackSeconds": 246.89,
+          "offsetMs": -60.0,
+          "rise": 0.11960404366254807
+        },
+        {
+          "cueSeconds": 258.95,
+          "nearbyAttackSeconds": 258.95,
+          "offsetMs": 0.0,
+          "rise": 0.1398494839668274
+        },
+        {
+          "cueSeconds": 270.95,
+          "nearbyAttackSeconds": 270.925,
+          "offsetMs": -25.0,
+          "rise": 0.18923138454556465
+        },
+        {
+          "cueSeconds": 282.95,
+          "nearbyAttackSeconds": 282.885,
+          "offsetMs": -65.0,
+          "rise": 0.1812123078852892
+        },
+        {
+          "cueSeconds": 294.95,
+          "nearbyAttackSeconds": 294.95,
+          "offsetMs": 0.0,
+          "rise": 0.04450598359107971
         }
       ],
-      "maxMeasuredLocalOffsetMs": 80.0,
+      "maxMeasuredLocalOffsetMs": 75.0,
       "attackEdits": [
         {
-          "time": 4.75,
-          "sourceShiftMs": -25.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 10.42,
-          "sourceShiftMs": -40.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 16.65,
-          "sourceShiftMs": -45.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 24.8,
-          "sourceShiftMs": 25.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 31.250000000000004,
-          "sourceShiftMs": 30.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 38.3,
-          "sourceShiftMs": -5.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 41.56333333333334,
-          "sourceShiftMs": 81.67,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 44.35,
-          "sourceShiftMs": -15.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 49.75000000000001,
-          "sourceShiftMs": 80.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 55.150000000000006,
-          "sourceShiftMs": -10.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 63.55,
-          "sourceShiftMs": 0.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 71.35000000000001,
-          "sourceShiftMs": 70.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 74.45,
-          "sourceShiftMs": -5.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 80.3,
-          "sourceShiftMs": -80.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 84.35,
-          "sourceShiftMs": -25.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 91.6,
-          "sourceShiftMs": -50.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 96.44999999999999,
-          "sourceShiftMs": 55.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 101.44999999999999,
-          "sourceShiftMs": -80.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 108.14333333333333,
-          "sourceShiftMs": 21.67,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 111.45,
-          "sourceShiftMs": 45.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 115.10000000000001,
-          "sourceShiftMs": 30.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 125.3,
-          "sourceShiftMs": 55.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 130.35000000000002,
-          "sourceShiftMs": 55.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 136.62,
-          "sourceShiftMs": 10.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 144.45000000000002,
-          "sourceShiftMs": 15.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 149.55,
-          "sourceShiftMs": -35.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 154.25000000000003,
-          "sourceShiftMs": -55.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 161.60000000000002,
-          "sourceShiftMs": -45.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 166.5,
-          "sourceShiftMs": -50.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 173.35000000000002,
-          "sourceShiftMs": -65.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 178.57333333333332,
-          "sourceShiftMs": -43.33,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 181.85,
+          "time": 1.15,
           "sourceShiftMs": 5.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 186.95000000000002,
-          "sourceShiftMs": 80.0,
+          "time": 4.05,
+          "sourceShiftMs": 5.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 193.1,
-          "sourceShiftMs": 35.0,
+          "time": 8.75,
+          "sourceShiftMs": 5.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 200.20000000000002,
-          "sourceShiftMs": -30.0,
+          "time": 14.42,
+          "sourceShiftMs": 20.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 209.95000000000002,
-          "sourceShiftMs": 65.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 218.95,
-          "sourceShiftMs": -80.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 223.35000000000002,
-          "sourceShiftMs": 55.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 229.15,
-          "sourceShiftMs": 60.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 233.95,
-          "sourceShiftMs": 50.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 238.9633333333333,
-          "sourceShiftMs": 81.67,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 242.95,
-          "sourceShiftMs": 25.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 254.95,
-          "sourceShiftMs": -55.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 266.95,
+          "time": 20.65,
           "sourceShiftMs": -70.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 278.95,
+          "time": 28.8,
+          "sourceShiftMs": -50.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 35.25,
+          "sourceShiftMs": -35.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 42.3,
+          "sourceShiftMs": 30.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 45.56333333333334,
+          "sourceShiftMs": 71.67,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 48.35,
+          "sourceShiftMs": -35.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 53.75000000000001,
+          "sourceShiftMs": 10.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 59.150000000000006,
+          "sourceShiftMs": 75.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 67.55,
+          "sourceShiftMs": -60.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 75.35000000000001,
+          "sourceShiftMs": -30.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 78.45,
+          "sourceShiftMs": 40.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 84.3,
+          "sourceShiftMs": -80.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 88.35,
+          "sourceShiftMs": -25.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 95.6,
           "sourceShiftMs": 45.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 290.95,
+          "time": 100.44999999999999,
+          "sourceShiftMs": 25.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 105.44999999999999,
+          "sourceShiftMs": 50.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 112.14333333333333,
+          "sourceShiftMs": -63.33,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 115.45,
+          "sourceShiftMs": 40.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 119.10000000000001,
+          "sourceShiftMs": -40.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 129.3,
+          "sourceShiftMs": -55.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 134.35000000000002,
+          "sourceShiftMs": -75.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 140.62,
+          "sourceShiftMs": -45.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 148.45000000000002,
+          "sourceShiftMs": -25.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 153.55,
+          "sourceShiftMs": -15.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 158.25000000000003,
+          "sourceShiftMs": -75.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 165.60000000000002,
+          "sourceShiftMs": -80.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 170.5,
+          "sourceShiftMs": -65.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 177.35000000000002,
+          "sourceShiftMs": 65.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 182.57333333333332,
+          "sourceShiftMs": -48.33,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 185.85,
+          "sourceShiftMs": -35.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 190.95000000000002,
+          "sourceShiftMs": 60.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 197.1,
+          "sourceShiftMs": 45.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 204.20000000000002,
+          "sourceShiftMs": -70.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 213.95000000000002,
+          "sourceShiftMs": 60.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 222.95,
+          "sourceShiftMs": -30.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 227.35000000000002,
+          "sourceShiftMs": -55.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 233.15,
+          "sourceShiftMs": 0.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 237.95,
+          "sourceShiftMs": -70.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 242.9633333333333,
+          "sourceShiftMs": -43.33,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 246.95,
+          "sourceShiftMs": -55.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 258.95,
+          "sourceShiftMs": 45.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 270.95,
+          "sourceShiftMs": -65.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 282.95,
+          "sourceShiftMs": -45.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 294.95,
           "sourceShiftMs": -20.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
@@ -855,849 +892,886 @@
     },
     {
       "label": "k3",
+      "openingTrim": 1.218,
       "mapping": [
         {
           "target": 0,
-          "source": 0,
+          "source": 1.218,
           "strength": 0
         },
         {
-          "target": 4.75,
-          "source": 4.832,
-          "strength": 0.349,
-          "chapter": "首页与需求"
+          "target": 1.15,
+          "source": 2.368,
+          "strength": 0.539,
+          "chapter": "Mo问候、首页与需求"
         },
         {
-          "target": 10.42,
-          "source": 10.251,
-          "strength": 0.259,
-          "chapter": "首页与需求"
+          "target": 4.05,
+          "source": 5.141,
+          "strength": 0.333,
+          "chapter": "Mo问候、首页与需求"
         },
         {
-          "target": 16.65,
-          "source": 16.491,
-          "strength": 0.124,
-          "chapter": "首页与需求"
+          "target": 8.75,
+          "source": 9.941,
+          "strength": 0.268,
+          "chapter": "Mo问候、首页与需求"
         },
         {
-          "target": 24.8,
-          "source": 24.587,
-          "strength": 0.413,
+          "target": 14.42,
+          "source": 15.531,
+          "strength": 0.167,
+          "chapter": "Mo问候、首页与需求"
+        },
+        {
+          "target": 20.65,
+          "source": 22.005,
+          "strength": 0.175,
+          "chapter": "Mo问候、首页与需求"
+        },
+        {
+          "target": 28.8,
+          "source": 30.165,
+          "strength": 0.288,
           "chapter": "多Agent与内置配色"
         },
         {
-          "target": 31.250000000000004,
-          "source": 31.147,
-          "strength": 0.359,
+          "target": 35.25,
+          "source": 36.715,
+          "strength": 0.412,
           "chapter": "多Agent与内置配色"
         },
         {
-          "target": 38.3,
-          "source": 38.123,
-          "strength": 0.578,
+          "target": 42.3,
+          "source": 43.861,
+          "strength": 0.906,
           "chapter": "多Agent与内置配色"
         },
         {
-          "target": 41.56333333333334,
-          "source": 41.451,
-          "strength": 0.849,
+          "target": 45.56333333333334,
+          "source": 46.901,
+          "strength": 0.774,
           "chapter": "Mo 场景接力"
         },
         {
-          "target": 44.35,
-          "source": 44.267,
-          "strength": 0.654,
-          "chapter": "真实课件与教学成果"
-        },
-        {
-          "target": 49.75000000000001,
+          "target": 48.35,
           "source": 49.717,
           "strength": 0.433,
           "chapter": "真实课件与教学成果"
         },
         {
-          "target": 55.150000000000006,
+          "target": 53.75000000000001,
           "source": 55.221,
           "strength": 0.298,
           "chapter": "真实课件与教学成果"
         },
         {
-          "target": 63.55,
-          "source": 63.605,
-          "strength": 0.357,
+          "target": 59.150000000000006,
+          "source": 60.619,
+          "strength": 0.325,
           "chapter": "真实课件与教学成果"
         },
         {
-          "target": 71.35000000000001,
-          "source": 71.403,
-          "strength": 0.141,
+          "target": 67.55,
+          "source": 68.928,
+          "strength": 0.317,
           "chapter": "真实课件与教学成果"
         },
         {
-          "target": 74.45,
-          "source": 74.613,
-          "strength": 0.273,
+          "target": 75.35000000000001,
+          "source": 76.704,
+          "strength": 0.168,
           "chapter": "真实课件与教学成果"
         },
         {
-          "target": 80.3,
-          "source": 80.608,
-          "strength": 0.292,
+          "target": 78.45,
+          "source": 79.755,
+          "strength": 0.526,
+          "chapter": "真实课件与教学成果"
+        },
+        {
+          "target": 84.3,
+          "source": 85.579,
+          "strength": 0.182,
           "chapter": "Mo 场景接力"
         },
         {
-          "target": 84.35,
-          "source": 84.864,
-          "strength": 0.283,
+          "target": 88.35,
+          "source": 89.696,
+          "strength": 0.643,
           "chapter": "交互模型"
         },
         {
-          "target": 91.6,
-          "source": 92.149,
-          "strength": 0.559,
+          "target": 95.6,
+          "source": 96.8,
+          "strength": 0.733,
           "chapter": "交互模型"
         },
         {
-          "target": 96.44999999999999,
-          "source": 97.259,
-          "strength": 0.983,
+          "target": 100.44999999999999,
+          "source": 101.611,
+          "strength": 0.787,
           "chapter": "交互模型"
         },
         {
-          "target": 101.44999999999999,
-          "source": 102.197,
-          "strength": 0.533,
+          "target": 105.44999999999999,
+          "source": 106.389,
+          "strength": 0.186,
           "chapter": "交互模型"
         },
         {
-          "target": 108.14333333333333,
-          "source": 108.853,
-          "strength": 0.203,
+          "target": 112.14333333333333,
+          "source": 113.067,
+          "strength": 0.146,
           "chapter": "Mo 场景接力"
         },
         {
-          "target": 111.45,
-          "source": 112.021,
-          "strength": 0.499,
+          "target": 115.45,
+          "source": 116.544,
+          "strength": 0.364,
           "chapter": "叮咚与小信箱"
         },
         {
-          "target": 115.10000000000001,
-          "source": 115.637,
+          "target": 119.10000000000001,
+          "source": 120.213,
+          "strength": 0.242,
+          "chapter": "叮咚与小信箱"
+        },
+        {
+          "target": 129.3,
+          "source": 130.133,
+          "strength": 0.16,
+          "chapter": "叮咚与小信箱"
+        },
+        {
+          "target": 134.35000000000002,
+          "source": 134.987,
+          "strength": 0.347,
+          "chapter": "跨端消息与叫人"
+        },
+        {
+          "target": 140.62,
+          "source": 141.323,
           "strength": 0.21,
-          "chapter": "叮咚与小信箱"
-        },
-        {
-          "target": 125.3,
-          "source": 125.899,
-          "strength": 0.124,
-          "chapter": "叮咚与小信箱"
-        },
-        {
-          "target": 130.35000000000002,
-          "source": 131.413,
-          "strength": 0.175,
           "chapter": "跨端消息与叫人"
         },
         {
-          "target": 136.62,
-          "source": 137.888,
-          "strength": 0.264,
+          "target": 148.45000000000002,
+          "source": 148.683,
+          "strength": 0.847,
           "chapter": "跨端消息与叫人"
         },
         {
-          "target": 144.45000000000002,
-          "source": 145.664,
+          "target": 153.55,
+          "source": 153.675,
+          "strength": 0.654,
+          "chapter": "跨端消息与叫人"
+        },
+        {
+          "target": 158.25000000000003,
+          "source": 158.368,
+          "strength": 0.405,
+          "chapter": "跨端消息与叫人"
+        },
+        {
+          "target": 165.60000000000002,
+          "source": 166.165,
+          "strength": 0.341,
+          "chapter": "跨端消息与叫人"
+        },
+        {
+          "target": 170.5,
+          "source": 171.253,
           "strength": 0.376,
           "chapter": "跨端消息与叫人"
         },
         {
-          "target": 149.55,
-          "source": 150.859,
-          "strength": 0.849,
+          "target": 177.35000000000002,
+          "source": 177.941,
+          "strength": 0.238,
           "chapter": "跨端消息与叫人"
         },
         {
-          "target": 154.25000000000003,
-          "source": 155.68,
-          "strength": 0.959,
-          "chapter": "跨端消息与叫人"
-        },
-        {
-          "target": 161.60000000000002,
-          "source": 162.859,
-          "strength": 0.168,
-          "chapter": "跨端消息与叫人"
-        },
-        {
-          "target": 166.5,
-          "source": 167.776,
-          "strength": 0.145,
-          "chapter": "跨端消息与叫人"
-        },
-        {
-          "target": 173.35000000000002,
-          "source": 174.805,
-          "strength": 0.237,
-          "chapter": "跨端消息与叫人"
-        },
-        {
-          "target": 178.57333333333332,
-          "source": 179.915,
-          "strength": 0.142,
-          "chapter": "Mo 场景接力"
-        },
-        {
-          "target": 181.85,
+          "target": 182.57333333333332,
           "source": 183.189,
           "strength": 0.128,
-          "chapter": "Mochi原生查人、流转与教师协作"
-        },
-        {
-          "target": 186.95000000000002,
-          "source": 188.139,
-          "strength": 0.71,
-          "chapter": "Mochi原生查人、流转与教师协作"
-        },
-        {
-          "target": 193.1,
-          "source": 194.272,
-          "strength": 0.283,
-          "chapter": "Mochi原生查人、流转与教师协作"
-        },
-        {
-          "target": 200.20000000000002,
-          "source": 201.408,
-          "strength": 0.658,
-          "chapter": "Mochi原生查人、流转与教师协作"
-        },
-        {
-          "target": 209.95000000000002,
-          "source": 211.019,
-          "strength": 0.787,
-          "chapter": "Mochi原生查人、流转与教师协作"
-        },
-        {
-          "target": 218.95,
-          "source": 219.339,
-          "strength": 0.302,
-          "chapter": "Mochi原生查人、流转与教师协作"
-        },
-        {
-          "target": 223.35000000000002,
-          "source": 223.648,
-          "strength": 0.349,
-          "chapter": "Mochi原生查人、流转与教师协作"
-        },
-        {
-          "target": 229.15,
-          "source": 229.621,
-          "strength": 0.242,
-          "chapter": "Mochi原生查人、流转与教师协作"
-        },
-        {
-          "target": 233.95,
-          "source": 234.347,
-          "strength": 0.167,
-          "chapter": "Mochi原生查人、流转与教师协作"
-        },
-        {
-          "target": 238.9633333333333,
-          "source": 239.541,
-          "strength": 0.16,
           "chapter": "Mo 场景接力"
         },
         {
-          "target": 242.95,
-          "source": 243.403,
-          "strength": 0.413,
+          "target": 185.85,
+          "source": 186.699,
+          "strength": 0.371,
+          "chapter": "Mochi原生查人、流转与教师协作"
+        },
+        {
+          "target": 190.95000000000002,
+          "source": 192.021,
+          "strength": 0.293,
+          "chapter": "Mochi原生查人、流转与教师协作"
+        },
+        {
+          "target": 197.1,
+          "source": 198.133,
+          "strength": 0.185,
+          "chapter": "Mochi原生查人、流转与教师协作"
+        },
+        {
+          "target": 204.20000000000002,
+          "source": 205.333,
+          "strength": 0.883,
+          "chapter": "Mochi原生查人、流转与教师协作"
+        },
+        {
+          "target": 213.95000000000002,
+          "source": 214.891,
+          "strength": 0.502,
+          "chapter": "Mochi原生查人、流转与教师协作"
+        },
+        {
+          "target": 222.95,
+          "source": 223.957,
+          "strength": 0.333,
+          "chapter": "Mochi原生查人、流转与教师协作"
+        },
+        {
+          "target": 227.35000000000002,
+          "source": 228.363,
+          "strength": 0.285,
+          "chapter": "Mochi原生查人、流转与教师协作"
+        },
+        {
+          "target": 233.15,
+          "source": 234.24,
+          "strength": 0.166,
+          "chapter": "Mochi原生查人、流转与教师协作"
+        },
+        {
+          "target": 237.95,
+          "source": 239.083,
+          "strength": 0.221,
+          "chapter": "Mochi原生查人、流转与教师协作"
+        },
+        {
+          "target": 242.9633333333333,
+          "source": 244.096,
+          "strength": 0.445,
+          "chapter": "Mo 场景接力"
+        },
+        {
+          "target": 246.95,
+          "source": 248,
+          "strength": 0.646,
           "chapter": "记忆、自动化与结尾"
         },
         {
-          "target": 254.95,
-          "source": 255.531,
-          "strength": 0.412,
+          "target": 258.95,
+          "source": 260.043,
+          "strength": 0.866,
           "chapter": "记忆、自动化与结尾"
         },
         {
-          "target": 266.95,
-          "source": 267.488,
-          "strength": 0.523,
+          "target": 270.95,
+          "source": 272.267,
+          "strength": 0.168,
           "chapter": "记忆、自动化与结尾"
         },
         {
-          "target": 278.95,
-          "source": 279.435,
-          "strength": 0.325,
+          "target": 282.95,
+          "source": 284.213,
+          "strength": 0.237,
           "chapter": "记忆、自动化与结尾"
         },
         {
-          "target": 290.95,
-          "source": 291.381,
-          "strength": 0.149,
+          "target": 294.95,
+          "source": 296.107,
+          "strength": 0.371,
           "chapter": "记忆、自动化与结尾"
         },
         {
-          "target": 295.95,
-          "source": 296.3809999999999,
+          "target": 299.95,
+          "source": 301.107,
           "strength": 0
         }
       ],
-      "maxTempoChange": 0.09188118811880841,
-      "method": "Original beat landmarks, bounded pitch-preserving atempo, four-ms edge fades; listening review still required.",
+      "maxTempoChange": 0.07121057985758328,
+      "method": "Original beat landmarks, optional opening trim, bounded pitch-preserving atempo, four-ms edge fades; listening review still required.",
       "renderedAttackChecks": [
         {
-          "cueSeconds": 4.75,
-          "nearbyAttackSeconds": 4.75,
+          "cueSeconds": 1.15,
+          "nearbyAttackSeconds": 1.15,
           "offsetMs": 0.0,
-          "rise": 0.15610533580183983
+          "rise": 0.06420013308525085
         },
         {
-          "cueSeconds": 10.42,
-          "nearbyAttackSeconds": 10.42,
-          "offsetMs": 0.0,
-          "rise": 0.052272628992795944
-        },
-        {
-          "cueSeconds": 16.65,
-          "nearbyAttackSeconds": 16.65,
-          "offsetMs": 0.0,
-          "rise": 0.047332651913166046
-        },
-        {
-          "cueSeconds": 24.8,
-          "nearbyAttackSeconds": 24.8,
-          "offsetMs": 0.0,
-          "rise": 0.10595192387700081
-        },
-        {
-          "cueSeconds": 31.250000000000004,
-          "nearbyAttackSeconds": 31.25,
-          "offsetMs": -0.0,
-          "rise": 0.12222792208194733
-        },
-        {
-          "cueSeconds": 38.3,
-          "nearbyAttackSeconds": 38.3,
-          "offsetMs": 0.0,
-          "rise": 0.10382246971130371
-        },
-        {
-          "cueSeconds": 41.56333333333334,
-          "nearbyAttackSeconds": 41.56,
-          "offsetMs": -3.33,
-          "rise": 0.08392412960529327
-        },
-        {
-          "cueSeconds": 44.35,
-          "nearbyAttackSeconds": 44.35,
-          "offsetMs": 0.0,
-          "rise": 0.14472705125808716
-        },
-        {
-          "cueSeconds": 49.75000000000001,
-          "nearbyAttackSeconds": 49.81,
-          "offsetMs": 60.0,
-          "rise": 0.05928239971399307
-        },
-        {
-          "cueSeconds": 55.150000000000006,
-          "nearbyAttackSeconds": 55.15,
-          "offsetMs": -0.0,
-          "rise": 0.05972853675484657
-        },
-        {
-          "cueSeconds": 63.55,
-          "nearbyAttackSeconds": 63.55,
-          "offsetMs": 0.0,
-          "rise": 0.05250786058604717
-        },
-        {
-          "cueSeconds": 71.35000000000001,
-          "nearbyAttackSeconds": 71.35,
-          "offsetMs": -0.0,
-          "rise": 0.06701488606631756
-        },
-        {
-          "cueSeconds": 74.45,
-          "nearbyAttackSeconds": 74.45,
-          "offsetMs": 0.0,
-          "rise": 0.030435070395469666
-        },
-        {
-          "cueSeconds": 80.3,
-          "nearbyAttackSeconds": 80.375,
-          "offsetMs": 75.0,
-          "rise": 0.11255843937397003
-        },
-        {
-          "cueSeconds": 84.35,
-          "nearbyAttackSeconds": 84.35,
-          "offsetMs": 0.0,
-          "rise": 0.022965218871831894
-        },
-        {
-          "cueSeconds": 91.6,
-          "nearbyAttackSeconds": 91.6,
-          "offsetMs": 0.0,
-          "rise": 0.08145330101251602
-        },
-        {
-          "cueSeconds": 96.44999999999999,
-          "nearbyAttackSeconds": 96.45,
-          "offsetMs": 0.0,
-          "rise": 0.04784184694290161
-        },
-        {
-          "cueSeconds": 101.44999999999999,
-          "nearbyAttackSeconds": 101.45,
-          "offsetMs": 0.0,
-          "rise": 0.0538746640086174
-        },
-        {
-          "cueSeconds": 108.14333333333333,
-          "nearbyAttackSeconds": 108.19,
-          "offsetMs": 46.67,
-          "rise": 0.03837667405605316
-        },
-        {
-          "cueSeconds": 111.45,
-          "nearbyAttackSeconds": 111.45,
-          "offsetMs": 0.0,
-          "rise": 0.036668743938207626
-        },
-        {
-          "cueSeconds": 115.10000000000001,
-          "nearbyAttackSeconds": 115.06,
-          "offsetMs": -40.0,
-          "rise": 0.06620971858501434
-        },
-        {
-          "cueSeconds": 125.3,
-          "nearbyAttackSeconds": 125.3,
-          "offsetMs": 0.0,
-          "rise": 0.1107271034270525
-        },
-        {
-          "cueSeconds": 130.35000000000002,
-          "nearbyAttackSeconds": 130.35,
-          "offsetMs": -0.0,
-          "rise": 0.09388411045074463
-        },
-        {
-          "cueSeconds": 136.62,
-          "nearbyAttackSeconds": 136.62,
-          "offsetMs": 0.0,
-          "rise": 0.12602422386407852
-        },
-        {
-          "cueSeconds": 144.45000000000002,
-          "nearbyAttackSeconds": 144.45,
-          "offsetMs": -0.0,
-          "rise": 0.0948491096496582
-        },
-        {
-          "cueSeconds": 149.55,
-          "nearbyAttackSeconds": 149.55,
-          "offsetMs": 0.0,
-          "rise": 0.07368023693561554
-        },
-        {
-          "cueSeconds": 154.25000000000003,
-          "nearbyAttackSeconds": 154.25,
-          "offsetMs": -0.0,
-          "rise": 0.07882077246904373
-        },
-        {
-          "cueSeconds": 161.60000000000002,
-          "nearbyAttackSeconds": 161.6,
-          "offsetMs": -0.0,
-          "rise": 0.023336052894592285
-        },
-        {
-          "cueSeconds": 166.5,
-          "nearbyAttackSeconds": 166.5,
-          "offsetMs": 0.0,
-          "rise": 0.11978805810213089
-        },
-        {
-          "cueSeconds": 173.35000000000002,
-          "nearbyAttackSeconds": 173.35,
-          "offsetMs": -0.0,
-          "rise": 0.06975005567073822
-        },
-        {
-          "cueSeconds": 178.57333333333332,
-          "nearbyAttackSeconds": 178.58,
-          "offsetMs": 6.67,
-          "rise": 0.008139722049236298
-        },
-        {
-          "cueSeconds": 181.85,
-          "nearbyAttackSeconds": 181.785,
-          "offsetMs": -65.0,
-          "rise": 0.07023248076438904
-        },
-        {
-          "cueSeconds": 186.95000000000002,
-          "nearbyAttackSeconds": 186.95,
-          "offsetMs": -0.0,
-          "rise": 0.08510011434555054
-        },
-        {
-          "cueSeconds": 193.1,
-          "nearbyAttackSeconds": 193.1,
-          "offsetMs": 0.0,
-          "rise": 0.020041033625602722
-        },
-        {
-          "cueSeconds": 200.20000000000002,
-          "nearbyAttackSeconds": 200.2,
-          "offsetMs": -0.0,
-          "rise": 0.08327962458133698
-        },
-        {
-          "cueSeconds": 209.95000000000002,
-          "nearbyAttackSeconds": 209.97,
-          "offsetMs": 20.0,
-          "rise": 0.05590398609638214
-        },
-        {
-          "cueSeconds": 218.95,
-          "nearbyAttackSeconds": 218.89,
-          "offsetMs": -60.0,
-          "rise": 0.10056166350841522
-        },
-        {
-          "cueSeconds": 223.35000000000002,
-          "nearbyAttackSeconds": 223.35,
-          "offsetMs": -0.0,
-          "rise": 0.03689160943031311
-        },
-        {
-          "cueSeconds": 229.15,
-          "nearbyAttackSeconds": 229.1,
+          "cueSeconds": 4.05,
+          "nearbyAttackSeconds": 4.0,
           "offsetMs": -50.0,
-          "rise": 0.07089443504810333
+          "rise": 0.10843758285045624
         },
         {
-          "cueSeconds": 233.95,
-          "nearbyAttackSeconds": 233.95,
+          "cueSeconds": 8.75,
+          "nearbyAttackSeconds": 8.675,
+          "offsetMs": -75.0,
+          "rise": 0.10533799231052399
+        },
+        {
+          "cueSeconds": 14.42,
+          "nearbyAttackSeconds": 14.42,
           "offsetMs": 0.0,
-          "rise": 0.048983342945575714
+          "rise": 0.0676429457962513
         },
         {
-          "cueSeconds": 238.9633333333333,
-          "nearbyAttackSeconds": 239.03,
-          "offsetMs": 66.67,
-          "rise": 0.09593886137008667
-        },
-        {
-          "cueSeconds": 242.95,
-          "nearbyAttackSeconds": 243.02,
-          "offsetMs": 70.0,
-          "rise": 0.08296465873718262
-        },
-        {
-          "cueSeconds": 254.95,
-          "nearbyAttackSeconds": 254.95,
+          "cueSeconds": 20.65,
+          "nearbyAttackSeconds": 20.65,
           "offsetMs": 0.0,
-          "rise": 0.06267789751291275
+          "rise": 0.0389716699719429
         },
         {
-          "cueSeconds": 266.95,
-          "nearbyAttackSeconds": 266.95,
+          "cueSeconds": 28.8,
+          "nearbyAttackSeconds": 28.8,
           "offsetMs": 0.0,
-          "rise": 0.017510637640953064
+          "rise": 0.030579514801502228
         },
         {
-          "cueSeconds": 278.95,
-          "nearbyAttackSeconds": 278.95,
-          "offsetMs": 0.0,
-          "rise": 0.0922570675611496
+          "cueSeconds": 35.25,
+          "nearbyAttackSeconds": 35.265,
+          "offsetMs": 15.0,
+          "rise": 0.12305375933647156
         },
         {
-          "cueSeconds": 290.95,
-          "nearbyAttackSeconds": 290.95,
+          "cueSeconds": 42.3,
+          "nearbyAttackSeconds": 42.24,
+          "offsetMs": -60.0,
+          "rise": 0.1201520562171936
+        },
+        {
+          "cueSeconds": 45.56333333333334,
+          "nearbyAttackSeconds": 45.62,
+          "offsetMs": 56.67,
+          "rise": 0.08087944984436035
+        },
+        {
+          "cueSeconds": 48.35,
+          "nearbyAttackSeconds": 48.35,
           "offsetMs": 0.0,
-          "rise": 0.03290220722556114
+          "rise": 0.04095183312892914
+        },
+        {
+          "cueSeconds": 53.75000000000001,
+          "nearbyAttackSeconds": 53.75,
+          "offsetMs": -0.0,
+          "rise": 0.05526275932788849
+        },
+        {
+          "cueSeconds": 59.150000000000006,
+          "nearbyAttackSeconds": 59.15,
+          "offsetMs": -0.0,
+          "rise": 0.11292877793312073
+        },
+        {
+          "cueSeconds": 67.55,
+          "nearbyAttackSeconds": 67.55,
+          "offsetMs": 0.0,
+          "rise": 0.09053612500429153
+        },
+        {
+          "cueSeconds": 75.35000000000001,
+          "nearbyAttackSeconds": 75.35,
+          "offsetMs": -0.0,
+          "rise": 0.09191828966140747
+        },
+        {
+          "cueSeconds": 78.45,
+          "nearbyAttackSeconds": 78.45,
+          "offsetMs": 0.0,
+          "rise": 0.061680614948272705
+        },
+        {
+          "cueSeconds": 84.3,
+          "nearbyAttackSeconds": 84.3,
+          "offsetMs": 0.0,
+          "rise": 0.1027640737593174
+        },
+        {
+          "cueSeconds": 88.35,
+          "nearbyAttackSeconds": 88.35,
+          "offsetMs": 0.0,
+          "rise": 0.040800631046295166
+        },
+        {
+          "cueSeconds": 95.6,
+          "nearbyAttackSeconds": 95.58,
+          "offsetMs": -20.0,
+          "rise": 0.10522715747356415
+        },
+        {
+          "cueSeconds": 100.44999999999999,
+          "nearbyAttackSeconds": 100.45,
+          "offsetMs": 0.0,
+          "rise": 0.04017399251461029
+        },
+        {
+          "cueSeconds": 105.44999999999999,
+          "nearbyAttackSeconds": 105.515,
+          "offsetMs": 65.0,
+          "rise": 0.026732131838798523
+        },
+        {
+          "cueSeconds": 112.14333333333333,
+          "nearbyAttackSeconds": 112.145,
+          "offsetMs": 1.67,
+          "rise": 0.1587054282426834
+        },
+        {
+          "cueSeconds": 115.45,
+          "nearbyAttackSeconds": 115.45,
+          "offsetMs": 0.0,
+          "rise": 0.06688722968101501
+        },
+        {
+          "cueSeconds": 119.10000000000001,
+          "nearbyAttackSeconds": 119.1,
+          "offsetMs": -0.0,
+          "rise": 0.05396530404686928
+        },
+        {
+          "cueSeconds": 129.3,
+          "nearbyAttackSeconds": 129.3,
+          "offsetMs": 0.0,
+          "rise": 0.04505908116698265
+        },
+        {
+          "cueSeconds": 134.35000000000002,
+          "nearbyAttackSeconds": 134.395,
+          "offsetMs": 45.0,
+          "rise": 0.09485982358455658
+        },
+        {
+          "cueSeconds": 140.62,
+          "nearbyAttackSeconds": 140.62,
+          "offsetMs": 0.0,
+          "rise": 0.019389547407627106
+        },
+        {
+          "cueSeconds": 148.45000000000002,
+          "nearbyAttackSeconds": 148.45,
+          "offsetMs": -0.0,
+          "rise": 0.10034018754959106
+        },
+        {
+          "cueSeconds": 153.55,
+          "nearbyAttackSeconds": 153.55,
+          "offsetMs": 0.0,
+          "rise": 0.14245270192623138
+        },
+        {
+          "cueSeconds": 158.25000000000003,
+          "nearbyAttackSeconds": 158.185,
+          "offsetMs": -65.0,
+          "rise": 0.02032884955406189
+        },
+        {
+          "cueSeconds": 165.60000000000002,
+          "nearbyAttackSeconds": 165.6,
+          "offsetMs": -0.0,
+          "rise": 0.11914166063070297
+        },
+        {
+          "cueSeconds": 170.5,
+          "nearbyAttackSeconds": 170.5,
+          "offsetMs": 0.0,
+          "rise": 0.11502756178379059
+        },
+        {
+          "cueSeconds": 177.35000000000002,
+          "nearbyAttackSeconds": 177.35,
+          "offsetMs": -0.0,
+          "rise": 0.009942956268787384
+        },
+        {
+          "cueSeconds": 182.57333333333332,
+          "nearbyAttackSeconds": 182.495,
+          "offsetMs": -78.33,
+          "rise": 0.0
+        },
+        {
+          "cueSeconds": 185.85,
+          "nearbyAttackSeconds": 185.775,
+          "offsetMs": -75.0,
+          "rise": 0.09407784044742584
+        },
+        {
+          "cueSeconds": 190.95000000000002,
+          "nearbyAttackSeconds": 190.95,
+          "offsetMs": -0.0,
+          "rise": 0.0222172848880291
+        },
+        {
+          "cueSeconds": 197.1,
+          "nearbyAttackSeconds": 197.1,
+          "offsetMs": 0.0,
+          "rise": 0.046788446605205536
+        },
+        {
+          "cueSeconds": 204.20000000000002,
+          "nearbyAttackSeconds": 204.28,
+          "offsetMs": 80.0,
+          "rise": 0.14488127827644348
+        },
+        {
+          "cueSeconds": 213.95000000000002,
+          "nearbyAttackSeconds": 213.95,
+          "offsetMs": -0.0,
+          "rise": 0.01569846272468567
+        },
+        {
+          "cueSeconds": 222.95,
+          "nearbyAttackSeconds": 222.95,
+          "offsetMs": 0.0,
+          "rise": 0.09985429793596268
+        },
+        {
+          "cueSeconds": 227.35000000000002,
+          "nearbyAttackSeconds": 227.35,
+          "offsetMs": -0.0,
+          "rise": 0.060624055564403534
+        },
+        {
+          "cueSeconds": 233.15,
+          "nearbyAttackSeconds": 233.085,
+          "offsetMs": -65.0,
+          "rise": 0.02356923744082451
+        },
+        {
+          "cueSeconds": 237.95,
+          "nearbyAttackSeconds": 237.965,
+          "offsetMs": 15.0,
+          "rise": 0.05882804095745087
+        },
+        {
+          "cueSeconds": 242.9633333333333,
+          "nearbyAttackSeconds": 242.965,
+          "offsetMs": 1.67,
+          "rise": 0.039387501776218414
+        },
+        {
+          "cueSeconds": 246.95,
+          "nearbyAttackSeconds": 246.95,
+          "offsetMs": 0.0,
+          "rise": 0.020154953002929688
+        },
+        {
+          "cueSeconds": 258.95,
+          "nearbyAttackSeconds": 258.95,
+          "offsetMs": 0.0,
+          "rise": 0.08108541369438171
+        },
+        {
+          "cueSeconds": 270.95,
+          "nearbyAttackSeconds": 270.95,
+          "offsetMs": 0.0,
+          "rise": 0.05620923638343811
+        },
+        {
+          "cueSeconds": 282.95,
+          "nearbyAttackSeconds": 283.015,
+          "offsetMs": 65.0,
+          "rise": 0.0717158205807209
+        },
+        {
+          "cueSeconds": 294.95,
+          "nearbyAttackSeconds": 294.95,
+          "offsetMs": 0.0,
+          "rise": 0.10361412167549133
         }
       ],
-      "maxMeasuredLocalOffsetMs": 75.0,
+      "maxMeasuredLocalOffsetMs": 80.0,
       "attackEdits": [
         {
-          "time": 4.75,
-          "sourceShiftMs": 5.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 10.42,
-          "sourceShiftMs": -20.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 16.65,
-          "sourceShiftMs": -50.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 24.8,
-          "sourceShiftMs": 70.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 31.250000000000004,
-          "sourceShiftMs": 60.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 38.3,
-          "sourceShiftMs": 5.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 41.56333333333334,
-          "sourceShiftMs": -73.33,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 44.35,
-          "sourceShiftMs": 35.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 49.75000000000001,
-          "sourceShiftMs": 55.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 55.150000000000006,
-          "sourceShiftMs": -15.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 63.55,
+          "time": 1.15,
           "sourceShiftMs": 30.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 71.35000000000001,
-          "sourceShiftMs": -40.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 74.45,
-          "sourceShiftMs": -55.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 80.3,
-          "sourceShiftMs": 15.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 84.35,
-          "sourceShiftMs": 60.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 91.6,
-          "sourceShiftMs": 40.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 96.44999999999999,
-          "sourceShiftMs": 5.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 101.44999999999999,
-          "sourceShiftMs": -5.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 108.14333333333333,
-          "sourceShiftMs": -3.33,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 111.45,
-          "sourceShiftMs": -25.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 115.10000000000001,
-          "sourceShiftMs": -75.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 125.3,
-          "sourceShiftMs": 60.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 130.35000000000002,
-          "sourceShiftMs": -15.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 136.62,
-          "sourceShiftMs": 35.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 144.45000000000002,
-          "sourceShiftMs": 70.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 149.55,
-          "sourceShiftMs": 45.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 154.25000000000003,
-          "sourceShiftMs": 45.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 161.60000000000002,
-          "sourceShiftMs": -15.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 166.5,
-          "sourceShiftMs": 60.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 173.35000000000002,
-          "sourceShiftMs": -70.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 178.57333333333332,
-          "sourceShiftMs": 26.67,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 181.85,
-          "sourceShiftMs": -75.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 186.95000000000002,
-          "sourceShiftMs": -5.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 193.1,
-          "sourceShiftMs": -5.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 200.20000000000002,
-          "sourceShiftMs": 25.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 209.95000000000002,
-          "sourceShiftMs": 70.0,
-          "blendHalfWidthMs": 250,
-          "unchangedCenterHalfWidthMs": 110
-        },
-        {
-          "time": 218.95,
+          "time": 4.05,
           "sourceShiftMs": -65.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 223.35000000000002,
-          "sourceShiftMs": 50.0,
+          "time": 8.75,
+          "sourceShiftMs": -50.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 229.15,
-          "sourceShiftMs": -80.0,
+          "time": 14.42,
+          "sourceShiftMs": 65.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 233.95,
-          "sourceShiftMs": -70.0,
+          "time": 20.65,
+          "sourceShiftMs": 65.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 238.9633333333333,
-          "sourceShiftMs": 36.67,
+          "time": 28.8,
+          "sourceShiftMs": 45.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 242.95,
-          "sourceShiftMs": 35.0,
+          "time": 35.25,
+          "sourceShiftMs": 70.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 254.95,
+          "time": 42.3,
+          "sourceShiftMs": -30.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 45.56333333333334,
+          "sourceShiftMs": 71.67,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 48.35,
+          "sourceShiftMs": 25.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 53.75000000000001,
+          "sourceShiftMs": -65.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 59.150000000000006,
+          "sourceShiftMs": -5.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 67.55,
           "sourceShiftMs": -15.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 266.95,
-          "sourceShiftMs": 40.0,
+          "time": 75.35000000000001,
+          "sourceShiftMs": 35.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 278.95,
+          "time": 78.45,
+          "sourceShiftMs": -70.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 84.3,
+          "sourceShiftMs": 15.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 88.35,
+          "sourceShiftMs": 10.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 95.6,
+          "sourceShiftMs": -75.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 100.44999999999999,
+          "sourceShiftMs": 75.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 105.44999999999999,
+          "sourceShiftMs": 65.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 112.14333333333333,
+          "sourceShiftMs": -23.33,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 115.45,
+          "sourceShiftMs": 30.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 119.10000000000001,
+          "sourceShiftMs": -70.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 129.3,
+          "sourceShiftMs": -20.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 134.35000000000002,
           "sourceShiftMs": 60.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         },
         {
-          "time": 290.95,
+          "time": 140.62,
+          "sourceShiftMs": 70.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 148.45000000000002,
+          "sourceShiftMs": -10.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 153.55,
+          "sourceShiftMs": -40.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 158.25000000000003,
+          "sourceShiftMs": -20.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 165.60000000000002,
+          "sourceShiftMs": -75.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 170.5,
+          "sourceShiftMs": -35.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 177.35000000000002,
+          "sourceShiftMs": -25.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 182.57333333333332,
+          "sourceShiftMs": -78.33,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 185.85,
+          "sourceShiftMs": -75.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 190.95000000000002,
+          "sourceShiftMs": -20.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 197.1,
+          "sourceShiftMs": -25.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 204.20000000000002,
+          "sourceShiftMs": 70.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 213.95000000000002,
+          "sourceShiftMs": -35.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 222.95,
           "sourceShiftMs": -60.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 227.35000000000002,
+          "sourceShiftMs": 50.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 233.15,
+          "sourceShiftMs": -20.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 237.95,
+          "sourceShiftMs": 80.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 242.9633333333333,
+          "sourceShiftMs": -28.33,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 246.95,
+          "sourceShiftMs": 15.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 258.95,
+          "sourceShiftMs": -10.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 270.95,
+          "sourceShiftMs": 45.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 282.95,
+          "sourceShiftMs": 25.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 294.95,
+          "sourceShiftMs": 25.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         }

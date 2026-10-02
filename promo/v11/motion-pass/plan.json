@@ -11,10 +11,10 @@
   ],
   "chapters": [
     {
-      "name": "首页与需求",
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/output/opening-presets.mp4",
+      "name": "Mo问候、首页与需求",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/greeting-chapter/output/greeting-and-opening.mp4",
       "start": 0,
-      "duration": 18
+      "duration": 22
     },
     {
       "name": "多Agent与内置配色",
@@ -59,5 +59,5 @@
       "duration": 56
     }
   ],
-  "duration": 295.95
+  "duration": 299.95
 }

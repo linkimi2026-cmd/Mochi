@@ -1,0 +1,10 @@
+import {mkdirSync,copyFileSync,writeFileSync,readFileSync} from 'node:fs';
+import {execFileSync} from 'node:child_process';
+import {resolve} from 'node:path';
+import {createHash} from 'node:crypto';
+const dir=resolve('promo/v11/greeting-chapter'),assets=resolve(dir,'assets');mkdirSync(assets,{recursive:true});
+for(const n of ['gsap.min.js','NotoSansCJKsc-Regular.otf','NotoSansCJKsc-Bold.otf'])copyFileSync('promo/v10/assets/'+n,resolve(assets,n));
+execFileSync('promo/node_modules/.bin/esbuild',[resolve(dir,'native.tsx'),'--bundle','--format=iife','--outfile='+resolve(assets,'native.js'),'--alias:react='+resolve('apps/desktop/runtime-modern/node_modules/react'),'--alias:react/jsx-runtime='+resolve('apps/desktop/runtime-modern/node_modules/react/jsx-runtime.js'),'--jsx=automatic','--define:process.env.NODE_ENV="production"'],{stdio:'inherit'});
+execFileSync('ffmpeg',['-v','error','-nostdin','-i','promo/v11/opening-chapter/output/opening-presets.mp4','-t','1','-an','-c:v','libx264','-preset','fast','-crf','17','-g','30','-y',resolve(assets,'home.mp4')],{stdio:'inherit'});
+const path='client-plugins/jxl-brand/src/ExpressiveOrb.tsx';
+writeFileSync(resolve(dir,'source-manifest.json'),JSON.stringify({character:'Original Mochi ExpressiveOrb; laptop is a separate original component and is not part of the rolling orb',source:path,sha256:createHash('sha256').update(readFileSync(path)).digest('hex'),greeting:'哈喽，我是 Mochi。',additionalDuration:4,sourceUi:'../opening-chapter/output/opening-presets.mp4'},null,2)+'\n');

@@ -12,7 +12,7 @@ for(const n of ['gsap.min.js','NotoSansCJKsc-Regular.otf','NotoSansCJKsc-Bold.ot
 writeFileSync(resolve(shared,'palettes.css'),petPaletteCss);
 execFileSync(resolve(root,'promo/node_modules/.bin/esbuild'),['promo/v11/motion-pass/native.tsx','--bundle','--format=iife','--outfile=promo/v11/motion-pass/assets/native.js','--alias:react=./apps/desktop/runtime-modern/node_modules/react','--jsx=automatic','--alias:react/jsx-runtime=./apps/desktop/runtime-modern/node_modules/react/jsx-runtime.js','--define:process.env.NODE_ENV="production"'],{cwd:root,stdio:'inherit'});
 const chapters=[
- ['首页与需求','../opening-chapter/output/opening-presets.mp4',0,18],
+ ['Mo问候、首页与需求','../greeting-chapter/output/greeting-and-opening.mp4',0,22],
  ['多Agent与内置配色','../team-dialogue/output/team-dialogue.mp4',0,23.35],
  ['真实课件与教学成果','../delivery-chapter/output/teaching-and-delivery.mp4',0,38],
  ['交互模型','../model-chapter/output/model-journey.mp4',0,26.8],

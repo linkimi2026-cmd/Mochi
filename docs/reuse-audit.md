@@ -650,3 +650,10 @@ Promptfoo实际接入结果：临时安装0.123.0，常规安装解析可选依�
 直接使用原UserStyleBubble、ApprovalFlow、MarkdownText和设计token，提取边界检查阻止源码变动后静默变形。原基础组件缺少的构建依赖仅补入影片隔离目录：simple-icons16.31.0/CC0-1.0、zustand4.4.7/MIT、immer10.1.1/MIT；符合上游依赖范围，npm许可已核，保留独立lock，不改变桌面软件依赖。
 
 通过当前原工具、真实隔离demo后台完成问询/委托/寻物投递回应，以及DEMO003申请→放行→到达→离开→返班CLOSED。审批由已授权演示脚本确认，不能冒充人工点击实录。寻物应答结束不等于物品找到，委托接办不等于工作完成。影片复用已保存结果，不在重建时再次发送。维护成本限定原组件适配与剪辑，未改产品业务代码。30秒补段的运行、布局和96项文字对比检查通过；一项循环动画静态重叠提示仍需结合时间轴/实际输出检查。全功能验收仍未完成。
+
+
+#### V11 定稿范围与Mo滚入开场
+
+2026-10-02用户明确从本片排除语音、拍题、课表，冻结新增功能，改为细节打磨；另指定Mo滚入中央说“哈喽，我是Mochi”后进入正片。完整工程检索 `site:github.com/heygen-com/hyperframes-launches k3-promo character animation`、组件检索 `site:github.com/greensock/GSAP timeline rotation bounce` 均成功，继续复用https://github.com/heygen-com/hyperframes-launches 与https://github.com/greensock/GSAP已有固定版本与许可，不新增框架依赖。原ExpressiveOrb球体可独立渲染，无需另造角色；原产品电脑是分离组件，滚入时仅使用球体。
+
+问候净增4秒，逐字文字与物理回弹，随后连接既有真实首页。A2A回应放大、角色标签跟随对应消息，审批卡先退场再出现回应；校园章节接缝以0.65秒连续空间转场代替硬切。维护范围仅promo原组件编舞与剪辑，未修改业务逻辑。冷启动可见性和媒体id由实际渲染检查纠正，接入结果另见本轮验证。
