@@ -1,0 +1,15 @@
+{
+  "durationSeconds": 235,
+  "width": 2560,
+  "height": 1440,
+  "fps": 120,
+  "videoFrames": 28200,
+  "bytes": 415698042,
+  "decodeExitCode": 0,
+  "decodeErrorLogBytes": 0,
+  "audioPeakDbFS": -4.3,
+  "contactFramesReviewed": 20,
+  "status": "first-assembly-for-review",
+  "fullFeatureCoverage": false,
+  "sha256": "73532ccc5669fb1c0812091f648929296a4836c056bc5653e15fcd7778c88544"
+}

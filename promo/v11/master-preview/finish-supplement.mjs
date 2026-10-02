@@ -1,0 +1,8 @@
+import {writeFileSync} from 'node:fs';import {execFileSync} from 'node:child_process';import {dirname,resolve} from 'node:path';import {fileURLToPath} from 'node:url';
+const dir=dirname(fileURLToPath(import.meta.url));const inputs=['assets/campus-rendered.mp4','assets/daily-rendered.mp4'];
+for(const [i,p] of inputs.entries()){const probe=JSON.parse(execFileSync('ffprobe',['-v','error','-show_streams','-show_format','-of','json',resolve(dir,p)],{encoding:'utf8'}));const v=probe.streams.find(s=>s.codec_type==='video');if(v.width!==2560||v.height!==1440||Math.abs(Number(probe.format.duration)-[36,56][i])>.02)throw Error('unexpected part '+p)}
+const normalized=inputs.map((p,i)=>{const out=resolve(dir,'assets/supplement-normal-'+i+'.mp4');execFileSync('ffmpeg',['-v','error','-i',resolve(dir,p),'-an','-c:v','copy','-video_track_timescale','90000','-y',out],{stdio:'inherit'});return out});
+const list=resolve(dir,'assets/supplement-concat.txt');writeFileSync(list,normalized.map(p=>`file '${p}'`).join('\n'));
+execFileSync('ffmpeg',['-v','error','-f','concat','-safe','0','-i',list,'-an','-c:v','copy','-movflags','+faststart','-y',resolve(dir,'supplement/output/continuation.mp4')],{stdio:'inherit'});
+const result=JSON.parse(execFileSync('ffprobe',['-v','error','-show_streams','-show_format','-of','json',resolve(dir,'supplement/output/continuation.mp4')],{encoding:'utf8'}));
+const v=result.streams.find(s=>s.codec_type==='video');if(v.avg_frame_rate!=='120/1'||v.nb_frames!=='11040'||Math.abs(Number(result.format.duration)-92)>.01)throw Error('supplement timebase/frame validation failed');

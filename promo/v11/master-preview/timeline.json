@@ -1,0 +1,51 @@
+{
+  "width": 2560,
+  "height": 1440,
+  "fps": 120,
+  "duration": 234.99999999999997,
+  "overlap": 0.4,
+  "chapters": [
+    {
+      "name": "暖心首页与预设",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/output/opening-presets.mp4",
+      "duration": 18,
+      "start": 0,
+      "end": 18
+    },
+    {
+      "name": "多 Agent 与配色",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-chapter/output/team-palette.mp4",
+      "duration": 24,
+      "start": 17.6,
+      "end": 41.6
+    },
+    {
+      "name": "课件与教学成果",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/output/teaching-artefacts.mp4",
+      "duration": 25,
+      "start": 41.2,
+      "end": 66.2
+    },
+    {
+      "name": "交互模型",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/model-chapter/output/model-journey.mp4",
+      "duration": 28,
+      "start": 65.8,
+      "end": 93.8
+    },
+    {
+      "name": "教室消息与叫人",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/output/student-chapter-paper-world.mp4",
+      "duration": 50,
+      "start": 93.39999999999999,
+      "end": 143.39999999999998
+    },
+    {
+      "name": "校园、记忆、自动化与结尾",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/output/continuation.mp4",
+      "duration": 92,
+      "start": 142.99999999999997,
+      "end": 234.99999999999997
+    }
+  ]
+}

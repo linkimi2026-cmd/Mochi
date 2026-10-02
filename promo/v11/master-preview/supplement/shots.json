@@ -1,0 +1,132 @@
+[
+  {
+    "id": 0,
+    "source": "campus-find-release",
+    "sourceStart": 2,
+    "duration": 6,
+    "crop": "2560:1220:0:170",
+    "title": "校园里的工作，继续连接。",
+    "note": "嘉行联真实网站 · 独立后端 · 隔离演示数据",
+    "start": 0
+  },
+  {
+    "id": 1,
+    "source": "campus-find-release",
+    "sourceStart": 63,
+    "duration": 6,
+    "crop": "1640:650:640:680",
+    "title": "找到那位同学。",
+    "note": "按演示学号查询 · 只显示授权范围内的信息",
+    "start": 6
+  },
+  {
+    "id": 2,
+    "source": "campus-find-release",
+    "sourceStart": 77,
+    "duration": 6,
+    "crop": "1660:900:630:470",
+    "title": "再看清他的状态。",
+    "note": "学生档案与到访记录",
+    "start": 12
+  },
+  {
+    "id": 3,
+    "source": "campus-find-release",
+    "sourceStart": 118,
+    "duration": 6,
+    "crop": "2100:1200:430:180",
+    "title": "一项申请，明确去向。",
+    "note": "选择学生、目的地与预计到达时间",
+    "start": 18
+  },
+  {
+    "id": 4,
+    "source": "campus-find-release",
+    "sourceStart": 132,
+    "duration": 6,
+    "crop": "2080:1150:430:210",
+    "title": "登记之后，交给审批。",
+    "note": "真实登记操作 · 学生放行流程",
+    "start": 24
+  },
+  {
+    "id": 5,
+    "source": "campus-find-release",
+    "sourceStart": 148,
+    "duration": 6,
+    "crop": "2080:1150:430:210",
+    "title": "每一步，都有明确状态。",
+    "note": "本次原片止于待审批 · 尚未正式放行",
+    "start": 30
+  },
+  {
+    "id": 6,
+    "source": "journal-memory-clean",
+    "sourceStart": 33,
+    "duration": 8,
+    "crop": "1340:1280:420:105",
+    "title": "今天的交流，留下来。",
+    "note": "Mochi 日记 · 来自已有真实活动记录",
+    "start": 36
+  },
+  {
+    "id": 7,
+    "source": "journal-memory-clean",
+    "sourceStart": 52,
+    "duration": 6,
+    "crop": "1340:1280:420:105",
+    "title": "记住，也能说明依据。",
+    "note": "展开来源 · 回到那次交流",
+    "start": 44
+  },
+  {
+    "id": 8,
+    "source": "journal-memory-clean",
+    "sourceStart": 66,
+    "duration": 8,
+    "crop": "1340:1230:420:155",
+    "title": "慢慢了解你的习惯。",
+    "note": "偏好与观察 · 记忆内容可查看",
+    "start": 50
+  },
+  {
+    "id": 9,
+    "source": "journal-memory-clean",
+    "sourceStart": 77,
+    "duration": 6,
+    "crop": "1340:1280:420:105",
+    "title": "决定权，始终在你。",
+    "note": "查看更正表单 · 本镜头没有提交修改",
+    "start": 58
+  },
+  {
+    "id": 10,
+    "source": "history-automation-clean",
+    "sourceStart": 48,
+    "duration": 8,
+    "crop": "1340:1280:420:105",
+    "title": "把经历，串成一段历史。",
+    "note": "本机日记摘录预览 · 保留来源",
+    "start": 64
+  },
+  {
+    "id": 11,
+    "source": "history-automation-clean",
+    "sourceStart": 6,
+    "duration": 6,
+    "crop": "2160:1360:0:65",
+    "title": "约定好，再按时出现。",
+    "note": "自动化任务 · 已有一次性规则",
+    "start": 72
+  },
+  {
+    "id": 12,
+    "source": "history-automation-clean",
+    "sourceStart": 17,
+    "duration": 6,
+    "crop": "2160:1360:0:65",
+    "title": "执行之后，也有记录。",
+    "note": "10 月 2 日既有运行历史 · 不是新触发",
+    "start": 78
+  }
+]
