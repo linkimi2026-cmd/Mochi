@@ -1,0 +1,45 @@
+{
+  "sourceRoot": "../capture-private.nosync",
+  "crop": "2160:1376:0:64",
+  "conformFps": 60,
+  "outputFps": 120,
+  "shots": [
+    {
+      "name": "home",
+      "source": "home-presets-clean.mov",
+      "ranges": [
+        [
+          82,
+          4
+        ]
+      ],
+      "sha256": "570d65ce7815aae98c57c188dff82604148a02e7ceda9569e1572ca9bae74f3d"
+    },
+    {
+      "name": "scenes",
+      "source": "presets-controls.mov",
+      "ranges": [
+        [
+          43,
+          6
+        ]
+      ],
+      "sha256": "49076824d641d2cfce659e18963d6cb3a1ff14f7ad7e427c65896b61a90add22"
+    },
+    {
+      "name": "examples",
+      "source": "examples-expanded.mov",
+      "ranges": [
+        [
+          43,
+          4
+        ],
+        [
+          56,
+          4
+        ]
+      ],
+      "sha256": "9e7260f1156a84cc3f0bb7602a164e7f17c22b7199e5d3b9a8230a3c62846052"
+    }
+  ]
+}

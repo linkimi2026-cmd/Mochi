@@ -1,0 +1,41 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><title>Mochi · 真实首页与场景预设</title>
+<script src="assets/gsap.min.js"></script><script src="assets/motion.js"></script><link rel="stylesheet" href="assets/motion.css">
+<style>
+@font-face{font-family:MoSans;src:url('assets/NotoSansCJKsc-Regular.otf')}@font-face{font-family:MoSans;src:url('assets/NotoSansCJKsc-Bold.otf');font-weight:700 900}@font-face{font-family:MoSerif;src:url('assets/NotoSerifCJKsc-SemiBold.otf')}
+*{box-sizing:border-box}body{margin:0;color:#263e35;font-family:MoSans}#film{width:2560px;height:1440px;position:relative;overflow:hidden;background:#f5f1e8}
+.camera{position:absolute;left:0;top:0;width:2160px;height:1376px;transform-origin:0 0}
+.camera video{position:absolute;inset:0;width:2160px;height:1376px;display:block;clip-path:inset(0 18px 28px 0)}
+#home-camera{transform:translate(-100px,-240px) scale(1.3)}#scene-camera{transform:translate(-250px,-490px) scale(1.1)}#example-camera{transform:translate(-160px,-200px) scale(1.25)}
+.copy{position:absolute;pointer-events:none;opacity:0;z-index:20}.glyph{display:inline-block;opacity:0}.copy p{opacity:0}h1,h2,p{margin:0}#greeting-copy{left:160px;top:92px}#greeting-copy h1{font:900 128px/1.1 MoSans;letter-spacing:-7px}#greeting-copy p{font:38px/1.5 MoSerif;margin-top:22px}
+#scene-copy{left:1440px;top:875px;width:1020px}#scene-copy h2{font:900 82px/1.3 MoSans;letter-spacing:-4px}#scene-copy p{font:34px/1.75 MoSans;margin-top:36px;max-width:950px}
+#example-copy{left:260px;top:1290px}#example-copy h2{font:700 50px/1.4 MoSans;letter-spacing:-1px}
+#source-note{position:absolute;left:80px;bottom:30px;font:23px MoSans;color:#536354}#light{position:absolute;inset:0;pointer-events:none;opacity:0;background:#f5f1e8}
+</style></head><body><main id="film" data-composition-id="mochi-opening" data-width="2560" data-height="1440" data-duration="18" data-fps="120">
+<div id="home-camera" class="camera" data-layout-allow-overflow><video id="home-video" class="clip" src="assets/home.mp4" muted playsinline data-start="0" data-duration="4" data-track-index="1"></video></div>
+<div id="scene-camera" class="camera" data-layout-allow-overflow><video id="scene-video" class="clip" src="assets/scenes.mp4" muted playsinline data-start="4" data-duration="6" data-track-index="1"></video></div>
+<div id="example-camera" class="camera" data-layout-allow-overflow><video id="example-video" class="clip" src="assets/examples.mp4" muted playsinline data-start="10" data-duration="8" data-track-index="1"></video></div>
+<section id="greeting-copy" class="copy"><h1>Mochi</h1><p>一声问候，一个开始。</p></section>
+<section id="scene-copy" class="copy"><h2>常用能力，<br>随手就绪。</h2><p>预置场景与 Agent 配置<br>备课、资料、成绩、班级协作</p></section>
+<section id="example-copy" class="copy"><h2>从一个示例开始，再写成你的想法。</h2></section>
+<div id="source-note">真实 Mochi 窗口录制 · 节日演示日期：10 月 1 日</div><div id="light"></div>
+<audio id="opening-music" src="assets/music-review.wav" data-start="0" data-duration="18" data-track-index="9"></audio></main><script>
+const tl=gsap.timeline({paused:true});window.__timelines={'mochi-opening':tl};const M=window.MochiMotion,p=M.createCursor(document.querySelector('#film'));
+function headline(id,at,out){const el=document.querySelector(id),h=el.querySelector('h1,h2');for(const node of [...h.childNodes]){if(node.nodeType!==3)continue;const f=document.createDocumentFragment();for(const letter of node.textContent){const span=document.createElement('span');span.className='glyph';span.textContent=letter;f.append(span)}node.replaceWith(f)}
+tl.set(el,{opacity:1},at);tl.fromTo(el.querySelectorAll('.glyph'),{y:55,rotation:2,opacity:0},{y:0,rotation:0,opacity:1,stagger:.025,duration:.62,ease:'back.out(1.15)',immediateRender:false},at);const paragraphs=el.querySelectorAll('p');if(paragraphs.length)tl.fromTo(paragraphs,{y:25,opacity:0},{y:0,opacity:1,duration:.55,immediateRender:false},at+.7);tl.to(el,{y:-65,opacity:0,duration:.45,ease:'power2.in'},out)}
+headline('#greeting-copy',.1,2.6);headline('#scene-copy',5.3,9.35);headline('#example-copy',10.6,17.35);
+M.place(tl,'#home-camera',{x:-100,y:-240,scale:1.3},{x:-250,y:-490,scale:1.1},2.8,1.2);
+M.place(tl,'#scene-camera',{x:-250,y:-490,scale:1.1},{x:-580,y:-800,scale:1.5},4.7,1.1);
+// The cursor stays in screen coordinates. Its position follows the camera algebra,
+// while its 48 × 60 pixel shape never receives the camera scale.
+M.movePointer(tl,p,{x:2100,y:1070},{x:560,y:235},3.15,.7);M.click(tl,p,{x:560,y:235},4.75);
+M.movePointer(tl,p,{x:560,y:235},{x:725,y:350},4.85,.8);tl.to(p.cursor,{opacity:0,duration:.2},5.85);
+// A brief exposure bridge marks the editorial cut between two actual presets.
+tl.fromTo('#light',{opacity:0},{opacity:1,duration:.18,immediateRender:false},9.82);tl.to('#light',{opacity:0,duration:.3},10);
+M.movePointer(tl,p,{x:1580,y:1030},{x:500,y:715},10.05,.4);M.click(tl,p,{x:500,y:715},10.42);
+M.movePointer(tl,p,{x:500,y:715},{x:860,y:750},11.1,.65);tl.to(p.cursor,{opacity:0,duration:.2},12);
+// Waiting from source 47–56 s is removed; the selection itself remains at normal speed.
+M.movePointer(tl,p,{x:1440,y:930},{x:710,y:750},16.0,.55);M.click(tl,p,{x:710,y:750},16.65);
+M.movePointer(tl,p,{x:710,y:750},{x:2250,y:1130},16.95,.65);tl.to(p.cursor,{opacity:0,duration:.2},17.6);
+M.place(tl,'#example-camera',{x:-160,y:-200,scale:1.25},{x:-250,y:-360,scale:1.45},17.05,.95);
+tl.to('#source-note',{opacity:0,duration:.2},9.8);tl.to({}, {duration:.01},17.99);
+</script></body></html>
