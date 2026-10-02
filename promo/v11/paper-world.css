@@ -1,0 +1,9 @@
+.paper-world{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.paper-world-floor,.paper-world-far,.paper-world-near{position:absolute;left:0;top:0;width:7680px;height:1440px;will-change:transform}
+.paper-room{position:absolute;top:0;width:2560px;height:1440px;background:radial-gradient(ellipse at 55% 35%,#fffdf5 0%,#f4eedf 78%)}
+.paper-room.classroom{background:radial-gradient(ellipse at 50% 35%,#f6fcfb 0%,#deedea 78%)}
+.paper-room.campus{background:radial-gradient(ellipse at 50% 35%,#fcfcf3 0%,#e9edda 78%)}
+.world-page{position:absolute;width:750px;height:1000px;border-radius:3px;background:#fffdf280;box-shadow:0 7px 26px #5366420d;outline:1px solid #a1ab891f}
+.world-page-1{background:#c7d5bd55;width:650px;height:950px}
+.world-page-2{background:#d6b99724;width:900px;height:800px}
+.world-paper-edge{position:absolute;top:-220px;width:450px;height:1900px;background:#fdfbf570;transform:rotate(-16deg);box-shadow:24px 0 50px #39492b08}

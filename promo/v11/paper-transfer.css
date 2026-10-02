@@ -1,0 +1,5 @@
+.paper-courier{position:absolute;left:0;top:0;width:700px;height:430px;transform-origin:0 0;perspective:1400px;z-index:12;opacity:0;visibility:hidden;pointer-events:none;filter:drop-shadow(0 20px 22px #364b382b)}
+.courier-sheet,.courier-panel{position:absolute;inset:0;transform-style:preserve-3d}
+.courier-panel{background:#fffdf5;border-radius:8px;transform-origin:50% 50%;overflow:hidden;backface-visibility:hidden}
+.courier-content{width:644px;margin:28px;font-size:14px}
+.courier-plane{position:absolute;inset:0;width:700px!important;height:430px!important;max-width:none!important;opacity:0;visibility:hidden;transform-origin:50% 50%}
