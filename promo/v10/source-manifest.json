@@ -1,0 +1,34 @@
+[
+  {
+    "path": "client-plugins/mochi-lan/client.js",
+    "sha256": "fd46c7b06c7d6a663f831cf9c0cb332aedd9e9f6cac405a9d5c69dcb1a794e1e"
+  },
+  {
+    "path": "client-plugins/jxl-brand/src/OrbCompanion.tsx",
+    "sha256": "dbc2502ea13b4eaf008584f286f654e5f02b272728e51d58bf549f3d1de148be"
+  },
+  {
+    "path": "client-plugins/jxl-brand/src/ExpressiveOrb.tsx",
+    "sha256": "03218956a4a2c3b67a874017e53fa436618903df57666111ef602c7ed944435b"
+  },
+  {
+    "path": "client-plugins/jxl-brand/src/MochiTeam.tsx",
+    "sha256": "aaff781cf54eba0892f081a95613b1d0344a1ac6662d15c92167ccd3332e80ea"
+  },
+  {
+    "path": "client-plugins/jxl-brand/src/bloub-motion.ts",
+    "sha256": "fe8b1f5d607e8de20e39ad6170a1c578c7652600a8dba2325f82364c413c2f50"
+  },
+  {
+    "path": "client-plugins/jxl-theme/styles/jxl-theme-bridge.css",
+    "sha256": "7de57179fbee7f370e12d6779e4031b3be22cbf6e10de95a79395c41216b6258"
+  },
+  {
+    "path": "client-plugins/jxl-theme/styles/jxl-paper.css",
+    "sha256": "1e5d500a5a1a2a884d93e8788123e7afa20cd0d099a742f52175ea6912c4fe53"
+  },
+  {
+    "path": "client-plugins/jxl-theme/styles/mochi-controls.css",
+    "sha256": "c3f1ea274c84970906a7b5bd8e7fb34ee4e806d894e38809f88231d49d0f0189"
+  }
+]

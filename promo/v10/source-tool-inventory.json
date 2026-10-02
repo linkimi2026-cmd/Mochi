@@ -1,0 +1,181 @@
+[
+  {
+    "module": "plugins/mochi-campus",
+    "tools": [
+      "jxl_analytics",
+      "jxl_assistant",
+      "jxl_campus_status",
+      "jxl_clinic_status",
+      "jxl_dorm_status",
+      "jxl_event_detail",
+      "jxl_health_events",
+      "jxl_medical_event_create",
+      "jxl_medical_event_status",
+      "jxl_message",
+      "jxl_movement_detail",
+      "jxl_movement_link_medical_event",
+      "jxl_movement_request_create",
+      "jxl_movement_request_decide",
+      "jxl_movement_request_list",
+      "jxl_movement_transition",
+      "jxl_query",
+      "jxl_relay_find",
+      "jxl_relay_list",
+      "jxl_relay_register",
+      "jxl_relay_respond",
+      "jxl_relay_send",
+      "jxl_smart_digest",
+      "jxl_student_card",
+      "jxl_student_directory_search",
+      "message_send"
+    ],
+    "status": "source_present_not_runtime_verified"
+  },
+  {
+    "module": "plugins/mochi-dispatch",
+    "tools": [
+      "mochi_ask",
+      "mochi_call_student",
+      "mochi_find",
+      "mochi_list_classrooms",
+      "mochi_notify_classroom",
+      "mochi_register_verdicts",
+      "mochi_request",
+      "mochi_respond",
+      "mochi_send_classroom_file",
+      "mochi_tasks"
+    ],
+    "status": "source_present_not_runtime_verified"
+  },
+  {
+    "module": "plugins/mochi-files",
+    "tools": [
+      "file_copy",
+      "file_create_folder",
+      "file_move",
+      "file_read",
+      "file_rename",
+      "file_search"
+    ],
+    "status": "source_present_not_runtime_verified"
+  },
+  {
+    "module": "plugins/mochi-grades",
+    "tools": [
+      "mochi_grade_analyze"
+    ],
+    "status": "source_present_not_runtime_verified"
+  },
+  {
+    "module": "plugins/mochi-knowledge",
+    "tools": [
+      "mochi_knowledge_page",
+      "mochi_knowledge_search"
+    ],
+    "status": "source_present_not_runtime_verified"
+  },
+  {
+    "module": "plugins/mochi-lan",
+    "tools": [
+      "mochi_lan_configure_identity",
+      "mochi_lan_decide_pairing",
+      "mochi_lan_open_presentation",
+      "mochi_lan_pair_classroom",
+      "mochi_lan_pending_requests",
+      "mochi_lan_probe_classroom",
+      "mochi_lan_received_presentations",
+      "mochi_lan_reply_student_request",
+      "mochi_lan_send_student_request",
+      "mochi_lan_status"
+    ],
+    "status": "source_present_not_runtime_verified"
+  },
+  {
+    "module": "plugins/mochi-memory",
+    "tools": [
+      "mochi_journal_read",
+      "mochi_journal_summarize",
+      "mochi_memory_clear",
+      "mochi_memory_forget",
+      "mochi_memory_list",
+      "mochi_memory_note",
+      "mochi_memory_observe",
+      "mochi_memory_recall",
+      "mochi_memory_world"
+    ],
+    "status": "source_present_not_runtime_verified"
+  },
+  {
+    "module": "plugins/mochi-modeling",
+    "tools": [
+      "mochi_model_create"
+    ],
+    "status": "source_present_not_runtime_verified"
+  },
+  {
+    "module": "plugins/mochi-presentations",
+    "tools": [
+      "mochi_ppt_create",
+      "mochi_ppt_revise",
+      "ppt_inspect"
+    ],
+    "status": "source_present_not_runtime_verified"
+  },
+  {
+    "module": "plugins/mochi-sheets",
+    "tools": [
+      "spreadsheet_create",
+      "spreadsheet_export",
+      "spreadsheet_formula",
+      "spreadsheet_read"
+    ],
+    "status": "source_present_not_runtime_verified"
+  },
+  {
+    "module": "plugins/mochi-task-scheduler",
+    "tools": [
+      "mochi_schedule_cancel",
+      "mochi_schedule_create",
+      "mochi_schedule_list"
+    ],
+    "status": "source_present_not_runtime_verified"
+  },
+  {
+    "module": "plugins/mochi-visuals",
+    "tools": [
+      "diagram_draw",
+      "image_edit",
+      "image_find",
+      "teaching_image_match"
+    ],
+    "status": "source_present_not_runtime_verified"
+  },
+  {
+    "module": "plugins/mochi-documents",
+    "tools": [
+      "mochi_document_create",
+      "doc_create",
+      "doc_read",
+      "doc_edit",
+      "doc_export",
+      "pdf_read"
+    ],
+    "status": "source_present_not_runtime_verified"
+  },
+  {
+    "module": "plugins/mochi-classroom-planner",
+    "tools": [
+      "mochi_timetable_import",
+      "mochi_timetable_status",
+      "mochi_companionship_status"
+    ],
+    "status": "source_present_not_runtime_verified"
+  },
+  {
+    "module": "plugins/mochi-camera",
+    "tools": [
+      "mochi_open_camera"
+    ],
+    "status": "source_present_not_runtime_verified"
+  }
+]

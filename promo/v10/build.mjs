@@ -1,0 +1,16 @@
+import {copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync} from 'node:fs';
+import {createHash} from 'node:crypto';
+import {execFileSync} from 'node:child_process';
+import {dirname, resolve} from 'node:path';
+import {fileURLToPath} from 'node:url';
+const dir=dirname(fileURLToPath(import.meta.url)), root=resolve(dir,'../..');
+const sources=['client-plugins/mochi-lan/client.js','client-plugins/jxl-brand/src/OrbCompanion.tsx','client-plugins/jxl-brand/src/ExpressiveOrb.tsx','client-plugins/jxl-brand/src/MochiTeam.tsx','client-plugins/jxl-brand/src/bloub-motion.ts','client-plugins/jxl-theme/styles/jxl-theme-bridge.css','client-plugins/jxl-theme/styles/jxl-paper.css','client-plugins/jxl-theme/styles/mochi-controls.css'];
+mkdirSync(resolve(dir,'assets'),{recursive:true});
+for(const name of ['gsap.min.js','NotoSansCJKsc-Regular.otf','NotoSansCJKsc-Bold.otf','NotoSerifCJKsc-SemiBold.otf']) copyFileSync(resolve(dir,'../v8/assets',name),resolve(dir,'assets',name));
+mkdirSync(resolve(dir,'jxl-assets/icons'),{recursive:true});
+copyFileSync(resolve(root,'client-plugins/jxl-theme/assets/icons/icon.svg'),resolve(dir,'jxl-assets/icons/icon.svg'));
+if(!existsSync(resolve(dir,'assets/model-demo-final.mp4'))) throw new Error('Missing model-demo-final.mp4: prepare the real 29–36 second capture described in README.');
+if(!existsSync(resolve(dir,'assets/music-30.wav'))) execFileSync('ffmpeg',['-hide_banner','-loglevel','error','-i',resolve(dir,'../v8/assets/music.wav'),'-t','30','-af','afade=t=in:st=0:d=0.25,afade=t=out:st=28.5:d=1.5,loudnorm=I=-17:TP=-1.5:LRA=7','-y',resolve(dir,'assets/music-30.wav')]);
+copyFileSync(resolve(root,sources[0]),resolve(dir,'assets/lan-source.txt'));
+execFileSync(resolve(root,'promo/node_modules/.bin/esbuild'),['promo/v10/source-components.tsx','--bundle','--format=iife','--outfile=promo/v10/assets/source-components.js','--alias:react=./apps/desktop/runtime-modern/node_modules/react','--jsx=automatic','--alias:react/jsx-runtime=./apps/desktop/runtime-modern/node_modules/react/jsx-runtime.js','--loader:.txt=text','--define:process.env.NODE_ENV="production"','--external:/jxl-assets/*'],{cwd:root,stdio:'inherit'});
+writeFileSync(resolve(dir,'source-manifest.json'),JSON.stringify(sources.map(path=>({path,sha256:createHash('sha256').update(readFileSync(resolve(root,path))).digest('hex')})),null,2)+'\n');
