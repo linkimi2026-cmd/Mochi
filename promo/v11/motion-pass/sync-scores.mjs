@@ -1,3 +1,4 @@
+import {tracks} from './score-tracks.mjs';
 import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
 import {execFileSync} from 'node:child_process';
 import {dirname,resolve} from 'node:path';
@@ -28,7 +29,7 @@ writeFileSync(resolve(dir,'choreography-cues.json'),JSON.stringify({duration:tim
 const ff=args=>execFileSync('ffmpeg',['-v','error','-nostdin',...args],{stdio:'inherit'});
 const previous=process.argv.includes('--refine')?JSON.parse(readFileSync(resolve(dir,'score-sync.json'))):null;
 const reports=[];
-for(const label of ['own','k3']){
+for(const label of tracks.map(t=>t.id)){
  const part=resolve(dir,'assets/scores',label),beats=JSON.parse(readFileSync(resolve(part,'beats/music.wav.json'))).beats;
  const firstTarget=accents[0]?.time??0;
  const hasOpeningBeat=beats.some(b=>b.time>=firstTarget*.88&&b.time<=firstTarget*1.12);
@@ -39,7 +40,7 @@ for(const label of ['own','k3']){
  for(const cue of accents){
   const last=mapping.at(-1),dt=cue.time-last.target,predicted=last.source+dt;
   const options=beats.filter(b=>b.time>last.source&&b.time-last.source>=dt*.88&&b.time-last.source<=dt*1.12);
-  if(!options.length)throw Error(`No bounded beat for ${label} at ${cue.time}`);
+  if(!options.length){mapping.push({target:cue.time,source:predicted,strength:0,chapter:cue.chapter,addedAccent:true,reason:'Sparse reference beat interval; keep musical tempo and add a soft editorial accent.'});continue;}
   options.sort((a,b)=>(Math.abs(a.time-predicted)/dt-.055*a.strength)-(Math.abs(b.time-predicted)/dt-.055*b.strength));
   mapping.push({target:cue.time,source:options[0].time,strength:options[0].strength,chapter:cue.chapter});
  }
@@ -55,7 +56,7 @@ for(const label of ['own','k3']){
  }
  writeFileSync(resolve(part,'concat.txt'),segments.map(p=>`file '${p}'`).join('\n'));
  ff(['-f','concat','-safe','0','-i',resolve(part,'concat.txt'),'-af',`loudnorm=I=-18:TP=-2:LRA=8,afade=t=in:d=0.5,afade=t=out:st=${time-3}:d=3`,'-ar','48000','-ac','2','-y',resolve(part,'aligned.wav')]);
- reports.push({label,openingTrim,mapping,maxTempoChange:Math.max(...mapping.slice(1).map((b,i)=>Math.abs((b.source-mapping[i].source)/(b.target-mapping[i].target)-1))),method:'Original beat landmarks, optional opening trim, bounded pitch-preserving atempo, four-ms edge fades; listening review still required.'});
+ reports.push({label,openingTrim,mapping,maxTempoChange:Math.max(...mapping.slice(1).map((b,i)=>Math.abs((b.source-mapping[i].source)/(b.target-mapping[i].target)-1))),method:'Original beat landmarks with explicit soft editorial accents for sparse intervals, optional opening trim, bounded pitch-preserving atempo, four-ms edge fades; listening review still required.'});
 }
 // Ask the product's own sound generator for its samples, rather than copying its synthesis code.
 let context;const voices=[];
@@ -70,7 +71,7 @@ const samples=new Float32Array(Math.ceil(time*48000));
 for(const cue of clicks)for(const v of voices){const start=Math.round((cue.time+v.time)*48000);for(let i=0;i<v.data.length&&i+start<samples.length;i++)samples[i+start]+=v.data[i]*v.gain*2.2}
 writeFileSync(resolve(dir,'assets/clicks.f32'),Buffer.from(samples.buffer));
 ff(['-f','f32le','-ar','48000','-ac','1','-i',resolve(dir,'assets/clicks.f32'),'-ac','2','-y',resolve(dir,'assets/clicks.wav')]);
-for(const label of ['own','k3']){
+for(const label of tracks.map(t=>t.id)){
  const part=resolve(dir,'assets/scores',label);
  ff(['-i',resolve(part,'aligned.wav'),'-i',resolve(dir,'assets/clicks.wav'),'-filter_complex','[0:a][1:a]amix=inputs=2:normalize=0,alimiter=limit=0.9:level=false:latency=true[a]','-map','[a]','-ar','48000','-ac','2','-y',resolve(part,'final.wav')]);
 }

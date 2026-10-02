@@ -657,3 +657,13 @@ Promptfoo实际接入结果：临时安装0.123.0，常规安装解析可选依�
 2026-10-02用户明确从本片排除语音、拍题、课表，冻结新增功能，改为细节打磨；另指定Mo滚入中央说“哈喽，我是Mochi”后进入正片。完整工程检索 `site:github.com/heygen-com/hyperframes-launches k3-promo character animation`、组件检索 `site:github.com/greensock/GSAP timeline rotation bounce` 均成功，继续复用https://github.com/heygen-com/hyperframes-launches 与https://github.com/greensock/GSAP已有固定版本与许可，不新增框架依赖。原ExpressiveOrb球体可独立渲染，无需另造角色；原产品电脑是分离组件，滚入时仅使用球体。
 
 问候净增4秒，逐字文字与物理回弹，随后连接既有真实首页。A2A回应放大、角色标签跟随对应消息，审批卡先退场再出现回应；校园章节接缝以0.65秒连续空间转场代替硬切。维护范围仅promo原组件编舞与剪辑，未修改业务逻辑。冷启动可见性和媒体id由实际渲染检查纠正，接入结果另见本轮验证。
+
+#### V11 第五版：打字声、K2.5音轨与品牌封面
+
+2026-10-02先检索完整框架 `site:github.com/heygen-com/hyperframes audio beats sound effects`，实际找到 https://github.com/heygen-com/hyperframes 和 https://github.com/heygen-com/hyperframes-launch-video ，读取搜索返回的beats功能资料；再检索 `site:github.com/FFmpeg/FFmpeg attached_pic cover mp4`，该次搜索未取得相关结果。直接访问FFmpeg官网文档失败（连接错误），不视为已读。FFmpeg封面支持以本机实际封装和ffprobe attached_pic结果验证。
+
+部分采用既有框架：本机HyperFrames0.8.36/Apache-2.0与GSAP3.15.0/Standard no charge许可证本轮重新读取；固定提交沿用此前核验的d4756f597c0dbb66310c2add699de6767b23f11b、13e2b790546426a1a2e0e9b409f3f8dc6d6611f2。复用现成beats分析、GSAP时间轴及FFmpeg9.0.1，不升级依赖。本轮没有重新核对上游维护活跃度，已有本地兼容运行证据。现有产品createMechanicalAudio供给打字/点击音色，不另写基础音频引擎；仅稀疏音乐段落补柔和重音。维护成本限于剪辑映射、音轨配置和后期混音，不改产品。
+
+新增桌面原K2.5参考音轨（含原片可能的音效/语音，非纯音乐分轨），保留K3和现有配乐版。三个版本画面不变，打字声读取实际GSAP逐字入场时间，处理复合片段偏移与裁剪；不把录屏中的未知按键假定成已验证事件。音乐按独立节拍映射，不能满足12%以内速度约束的留白段维持原速并明确记录addedAccent。RMS起音检测不等于人工听审，保留listenVerified=false。
+
+封面使用apps/desktop/build/icon-source.svg原矢量；来源记录见ICON-SOURCE.md。只做2560×1440背景排版，不重绘品牌。输出独立PNG并尝试MP4 attached_pic；不同播放器的缩略图行为不保证一致。第五版音视频与封面验证结果见promo/v11/motion-pass/music-variants.json、typing-cues.json、cover-source.json、score-sync.json。旧第四版文件保留。

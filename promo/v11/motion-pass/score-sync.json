@@ -307,7 +307,7 @@
         }
       ],
       "maxTempoChange": 0.10347826086956524,
-      "method": "Original beat landmarks, optional opening trim, bounded pitch-preserving atempo, four-ms edge fades; listening review still required.",
+      "method": "Original beat landmarks with explicit soft editorial accents for sparse intervals, optional opening trim, bounded pitch-preserving atempo, four-ms edge fades; listening review still required.",
       "renderedAttackChecks": [
         {
           "cueSeconds": 1.15,
@@ -1194,7 +1194,7 @@
         }
       ],
       "maxTempoChange": 0.07121057985758328,
-      "method": "Original beat landmarks, optional opening trim, bounded pitch-preserving atempo, four-ms edge fades; listening review still required.",
+      "method": "Original beat landmarks with explicit soft editorial accents for sparse intervals, optional opening trim, bounded pitch-preserving atempo, four-ms edge fades; listening review still required.",
       "renderedAttackChecks": [
         {
           "cueSeconds": 1.15,
@@ -1772,6 +1772,905 @@
         {
           "time": 294.95,
           "sourceShiftMs": 25.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        }
+      ]
+    },
+    {
+      "label": "k25",
+      "openingTrim": 0.8340000000000001,
+      "mapping": [
+        {
+          "target": 0,
+          "source": 0.8340000000000001,
+          "strength": 0
+        },
+        {
+          "target": 1.15,
+          "source": 1.984,
+          "strength": 0.148,
+          "chapter": "Mo问候、首页与需求"
+        },
+        {
+          "target": 4.05,
+          "source": 4.896,
+          "strength": 0.523,
+          "chapter": "Mo问候、首页与需求"
+        },
+        {
+          "target": 8.75,
+          "source": 9.611,
+          "strength": 0.683,
+          "chapter": "Mo问候、首页与需求"
+        },
+        {
+          "target": 14.42,
+          "source": 15.413,
+          "strength": 0.511,
+          "chapter": "Mo问候、首页与需求"
+        },
+        {
+          "target": 20.65,
+          "source": 21.728,
+          "strength": 0.512,
+          "chapter": "Mo问候、首页与需求"
+        },
+        {
+          "target": 28.8,
+          "source": 29.878000000000004,
+          "strength": 0,
+          "chapter": "多Agent与内置配色",
+          "addedAccent": true,
+          "reason": "Sparse reference beat interval; keep musical tempo and add a soft editorial accent."
+        },
+        {
+          "target": 35.25,
+          "source": 36.437,
+          "strength": 0.472,
+          "chapter": "多Agent与内置配色"
+        },
+        {
+          "target": 42.3,
+          "source": 43.275,
+          "strength": 0.696,
+          "chapter": "多Agent与内置配色"
+        },
+        {
+          "target": 45.56333333333334,
+          "source": 46.688,
+          "strength": 0.318,
+          "chapter": "Mo 场景接力"
+        },
+        {
+          "target": 48.35,
+          "source": 49.579,
+          "strength": 0.227,
+          "chapter": "真实课件与教学成果"
+        },
+        {
+          "target": 53.75000000000001,
+          "source": 54.581,
+          "strength": 0.41,
+          "chapter": "真实课件与教学成果"
+        },
+        {
+          "target": 59.150000000000006,
+          "source": 60.096,
+          "strength": 0.139,
+          "chapter": "真实课件与教学成果"
+        },
+        {
+          "target": 67.55,
+          "source": 68.512,
+          "strength": 0.321,
+          "chapter": "真实课件与教学成果"
+        },
+        {
+          "target": 75.35000000000001,
+          "source": 76.405,
+          "strength": 0.678,
+          "chapter": "真实课件与教学成果"
+        },
+        {
+          "target": 78.45,
+          "source": 79.435,
+          "strength": 0.649,
+          "chapter": "真实课件与教学成果"
+        },
+        {
+          "target": 84.3,
+          "source": 84.843,
+          "strength": 0.206,
+          "chapter": "Mo 场景接力"
+        },
+        {
+          "target": 88.35,
+          "source": 88.893,
+          "strength": 0,
+          "chapter": "交互模型",
+          "addedAccent": true,
+          "reason": "Sparse reference beat interval; keep musical tempo and add a soft editorial accent."
+        },
+        {
+          "target": 95.6,
+          "source": 96.128,
+          "strength": 0.486,
+          "chapter": "交互模型"
+        },
+        {
+          "target": 100.44999999999999,
+          "source": 100.853,
+          "strength": 0.668,
+          "chapter": "交互模型"
+        },
+        {
+          "target": 105.44999999999999,
+          "source": 105.856,
+          "strength": 0.548,
+          "chapter": "交互模型"
+        },
+        {
+          "target": 112.14333333333333,
+          "source": 112.16,
+          "strength": 0.379,
+          "chapter": "Mo 场景接力"
+        },
+        {
+          "target": 115.45,
+          "source": 115.46666666666667,
+          "strength": 0,
+          "chapter": "叮咚与小信箱",
+          "addedAccent": true,
+          "reason": "Sparse reference beat interval; keep musical tempo and add a soft editorial accent."
+        },
+        {
+          "target": 119.10000000000001,
+          "source": 119.296,
+          "strength": 0.816,
+          "chapter": "叮咚与小信箱"
+        },
+        {
+          "target": 129.3,
+          "source": 129.387,
+          "strength": 0.54,
+          "chapter": "叮咚与小信箱"
+        },
+        {
+          "target": 134.35000000000002,
+          "source": 134.517,
+          "strength": 0.325,
+          "chapter": "跨端消息与叫人"
+        },
+        {
+          "target": 140.62,
+          "source": 140.331,
+          "strength": 0.743,
+          "chapter": "跨端消息与叫人"
+        },
+        {
+          "target": 148.45000000000002,
+          "source": 148.768,
+          "strength": 0.87,
+          "chapter": "跨端消息与叫人"
+        },
+        {
+          "target": 153.55,
+          "source": 153.835,
+          "strength": 0.654,
+          "chapter": "跨端消息与叫人"
+        },
+        {
+          "target": 158.25000000000003,
+          "source": 158.443,
+          "strength": 0.696,
+          "chapter": "跨端消息与叫人"
+        },
+        {
+          "target": 165.60000000000002,
+          "source": 165.781,
+          "strength": 0.132,
+          "chapter": "跨端消息与叫人"
+        },
+        {
+          "target": 170.5,
+          "source": 170.68099999999998,
+          "strength": 0,
+          "chapter": "跨端消息与叫人",
+          "addedAccent": true,
+          "reason": "Sparse reference beat interval; keep musical tempo and add a soft editorial accent."
+        },
+        {
+          "target": 177.35000000000002,
+          "source": 177.643,
+          "strength": 0.507,
+          "chapter": "跨端消息与叫人"
+        },
+        {
+          "target": 182.57333333333332,
+          "source": 183.147,
+          "strength": 0.662,
+          "chapter": "Mo 场景接力"
+        },
+        {
+          "target": 185.85,
+          "source": 186.571,
+          "strength": 0.669,
+          "chapter": "Mochi原生查人、流转与教师协作"
+        },
+        {
+          "target": 190.95000000000002,
+          "source": 191.573,
+          "strength": 0.678,
+          "chapter": "Mochi原生查人、流转与教师协作"
+        },
+        {
+          "target": 197.1,
+          "source": 197.621,
+          "strength": 0.663,
+          "chapter": "Mochi原生查人、流转与教师协作"
+        },
+        {
+          "target": 204.20000000000002,
+          "source": 204.651,
+          "strength": 0.22,
+          "chapter": "Mochi原生查人、流转与教师协作"
+        },
+        {
+          "target": 213.95000000000002,
+          "source": 214.709,
+          "strength": 0.658,
+          "chapter": "Mochi原生查人、流转与教师协作"
+        },
+        {
+          "target": 222.95,
+          "source": 223.627,
+          "strength": 0.209,
+          "chapter": "Mochi原生查人、流转与教师协作"
+        },
+        {
+          "target": 227.35000000000002,
+          "source": 228.02700000000004,
+          "strength": 0,
+          "chapter": "Mochi原生查人、流转与教师协作",
+          "addedAccent": true,
+          "reason": "Sparse reference beat interval; keep musical tempo and add a soft editorial accent."
+        },
+        {
+          "target": 233.15,
+          "source": 233.632,
+          "strength": 0.134,
+          "chapter": "Mochi原生查人、流转与教师协作"
+        },
+        {
+          "target": 237.95,
+          "source": 238.677,
+          "strength": 0.9,
+          "chapter": "Mochi原生查人、流转与教师协作"
+        },
+        {
+          "target": 242.9633333333333,
+          "source": 243.765,
+          "strength": 0.65,
+          "chapter": "Mo 场景接力"
+        },
+        {
+          "target": 246.95,
+          "source": 247.861,
+          "strength": 0.525,
+          "chapter": "记忆、自动化与结尾"
+        },
+        {
+          "target": 258.95,
+          "source": 259.861,
+          "strength": 0,
+          "chapter": "记忆、自动化与结尾",
+          "addedAccent": true,
+          "reason": "Sparse reference beat interval; keep musical tempo and add a soft editorial accent."
+        },
+        {
+          "target": 270.95,
+          "source": 271.893,
+          "strength": 0.151,
+          "chapter": "记忆、自动化与结尾"
+        },
+        {
+          "target": 282.95,
+          "source": 284.117,
+          "strength": 0.182,
+          "chapter": "记忆、自动化与结尾"
+        },
+        {
+          "target": 294.95,
+          "source": 296.256,
+          "strength": 0.873,
+          "chapter": "记忆、自动化与结尾"
+        },
+        {
+          "target": 299.95,
+          "source": 301.2559999999999,
+          "strength": 0
+        }
+      ],
+      "maxTempoChange": 0.07752234993614282,
+      "method": "Original beat landmarks with explicit soft editorial accents for sparse intervals, optional opening trim, bounded pitch-preserving atempo, four-ms edge fades; listening review still required.",
+      "renderedAttackChecks": [
+        {
+          "cueSeconds": 1.15,
+          "nearbyAttackSeconds": 1.15,
+          "offsetMs": 0.0,
+          "rise": 0.1996765471994877
+        },
+        {
+          "cueSeconds": 4.05,
+          "nearbyAttackSeconds": 4.05,
+          "offsetMs": 0.0,
+          "rise": 0.26405953615903854
+        },
+        {
+          "cueSeconds": 8.75,
+          "nearbyAttackSeconds": 8.805,
+          "offsetMs": 55.0,
+          "rise": 0.1779741644859314
+        },
+        {
+          "cueSeconds": 14.42,
+          "nearbyAttackSeconds": 14.42,
+          "offsetMs": 0.0,
+          "rise": 0.19752775318920612
+        },
+        {
+          "cueSeconds": 20.65,
+          "nearbyAttackSeconds": 20.65,
+          "offsetMs": 0.0,
+          "rise": 0.15701832808554173
+        },
+        {
+          "cueSeconds": 28.8,
+          "nearbyAttackSeconds": 28.8,
+          "offsetMs": 0.0,
+          "rise": 0.07080083712935448
+        },
+        {
+          "cueSeconds": 35.25,
+          "nearbyAttackSeconds": 35.27,
+          "offsetMs": 20.0,
+          "rise": 0.15065763890743256
+        },
+        {
+          "cueSeconds": 42.3,
+          "nearbyAttackSeconds": 42.3,
+          "offsetMs": 0.0,
+          "rise": 0.15838130563497543
+        },
+        {
+          "cueSeconds": 45.56333333333334,
+          "nearbyAttackSeconds": 45.56,
+          "offsetMs": -3.33,
+          "rise": 0.13092686235904694
+        },
+        {
+          "cueSeconds": 48.35,
+          "nearbyAttackSeconds": 48.35,
+          "offsetMs": 0.0,
+          "rise": 0.024582323618233204
+        },
+        {
+          "cueSeconds": 53.75000000000001,
+          "nearbyAttackSeconds": 53.75,
+          "offsetMs": -0.0,
+          "rise": 0.15227428823709488
+        },
+        {
+          "cueSeconds": 59.150000000000006,
+          "nearbyAttackSeconds": 59.15,
+          "offsetMs": -0.0,
+          "rise": 0.06579937785863876
+        },
+        {
+          "cueSeconds": 67.55,
+          "nearbyAttackSeconds": 67.55,
+          "offsetMs": 0.0,
+          "rise": 0.15198185294866562
+        },
+        {
+          "cueSeconds": 75.35000000000001,
+          "nearbyAttackSeconds": 75.32,
+          "offsetMs": -30.0,
+          "rise": 0.07348330318927765
+        },
+        {
+          "cueSeconds": 78.45,
+          "nearbyAttackSeconds": 78.37,
+          "offsetMs": -80.0,
+          "rise": 0.2154984176158905
+        },
+        {
+          "cueSeconds": 84.3,
+          "nearbyAttackSeconds": 84.3,
+          "offsetMs": 0.0,
+          "rise": 0.0744510293006897
+        },
+        {
+          "cueSeconds": 88.35,
+          "nearbyAttackSeconds": 88.35,
+          "offsetMs": 0.0,
+          "rise": 0.023607619106769562
+        },
+        {
+          "cueSeconds": 95.6,
+          "nearbyAttackSeconds": 95.6,
+          "offsetMs": 0.0,
+          "rise": 0.1631467193365097
+        },
+        {
+          "cueSeconds": 100.44999999999999,
+          "nearbyAttackSeconds": 100.45,
+          "offsetMs": 0.0,
+          "rise": 0.0708976574242115
+        },
+        {
+          "cueSeconds": 105.44999999999999,
+          "nearbyAttackSeconds": 105.45,
+          "offsetMs": 0.0,
+          "rise": 0.012182816863059998
+        },
+        {
+          "cueSeconds": 112.14333333333333,
+          "nearbyAttackSeconds": 112.08,
+          "offsetMs": -63.33,
+          "rise": 0.04477173835039139
+        },
+        {
+          "cueSeconds": 115.45,
+          "nearbyAttackSeconds": 115.45,
+          "offsetMs": 0.0,
+          "rise": 0.15514790639281273
+        },
+        {
+          "cueSeconds": 119.10000000000001,
+          "nearbyAttackSeconds": 119.17,
+          "offsetMs": 70.0,
+          "rise": 0.14319661259651184
+        },
+        {
+          "cueSeconds": 129.3,
+          "nearbyAttackSeconds": 129.3,
+          "offsetMs": 0.0,
+          "rise": 0.1507420688867569
+        },
+        {
+          "cueSeconds": 134.35000000000002,
+          "nearbyAttackSeconds": 134.35,
+          "offsetMs": -0.0,
+          "rise": 0.2871026545763016
+        },
+        {
+          "cueSeconds": 140.62,
+          "nearbyAttackSeconds": 140.62,
+          "offsetMs": 0.0,
+          "rise": 0.03369002789258957
+        },
+        {
+          "cueSeconds": 148.45000000000002,
+          "nearbyAttackSeconds": 148.39,
+          "offsetMs": -60.0,
+          "rise": 0.20956012606620789
+        },
+        {
+          "cueSeconds": 153.55,
+          "nearbyAttackSeconds": 153.475,
+          "offsetMs": -75.0,
+          "rise": 0.12273139506578445
+        },
+        {
+          "cueSeconds": 158.25000000000003,
+          "nearbyAttackSeconds": 158.25,
+          "offsetMs": -0.0,
+          "rise": 0.15142430365085602
+        },
+        {
+          "cueSeconds": 165.60000000000002,
+          "nearbyAttackSeconds": 165.6,
+          "offsetMs": -0.0,
+          "rise": 0.12408518046140671
+        },
+        {
+          "cueSeconds": 170.5,
+          "nearbyAttackSeconds": 170.5,
+          "offsetMs": 0.0,
+          "rise": 0.03049214743077755
+        },
+        {
+          "cueSeconds": 177.35000000000002,
+          "nearbyAttackSeconds": 177.35,
+          "offsetMs": -0.0,
+          "rise": 0.1489918977022171
+        },
+        {
+          "cueSeconds": 182.57333333333332,
+          "nearbyAttackSeconds": 182.535,
+          "offsetMs": -38.33,
+          "rise": 0.12262275069952011
+        },
+        {
+          "cueSeconds": 185.85,
+          "nearbyAttackSeconds": 185.825,
+          "offsetMs": -25.0,
+          "rise": 0.1563342660665512
+        },
+        {
+          "cueSeconds": 190.95000000000002,
+          "nearbyAttackSeconds": 190.875,
+          "offsetMs": -75.0,
+          "rise": 0.12508448213338852
+        },
+        {
+          "cueSeconds": 197.1,
+          "nearbyAttackSeconds": 197.1,
+          "offsetMs": 0.0,
+          "rise": 0.044069573283195496
+        },
+        {
+          "cueSeconds": 204.20000000000002,
+          "nearbyAttackSeconds": 204.125,
+          "offsetMs": -75.0,
+          "rise": 0.158167764544487
+        },
+        {
+          "cueSeconds": 213.95000000000002,
+          "nearbyAttackSeconds": 213.95,
+          "offsetMs": -0.0,
+          "rise": 0.08657427877187729
+        },
+        {
+          "cueSeconds": 222.95,
+          "nearbyAttackSeconds": 222.95,
+          "offsetMs": 0.0,
+          "rise": 0.035589827224612236
+        },
+        {
+          "cueSeconds": 227.35000000000002,
+          "nearbyAttackSeconds": 227.355,
+          "offsetMs": 5.0,
+          "rise": 0.030586359091103077
+        },
+        {
+          "cueSeconds": 233.15,
+          "nearbyAttackSeconds": 233.15,
+          "offsetMs": 0.0,
+          "rise": 0.23535485565662384
+        },
+        {
+          "cueSeconds": 237.95,
+          "nearbyAttackSeconds": 237.95,
+          "offsetMs": 0.0,
+          "rise": 0.1493988335132599
+        },
+        {
+          "cueSeconds": 242.9633333333333,
+          "nearbyAttackSeconds": 242.995,
+          "offsetMs": 31.67,
+          "rise": 0.13810807466506958
+        },
+        {
+          "cueSeconds": 246.95,
+          "nearbyAttackSeconds": 246.95,
+          "offsetMs": 0.0,
+          "rise": 0.17069744318723679
+        },
+        {
+          "cueSeconds": 258.95,
+          "nearbyAttackSeconds": 258.87,
+          "offsetMs": -80.0,
+          "rise": 0.02562105283141136
+        },
+        {
+          "cueSeconds": 270.95,
+          "nearbyAttackSeconds": 270.93,
+          "offsetMs": -20.0,
+          "rise": 0.10746965557336807
+        },
+        {
+          "cueSeconds": 282.95,
+          "nearbyAttackSeconds": 282.95,
+          "offsetMs": 0.0,
+          "rise": 0.0009572993731126189
+        },
+        {
+          "cueSeconds": 294.95,
+          "nearbyAttackSeconds": 294.95,
+          "offsetMs": 0.0,
+          "rise": 0.14368316903710365
+        }
+      ],
+      "maxMeasuredLocalOffsetMs": 80.0,
+      "attackEdits": [
+        {
+          "time": 1.15,
+          "sourceShiftMs": 0.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 4.05,
+          "sourceShiftMs": -20.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 8.75,
+          "sourceShiftMs": 55.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 14.42,
+          "sourceShiftMs": 0.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 20.65,
+          "sourceShiftMs": 0.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 28.8,
+          "sourceShiftMs": 5.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 35.25,
+          "sourceShiftMs": 65.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 42.3,
+          "sourceShiftMs": -40.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 45.56333333333334,
+          "sourceShiftMs": 56.67,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 48.35,
+          "sourceShiftMs": 65.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 53.75000000000001,
+          "sourceShiftMs": -0.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 59.150000000000006,
+          "sourceShiftMs": -80.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 67.55,
+          "sourceShiftMs": -30.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 75.35000000000001,
+          "sourceShiftMs": -55.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 78.45,
+          "sourceShiftMs": -70.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 84.3,
+          "sourceShiftMs": -60.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 88.35,
+          "sourceShiftMs": -45.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 95.6,
+          "sourceShiftMs": -60.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 100.44999999999999,
+          "sourceShiftMs": -15.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 105.44999999999999,
+          "sourceShiftMs": -10.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 112.14333333333333,
+          "sourceShiftMs": -78.33,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 115.45,
+          "sourceShiftMs": -35.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 119.10000000000001,
+          "sourceShiftMs": 30.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 129.3,
+          "sourceShiftMs": -55.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 134.35000000000002,
+          "sourceShiftMs": -60.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 140.62,
+          "sourceShiftMs": -35.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 148.45000000000002,
+          "sourceShiftMs": -45.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 153.55,
+          "sourceShiftMs": -80.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 158.25000000000003,
+          "sourceShiftMs": -65.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 165.60000000000002,
+          "sourceShiftMs": 15.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 170.5,
+          "sourceShiftMs": 75.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 177.35000000000002,
+          "sourceShiftMs": -80.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 182.57333333333332,
+          "sourceShiftMs": -48.33,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 185.85,
+          "sourceShiftMs": -65.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 190.95000000000002,
+          "sourceShiftMs": -70.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 197.1,
+          "sourceShiftMs": 30.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 204.20000000000002,
+          "sourceShiftMs": -45.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 213.95000000000002,
+          "sourceShiftMs": 20.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 222.95,
+          "sourceShiftMs": 5.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 227.35000000000002,
+          "sourceShiftMs": 80.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 233.15,
+          "sourceShiftMs": -45.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 237.95,
+          "sourceShiftMs": 30.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 242.9633333333333,
+          "sourceShiftMs": 11.67,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 246.95,
+          "sourceShiftMs": -30.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 258.95,
+          "sourceShiftMs": -55.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 270.95,
+          "sourceShiftMs": -75.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 282.95,
+          "sourceShiftMs": 55.0,
+          "blendHalfWidthMs": 250,
+          "unchangedCenterHalfWidthMs": 110
+        },
+        {
+          "time": 294.95,
+          "sourceShiftMs": -50.0,
           "blendHalfWidthMs": 250,
           "unchangedCenterHalfWidthMs": 110
         }

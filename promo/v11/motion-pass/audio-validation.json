@@ -1,0 +1,25 @@
+{
+  "tracks": [
+    {
+      "track": "own",
+      "samplePeak": 0.544097900390625,
+      "finite": true,
+      "duration": 299.95
+    },
+    {
+      "track": "k3",
+      "samplePeak": 0.5406494140625,
+      "finite": true,
+      "duration": 299.95
+    },
+    {
+      "track": "k25",
+      "samplePeak": 0.7943115234375,
+      "finite": true,
+      "duration": 299.95
+    }
+  ],
+  "typingGlyphs": 309,
+  "typingSounds": 125,
+  "manualListeningVerified": false
+}
