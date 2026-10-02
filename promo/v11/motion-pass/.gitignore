@@ -1,0 +1,11 @@
+assets/
+output/
+evidence/
+bridges/*/assets/
+native-query/assets/
+native-query/output/
+*.log
+bridges/*/output/
+ending/assets/
+ending/output/
+ending/assets

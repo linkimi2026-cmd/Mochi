@@ -1,0 +1,60 @@
+{
+  "clips": [
+    {
+      "name": "send",
+      "source": "../capture-private.nosync/native-student-query.mov",
+      "start": 6,
+      "duration": 7,
+      "crop": "2160:1376:0:64"
+    },
+    {
+      "name": "process",
+      "source": "../capture-private.nosync/native-student-query.mov",
+      "start": 27,
+      "duration": 12,
+      "crop": "1580:1070:560:178",
+      "speed": 2
+    },
+    {
+      "name": "result",
+      "source": "../capture-private.nosync/native-student-result.mov",
+      "start": 50,
+      "duration": 7,
+      "crop": "2160:1376:0:64"
+    },
+    {
+      "name": "close",
+      "source": "../capture-private.nosync/native-student-result.mov",
+      "start": 60,
+      "duration": 10,
+      "pad": 2,
+      "crop": "1530:630:600:180"
+    },
+    {
+      "name": "pending",
+      "source": "../master-preview/supplement/output/continuation.mp4",
+      "start": 20,
+      "duration": 8,
+      "crop": "2560:1440:0:0"
+    }
+  ],
+  "dataMode": "cloud-demo",
+  "student": "DEMO001",
+  "verifiedAnswer": "医务室（留观中）",
+  "queryCompleteSeconds": 162,
+  "sourceNotice": "真实隔离演示记录；结果来自医务事件，不是定位传感器；等待已剪辑压缩",
+  "sources": [
+    {
+      "path": "/Users/a1379/Documents/Mochi/promo/v11/capture-private.nosync/native-student-query.mov",
+      "sha256": "8986963dbcf49e6a39920e6061033063f21d1d4163d70fc6432da0525f67aa09"
+    },
+    {
+      "path": "/Users/a1379/Documents/Mochi/promo/v11/capture-private.nosync/native-student-result.mov",
+      "sha256": "668e56fabafecc19ec8a1d376baabb16454f5ff8355754cc1bd9a18aad60f313"
+    },
+    {
+      "path": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/output/continuation.mp4",
+      "sha256": "2a31f32593b89acc56e74fabcb629fe67e8ebc98549a331e3a3c4149ff70a28d"
+    }
+  ]
+}

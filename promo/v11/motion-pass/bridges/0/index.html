@@ -1,0 +1,23 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><title>Mochi · Mo接力 0</title><script src="assets/gsap.min.js"></script><script src="assets/native.js"></script><link rel="stylesheet" href="assets/native.css"><link rel="stylesheet" href="assets/palettes.css"><style>
+@font-face{font-family:MoSans;src:url('assets/NotoSansCJKsc-Regular.otf')}@font-face{font-family:MoSans;src:url('assets/NotoSansCJKsc-Bold.otf');font-weight:700 900}@font-face{font-family:MoSerif;src:url('assets/NotoSerifCJKsc-SemiBold.otf')}
+*{box-sizing:border-box}body{margin:0}#film{width:2560px;height:1440px;position:relative;overflow:hidden;background:#f5f1e8;color:#2b4036;perspective:2400px}#atmosphere{position:absolute;inset:-35%;background:radial-gradient(ellipse at 40% 65%,#ede2cd,#f8f5e9 55%);transform:translateZ(-900px)}.screen{position:absolute;inset:0;transform-origin:50% 50%;overflow:hidden;backface-visibility:hidden;box-shadow:0 60px 100px #354f352d}video{display:block;width:2560px;height:1440px}#incoming{opacity:0}#mo-actor{position:absolute;left:0;top:0;width:420px;height:520px;opacity:0;transform-origin:50% 50%;filter:drop-shadow(0 28px 28px #25372620)}#shadow{position:absolute;left:980px;top:1290px;width:600px;height:55px;border-radius:50%;background:#66785418;filter:blur(16px);opacity:0}#words{position:absolute;left:180px;top:110px;z-index:4;font:900 112px/1.24 MoSans;letter-spacing:-4px;opacity:0}#words span{display:inline-block}#chapter{position:absolute;right:120px;top:105px;font:28px MoSans;opacity:0;color:#617264}.orb-companion__laptop{will-change:transform}
+</style></head><body><main id="film" data-composition-id="mochi-bridge-0" data-width="2560" data-height="1440" data-duration="6" data-fps="120"><div id="atmosphere"></div><div id="outgoing" class="screen"><video id="out-video" class="clip" src="assets/out.mp4" muted data-start="0" data-duration="6" data-track-index="1"></video></div><div id="incoming" class="screen"><video id="in-video" class="clip" src="assets/in.mp4" muted data-start="0" data-duration="6" data-track-index="2"></video></div><div id="shadow"></div><div id="mo-actor" data-mochi-pet-palette="caramel"></div><div id="words"><span>一</span><span>位</span><span>伙</span><span>伴</span><span>。</span><br><span>也</span><span>可</span><span>以</span><span>是</span><span>一</span><span>支</span><span>团</span><span>队</span><span>。</span></div><div id="chapter">多Agent与内置配色</div></main><script>
+initMoActor();const tl=gsap.timeline({paused:true});window.__timelines={'mochi-bridge-0':tl};
+const rest={x:0,y:0,z:0,rotationX:0,rotationY:0,scale:1};
+tl.fromTo('#outgoing',rest,{...{"x":-700,"y":180,"z":-640,"rotationX":6,"rotationY":16,"scale":0.66},duration:1.4,ease:'power3.inOut',immediateRender:false},.15);
+tl.fromTo('#incoming',{...{"x":1050,"y":180,"z":-700,"rotationX":-5,"rotationY":-16,"scale":0.66},opacity:0},{...{"x":1050,"y":180,"z":-700,"rotationX":-5,"rotationY":-16,"scale":0.66},opacity:1,duration:.5,ease:'power2.out',immediateRender:false},1.15);
+tl.fromTo('#mo-actor',{x:180,y:620,scale:.13,rotation:16,opacity:0},{x:1080,y:790,scale:1,rotation:0,opacity:1,duration:1.5,ease:'back.out(1.18)',immediateRender:false},.4);
+tl.fromTo('#shadow',{scale:.25,opacity:0},{scale:1,opacity:1,duration:1.4,immediateRender:false},.4);
+tl.set('#words',{opacity:1},1.1).fromTo('#words span',{y:95,rotation:5,opacity:0},{y:0,rotation:0,opacity:1,duration:.7,stagger:.025,ease:'back.out(1.35)',immediateRender:false},1.1);
+tl.to('#chapter',{opacity:1,duration:.4},1.5);
+tl.to('#atmosphere',{x:200,y:120,duration:6,ease:'sine.inOut'},0);
+tl.to('#mo-actor',{y:740,rotation:-4,duration:.7,ease:'sine.inOut'},2.2).to('#mo-actor',{y:790,rotation:3,duration:.65,ease:'sine.inOut'},2.9);
+// Mo leads the lens to the next live product scene; the old one stays in the same space.
+tl.to('#words span',{y:-70,rotation:-3,opacity:0,duration:.45,stagger:.012,ease:'power2.in'},3.35);tl.to('#chapter',{opacity:0,duration:.3},3.45);
+tl.to('#mo-actor',{x:580,y:420,scale:.45,rotation:-12,duration:1,ease:'power3.inOut'},3.5);
+tl.to('#shadow',{scale:.3,opacity:0,duration:.9},3.5);
+tl.to('#outgoing',{x:-1680,y:288,z:-1500,scale:.4,opacity:0,duration:1.5,ease:'power3.inOut'},3.2);
+tl.to('#incoming',{...rest,duration:1.6,ease:'power3.inOut'},3.35);
+tl.to('#mo-actor',{scale:.12,opacity:0,duration:.65,ease:'power2.in'},4.25);
+let time=0;const clock={get time(){return time},set time(v){time=v;paintMo(v,22*Math.sin(v*.6))}};tl.to(clock,{time:6,duration:6,ease:'none'},0);
+</script></body></html>

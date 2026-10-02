@@ -1,0 +1,31 @@
+{
+  "character": "Mochi / Mo",
+  "hyperframes": "0.8.36",
+  "gsap": "3.15.0",
+  "sources": [
+    {
+      "path": "client-plugins/jxl-brand/src/OrbCompanion.tsx",
+      "sha256": "dbc2502ea13b4eaf008584f286f654e5f02b272728e51d58bf549f3d1de148be"
+    },
+    {
+      "path": "client-plugins/jxl-brand/src/ExpressiveOrb.tsx",
+      "sha256": "03218956a4a2c3b67a874017e53fa436618903df57666111ef602c7ed944435b"
+    },
+    {
+      "path": "client-plugins/jxl-brand/src/bloub-motion.ts",
+      "sha256": "fe8b1f5d607e8de20e39ad6170a1c578c7652600a8dba2325f82364c413c2f50"
+    },
+    {
+      "path": "client-plugins/jxl-brand/src/vendor/bloub/engine.ts",
+      "sha256": "d824c715b6ec38b241fc61ae2ac516d7c1623f9603f88942b4585cdd9307e638"
+    },
+    {
+      "path": "client-plugins/jxl-brand/src/vendor/bloub/states.ts",
+      "sha256": "7b67bfc4ee95011225a2cef542866dacde0a1c044a56f174bee4173b82cec207"
+    },
+    {
+      "path": "client-plugins/jxl-theme/assets/mochi-palettes.json",
+      "sha256": "ca17020d8d51dfb34a73ed184973a202f2e820403a7c2c12e18ad6847a689275"
+    }
+  ]
+}
