@@ -1,0 +1,65 @@
+{
+  "method": "640x360 grayscale endpoint comparison with original handle frame; mean absolute normalized error <0.025. Allows codec differences; does not replace motion/art review.",
+  "checks": [
+    {
+      "bridge": 0,
+      "endpoint": "out",
+      "normalizedMeanAbsolutePixelError": 0.0009691925381263725
+    },
+    {
+      "bridge": 0,
+      "endpoint": "in",
+      "normalizedMeanAbsolutePixelError": 0.003547623910675371
+    },
+    {
+      "bridge": 1,
+      "endpoint": "out",
+      "normalizedMeanAbsolutePixelError": 0.004010927287581687
+    },
+    {
+      "bridge": 1,
+      "endpoint": "in",
+      "normalizedMeanAbsolutePixelError": 0.0033527199074074136
+    },
+    {
+      "bridge": 2,
+      "endpoint": "out",
+      "normalizedMeanAbsolutePixelError": 0.0027315495642701525
+    },
+    {
+      "bridge": 2,
+      "endpoint": "in",
+      "normalizedMeanAbsolutePixelError": 0.0035057700163398744
+    },
+    {
+      "bridge": 4,
+      "endpoint": "out",
+      "normalizedMeanAbsolutePixelError": 0.002427457788671026
+    },
+    {
+      "bridge": 4,
+      "endpoint": "in",
+      "normalizedMeanAbsolutePixelError": 0.0024146922657952035
+    },
+    {
+      "bridge": 5,
+      "endpoint": "out",
+      "normalizedMeanAbsolutePixelError": 0.0021606924019607846
+    },
+    {
+      "bridge": 5,
+      "endpoint": "in",
+      "normalizedMeanAbsolutePixelError": 0.0028500816993464097
+    },
+    {
+      "bridge": 6,
+      "endpoint": "out",
+      "normalizedMeanAbsolutePixelError": 0.002591622412854031
+    },
+    {
+      "bridge": 6,
+      "endpoint": "in",
+      "normalizedMeanAbsolutePixelError": 0.0028942504084967283
+    }
+  ]
+}

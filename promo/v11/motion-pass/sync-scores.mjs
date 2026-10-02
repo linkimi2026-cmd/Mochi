@@ -20,7 +20,7 @@ for(const [i,ch]of plan.chapters.entries()){
  const skip=i?h:0,length=ch.duration-skip-(i<plan.chapters.length-1?h:0);
  for(const kind of ['clicks','accents'])for(const t of choreography[i][kind])if(t>=skip&&t<skip+length)(kind==='clicks'?clicks:candidates).push({time:time+t-skip,chapter:ch.name,sourceTime:t});
  time+=length;
- if(i<plan.chapters.length-1){const duration=plan.bridgeDurations?.[i]??plan.bridgeSeconds;candidates.push({time:time+1.9*duration/6,chapter:'Mo 场景接力',sourceTime:1.9});time+=duration}
+ if(i<plan.chapters.length-1){const duration=plan.bridgeDurations?.[i]??plan.bridgeSeconds;candidates.push({time:time+(i===3?1.9/6:.78)*duration,chapter:'Mo 场景接力',sourceTime:(i===3?1.9/6:.78)*duration});time+=duration}
 }
 // Closely spaced clicks keep their SFX; music anchors leave enough phrase to stretch naturally.
 const accents=[];for(const x of candidates.sort((a,b)=>a.time-b.time))if(!accents.length||x.time-accents.at(-1).time>=2.7)accents.push(x);

@@ -23,8 +23,8 @@ writeFileSync(resolve(assets,'concat.txt'),parts.map(p=>`file '${p.replaceAll("'
 ff(['-f','concat','-safe','0','-i',resolve(assets,'concat.txt'),'-an','-c:v','copy','-movflags','+faststart','-y',resolve(assets,'picture.mp4')]);
 const music=resolve(dir,'../../v8/assets/music.wav');
 ff(['-i',music,'-i',music,'-i',music,'-filter_complex',`[0:a][1:a]acrossfade=d=4:c1=qsin:c2=qsin[a];[a][2:a]acrossfade=d=4:c1=qsin:c2=qsin,atrim=duration=${cursor},asetpts=PTS-STARTPTS,loudnorm=I=-17:TP=-1.5:LRA=8,afade=t=in:d=1,afade=t=out:st=${cursor-3}:d=3[m]`,'-map','[m]','-ar','48000','-ac','2','-y',resolve(assets,'score.wav')]);
-const edition=process.argv.includes('--edition=4')?4:process.argv.includes('--edition=3')?3:2;
-const final=resolve(out,edition===4?'Mochi_V11_第四版_完整精修_2K120.mp4':edition===3?'Mochi_V11_第三版_叮咚小信箱与协作接力_2K120.mp4':'Mochi_V11_第二版_Mo贯穿与原生查人_2K120.mp4');
+const edition=process.argv.includes('--edition=6')?6:process.argv.includes('--edition=4')?4:process.argv.includes('--edition=3')?3:2;
+const final=resolve(out,edition===6?'Mochi_V11_第六版_空间接续_2K120.mp4':edition===4?'Mochi_V11_第四版_完整精修_2K120.mp4':edition===3?'Mochi_V11_第三版_叮咚小信箱与协作接力_2K120.mp4':'Mochi_V11_第二版_Mo贯穿与原生查人_2K120.mp4');
 ff(['-i',resolve(assets,'picture.mp4'),'-i',resolve(assets,'score.wav'),'-map','0:v','-map','1:a','-c:v','copy','-c:a','aac','-b:a','256k','-t',String(cursor),'-movflags','+faststart','-metadata',`title=Mochi · 第${edition}版审片`,'-y',final]);
 const p=probe(final),v=p.streams.find(s=>s.codec_type==='video');if(v.width!==2560||v.height!==1440||v.avg_frame_rate!=='120/1'||Math.abs(Number(p.format.duration)-cursor)>.03)throw Error('export mismatch');
 writeFileSync(resolve(dir,'timeline.json'),JSON.stringify({output:final,edition,width:2560,height:1440,fps:120,duration:cursor,chapters:timeline},null,2)+'\n');

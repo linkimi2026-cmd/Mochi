@@ -5,13 +5,13 @@ import {execFileSync} from 'node:child_process';
 import puppeteer from 'puppeteer-core';
 import {createMechanicalAudio} from '../../../client-plugins/jxl-theme/scripts/mechanical-audio.mjs';
 import {tracks} from './score-tracks.mjs';
-const root=dirname(fileURLToPath(import.meta.url)),timeline=JSON.parse(readFileSync(resolve(root,'timeline.json'))),chapters=timeline.chapters.filter(c=>c.type==='chapter');
+const root=dirname(fileURLToPath(import.meta.url)),timeline=JSON.parse(readFileSync(resolve(root,'timeline.json'))),chapters=[...timeline.chapters.filter(c=>c.type==='chapter'),...timeline.chapters.filter(c=>c.type==='mo-handoff').map(c=>({...c,sourceStart:0}))];
 const browser=await puppeteer.launch({executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless:true,args:['--allow-file-access-from-files']});
 const cues=[];
 try{
  const page=await browser.newPage();await page.setViewport({width:2560,height:1440});
  // Source offsets follow the actual compound clip edits, not approximate chapter durations.
- const sources=[['../greeting-chapter',0,0,4],['../opening-chapter',0,4,18],['../team-dialogue',1,0,23.35],['../teaching-chapter',2,0,22],['../delivery-chapter',2,22,16],['../model-chapter',3,0,26.8],['../mailbox-chapter',4,0,18],['../student-chapter',5,0,50],['native-query',6,0,30],['../collaboration-chapter',6,30,30],['../master-preview/supplement',7,-36,92]];
+ const sources=[['../greeting-chapter',0,0,4],['../opening-chapter',0,4,18],['../team-dialogue',1,0,23.35],['../teaching-chapter',2,0,22],['../delivery-chapter',2,22,16],['../model-chapter',3,0,26.8],['../mailbox-chapter',4,0,18],['../student-chapter',5,0,50],['native-query',6,0,30],['../collaboration-chapter',6,30,30],['../master-preview/supplement',7,-36,92],...[0,1,2,4,5,6].map(i=>['bridges/'+i,8+i,0,chapters[8+i].duration])];
  for(const [folder,index,offset,length] of sources){
   const file=resolve(root,folder,'index.html');
   await page.goto(pathToFileURL(file).href,{waitUntil:'load',timeout:30000});

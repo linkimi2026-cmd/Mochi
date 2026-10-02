@@ -1,0 +1,59 @@
+{
+  "edition": 6,
+  "reference": "Desktop K2.6 and K3, inspected with overview and 0.2s transition samples",
+  "unchangedTiming": true,
+  "scenes": [
+    {
+      "bridge": 0,
+      "name": "同一空间，展开团队",
+      "title": "一个想法。<br>一起完成。",
+      "pose": "left:170px;top:90px;font-size:110px",
+      "color": "#dce8d1",
+      "type": "lateral"
+    },
+    {
+      "bridge": 1,
+      "name": "成果环绕，进入作品",
+      "title": "分工，<br>成为作品。",
+      "pose": "left:165px;top:105px;font-size:120px",
+      "color": "#f1d8b9",
+      "type": "gallery"
+    },
+    {
+      "bridge": 2,
+      "name": "纸面折起，穿入模型",
+      "title": "让想法<br><em>动起来。</em>",
+      "pose": "left:170px;top:80px;font-size:110px",
+      "color": "#dae7de",
+      "type": "portal"
+    },
+    {
+      "bridge": 3,
+      "preserved": "Existing envelope delivery and ding-dong continuity"
+    },
+    {
+      "bridge": 4,
+      "name": "信件飞过，两端相连",
+      "title": "一封信。<br>校园，就近了一点。",
+      "pose": "left:150px;top:70px;font-size:90px",
+      "color": "#dce8d7",
+      "type": "courier"
+    },
+    {
+      "bridge": 5,
+      "name": "聚焦问题，进入对话",
+      "title": "同学在哪里？",
+      "pose": "left:1430px;top:90px;font-size:96px",
+      "color": "#eadcc7",
+      "type": "focus"
+    },
+    {
+      "bridge": 6,
+      "name": "今天翻过，记忆延续",
+      "title": "接住今天。<br><em>也记得明天。</em>",
+      "pose": "left:1280px;top:100px;font-size:96px",
+      "color": "#d9e5dc",
+      "type": "vertical"
+    }
+  ]
+}

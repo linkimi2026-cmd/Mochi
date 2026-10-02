@@ -1,8 +1,9 @@
 {
+  "edition": 6,
   "tracks": [
     {
       "track": "own",
-      "samplePeak": 0.544097900390625,
+      "samplePeak": 0.55072021484375,
       "finite": true,
       "duration": 299.95
     },
@@ -19,7 +20,7 @@
       "duration": 299.95
     }
   ],
-  "typingGlyphs": 309,
-  "typingSounds": 125,
+  "typingGlyphs": 364,
+  "typingSounds": 140,
   "manualListeningVerified": false
 }

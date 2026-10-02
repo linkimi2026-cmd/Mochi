@@ -82,3 +82,13 @@
 `typing-cover.mjs`读取已渲染章节原GSAP逐字入场时间，按拼接与裁剪映射为309个字符事件，密集字串合并为125次轻按键声。覆盖问候、开场、多Agent、教学成果、建模、信箱、校园协作、记忆自动化的逐字标题；未对录屏内部未知按键时间作假设。打字、鼠标、叮咚保持独立音效层，重建不累计叠加。完整顺序：prepare-scores（按需）→sync-scores→measure-sync→finish-score-attacks→measure-sync→mail-delivery-audio→typing-cover→music-variants。
 
 封面直接渲染当前安装包`apps/desktop/build/icon-source.svg`，浅色背景中央仅品牌标识；独立PNG为2560×1440，并嵌入三份MP4的attached_pic。播放器是否自动采用内嵌封面取决于播放器，上传平台可以选独立PNG。没有改变开场滚入镜头。核验报告见music-variants.json、typing-cues.json、cover-source.json和audio-validation.json。
+
+## 第六版：空间接续
+
+先重看桌面K2.6、K3原片，再按每0.2秒观察关键转场；事实与设计判断见reference-study.md。重做0/1/2/4/5/6六处转场，第3处保留原有叮咚投递。动态课件背景限定相关场景，标题区域留白；移除过多相同的两窗口3D缩放。Mo仅保留原球体参与跨场运动，功能界面仍是已有真实片段。
+
+重建方式：原build（仅需要重建源媒体时）→bridge-scenes.mjs→render.mjs 0 1 2 4 5 6→assemble.mjs --edition=6 --reuse-bodies --refresh-bridges=0,1,2,4,5,6。旧build会覆盖编舞，必须最后执行bridge-scenes。实际新增转场的文字也纳入typing-cover读取；sync-scores把新转场动作重音移到入场推进阶段，保留第3处原落点。三种配乐版本和品牌封面沿用。
+
+第六版保持299.95秒、2560×1440、120fps，不延长等待、不删除功能段。旧第四/第五版保留。使用新timeline更新music-variants，三版视频码流对照当前第六版母版，而非第四版。审片是否达到参考的艺术效果由实际观看判断，不能用技术检查代替。
+
+第六版核验：六处新转场共12个首尾画面对照，640×360灰度平均归一化像素差均低于0.005（允许编码差异）；所有重点时长保持原值。三份299.95秒、35994帧的完整版本均全片解码零错误，视频码流与第六版母版一致，封面有效。新增转场文字纳入后，共364个逐字事件、140次轻按键声；音乐混音无削波。音轨听感仍保留人工审片边界。另附约30秒转场速览，含前后各一秒上下文，不能代替完整影片。

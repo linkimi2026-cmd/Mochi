@@ -667,3 +667,11 @@ Promptfoo实际接入结果：临时安装0.123.0，常规安装解析可选依�
 新增桌面原K2.5参考音轨（含原片可能的音效/语音，非纯音乐分轨），保留K3和现有配乐版。三个版本画面不变，打字声读取实际GSAP逐字入场时间，处理复合片段偏移与裁剪；不把录屏中的未知按键假定成已验证事件。音乐按独立节拍映射，不能满足12%以内速度约束的留白段维持原速并明确记录addedAccent。RMS起音检测不等于人工听审，保留listenVerified=false。
 
 封面使用apps/desktop/build/icon-source.svg原矢量；来源记录见ICON-SOURCE.md。只做2560×1440背景排版，不重绘品牌。输出独立PNG并尝试MP4 attached_pic；不同播放器的缩略图行为不保证一致。第五版音视频与封面验证结果见promo/v11/motion-pass/music-variants.json、typing-cues.json、cover-source.json、score-sync.json。旧第四版文件保留。
+
+#### V11 第六版：K2.6/K3空间转场复习与落地
+
+2026-10-02先执行完整框架/应用检索 `site:github.com heygen hyperframes launches kimi k3 promo`，再执行组件生态检索 `site:github.com greensock GSAP transition shared element timeline`。成功命中 https://github.com/heygen-com/hyperframes 、https://github.com/heygen-com/hyperframes-launches/blob/main/k3-promo/index.html 、https://github.com/greensock/GSAP 。GitHub API实际确认launches当前提交d7ac35069d74a3a437780579b3b7fe2f3eeace5f、Apache-2.0、最近push2026-09-26；GSAP当前提交13e2b790546426a1a2e0e9b409f3f8dc6d6611f2、最近push2026-04-13，API的license字段为null，许可证依据已有本地3.15.0包的Standard no charge记录，不把null当作无许可证。
+
+部分采用：延续现有HyperFrames0.8.36/Apache-2.0、GSAP3.15.0及本仓paper-transfer机制，不安装新框架，不改变依赖。框架用于确定性120fps渲染、GSAP用于层次空间/遮罩/时间轴，原组件继续提供Mo和真实界面。参考桌面K2.6约32–36秒、K3约23–27秒的实际抽帧，迁移局部→成果群→新主体的镜头逻辑；Github示例与桌面原片分开记录。无需重写基础动画引擎。来源、事实、推测和验证边界见promo/v11/motion-pass/reference-study.md。
+
+六个转场分别采用横移、成果群推进、折纸/圆形视窗、原信箱折为信封、对话视窗聚焦、上下翻页；保持原功能段与时长，保留已有叮咚投递。背景真实课件只用于相关章节，顶部渐隐保障阅读。维护代价为一个独立编舞构建器、原媒体起止点与音轨重新映射；产品源码不变。render/build旧入口仍保留，第六版需在旧build之后运行bridge-scenes.mjs，避免被旧模板覆盖。
