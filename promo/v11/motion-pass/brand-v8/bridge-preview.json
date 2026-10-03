@@ -1,0 +1,730 @@
+[
+  {
+    "id": "bridges/0",
+    "time": 0.05,
+    "background": "rgb(223, 205, 170)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "bridge-0",
+      "palette": "cream",
+      "background": "#dfcdaa",
+      "next": "sage",
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "bridge-0",
+      "palette": "sage",
+      "time": 0.05,
+      "state": "thinking",
+      "dots": 2,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "bridges/0",
+    "time": 0.9,
+    "background": "rgb(223, 205, 170)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "bridge-0",
+      "palette": "cream",
+      "background": "#dfcdaa",
+      "next": "sage",
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "bridge-0",
+      "palette": "sage",
+      "time": 0.9,
+      "state": "thinking",
+      "dots": 2,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "bridges/0",
+    "time": 1.5,
+    "background": "rgb(223, 205, 170)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "bridge-0",
+      "palette": "cream",
+      "background": "#dfcdaa",
+      "next": "sage",
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "bridge-0",
+      "palette": "sage",
+      "time": 1.5,
+      "state": "thinking",
+      "dots": 2,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "bridges/0",
+    "time": 2.3,
+    "background": "rgb(223, 205, 170)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "bridge-0",
+      "palette": "cream",
+      "background": "#dfcdaa",
+      "next": "sage",
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "bridge-0",
+      "palette": "sage",
+      "time": 2.3,
+      "state": "idle",
+      "dots": 0,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "bridges/1",
+    "time": 0.05,
+    "background": "rgb(173, 184, 160)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "bridge-1",
+      "palette": "sage",
+      "background": "#adb8a0",
+      "next": "caramel",
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "bridge-1",
+      "palette": "caramel",
+      "time": 0.05,
+      "state": "burst",
+      "dots": 1,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "bridges/1",
+    "time": 0.9,
+    "background": "rgb(173, 184, 160)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "bridge-1",
+      "palette": "sage",
+      "background": "#adb8a0",
+      "next": "caramel",
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "bridge-1",
+      "palette": "caramel",
+      "time": 0.9,
+      "state": "burst",
+      "dots": 3,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "bridges/1",
+    "time": 1.5,
+    "background": "rgb(173, 184, 160)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "bridge-1",
+      "palette": "sage",
+      "background": "#adb8a0",
+      "next": "caramel",
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "bridge-1",
+      "palette": "caramel",
+      "time": 1.5,
+      "state": "burst",
+      "dots": 0,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "bridges/1",
+    "time": 2.3,
+    "background": "rgb(173, 184, 160)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "bridge-1",
+      "palette": "sage",
+      "background": "#adb8a0",
+      "next": "caramel",
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "bridge-1",
+      "palette": "caramel",
+      "time": 2.3,
+      "state": "burst",
+      "dots": 0,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "bridges/2",
+    "time": 0.05,
+    "background": "rgb(160, 106, 50)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "bridge-2",
+      "palette": "caramel",
+      "background": "#a06a32",
+      "next": "cream",
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "bridge-2",
+      "palette": "cream",
+      "time": 0.05,
+      "state": "orbit",
+      "dots": 0,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "bridges/2",
+    "time": 0.9,
+    "background": "rgb(160, 106, 50)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "bridge-2",
+      "palette": "caramel",
+      "background": "#a06a32",
+      "next": "cream",
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "bridge-2",
+      "palette": "cream",
+      "time": 0.9,
+      "state": "orbit",
+      "dots": 0,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "bridges/2",
+    "time": 1.5,
+    "background": "rgb(160, 106, 50)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "bridge-2",
+      "palette": "caramel",
+      "background": "#a06a32",
+      "next": "cream",
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "bridge-2",
+      "palette": "cream",
+      "time": 1.5,
+      "state": "orbit",
+      "dots": 0,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "bridges/2",
+    "time": 2.3,
+    "background": "rgb(160, 106, 50)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "bridge-2",
+      "palette": "caramel",
+      "background": "#a06a32",
+      "next": "cream",
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "bridge-2",
+      "palette": "cream",
+      "time": 2.3,
+      "state": "orbit",
+      "dots": 0,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "bridges/3",
+    "time": 0.05,
+    "background": "rgb(223, 205, 170)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "bridge-3",
+      "palette": "cream",
+      "background": "#dfcdaa",
+      "next": "peach",
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "bridge-3",
+      "palette": "peach",
+      "time": 0.05,
+      "state": "notify",
+      "dots": 0,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "bridges/3",
+    "time": 0.9,
+    "background": "rgb(223, 205, 170)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "bridge-3",
+      "palette": "cream",
+      "background": "#dfcdaa",
+      "next": "peach",
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "bridge-3",
+      "palette": "peach",
+      "time": 0.9,
+      "state": "notify",
+      "dots": 0,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "bridges/3",
+    "time": 1.5,
+    "background": "rgb(223, 205, 170)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "bridge-3",
+      "palette": "cream",
+      "background": "#dfcdaa",
+      "next": "peach",
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "bridge-3",
+      "palette": "peach",
+      "time": 1.5,
+      "state": "notify",
+      "dots": 0,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "bridges/3",
+    "time": 2.3,
+    "background": "rgb(223, 205, 170)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "bridge-3",
+      "palette": "cream",
+      "background": "#dfcdaa",
+      "next": "peach",
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "bridge-3",
+      "palette": "peach",
+      "time": 2.3,
+      "state": "notify",
+      "dots": 0,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "bridges/4",
+    "time": 0.05,
+    "background": "rgb(218, 183, 163)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "bridge-4",
+      "palette": "peach",
+      "background": "#dab7a3",
+      "next": "sage",
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "bridge-4",
+      "palette": "sage",
+      "time": 0.05,
+      "state": "comet",
+      "dots": 0,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "bridges/4",
+    "time": 0.9,
+    "background": "rgb(218, 183, 163)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "bridge-4",
+      "palette": "peach",
+      "background": "#dab7a3",
+      "next": "sage",
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "bridge-4",
+      "palette": "sage",
+      "time": 0.9,
+      "state": "comet",
+      "dots": 0,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "bridges/4",
+    "time": 1.5,
+    "background": "rgb(218, 183, 163)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "bridge-4",
+      "palette": "peach",
+      "background": "#dab7a3",
+      "next": "sage",
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "bridge-4",
+      "palette": "sage",
+      "time": 1.5,
+      "state": "comet",
+      "dots": 0,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "bridges/4",
+    "time": 2.3,
+    "background": "rgb(218, 183, 163)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "bridge-4",
+      "palette": "peach",
+      "background": "#dab7a3",
+      "next": "sage",
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "bridge-4",
+      "palette": "sage",
+      "time": 2.3,
+      "state": "comet",
+      "dots": 0,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "bridges/5",
+    "time": 0.05,
+    "background": "rgb(173, 184, 160)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "bridge-5",
+      "palette": "sage",
+      "background": "#adb8a0",
+      "next": "cream",
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "bridge-5",
+      "palette": "cream",
+      "time": 0.05,
+      "state": "thinking",
+      "dots": 2,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "bridges/5",
+    "time": 0.9,
+    "background": "rgb(173, 184, 160)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "bridge-5",
+      "palette": "sage",
+      "background": "#adb8a0",
+      "next": "cream",
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "bridge-5",
+      "palette": "cream",
+      "time": 0.9,
+      "state": "thinking",
+      "dots": 2,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "bridges/5",
+    "time": 1.5,
+    "background": "rgb(173, 184, 160)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "bridge-5",
+      "palette": "sage",
+      "background": "#adb8a0",
+      "next": "cream",
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "bridge-5",
+      "palette": "cream",
+      "time": 1.5,
+      "state": "idle",
+      "dots": 2,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "bridges/5",
+    "time": 2.3,
+    "background": "rgb(173, 184, 160)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "bridge-5",
+      "palette": "sage",
+      "background": "#adb8a0",
+      "next": "cream",
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "bridge-5",
+      "palette": "cream",
+      "time": 2.3,
+      "state": "idle",
+      "dots": 0,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "bridges/6",
+    "time": 0.05,
+    "background": "rgb(218, 183, 163)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "bridge-6",
+      "palette": "peach",
+      "background": "#dab7a3",
+      "next": "sage",
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "bridge-6",
+      "palette": "sage",
+      "time": 0.05,
+      "state": "swirl",
+      "dots": 0,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "bridges/6",
+    "time": 0.9,
+    "background": "rgb(218, 183, 163)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "bridge-6",
+      "palette": "peach",
+      "background": "#dab7a3",
+      "next": "sage",
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "bridge-6",
+      "palette": "sage",
+      "time": 0.9,
+      "state": "swirl",
+      "dots": 0,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "bridges/6",
+    "time": 1.5,
+    "background": "rgb(218, 183, 163)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "bridge-6",
+      "palette": "peach",
+      "background": "#dab7a3",
+      "next": "sage",
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "bridge-6",
+      "palette": "sage",
+      "time": 1.5,
+      "state": "wide",
+      "dots": 0,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "bridges/6",
+    "time": 2.3,
+    "background": "rgb(218, 183, 163)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "bridge-6",
+      "palette": "peach",
+      "background": "#dab7a3",
+      "next": "sage",
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "bridge-6",
+      "palette": "sage",
+      "time": 2.3,
+      "state": "wide",
+      "dots": 0,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  }
+]

@@ -14,10 +14,10 @@ const previous=selected?JSON.parse(readFileSync(resolve(dir,'music-variants.json
 if(previous&&(previous.edition!==timeline.edition||Math.abs(previous.duration-duration)>.001))throw Error('Cannot reuse variants from a different timeline');
 const outputs=previous?previous.outputs.filter(o=>o.label!==tracks.find(t=>t.id===selected).label):[];
 const sourceHash=execFileSync('ffmpeg',['-v','error','-i',source,'-map','0:v:0','-c:v','copy','-f','hash','-hash','sha256','-'],{encoding:'utf8'}).trim();
-const editionName=timeline.edition===7?'第七版':timeline.edition===6?'第六版':'第五版';
+const editionName=timeline.edition===8?'第八版':timeline.edition===7?'第七版':timeline.edition===6?'第六版':'第五版';
 for(const {id,label} of tracks.filter(t=>!selected||t.id===selected)){
  console.log('Exporting',label);
- const repaired=id==='k25'&&timeline.edition===7;
+ const repaired=id==='k25'&&[7,8].includes(timeline.edition);
  const repair=repaired?JSON.parse(readFileSync(resolve(dir,'k25-audio-repair/edit-report.json'))):null;
  if(repair&&(Math.abs(repair.duration-duration)>.001||repair.pictureBitstreamHash!==sourceHash||repair.referenceEffectsMixed!==false))throw Error('Rebuild separated K2.5 music for the current picture before exporting');
  const audio=repair?resolve(dir,'k25-audio-repair/media/final.wav'):resolve(dir,`assets/scores/${id}/typed-final.wav`);

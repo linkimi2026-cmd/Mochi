@@ -1,0 +1,135 @@
+{
+  "edition": 8,
+  "palettesSource": "client-plugins/jxl-theme/assets/mochi-palettes.json",
+  "palettes": [
+    {
+      "id": "caramel",
+      "label": "经典焦糖",
+      "body": "#a06a32",
+      "eyes": "#fff6e6",
+      "case": "#4A3826",
+      "screen": "#2E2318",
+      "base": "#6B4E33",
+      "front": "#7A5C3E",
+      "glyph": "#FFE7C2"
+    },
+    {
+      "id": "cream",
+      "label": "奶油米白",
+      "body": "#dfcdaa",
+      "eyes": "#584a3e",
+      "case": "#756653",
+      "screen": "#514a3e",
+      "base": "#8c7e68",
+      "front": "#a2957f",
+      "glyph": "#fff6e6"
+    },
+    {
+      "id": "sage",
+      "label": "鼠尾草绿",
+      "body": "#adb8a0",
+      "eyes": "#384437",
+      "case": "#616b5a",
+      "screen": "#3f493d",
+      "base": "#78826e",
+      "front": "#909b84",
+      "glyph": "#f3f1df"
+    },
+    {
+      "id": "peach",
+      "label": "雾桃奶茶",
+      "body": "#dab7a3",
+      "eyes": "#665044",
+      "case": "#79655a",
+      "screen": "#51443d",
+      "base": "#91786b",
+      "front": "#ac9180",
+      "glyph": "#fff0dd"
+    }
+  ],
+  "logoSource": "apps/desktop/build/icon-source.svg",
+  "logoSha256": "ec84410e8dc043de566f568228c7f5812f1be3ea01c3f698e1bb54a34cbd1587",
+  "productUiModified": false,
+  "chapters": [
+    {
+      "id": "opening",
+      "palette": "cream",
+      "source": "promo/v11/motion-pass/pacing-v7/opening/index.html",
+      "sha256": "414ef3cf7aca04cba0b5f3203234c60f019c89154833fca0dc58df7d0f8b8c40"
+    },
+    {
+      "id": "team",
+      "palette": "sage",
+      "source": "promo/v11/motion-pass/pacing-v7/team/index.html",
+      "sha256": "00837841996b584dd1ec3cb357b55b3e9e2648a757802c17e01b12b7acf1b697"
+    },
+    {
+      "id": "teaching",
+      "palette": "caramel",
+      "source": "promo/v11/motion-pass/pacing-v7/teaching/index.html",
+      "sha256": "00ab700af719ad28d041e88e2aa7bd96a5cf8add1da33d9a78b617faf4dd9e5b"
+    },
+    {
+      "id": "delivery",
+      "palette": "caramel",
+      "source": "promo/v11/motion-pass/pacing-v7/delivery/index.html",
+      "sha256": "e2316d1787bb5e0191ceb944f65b9ab6eb4747e1478d0c068b465c64da456608"
+    },
+    {
+      "id": "model",
+      "palette": "cream",
+      "source": "promo/v11/motion-pass/pacing-v7/model/index.html",
+      "sha256": "11de4712498e93c9875abe5795fab2701f64b94c44ad3a6d518019269c814878"
+    },
+    {
+      "id": "mailbox",
+      "palette": "peach",
+      "source": "promo/v11/motion-pass/pacing-v7/mailbox/index.html",
+      "sha256": "083188515df84205adc3584d056ed2f80879d391e77d1fabbbdd61c59a3f32dc"
+    },
+    {
+      "id": "students",
+      "palette": "sage",
+      "source": "promo/v11/motion-pass/pacing-v7/students/index.html",
+      "sha256": "36ba713f7386b99b7eee021addf6fb8f1995f3028b11471d2107af57d679152e"
+    },
+    {
+      "id": "query",
+      "palette": "cream",
+      "source": "promo/v11/motion-pass/pacing-v7/query/index.html",
+      "sha256": "4498d4e2160160e139821e72414f39854e974ccc7a1e89f035eb436dac2746f0"
+    },
+    {
+      "id": "collaboration",
+      "palette": "peach",
+      "source": "promo/v11/motion-pass/pacing-v7/collaboration/index.html",
+      "sha256": "4d3bf6cf3a5ac2249ea3d9ff07d82fdb58208881c0972872af7d9babb680f0ad"
+    },
+    {
+      "id": "daily",
+      "palette": "sage",
+      "source": "promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "sha256": "092c12ac1c1a64e4fbf2f30e0e2fa30efc605aa83b6c1781ed43b7411d1aab53"
+    },
+    {
+      "id": "ending",
+      "palette": "cream",
+      "source": "promo/v11/motion-pass/pacing-v7/ending/index.html",
+      "sha256": "c913c81776447a3e260b5f2af46b85ae677b01e62f1d487e99427c6df5d08cb8"
+    }
+  ],
+  "actorSources": [
+    {
+      "source": "client-plugins/jxl-brand/src/bloub-motion.ts",
+      "sha256": "fe8b1f5d607e8de20e39ad6170a1c578c7652600a8dba2325f82364c413c2f50"
+    },
+    {
+      "source": "client-plugins/jxl-brand/src/vendor/bloub/engine.ts",
+      "sha256": "d824c715b6ec38b241fc61ae2ac516d7c1623f9603f88942b4585cdd9307e638"
+    },
+    {
+      "source": "client-plugins/jxl-brand/src/vendor/bloub/states.ts",
+      "sha256": "7b67bfc4ee95011225a2cef542866dacde0a1c044a56f174bee4173b82cec207"
+    }
+  ]
+}

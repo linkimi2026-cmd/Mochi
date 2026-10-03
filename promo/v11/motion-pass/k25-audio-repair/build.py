@@ -106,7 +106,7 @@ ff('-i', music, '-i', ROOT/'assets/clicks.wav', '-i', ROOT/'assets/typing.wav',
 picture_hash = subprocess.check_output(['ffmpeg','-v','error','-i',timeline['output'],'-map','0:v:0','-c:v','copy','-f','hash','-hash','sha256','-'],text=True).strip()
 assert_samples(music, DURATION)
 assert_samples(final, DURATION)
-result = {'pictureBitstreamHash': picture_hash, 'revision': '7.2-k25-music-stem', 'duration': DURATION, 'source': str(SOURCE),
+result = {'pictureBitstreamHash': picture_hash, 'revision': f"{timeline['edition']}.2-k25-music-stem", 'duration': DURATION, 'source': str(SOURCE),
           'sourceSha256': hashlib.sha256(SOURCE.read_bytes()).hexdigest(),
           'reference': str(REFERENCE), 'separationReport': 'separation-check.json',
           'referenceEffectsMixed': False, 'referenceDialogueMixed': False,

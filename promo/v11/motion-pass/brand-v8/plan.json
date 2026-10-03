@@ -1,0 +1,63 @@
+{
+  "handleSeconds": 1.2,
+  "bridgeDurations": [
+    2.8,
+    3.2,
+    3,
+    4.4,
+    3.4,
+    2.6,
+    3.2
+  ],
+  "chapters": [
+    {
+      "name": "Mo问候、校园工作伙伴定位与需求",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/brand-v8/media/opening.mp4",
+      "start": 0,
+      "duration": 22
+    },
+    {
+      "name": "多Agent与内置配色",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/brand-v8/team/output/video.mp4",
+      "start": 0,
+      "duration": 23.35
+    },
+    {
+      "name": "真实课件与教学成果",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/brand-v8/media/teaching-delivery.mp4",
+      "start": 0,
+      "duration": 38
+    },
+    {
+      "name": "交互模型",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/brand-v8/model/output/video.mp4",
+      "start": 0,
+      "duration": 26.8
+    },
+    {
+      "name": "叮咚与小信箱",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/brand-v8/mailbox/output/video.mp4",
+      "start": 0,
+      "duration": 18
+    },
+    {
+      "name": "跨端消息与叫人",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/brand-v8/students/output/video.mp4",
+      "start": 0,
+      "duration": 50
+    },
+    {
+      "name": "Mochi原生查人、流转与教师协作",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/brand-v8/media/query-collaboration.mp4",
+      "start": 0,
+      "duration": 60
+    },
+    {
+      "name": "记忆、自动化与结尾",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/brand-v8/media/daily-ending.mp4",
+      "start": 0,
+      "duration": 55.4
+    }
+  ],
+  "duration": 299.35
+}

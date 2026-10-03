@@ -1,0 +1,161 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><title>Mochi · 从输入到可探索的模型</title><script src="assets/gsap.min.js"></script><script src="assets/motion.js"></script><link rel="stylesheet" href="assets/motion.css"><style>
+@font-face{font-family:MoSans;src:url('assets/NotoSansCJKsc-Regular.otf')}@font-face{font-family:MoSans;src:url('assets/NotoSansCJKsc-Bold.otf');font-weight:700 900}@font-face{font-family:MoSerif;src:url('assets/NotoSerifCJKsc-SemiBold.otf')}
+*{box-sizing:border-box}body{margin:0;font-family:MoSans;color:#263e35}#film{position:relative;width:2560px;height:1440px;overflow:hidden;background:#eef3eb;perspective:2200px}
+.shot{position:absolute;left:0;top:0;transform-origin:0 0;overflow:hidden;box-shadow:0 28px 80px #213a2520;border-radius:22px;background:#f3efe6}.shot video{display:block;width:1540px}.clip{position:absolute;left:0;top:0}
+#request{width:1540px;height:390px;transform:translate(240px,600px) scale(1.35)}#sent{width:1540px;height:580px;transform:translate(240px,430px) scale(1.35);opacity:0}#process{width:1540px;height:800px;transform:translate(240px,300px) scale(1.35);opacity:0}
+#model{position:absolute;width:1440px;height:820px;left:0;top:0;transform-origin:0 0;opacity:0;overflow:hidden;border-radius:14px;box-shadow:0 34px 100px #233d2624;background:white}#model iframe{display:block;width:1440px;height:820px;border:0;background:white}
+.headline{position:absolute;left:170px;top:140px;opacity:0;pointer-events:none}h1{font:900 96px/1.3 MoSans;letter-spacing:-3px;margin:0}.glyph{display:inline-block;opacity:0}#title-b{top:70px;left:250px}#title-b h1{font-size:72px}#title-c{left:1580px;top:590px;width:840px}#title-c h1{font:84px/1.35 MoSerif}.sub{opacity:0;font:33px/1.6 MoSans;margin-top:20px}
+#note{position:absolute;left:80px;bottom:25px;font:23px MoSans;color:#536354;background:#f4f6edf0;padding:8px 16px;border-radius:5px}#speed{position:absolute;right:95px;top:90px;opacity:0;font:30px MoSans}#wash{position:absolute;inset:0;background:#f8f9f3;opacity:0;pointer-events:none}
+</style><script src="assets/actor.js"></script></head><body><main id="film" data-composition-id="mochi-model" data-width="2560" data-height="1440" data-duration="28" data-fps="120">
+<div id="request" class="shot"><video id="request-video" class="clip" src="assets/request.mp4" data-start="0" data-duration="3.4" data-track-index="1" muted playsinline></video></div>
+<div id="sent" class="shot"><video id="sent-video" class="clip" src="assets/sent.mp4" data-start="3.4" data-duration="2.6" data-track-index="1" muted playsinline></video></div>
+<div id="process" class="shot"><video id="process-video" class="clip" src="assets/process.mp4" data-start="6" data-duration="4" data-track-index="1" muted playsinline></video></div>
+<div id="model"><iframe id="native-model" src="assets/actual-model.html" title="Mochi实际生成的椭圆切线模型"></iframe></div>
+<section id="title-a" class="headline"><h1>一个想法，<br>变成可以探索的模型。</h1></section>
+<section id="title-b" class="headline"><h1>拖动，观察。再问一个为什么。</h1></section>
+<section id="title-c" class="headline"><h1>让知识，<br>在眼前发生。</h1><div class="sub">切点 · 辅助线 · 参数 · 分步推导</div></section>
+<div id="note">真实建模请求 · 已剪去等待</div><div id="speed">执行过程 2×</div><div id="wash"></div>
+<audio id="model-music" src="assets/music-review.wav" data-start="0" data-duration="28" data-track-index="9"></audio></main><script>
+const tl=gsap.timeline({paused:true});window.__timelines={'mochi-model':tl};const M=window.MochiMotion,p=M.createCursor(document.querySelector('#film')),frame=document.querySelector('#native-model');
+function title(id,at,out){const e=document.querySelector(id),h=e.querySelector('h1');for(const n of [...h.childNodes]){if(n.nodeType!==3)continue;const frag=document.createDocumentFragment();for(const c of n.textContent){const s=document.createElement('span');s.className='glyph';s.textContent=c;frag.append(s)}n.replaceWith(frag)}tl.set(e,{opacity:1},at);tl.fromTo(e.querySelectorAll('.glyph'),{y:65,rotation:2,opacity:0},{y:0,rotation:0,opacity:1,stagger:.025,duration:.7,ease:'back.out(1.2)',immediateRender:false},at);const sub=e.querySelector('.sub');if(sub)tl.fromTo(sub,{y:25,opacity:0},{y:0,opacity:1,duration:.5,immediateRender:false},at+.8);tl.to(e,{y:-75,opacity:0,duration:.5,ease:'power2.in'},out)}
+title('#title-a',.1,2.5);title('#title-b',10,11.6);title('#title-c',24.2,27.3);
+M.movePointer(tl,p,{x:1730,y:1110},{x:2144,y:979},2.1,.55);M.click(tl,p,{x:2144,y:979},3.2);tl.to(p.cursor,{opacity:0,duration:.12},3.38);
+M.place(tl,'#request',{x:240,y:600,scale:1.35,opacity:1},{x:470,y:260,scale:1.04,opacity:0},3.05,.35);
+M.place(tl,'#sent',{x:470,y:260,scale:1.04,opacity:0},{x:240,y:430,scale:1.35,opacity:1},3.4,.65,'power3.out');
+tl.to('#sent',{opacity:0,duration:.1},5.9);tl.set('#sent',{opacity:0},6);tl.set('#process',{opacity:1},6);tl.set('#speed',{opacity:1},6);tl.fromTo('#process',{x:240,y:300,scale:1.35},{x:240,y:230,scale:1.35,duration:3.2,ease:'none',immediateRender:false},6);
+tl.fromTo('#process',{x:240,y:230,scale:1.35,rotation:0,opacity:1},{x:-1850,y:230,scale:1.35,rotation:-4,opacity:0,duration:.85,ease:'power3.inOut',immediateRender:false},9.2);tl.to('#speed',{opacity:0,duration:.3},9.35);
+M.place(tl,'#model',{x:2280,y:700,scale:.55,rotation:8,opacity:0},{x:272,y:230,scale:1.4,rotation:0,opacity:1},9.35,1.1,'back.out(1.08)');
+tl.set('#note',{textContent:'实际生成模型 · 修复依赖后，以原源码渲染演示'},9.35);
+let modelTime=0;function paint(){
+ if(!frame.contentWindow?.renderMochiModel)return;
+ window.updateMochiModelCamera?.(modelTime+10.5);
+ const state=frame.contentWindow.renderMochiModel(modelTime);window.modelFrameEvidence=state;
+ const r=frame.getBoundingClientRect(),t=modelTime;let target=null,alpha=1;
+ if(t>=.5&&t<=4.1)target=state.point;
+ else if(t>=4.35&&t<=5.1)target=state.controls.aux;
+ else if(t>=6.7&&t<=9.05)target=state.controls.slider;
+ else if(t>=9.35&&t<=10.05)target=state.controls.derive;
+ if(target){alpha=Math.min(1,Math.max(0,t<4.2?(t-.5)*8:t<5.2?(t-4.35)*8:t<9.1?(t-6.7)*8:(t-9.35)*8));gsap.set(p.cursor,{x:r.left+target.x*r.width/1440-4.5,y:r.top+target.y*r.height/820-3,opacity:alpha});}
+ else gsap.set(p.cursor,{opacity:0});
+ const pulse=t>=4.8&&t<5.2?{time:t-4.8,at:state.controls.aux}:t>=7&&t<7.4?{time:t-7,at:state.controls.slider}:t>=9.8&&t<10.2?{time:t-9.8,at:state.controls.derive}:null;
+ if(pulse)gsap.set(p.ring,{x:r.left+pulse.at.x*r.width/1440-40,y:r.top+pulse.at.y*r.height/820-40,scale:.2+pulse.time*2.5,opacity:.7*(1-pulse.time/.4)});else gsap.set(p.ring,{opacity:0});
+}
+window.addEventListener('message',event=>{if(event.source===frame.contentWindow&&event.data?.type==='mochi-model-render-ready')paint()});
+
+const clock={};Object.defineProperty(clock,'time',{get:()=>modelTime,set:v=>{modelTime=v;paint()}});tl.fromTo(clock,{time:0},{time:17.5,duration:17.5,ease:'none'},10.5);
+M.place(tl,'#model',{x:272,y:230,scale:1.4,rotation:0},{x:110,y:455,scale:.88,rotation:-3},23.15,1.25,'power3.inOut');
+tl.to('#model',{x:-1460,y:160,rotation:-9,opacity:0,duration:1.05,ease:'power3.inOut'},26.9);tl.to('#note',{opacity:0,duration:.4},27.3);tl.to({}, {duration:.01},27.99);
+</script><script>/* Film-only additive camera rig. Product DOM, video rate and source data stay intact. */
+window.MochiPacing={apply(config){
+ const stage=document.querySelector('#film'),tl=Object.values(window.__timelines)[0];
+ const rig=document.createElement('div');rig.id='editorial-camera';
+ Object.assign(rig.style,{position:'absolute',inset:'0',transformOrigin:'0 0',pointerEvents:'none'});
+ const elements=[...new Set(config.targets.flatMap(s=>[...stage.querySelectorAll(s)]))];
+ stage.insertBefore(rig,elements[0]);elements.forEach(e=>rig.append(e));
+ const captions=document.createElement('div');
+ Object.assign(captions.style,{position:'absolute',inset:'0',pointerEvents:'none'});
+ const captionNodes=[...stage.children].filter(e=>e.matches('.copy,.copy-group,.headline,h1,h2,#hint,#arrival,#colors-sub'));
+ stage.append(captions);captionNodes.forEach(e=>captions.append(e));
+ const neutral={scale:1,x:0,y:0};
+ function move(at,duration,pose){tl.to(rig,{...pose,duration,ease:'power2.inOut'},at)}
+ const report=[];
+ for(const [start,end,targets,purpose]of config.windows){
+  const poses=targets.map(([scale,cx,cy])=>({scale,x:1280-cx*scale,y:720-cy*scale}));
+  const steps=[...poses,neutral],step=(end-start)/steps.length;
+  // Each stop lasts <=1.2 s. The remainder is a smooth, purposeful camera move.
+  const travel=Math.max(.55,step-1.2);
+  steps.forEach((pose,i)=>move(start+i*step,Math.min(travel,step),pose));
+  // The editorial headline clears the close-up instead of covering native fields.
+  tl.to(captions,{opacity:0,duration:.25},start);
+  tl.to(captions,{opacity:1,duration:.25},end-.25);
+  report.push({start,end,purpose,maxDesignedHold:Math.max(0,step-travel),targets});
+ }
+ // Small perspective paper fields, behind the UI. They move through space, not over text.
+ const field=document.createElement('div');field.id='editorial-paper-field';
+ Object.assign(field.style,{position:'absolute',inset:'0',overflow:'hidden',pointerEvents:'none',perspective:'2200px'});
+ stage.insertBefore(field,stage.firstChild);
+ const colors=['#dbe5cd','#efe0c4','#d6e5df'];
+ for(let i=0;i<3;i++){
+  const paper=document.createElement('div');
+  Object.assign(paper.style,{position:'absolute',width:'820px',height:'1140px',left:(i===1?2160:-650)+'px',top:(i*470-540)+'px',background:colors[i],opacity:'.68',boxShadow:'30px 40px 0 #fffaf550',transformOrigin:'50% 50%'});
+  field.append(paper);tl.set(paper,{rotation:i%2?17:-24,rotationY:i%2?-24:21},0);
+  for(const [k,w]of config.windows.entries())tl.to(paper,{x:(k%2?1:-1)*(110+i*25),y:((k+i)%3-1)*150,rotation:(k%2?1:-1)*(16+i*3),duration:1.1,ease:'power2.inOut'},w[0]+i*.07);
+ }
+ // Endpoint identity is required by the already-rendered inter-chapter bridges.
+ const duration=Number(stage.dataset.duration||tl.duration());
+ tl.fromTo(field,{opacity:0},{opacity:1,duration:.5,immediateRender:false},1.25);
+ tl.to(field,{opacity:0,duration:.4},duration-1.8);
+ if(config.id==='model'){
+  // The model remains the original iframe with its existing deterministic interaction clock.
+  const moves=[
+   [10.5,1.05,{x:65,y:190,scale:1.68}],
+   [12.65,.85,{x:220,y:220,scale:1.48}],
+   [14.65,.8,{x:90,y:180,scale:1.62}],
+   [16.65,.85,{x:130,y:155,scale:1.5}],
+   [18.7,.85,{x:240,y:155,scale:1.45}],
+   [20.65,.9,{x:-400,y:165,scale:1.7}],
+   [22.55,.55,{x:272,y:230,scale:1.4}],
+  ];
+  // The native model clock seeks this GSAP camera before calculating screen cursor positions.
+  // This also works when the renderer suppresses timeline callbacks during random-access seeks.
+  const camera=gsap.timeline({paused:true});let previous={x:272,y:230,scale:1.4};
+  moves.forEach(([at,duration,pose])=>{camera.fromTo('#model',previous,{...pose,duration,ease:'power2.inOut',immediateRender:false},at);previous=pose});
+  window.updateMochiModelCamera=t=>{if(t>=10.5&&t<23.15)camera.seek(t)};
+  kinetic('拖动，一个切点。',11.9,14.5,'left');
+  kinetic('看见，几何关系。',14.6,17.15,'right');
+  kinetic('改变参数，继续探索。',17.2,20.35,'left');
+  kinetic('再展开，为什么。',20.4,22.8,'right');
+ }
+ function kinetic(text,start,end,align){
+  const el=document.createElement('div');el.className='pacing-type';
+  Object.assign(el.style,{position:'absolute',left:align==='left'?'180px':'auto',right:align==='right'?'160px':'auto',top:'28px',height:'95px',font:'700 68px/1.15 MoSans',letterSpacing:'-3px',overflow:'hidden',whiteSpace:'nowrap',pointerEvents:'none',opacity:'0'});
+  for(const char of text){const span=document.createElement('span');span.className='glyph';span.textContent=char;span.style.display='inline-block';el.append(span)}
+  stage.append(el);tl.set(el,{opacity:1},start);
+  tl.fromTo(el.children,{y:100,rotation:8,opacity:0},{y:0,rotation:0,opacity:1,stagger:.022,duration:.55,ease:'power3.out',immediateRender:false},start);
+  tl.to(el,{x:align==='left'?80:-80,duration:.65,ease:'power2.inOut'},end-1.15);
+  tl.to(el.children,{y:-110,rotation:-5,opacity:0,stagger:.016,duration:.35,ease:'power2.in'},end-.4);
+ }
+ window.pacingEvidence={chapter:config.id,windows:report,playbackRate:1};
+}};
+
+MochiPacing.apply({"id":"model","source":"model-chapter","targets":["#request","#sent","#process"],"windows":[[4.25,5.8,[[1.13,1400,770]],"真实请求已发送"]]});</script><script>/* Editorial stage colors only: never recolor native DOM, video, images or iframe content. */
+window.MochiBrand={apply(config){
+ const {id,palette:p,next,palettes}=config,stage=document.querySelector('#film'),tl=Object.values(window.__timelines)[0],duration=Number(stage.dataset.duration);
+ const ink=p.id==='caramel'?p.glyph:p.eyes;
+ // Preserve inherited native foreground colors before changing the editorial stage.
+ stage.querySelectorAll('.native,#file,#grade-native').forEach(el=>{el.style.color=getComputedStyle(el).color});
+ if(['delivery','mailbox','collaboration'].includes(id)){const light=stage.querySelector('#light');if(light)light.style.background=`radial-gradient(ellipse at 70% 25%,${p.glyph}18,transparent 60%)`;}
+ stage.style.background=p.body;stage.style.color=ink;
+ stage.dataset.brandPalette=p.id;
+ const css=document.createElement('style');css.textContent=`
+ #film .paper-world .paper-room{background:${p.body}!important}
+ #film #world,#film #atmosphere{background:none!important}
+ #film .copy,#film .copy-group,#film .headline,#film .pacing-type,#film #words,#film #chapter,#film #page-state,#film #labels,#film #colors-sub,#film .type,#film .type p{color:${ink}}
+ #film #source-note,#film #note,#film #folio{color:${p.case};background:${p.glyph}e6;border-radius:8px;padding:8px 14px}
+ #film #characters .character{background:radial-gradient(ellipse at 50% 34%,#f3f1df 0%,#f3f1df99 32%,transparent 67%);border-radius:50%}
+ #brand-mark{position:absolute;right:100px;top:64px;width:126px;height:126px;z-index:5;opacity:0;pointer-events:none}
+ `;document.head.append(css);
+ const field=document.querySelector('#editorial-paper-field');
+ if(field)[...field.children].forEach((el,i)=>{el.style.background=i===1?p.glyph:palettes[(palettes.findIndex(x=>x.id===p.id)+i+1)%4]?.body||p.glyph;el.style.opacity='.42'});
+ if(id==='daily'){
+  // Discrete memory and automation sections gain a new palette through moving paper.
+  const swaps=[[0,'sage'],[8,'cream'],[14,'peach'],[22,'cream'],[28,'sage'],[36,'peach'],[42,'cream']];
+  for(const [at,key]of swaps){const theme=palettes.find(x=>x.id===key);tl.to(stage,{backgroundColor:theme.body,duration:.65,ease:'power2.inOut'},at)}
+ }
+ if(next){
+  const wipe=document.createElement('div');wipe.id='brand-color-wipe';
+  Object.assign(wipe.style,{position:'absolute',inset:'-12%',background:next.body,pointerEvents:'none'});
+  stage.insertBefore(wipe,stage.firstChild);
+  const n=Number(id.split('-')[1]);
+  if(n%3===0){tl.fromTo(wipe,{clipPath:'circle(0% at 74% 70%)'},{clipPath:'circle(145% at 74% 70%)',duration:duration*.64,ease:'power3.inOut',immediateRender:false},duration*.05)}
+  else if(n%3===1){tl.fromTo(wipe,{xPercent:115,rotation:-8},{xPercent:0,rotation:0,duration:duration*.64,ease:'power3.inOut',immediateRender:false},duration*.05)}
+  else{tl.fromTo(wipe,{yPercent:115,rotation:8},{yPercent:0,rotation:0,duration:duration*.64,ease:'power3.inOut',immediateRender:false},duration*.05)}
+  const logo=document.createElement('img');logo.id='brand-mark';logo.src='assets/brand.svg';logo.alt='Mochi';if(n===3){logo.style.left='100px';logo.style.right='auto'}stage.append(logo);
+  tl.fromTo(logo,{y:24,scale:.7,opacity:0},{y:0,scale:1,opacity:1,duration:.35,ease:'power3.out',immediateRender:false},duration*.26);
+  tl.to(logo,{y:-24,opacity:0,duration:.28},duration*.60);
+  tl.to('#words',{color:next.id==='caramel'?next.glyph:next.eyes,duration:.35},duration*.25);
+ }
+ window.brandEvidence={id,palette:p.id,background:p.body,next:next?.id||null,productUiModified:false};
+}};
+
+MochiBrand.apply({"id":"model","palette":{"id":"cream","label":"奶油米白","body":"#dfcdaa","eyes":"#584a3e","case":"#756653","screen":"#514a3e","base":"#8c7e68","front":"#a2957f","glyph":"#fff6e6"},"palettes":[{"id":"caramel","label":"经典焦糖","body":"#a06a32","eyes":"#fff6e6","case":"#4A3826","screen":"#2E2318","base":"#6B4E33","front":"#7A5C3E","glyph":"#FFE7C2"},{"id":"cream","label":"奶油米白","body":"#dfcdaa","eyes":"#584a3e","case":"#756653","screen":"#514a3e","base":"#8c7e68","front":"#a2957f","glyph":"#fff6e6"},{"id":"sage","label":"鼠尾草绿","body":"#adb8a0","eyes":"#384437","case":"#616b5a","screen":"#3f493d","base":"#78826e","front":"#909b84","glyph":"#f3f1df"},{"id":"peach","label":"雾桃奶茶","body":"#dab7a3","eyes":"#665044","case":"#79655a","screen":"#51443d","base":"#91786b","front":"#ac9180","glyph":"#fff0dd"}]});MochiFilmActor.install({"id":"model","palette":{"id":"cream","label":"奶油米白","body":"#dfcdaa","eyes":"#584a3e","case":"#756653","screen":"#514a3e","base":"#8c7e68","front":"#a2957f","glyph":"#fff6e6"},"palettes":[{"id":"caramel","label":"经典焦糖","body":"#a06a32","eyes":"#fff6e6","case":"#4A3826","screen":"#2E2318","base":"#6B4E33","front":"#7A5C3E","glyph":"#FFE7C2"},{"id":"cream","label":"奶油米白","body":"#dfcdaa","eyes":"#584a3e","case":"#756653","screen":"#514a3e","base":"#8c7e68","front":"#a2957f","glyph":"#fff6e6"},{"id":"sage","label":"鼠尾草绿","body":"#adb8a0","eyes":"#384437","case":"#616b5a","screen":"#3f493d","base":"#78826e","front":"#909b84","glyph":"#f3f1df"},{"id":"peach","label":"雾桃奶茶","body":"#dab7a3","eyes":"#665044","case":"#79655a","screen":"#51443d","base":"#91786b","front":"#ac9180","glyph":"#fff0dd"}]});</script></body></html>

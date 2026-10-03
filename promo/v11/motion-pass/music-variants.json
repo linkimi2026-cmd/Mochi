@@ -5,7 +5,7 @@
       "path": "/Users/a1379/Desktop/AI模型宣传视频/Kimi_K2.5_全能Agent模型.mp4"
     }
   ],
-  "edition": 7,
+  "edition": 8,
   "versionCount": 2,
   "cover": "output/Mochi_品牌封面_2K.png",
   "pictureIdentical": true,
@@ -22,23 +22,23 @@
     {
       "coverEmbedded": true,
       "label": "现有配乐版",
-      "path": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/output/Mochi_V11_第七版_现有配乐版_2K120.mp4",
-      "bytes": 720093448,
+      "path": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/output/Mochi_V11_第八版_现有配乐版_2K120.mp4",
+      "bytes": 654712010,
       "duration": 299.35,
       "frames": 35922,
-      "videoBitstreamHash": "SHA256=a3da4ca5c23030ce76178a5aee7360eba09f6344823f9379d0e0f4196f642b4b",
+      "videoBitstreamHash": "SHA256=e0d4d4a1fa39f886ccf59add68e676a8aaca788a89a95bdb7c52d51153d16e74",
       "decodeErrors": 0
     },
     {
       "coverEmbedded": true,
       "label": "K2.5参考音轨版",
-      "path": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/output/Mochi_V11_第七版_K2.5音轨修订版_2K120.mp4",
-      "bytes": 719501934,
+      "path": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/output/Mochi_V11_第八版_K2.5音轨修订版_2K120.mp4",
+      "bytes": 654123781,
       "duration": 299.35,
       "frames": 35922,
-      "videoBitstreamHash": "SHA256=a3da4ca5c23030ce76178a5aee7360eba09f6344823f9379d0e0f4196f642b4b",
+      "videoBitstreamHash": "SHA256=e0d4d4a1fa39f886ccf59add68e676a8aaca788a89a95bdb7c52d51153d16e74",
       "decodeErrors": 0,
-      "audioRevision": "7.2-k25-music-stem",
+      "audioRevision": "8.2-k25-music-stem",
       "audioReport": "k25-audio-repair/edit-report.json"
     }
   ]

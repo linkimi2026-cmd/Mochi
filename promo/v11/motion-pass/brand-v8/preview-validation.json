@@ -1,0 +1,798 @@
+[
+  {
+    "id": "greeting",
+    "time": 1.9,
+    "background": "rgb(223, 205, 170)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "greeting",
+      "palette": "cream",
+      "background": "#dfcdaa",
+      "next": null,
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "greeting",
+      "palette": "cream",
+      "time": 1.9,
+      "state": "wide",
+      "dots": 0,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "greeting",
+    "time": 3.8,
+    "background": "rgb(223, 205, 170)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "greeting",
+      "palette": "cream",
+      "background": "#dfcdaa",
+      "next": null,
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "greeting",
+      "palette": "cream",
+      "time": 3.8,
+      "state": "play",
+      "dots": 0,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "greeting",
+    "time": 5.2,
+    "background": "rgb(223, 205, 170)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "greeting",
+      "palette": "cream",
+      "background": "#dfcdaa",
+      "next": null,
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "greeting",
+      "palette": "cream",
+      "time": 5.2,
+      "state": "idle",
+      "dots": 0,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "greeting",
+    "time": 6.5,
+    "background": "rgb(223, 205, 170)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "greeting",
+      "palette": "cream",
+      "background": "#dfcdaa",
+      "next": null,
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "greeting",
+      "palette": "cream",
+      "time": 6.5,
+      "state": "idle",
+      "dots": 0,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "greeting",
+    "time": 7.8,
+    "background": "rgb(223, 205, 170)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "greeting",
+      "palette": "cream",
+      "background": "#dfcdaa",
+      "next": null,
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "greeting",
+      "palette": "cream",
+      "time": 7.8,
+      "state": "idle",
+      "dots": 0,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "opening",
+    "time": 5.8,
+    "background": "rgb(223, 205, 170)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "opening",
+      "palette": "cream",
+      "background": "#dfcdaa",
+      "next": null,
+      "productUiModified": false
+    },
+    "actor": null,
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "opening",
+    "time": 13,
+    "background": "rgb(223, 205, 170)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "opening",
+      "palette": "cream",
+      "background": "#dfcdaa",
+      "next": null,
+      "productUiModified": false
+    },
+    "actor": null,
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "team",
+    "time": 2,
+    "background": "rgb(173, 184, 160)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "team",
+      "palette": "sage",
+      "background": "#adb8a0",
+      "next": null,
+      "productUiModified": false
+    },
+    "actor": null,
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "team",
+    "time": 8,
+    "background": "rgb(173, 184, 160)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "team",
+      "palette": "sage",
+      "background": "#adb8a0",
+      "next": null,
+      "productUiModified": false
+    },
+    "actor": null,
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "team",
+    "time": 20.4,
+    "background": "rgb(173, 184, 160)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "team",
+      "palette": "sage",
+      "background": "#adb8a0",
+      "next": null,
+      "productUiModified": false
+    },
+    "actor": null,
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "teaching",
+    "time": 2,
+    "background": "rgb(160, 106, 50)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "teaching",
+      "palette": "caramel",
+      "background": "#a06a32",
+      "next": null,
+      "productUiModified": false
+    },
+    "actor": null,
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "teaching",
+    "time": 8,
+    "background": "rgb(160, 106, 50)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "teaching",
+      "palette": "caramel",
+      "background": "#a06a32",
+      "next": null,
+      "productUiModified": false
+    },
+    "actor": null,
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "teaching",
+    "time": 15,
+    "background": "rgb(160, 106, 50)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "teaching",
+      "palette": "caramel",
+      "background": "#a06a32",
+      "next": null,
+      "productUiModified": false
+    },
+    "actor": null,
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "delivery",
+    "time": 4,
+    "background": "rgb(160, 106, 50)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "delivery",
+      "palette": "caramel",
+      "background": "#a06a32",
+      "next": null,
+      "productUiModified": false
+    },
+    "actor": null,
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "delivery",
+    "time": 12,
+    "background": "rgb(160, 106, 50)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "delivery",
+      "palette": "caramel",
+      "background": "#a06a32",
+      "next": null,
+      "productUiModified": false
+    },
+    "actor": null,
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "model",
+    "time": 6,
+    "background": "rgb(223, 205, 170)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "model",
+      "palette": "cream",
+      "background": "#dfcdaa",
+      "next": null,
+      "productUiModified": false
+    },
+    "actor": null,
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "model",
+    "time": 14,
+    "background": "rgb(223, 205, 170)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "model",
+      "palette": "cream",
+      "background": "#dfcdaa",
+      "next": null,
+      "productUiModified": false
+    },
+    "actor": null,
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "mailbox",
+    "time": 7,
+    "background": "rgb(218, 183, 163)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "mailbox",
+      "palette": "peach",
+      "background": "#dab7a3",
+      "next": null,
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "mailbox",
+      "palette": "peach",
+      "time": 7,
+      "state": "notify",
+      "dots": 0,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "mailbox",
+    "time": 11,
+    "background": "rgb(218, 183, 163)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "mailbox",
+      "palette": "peach",
+      "background": "#dab7a3",
+      "next": null,
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "mailbox",
+      "palette": "peach",
+      "time": 11,
+      "state": "notify",
+      "dots": 0,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "students",
+    "time": 3,
+    "background": "rgb(173, 184, 160)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "students",
+      "palette": "sage",
+      "background": "#adb8a0",
+      "next": null,
+      "productUiModified": false
+    },
+    "actor": null,
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "students",
+    "time": 18,
+    "background": "rgb(173, 184, 160)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "students",
+      "palette": "sage",
+      "background": "#adb8a0",
+      "next": null,
+      "productUiModified": false
+    },
+    "actor": null,
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "students",
+    "time": 29.8,
+    "background": "rgb(173, 184, 160)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "students",
+      "palette": "sage",
+      "background": "#adb8a0",
+      "next": null,
+      "productUiModified": false
+    },
+    "actor": null,
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "students",
+    "time": 30.7,
+    "background": "rgb(173, 184, 160)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "students",
+      "palette": "sage",
+      "background": "#adb8a0",
+      "next": null,
+      "productUiModified": false
+    },
+    "actor": null,
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "students",
+    "time": 32,
+    "background": "rgb(173, 184, 160)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "students",
+      "palette": "sage",
+      "background": "#adb8a0",
+      "next": null,
+      "productUiModified": false
+    },
+    "actor": null,
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "query",
+    "time": 14,
+    "background": "rgb(223, 205, 170)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "query",
+      "palette": "cream",
+      "background": "#dfcdaa",
+      "next": null,
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "query",
+      "palette": "cream",
+      "time": 14,
+      "state": "wide",
+      "dots": 0,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "query",
+    "time": 24,
+    "background": "rgb(223, 205, 170)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "query",
+      "palette": "cream",
+      "background": "#dfcdaa",
+      "next": null,
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "query",
+      "palette": "cream",
+      "time": 24,
+      "state": "wide",
+      "dots": 0,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "collaboration",
+    "time": 5,
+    "background": "rgb(218, 183, 163)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "collaboration",
+      "palette": "peach",
+      "background": "#dab7a3",
+      "next": null,
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "collaboration",
+      "palette": "peach",
+      "time": 5,
+      "state": "notify",
+      "dots": 0,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "collaboration",
+    "time": 17,
+    "background": "rgb(218, 183, 163)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "collaboration",
+      "palette": "peach",
+      "background": "#dab7a3",
+      "next": null,
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "collaboration",
+      "palette": "peach",
+      "time": 17,
+      "state": "play",
+      "dots": 0,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "daily",
+    "time": 3,
+    "background": "rgb(173, 184, 160)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "daily",
+      "palette": "sage",
+      "background": "#adb8a0",
+      "next": null,
+      "productUiModified": false
+    },
+    "actor": null,
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "daily",
+    "time": 11,
+    "background": "rgb(223, 205, 170)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "daily",
+      "palette": "sage",
+      "background": "#adb8a0",
+      "next": null,
+      "productUiModified": false
+    },
+    "actor": null,
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "daily",
+    "time": 17,
+    "background": "rgb(218, 183, 163)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "daily",
+      "palette": "sage",
+      "background": "#adb8a0",
+      "next": null,
+      "productUiModified": false
+    },
+    "actor": null,
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "daily",
+    "time": 25,
+    "background": "rgb(223, 205, 170)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "daily",
+      "palette": "sage",
+      "background": "#adb8a0",
+      "next": null,
+      "productUiModified": false
+    },
+    "actor": null,
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "daily",
+    "time": 31,
+    "background": "rgb(173, 184, 160)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "daily",
+      "palette": "sage",
+      "background": "#adb8a0",
+      "next": null,
+      "productUiModified": false
+    },
+    "actor": null,
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "daily",
+    "time": 39,
+    "background": "rgb(218, 183, 163)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "daily",
+      "palette": "sage",
+      "background": "#adb8a0",
+      "next": null,
+      "productUiModified": false
+    },
+    "actor": null,
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "daily",
+    "time": 45,
+    "background": "rgb(223, 205, 170)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "daily",
+      "palette": "sage",
+      "background": "#adb8a0",
+      "next": null,
+      "productUiModified": false
+    },
+    "actor": null,
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "ending",
+    "time": 2,
+    "background": "rgb(223, 205, 170)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "ending",
+      "palette": "cream",
+      "background": "#dfcdaa",
+      "next": null,
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "ending",
+      "palette": "caramel",
+      "time": 2,
+      "state": "idle",
+      "dots": 0,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "ending",
+    "time": 4.5,
+    "background": "rgb(223, 205, 170)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "ending",
+      "palette": "cream",
+      "background": "#dfcdaa",
+      "next": null,
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "ending",
+      "palette": "caramel",
+      "time": 4.5,
+      "state": "wide",
+      "dots": 0,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  },
+  {
+    "id": "ending",
+    "time": 6.5,
+    "background": "rgb(223, 205, 170)",
+    "missingVideo": [],
+    "missingImages": [],
+    "fonts": "loaded",
+    "brand": {
+      "id": "ending",
+      "palette": "cream",
+      "background": "#dfcdaa",
+      "next": null,
+      "productUiModified": false
+    },
+    "actor": {
+      "id": "ending",
+      "palette": "caramel",
+      "time": 6.5,
+      "state": "wink",
+      "dots": 0,
+      "finite": true,
+      "source": "product BotEngine + createPainter"
+    },
+    "badText": false,
+    "errors": []
+  }
+]

@@ -1,0 +1,70 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><title>Mochi · Mo接力 3</title><script src="assets/gsap.min.js"></script><script src="assets/native.js"></script><link rel="stylesheet" href="assets/native.css"><link rel="stylesheet" href="assets/palettes.css"><style>
+@font-face{font-family:MoSans;src:url('assets/NotoSansCJKsc-Regular.otf')}@font-face{font-family:MoSans;src:url('assets/NotoSansCJKsc-Bold.otf');font-weight:700 900}@font-face{font-family:MoSerif;src:url('assets/NotoSerifCJKsc-SemiBold.otf')}
+*{box-sizing:border-box}body{margin:0}#film{width:2560px;height:1440px;position:relative;overflow:hidden;background:#f5f1e8;color:#2b4036;perspective:2400px}#atmosphere{position:absolute;inset:-35%;background:radial-gradient(ellipse at 40% 65%,#e6e4d0,#f8f5e9 55%);transform:translateZ(-900px)}.screen{position:absolute;inset:0;transform-origin:50% 50%;overflow:hidden;backface-visibility:hidden;box-shadow:0 60px 100px #354f352d}video{display:block;width:2560px;height:1440px}#incoming{opacity:0}#mo-actor{position:absolute;left:0;top:0;width:420px;height:520px;opacity:0;transform-origin:50% 50%;filter:drop-shadow(0 28px 28px #25372620)}#shadow{position:absolute;left:980px;top:1290px;width:600px;height:55px;border-radius:50%;background:#66785418;filter:blur(16px);opacity:0}#words{position:absolute;left:180px;top:110px;z-index:4;font:900 112px/1.24 MoSans;letter-spacing:-4px;opacity:0}#words span{display:inline-block}#chapter{position:absolute;right:120px;top:105px;font:28px MoSans;opacity:0;color:#617264}.orb-companion__laptop{will-change:transform}#words{display:none}#mo-actor,#shadow{visibility:hidden}
+</style><script src="assets/actor.js"></script></head><body><main id="film" data-composition-id="mochi-bridge-3" data-width="2560" data-height="1440" data-duration="4.4" data-fps="120"><div id="atmosphere"></div><div id="outgoing" class="screen"><video id="out-video" class="clip" src="assets/out.mp4" muted data-start="0" data-duration="4.4" data-track-index="1"></video></div><div id="incoming" class="screen"><video id="in-video" class="clip" src="assets/in.mp4" muted data-start="0" data-duration="4.4" data-track-index="2"></video></div><div id="shadow"></div><div id="mo-actor" data-mochi-pet-palette="caramel"></div><div id="words"><span>叮</span><span>咚</span><span>。</span><br><span>有</span><span>人</span><span>在</span><span>等</span><span>你</span><span>的</span><span>回</span><span>应</span><span>。</span></div><div id="chapter">叮咚与小信箱</div></main><script>
+initMoActor();const tl=gsap.timeline({paused:true});window.__timelines={'mochi-bridge-3':tl};
+const rest={x:0,y:0,z:0,rotationX:0,rotationY:0,scale:1};
+tl.fromTo('#outgoing',rest,{...{"x":-1080,"y":250,"z":-660,"rotationX":0,"rotationY":22,"scale":0.66},duration:1.4,ease:'power3.inOut',immediateRender:false},.15);
+tl.fromTo('#incoming',{...{"x":1080,"y":240,"z":-660,"rotationX":0,"rotationY":-22,"scale":0.66},opacity:0},{...{"x":1080,"y":240,"z":-660,"rotationX":0,"rotationY":-22,"scale":0.66},opacity:1,duration:.5,ease:'power2.out',immediateRender:false},1.15);
+tl.fromTo('#mo-actor',{x:2200,y:620,scale:.13,rotation:-16,opacity:0},{x:1120,y:810,scale:1,rotation:0,opacity:1,duration:1.5,ease:'back.out(1.18)',immediateRender:false},.4);
+tl.fromTo('#shadow',{scale:.25,opacity:0},{scale:1,opacity:1,duration:1.4,immediateRender:false},.4);
+tl.set('#words',{opacity:1},1.1);
+tl.fromTo('#words span',{opacity:0},{opacity:1,duration:.035,stagger:.065,ease:'none',immediateRender:false},1.1);
+tl.to('#chapter',{opacity:1,duration:.4},1.5);
+
+
+
+
+tl.to('#atmosphere',{x:-200,y:120,duration:6,ease:'sine.inOut'},0);
+tl.to('#mo-actor',{y:760,rotation:-4,duration:.7,ease:'sine.inOut'},2.2).to('#mo-actor',{y:810,rotation:3,duration:.65,ease:'sine.inOut'},2.9);
+// Mo leads the lens to the next live product scene; the old one stays in the same space.
+tl.to('#words span',{y:-70,rotation:-3,opacity:0,duration:.45,stagger:.012,ease:'power2.in'},3.35);tl.to('#chapter',{opacity:0,duration:.3},3.45);
+tl.to('#mo-actor',{x:1760,y:420,scale:.45,rotation:12,duration:1,ease:'power3.inOut'},3.5);
+tl.to('#shadow',{scale:.3,opacity:0,duration:.9},3.5);
+tl.to('#outgoing',{x:-2592,y:400,z:-1500,scale:.4,opacity:0,duration:1.5,ease:'power3.inOut'},3.2);
+tl.to('#incoming',{...rest,duration:1.6,ease:'power3.inOut'},3.35);
+tl.to('#mo-actor',{scale:.12,opacity:0,duration:.65,ease:'power2.in'},4.25);
+let time=0;const clock={get time(){return time},set time(v){time=v;paintMo(v,28*Math.sin(v*.6))}};tl.to(clock,{time:6,duration:6,ease:'none'},0);
+// Retiming changes choreography durations, not the speed of readable source footage.
+const retime=4.4/6;const children=tl.getChildren(false,true,true).map(t=>({t,start:t.startTime(),duration:t.duration()}));for(const item of children){item.t.startTime(item.start*retime);item.t.duration(item.duration*retime);}
+</script><script>/* Editorial stage colors only: never recolor native DOM, video, images or iframe content. */
+window.MochiBrand={apply(config){
+ const {id,palette:p,next,palettes}=config,stage=document.querySelector('#film'),tl=Object.values(window.__timelines)[0],duration=Number(stage.dataset.duration);
+ const ink=p.id==='caramel'?p.glyph:p.eyes;
+ // Preserve inherited native foreground colors before changing the editorial stage.
+ stage.querySelectorAll('.native,#file,#grade-native').forEach(el=>{el.style.color=getComputedStyle(el).color});
+ if(['delivery','mailbox','collaboration'].includes(id)){const light=stage.querySelector('#light');if(light)light.style.background=`radial-gradient(ellipse at 70% 25%,${p.glyph}18,transparent 60%)`;}
+ stage.style.background=p.body;stage.style.color=ink;
+ stage.dataset.brandPalette=p.id;
+ const css=document.createElement('style');css.textContent=`
+ #film .paper-world .paper-room{background:${p.body}!important}
+ #film #world,#film #atmosphere{background:none!important}
+ #film .copy,#film .copy-group,#film .headline,#film .pacing-type,#film #words,#film #chapter,#film #page-state,#film #labels,#film #colors-sub,#film .type,#film .type p{color:${ink}}
+ #film #source-note,#film #note,#film #folio{color:${p.case};background:${p.glyph}e6;border-radius:8px;padding:8px 14px}
+ #film #characters .character{background:radial-gradient(ellipse at 50% 34%,#f3f1df 0%,#f3f1df99 32%,transparent 67%);border-radius:50%}
+ #brand-mark{position:absolute;right:100px;top:64px;width:126px;height:126px;z-index:5;opacity:0;pointer-events:none}
+ `;document.head.append(css);
+ const field=document.querySelector('#editorial-paper-field');
+ if(field)[...field.children].forEach((el,i)=>{el.style.background=i===1?p.glyph:palettes[(palettes.findIndex(x=>x.id===p.id)+i+1)%4]?.body||p.glyph;el.style.opacity='.42'});
+ if(id==='daily'){
+  // Discrete memory and automation sections gain a new palette through moving paper.
+  const swaps=[[0,'sage'],[8,'cream'],[14,'peach'],[22,'cream'],[28,'sage'],[36,'peach'],[42,'cream']];
+  for(const [at,key]of swaps){const theme=palettes.find(x=>x.id===key);tl.to(stage,{backgroundColor:theme.body,duration:.65,ease:'power2.inOut'},at)}
+ }
+ if(next){
+  const wipe=document.createElement('div');wipe.id='brand-color-wipe';
+  Object.assign(wipe.style,{position:'absolute',inset:'-12%',background:next.body,pointerEvents:'none'});
+  stage.insertBefore(wipe,stage.firstChild);
+  const n=Number(id.split('-')[1]);
+  if(n%3===0){tl.fromTo(wipe,{clipPath:'circle(0% at 74% 70%)'},{clipPath:'circle(145% at 74% 70%)',duration:duration*.64,ease:'power3.inOut',immediateRender:false},duration*.05)}
+  else if(n%3===1){tl.fromTo(wipe,{xPercent:115,rotation:-8},{xPercent:0,rotation:0,duration:duration*.64,ease:'power3.inOut',immediateRender:false},duration*.05)}
+  else{tl.fromTo(wipe,{yPercent:115,rotation:8},{yPercent:0,rotation:0,duration:duration*.64,ease:'power3.inOut',immediateRender:false},duration*.05)}
+  const logo=document.createElement('img');logo.id='brand-mark';logo.src='assets/brand.svg';logo.alt='Mochi';if(n===3){logo.style.left='100px';logo.style.right='auto'}stage.append(logo);
+  tl.fromTo(logo,{y:24,scale:.7,opacity:0},{y:0,scale:1,opacity:1,duration:.35,ease:'power3.out',immediateRender:false},duration*.26);
+  tl.to(logo,{y:-24,opacity:0,duration:.28},duration*.60);
+  tl.to('#words',{color:next.id==='caramel'?next.glyph:next.eyes,duration:.35},duration*.25);
+ }
+ window.brandEvidence={id,palette:p.id,background:p.body,next:next?.id||null,productUiModified:false};
+}};
+
+MochiBrand.apply({"id":"bridge-3","palette":{"id":"cream","label":"奶油米白","body":"#dfcdaa","eyes":"#584a3e","case":"#756653","screen":"#514a3e","base":"#8c7e68","front":"#a2957f","glyph":"#fff6e6"},"next":{"id":"peach","label":"雾桃奶茶","body":"#dab7a3","eyes":"#665044","case":"#79655a","screen":"#51443d","base":"#91786b","front":"#ac9180","glyph":"#fff0dd"},"palettes":[{"id":"caramel","label":"经典焦糖","body":"#a06a32","eyes":"#fff6e6","case":"#4A3826","screen":"#2E2318","base":"#6B4E33","front":"#7A5C3E","glyph":"#FFE7C2"},{"id":"cream","label":"奶油米白","body":"#dfcdaa","eyes":"#584a3e","case":"#756653","screen":"#514a3e","base":"#8c7e68","front":"#a2957f","glyph":"#fff6e6"},{"id":"sage","label":"鼠尾草绿","body":"#adb8a0","eyes":"#384437","case":"#616b5a","screen":"#3f493d","base":"#78826e","front":"#909b84","glyph":"#f3f1df"},{"id":"peach","label":"雾桃奶茶","body":"#dab7a3","eyes":"#665044","case":"#79655a","screen":"#51443d","base":"#91786b","front":"#ac9180","glyph":"#fff0dd"}]});MochiFilmActor.install({"id":"bridge-3","palette":{"id":"cream","label":"奶油米白","body":"#dfcdaa","eyes":"#584a3e","case":"#756653","screen":"#514a3e","base":"#8c7e68","front":"#a2957f","glyph":"#fff6e6"},"next":{"id":"peach","label":"雾桃奶茶","body":"#dab7a3","eyes":"#665044","case":"#79655a","screen":"#51443d","base":"#91786b","front":"#ac9180","glyph":"#fff0dd"},"palettes":[{"id":"caramel","label":"经典焦糖","body":"#a06a32","eyes":"#fff6e6","case":"#4A3826","screen":"#2E2318","base":"#6B4E33","front":"#7A5C3E","glyph":"#FFE7C2"},{"id":"cream","label":"奶油米白","body":"#dfcdaa","eyes":"#584a3e","case":"#756653","screen":"#514a3e","base":"#8c7e68","front":"#a2957f","glyph":"#fff6e6"},{"id":"sage","label":"鼠尾草绿","body":"#adb8a0","eyes":"#384437","case":"#616b5a","screen":"#3f493d","base":"#78826e","front":"#909b84","glyph":"#f3f1df"},{"id":"peach","label":"雾桃奶茶","body":"#dab7a3","eyes":"#665044","case":"#79655a","screen":"#51443d","base":"#91786b","front":"#ac9180","glyph":"#fff0dd"}]});</script></body></html>

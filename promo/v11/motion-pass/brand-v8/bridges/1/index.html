@@ -1,0 +1,63 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><title>成果环绕，进入作品</title><script src="assets/gsap.min.js"></script><script src="assets/native.js"></script><script src="assets/paper-transfer.js"></script><link rel="stylesheet" href="assets/native.css"><link rel="stylesheet" href="assets/palettes.css"><link rel="stylesheet" href="assets/paper-transfer.css"><style>
+ @font-face{font-family:Mo;src:url('assets/NotoSansCJKsc-Bold.otf');font-weight:700 900}@font-face{font-family:MoSerif;src:url('assets/NotoSerifCJKsc-SemiBold.otf')}
+ *{box-sizing:border-box}body{margin:0}#film{position:relative;width:2560px;height:1440px;overflow:hidden;background:#f5f1e8;color:#294138;perspective:2400px}#world{position:absolute;inset:-20%;background:radial-gradient(ellipse at 70% 20%,#f1d8b9,transparent 55%),radial-gradient(ellipse at 25% 90%,#e8dfcc,transparent 60%)}#art{position:absolute;inset:0;opacity:0;mask-image:linear-gradient(transparent 0%,transparent 29%,#000 49%)}.work{position:absolute;width:650px;box-shadow:0 24px 55px #263e3020;opacity:.82}.screen{position:absolute;inset:0;transform-origin:50% 50%;backface-visibility:hidden;overflow:hidden;box-shadow:0 35px 90px #2d493326}video{width:2560px;height:1440px;display:block}#incoming{opacity:0}#mo-actor{position:absolute;left:0;top:0;width:420px;height:520px;opacity:0;z-index:6;filter:drop-shadow(0 22px 28px #33432b20)}#mo-actor .orb-companion__laptop{display:none}#words{position:absolute;left:165px;top:105px;font-size:120px;font-family:Mo;font-weight:900;line-height:1.22;letter-spacing:-4px;margin:0;z-index:5;opacity:0}#words em{font-family:MoSerif;font-style:normal;font-weight:600}.glyph{display:inline-block}#paper-seed{position:absolute;left:-4000px;width:650px}#paper-seed img{width:650px}.courier-content{margin:0!important;width:700px!important}.courier-content img{width:700px!important}
+ </style><script src="assets/actor.js"></script></head><body><main id="film" data-composition-id="mochi-bridge-1" data-width="2560" data-height="1440" data-duration="3.2" data-fps="120"><div id="world"></div><div id="art"><img class="work work-0" src="assets/work-0.png" alt=""/><img class="work work-1" src="assets/work-1.png" alt=""/><img class="work work-2" src="assets/work-2.png" alt=""/><img class="work work-3" src="assets/work-0.png" alt=""/><img class="work work-4" src="assets/work-1.png" alt=""/><img class="work work-5" src="assets/work-2.png" alt=""/></div><div id="outgoing" class="screen"><video id="out-video" class="clip" src="assets/out.mp4" muted data-start="0" data-duration="3.2" data-track-index="1"></video></div><div id="incoming" class="screen"><video id="in-video" class="clip" src="assets/in.mp4" muted data-start="0" data-duration="3.2" data-track-index="2"></video></div><h1 id="words">分工，<br>成为作品。</h1><div id="mo-actor" data-mochi-pet-palette="caramel"></div></main><script>
+ initMoActor();const d=3.2,tl=gsap.timeline({paused:true});window.__timelines={'mochi-bridge-1':tl};const rest={x:0,y:0,scale:1,rotation:0,rotationX:0,rotationY:0};
+ const heading=document.querySelector('#words');for(const n of [...heading.childNodes,...heading.querySelectorAll('em')].flatMap(n=>n.nodeType===3?[n]:n.tagName==='EM'?[...n.childNodes]:[]).flat()){if(n.nodeType!==3)continue;const f=document.createDocumentFragment();for(const c of n.textContent){const s=document.createElement('span');s.className='glyph';s.textContent=c;f.append(s)}n.replaceWith(f)}
+ tl.to('#incoming',{opacity:1,duration:d*.12,ease:'power2.out'},d*.5);
+ function actor(x0,y0,x1,y1,x2,y2){tl.fromTo('#mo-actor',{x:x0,y:y0,scale:.18,rotation:-42,opacity:0},{x:x1,y:Math.min(y1,820),scale:.95,rotation:0,opacity:1,duration:d*.38,ease:'power3.out',immediateRender:false},d*.08).to('#mo-actor',{x:x2,y:y2,scale:.2,rotation:32,opacity:0,duration:d*.34,ease:'power3.in'},d*.56)}
+
+  tl.to('#outgoing',{x:850,y:-450,scale:.30,rotation:5,duration:d*.32,ease:'power3.inOut'},d*.02);
+  tl.fromTo('#incoming',{x:680,y:950,scale:.48,rotation:-7},{x:600,y:380,scale:.48,rotation:0,duration:d*.38,ease:'power3.out'},d*.09);
+  tl.to('#outgoing',{x:1050,y:-1650,rotation:12,duration:d*.4,ease:'power3.inOut'},d*.5);
+  tl.to('#incoming',{...rest,duration:d*.38,ease:'power3.inOut'},d*.59);
+  actor(60,1080,550,930,1050,640);
+
+ tl.fromTo('#world',{x:-60,y:30,scale:1},{x:100,y:-100,scale:1.13,duration:d,ease:'sine.inOut'},0);
+ tl.to('#art',{opacity:1,duration:d*.14},d*.12).to('#art',{opacity:0,duration:d*.15},d*.71);
+ document.querySelectorAll('.work').forEach((e,j)=>{const col=j%3,row=Math.floor(j/3),x=[-180,920,2020][col],y=row*800-170;
+ tl.fromTo(e,{x,y:y+(col===1?-380:450),rotation:(j%2?8:-9),scale:.8},{x:x+(col-1)*120,y:y+(col===1?550:-470),rotation:j%2?1:-2,scale:1,duration:d,ease:'sine.inOut',immediateRender:false},0)});
+ tl.set('#words',{opacity:1},d*.21).fromTo('#words .glyph',{y:55,rotation:3,opacity:0},{y:0,rotation:0,opacity:1,duration:d*.16,stagger:.014,ease:'back.out(1.15)',immediateRender:false},d*.21);
+ tl.to('#words',{y:-45,opacity:0,duration:d*.15,ease:'power2.in'},d*.58);
+ let time=0;const clock={get time(){return time},set time(v){time=v;paintMo(v,18*Math.sin(v*.8))}};tl.to(clock,{time:d,duration:d,ease:'none'},0);
+ </script><script>/* Editorial stage colors only: never recolor native DOM, video, images or iframe content. */
+window.MochiBrand={apply(config){
+ const {id,palette:p,next,palettes}=config,stage=document.querySelector('#film'),tl=Object.values(window.__timelines)[0],duration=Number(stage.dataset.duration);
+ const ink=p.id==='caramel'?p.glyph:p.eyes;
+ // Preserve inherited native foreground colors before changing the editorial stage.
+ stage.querySelectorAll('.native,#file,#grade-native').forEach(el=>{el.style.color=getComputedStyle(el).color});
+ if(['delivery','mailbox','collaboration'].includes(id)){const light=stage.querySelector('#light');if(light)light.style.background=`radial-gradient(ellipse at 70% 25%,${p.glyph}18,transparent 60%)`;}
+ stage.style.background=p.body;stage.style.color=ink;
+ stage.dataset.brandPalette=p.id;
+ const css=document.createElement('style');css.textContent=`
+ #film .paper-world .paper-room{background:${p.body}!important}
+ #film #world,#film #atmosphere{background:none!important}
+ #film .copy,#film .copy-group,#film .headline,#film .pacing-type,#film #words,#film #chapter,#film #page-state,#film #labels,#film #colors-sub,#film .type,#film .type p{color:${ink}}
+ #film #source-note,#film #note,#film #folio{color:${p.case};background:${p.glyph}e6;border-radius:8px;padding:8px 14px}
+ #film #characters .character{background:radial-gradient(ellipse at 50% 34%,#f3f1df 0%,#f3f1df99 32%,transparent 67%);border-radius:50%}
+ #brand-mark{position:absolute;right:100px;top:64px;width:126px;height:126px;z-index:5;opacity:0;pointer-events:none}
+ `;document.head.append(css);
+ const field=document.querySelector('#editorial-paper-field');
+ if(field)[...field.children].forEach((el,i)=>{el.style.background=i===1?p.glyph:palettes[(palettes.findIndex(x=>x.id===p.id)+i+1)%4]?.body||p.glyph;el.style.opacity='.42'});
+ if(id==='daily'){
+  // Discrete memory and automation sections gain a new palette through moving paper.
+  const swaps=[[0,'sage'],[8,'cream'],[14,'peach'],[22,'cream'],[28,'sage'],[36,'peach'],[42,'cream']];
+  for(const [at,key]of swaps){const theme=palettes.find(x=>x.id===key);tl.to(stage,{backgroundColor:theme.body,duration:.65,ease:'power2.inOut'},at)}
+ }
+ if(next){
+  const wipe=document.createElement('div');wipe.id='brand-color-wipe';
+  Object.assign(wipe.style,{position:'absolute',inset:'-12%',background:next.body,pointerEvents:'none'});
+  stage.insertBefore(wipe,stage.firstChild);
+  const n=Number(id.split('-')[1]);
+  if(n%3===0){tl.fromTo(wipe,{clipPath:'circle(0% at 74% 70%)'},{clipPath:'circle(145% at 74% 70%)',duration:duration*.64,ease:'power3.inOut',immediateRender:false},duration*.05)}
+  else if(n%3===1){tl.fromTo(wipe,{xPercent:115,rotation:-8},{xPercent:0,rotation:0,duration:duration*.64,ease:'power3.inOut',immediateRender:false},duration*.05)}
+  else{tl.fromTo(wipe,{yPercent:115,rotation:8},{yPercent:0,rotation:0,duration:duration*.64,ease:'power3.inOut',immediateRender:false},duration*.05)}
+  const logo=document.createElement('img');logo.id='brand-mark';logo.src='assets/brand.svg';logo.alt='Mochi';if(n===3){logo.style.left='100px';logo.style.right='auto'}stage.append(logo);
+  tl.fromTo(logo,{y:24,scale:.7,opacity:0},{y:0,scale:1,opacity:1,duration:.35,ease:'power3.out',immediateRender:false},duration*.26);
+  tl.to(logo,{y:-24,opacity:0,duration:.28},duration*.60);
+  tl.to('#words',{color:next.id==='caramel'?next.glyph:next.eyes,duration:.35},duration*.25);
+ }
+ window.brandEvidence={id,palette:p.id,background:p.body,next:next?.id||null,productUiModified:false};
+}};
+
+MochiBrand.apply({"id":"bridge-1","palette":{"id":"sage","label":"鼠尾草绿","body":"#adb8a0","eyes":"#384437","case":"#616b5a","screen":"#3f493d","base":"#78826e","front":"#909b84","glyph":"#f3f1df"},"next":{"id":"caramel","label":"经典焦糖","body":"#a06a32","eyes":"#fff6e6","case":"#4A3826","screen":"#2E2318","base":"#6B4E33","front":"#7A5C3E","glyph":"#FFE7C2"},"palettes":[{"id":"caramel","label":"经典焦糖","body":"#a06a32","eyes":"#fff6e6","case":"#4A3826","screen":"#2E2318","base":"#6B4E33","front":"#7A5C3E","glyph":"#FFE7C2"},{"id":"cream","label":"奶油米白","body":"#dfcdaa","eyes":"#584a3e","case":"#756653","screen":"#514a3e","base":"#8c7e68","front":"#a2957f","glyph":"#fff6e6"},{"id":"sage","label":"鼠尾草绿","body":"#adb8a0","eyes":"#384437","case":"#616b5a","screen":"#3f493d","base":"#78826e","front":"#909b84","glyph":"#f3f1df"},{"id":"peach","label":"雾桃奶茶","body":"#dab7a3","eyes":"#665044","case":"#79655a","screen":"#51443d","base":"#91786b","front":"#ac9180","glyph":"#fff0dd"}]});MochiFilmActor.install({"id":"bridge-1","palette":{"id":"sage","label":"鼠尾草绿","body":"#adb8a0","eyes":"#384437","case":"#616b5a","screen":"#3f493d","base":"#78826e","front":"#909b84","glyph":"#f3f1df"},"next":{"id":"caramel","label":"经典焦糖","body":"#a06a32","eyes":"#fff6e6","case":"#4A3826","screen":"#2E2318","base":"#6B4E33","front":"#7A5C3E","glyph":"#FFE7C2"},"palettes":[{"id":"caramel","label":"经典焦糖","body":"#a06a32","eyes":"#fff6e6","case":"#4A3826","screen":"#2E2318","base":"#6B4E33","front":"#7A5C3E","glyph":"#FFE7C2"},{"id":"cream","label":"奶油米白","body":"#dfcdaa","eyes":"#584a3e","case":"#756653","screen":"#514a3e","base":"#8c7e68","front":"#a2957f","glyph":"#fff6e6"},{"id":"sage","label":"鼠尾草绿","body":"#adb8a0","eyes":"#384437","case":"#616b5a","screen":"#3f493d","base":"#78826e","front":"#909b84","glyph":"#f3f1df"},{"id":"peach","label":"雾桃奶茶","body":"#dab7a3","eyes":"#665044","case":"#79655a","screen":"#51443d","base":"#91786b","front":"#ac9180","glyph":"#fff0dd"}]});</script></body></html>

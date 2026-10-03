@@ -1,10 +1,10 @@
-# 当前审片：第七版
+# 当前审片：第八版
 
 本轮只制作 **现有配乐版、K2.5 音轨修订版**。K3 仅作为视觉参考，不再导出新的 K3 音轨版。两版使用同一画面母版，实测 299.35 秒、2560×1440、120fps；原录屏采样率与输出帧率分开说明。
 
-第七版的重建入口、34 处停留修正和素材依赖见 [pacing-v7/README.md](pacing-v7/README.md)，复用调查见 [reuse-comparison-v7.md](reuse-comparison-v7.md)。从第七版入口重建，下面的旧版命令仅作历史记录，不应用于覆盖当前编排。
+第八版增加开场产品定位、四款真实主题的 Mo、按情节变化的原生动作，以及 Logo 左上 / Mo 居中的结尾。当前重建入口见 [brand-v8/README.md](brand-v8/README.md)，复用调查见 [brand-v8/reuse-audit.md](brand-v8/reuse-audit.md)。第七版停留修正保留；下方旧版命令仅作历史记录，不应用于覆盖当前编排。
 
-K2.5 当前入口为 `output/Mochi_V11_第七版_K2.5音轨修订版_2K120.mp4`：先分离原片音乐/音效，再仅用音乐重混；不再直接循环原片完整音轨。修订与重建见 [k25-audio-repair/README.md](k25-audio-repair/README.md)。下方历代音轨说明仅作历史记录。
+K2.5 当前入口为 `output/Mochi_V11_第八版_K2.5音轨修订版_2K120.mp4`：先分离原片音乐/音效，再仅用音乐重混；不再直接循环原片完整音轨。修订与重建见 [k25-audio-repair/README.md](k25-audio-repair/README.md)。下方历代音轨说明仅作历史记录。
 
 当前导出与验证以 `timeline.json`、`music-variants.json`、`validation.json` 为准；编码验收与艺术审片分开。
 

@@ -1,0 +1,133 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><script src="assets/gsap.min.js"></script><script src="assets/mo.js"></script><script src="assets/native.js"></script><link rel="stylesheet" href="assets/mo.css"><link rel="stylesheet" href="assets/palettes.css"><link rel="stylesheet" href="assets/native.css"><style>
+@font-face{font-family:MoSans;src:url('assets/NotoSansCJKsc-Regular.otf')}@font-face{font-family:MoSans;src:url('assets/NotoSansCJKsc-Bold.otf');font-weight:700}@font-face{font-family:'Noto Sans CJK SC';src:url('assets/NotoSansCJKsc-Regular.otf')}@font-face{font-family:'Noto Serif CJK SC';src:url('assets/NotoSerifCJKsc-SemiBold.otf')}@font-face{font-family:'PingFang SC';src:local('PingFangSC-Regular')}@font-face{font-family:'Songti SC';src:local('Songti SC')}
+@font-face{font-family:'Microsoft YaHei';src:local('Microsoft YaHei')}@font-face{font-family:'STSong';src:local('STSong')}@font-face{font-family:'Source Han Serif SC';src:local('Source Han Serif SC')}*{box-sizing:border-box}body{margin:0}#film{width:2560px;height:1440px;position:relative;overflow:hidden;background:#f5f2e8;color:#304637;font-family:MoSans;perspective:2600px}#light{position:absolute;inset:-40%;background:radial-gradient(ellipse at 70% 30%,#e4eac9,transparent 55%),radial-gradient(ellipse at 25% 75%,#e8d3af,transparent 50%)}h1{position:absolute;top:95px;left:145px;margin:0;font:700 92px/1.25 MoSans;letter-spacing:-3px}.char{display:inline-block}#a2a-title{opacity:0}#mo-actor{position:absolute;width:420px;height:520px;transform-origin:center;left:0;top:0;opacity:0;filter:drop-shadow(0 24px 28px #30463720)}.native{position:absolute;left:0;top:0;width:748px;transform-origin:0 0;opacity:0;font-family:MoSans;--dsh-chat-content-width:748px;--dsh-composer-side-clearance:0px;--dsh-composer-text-max-height:720px;--dsw-radius-xl:14px;--dsw-specific-bubble:#eeeadd;--dsw-specific-input-major:#faf8f1;--dsw-alias-label-primary:#304637;--dsw-alias-state-warn-secondary:#bfb793;--dsw-alias-state-warn-tertiary:#f0ead6;--dsw-alias-state-warn-primary:#756532;--dsw-shadow-lv2:0 12px 36px #30463715}.native *{animation:none!important}.native .mna1RW_headline{white-space:pre-wrap}.request,.reply{width:560px;padding:20px 26px}.reply{background:#faf8f1;border-radius:16px;box-shadow:0 12px 36px #30463712}#states{position:absolute;left:1540px;top:355px;font:700 62px/1.5 MoSans}.state{opacity:0;white-space:nowrap;margin:0 0 22px}.state small{display:block;font:26px/1.5 MoSans;color:#65745a}#label{position:absolute;left:230px;top:290px;font:32px MoSans;opacity:0}#reply-label{position:absolute;left:1370px;top:470px;font:32px MoSans;opacity:0}#note{position:absolute;left:100px;bottom:28px;font:23px MoSans;color:#45543f}#find-note{position:absolute;left:1370px;top:870px;font:30px MoSans;opacity:0}#envelope{position:absolute;left:0;top:0;width:200px;height:132px;opacity:0;filter:drop-shadow(0 12px 15px #30463726)}
+</style><script src="assets/actor.js"></script></head><body><main id="film" data-composition-id="mochi-collaboration" data-width="2560" data-height="1440" data-duration="30" data-fps="120"><div id="light"></div><h1 id="movement-title">放行有确认，返班有回音。</h1><h1 id="a2a-title">让老师之间，也有默契。</h1><div id="movement-approval" class="native"></div><div id="movement-next-0" class="native"></div><div id="movement-next-1" class="native"></div><div id="movement-next-2" class="native"></div><div id="states"><p class="state" id="s0">批准放行<small>班主任 · 陈言蹊 / 演示学生</small></p><p class="state" id="s1">已到宿舍<small>宿舍工作人员确认</small></p><p class="state" id="s2">离开，返班中<small>宿舍工作人员确认</small></p><p class="state" id="s3">已返班 · 流程关闭<small>班主任确认</small></p></div><div id="a2a-approval" class="native"></div><div id="request-0" class="native request"></div><div id="request-1" class="native request"></div><div id="request-2" class="native request"></div><div id="reply-0" class="native reply"></div><div id="reply-1" class="native reply"></div><div id="reply-2" class="native reply"></div><div id="label">林清老师的 Mochi</div><div id="reply-label">顾言老师回应</div><div id="find-note">寻物：已收到回应，继续查找。</div><svg id="envelope" viewBox="0 0 200 132"><path d="M4 4H196V128H4Z" fill="#fffaf0" stroke="#8eaa79" stroke-width="3"/><path d="M5 5L100 83L195 5M5 127L76 64M195 127L124 64" fill="none" stroke="#8eaa79" stroke-width="3"/></svg><div id="mo-actor"></div><p id="note">隔离演示数据 · 原工具真实执行 / 原组件重放 · 审批由授权演示脚本确认</p></main><script>
+initMoActor();initCollaboration();const tl=gsap.timeline({paused:true});window.__timelines={'mochi-collaboration':tl};
+function title(id,at,out){const e=document.querySelector(id);e.innerHTML=Array.from(e.textContent).map(c=>'<span class="char">'+c+'</span>').join('');tl.set(e,{opacity:1},at).fromTo(e.children,{y:70,rotation:3,opacity:0},{y:0,rotation:0,opacity:1,stagger:.022,duration:.6,ease:'back.out(1.25)',immediateRender:false},at).to(e,{y:-80,opacity:0,duration:.5},out)}
+title('#movement-title',0,12.7);title('#a2a-title',14,29.1);
+tl.fromTo('#movement-approval',{x:190,y:380,scale:1.3,rotationY:9,opacity:0},{x:175,y:365,scale:1.65,rotationY:0,opacity:1,duration:.8,ease:'back.out(1.08)',immediateRender:false},.15);
+tl.to('#movement-approval',{y:100,opacity:0,duration:.5},4);
+[4.2,6.3,8.4].forEach((at,i)=>tl.fromTo('#movement-next-'+i,{x:175,y:600,scale:1.65,opacity:0},{x:175,y:365,scale:1.65,opacity:1,duration:.55,ease:'power3.out',immediateRender:false},at).to('#movement-next-'+i,{y:80,opacity:0,duration:.45},at+1.3));
+['#s0','#s1','#s2','#s3'].forEach((id,i)=>tl.fromTo(id,{x:180,y:35,opacity:0},{x:0,y:0,opacity:1,duration:.65,ease:'back.out(1.3)',immediateRender:false},3.5+i*2.1));
+tl.fromTo('#mo-actor',{x:2230,y:850,scale:.1,opacity:0},{x:2040,y:900,scale:.6,opacity:1,duration:.8,ease:'back.out(1.4)',immediateRender:false},.5).to('#mo-actor',{x:1950,y:1030,rotation:-7,duration:2,ease:'sine.inOut'},9.5);
+tl.to('#movement-approval',{x:-1300,y:150,rotationY:25,scale:1.1,opacity:0,duration:.9,ease:'power3.inOut'},12.7).to('#states',{x:1200,rotationY:-18,opacity:0,duration:.9,ease:'power3.inOut'},12.9);
+tl.to('#mo-actor',{x:1080,y:480,scale:1,rotation:0,duration:1,ease:'back.out(1.1)'},13).to('#mo-actor',{x:1060,y:950,scale:.5,duration:1,ease:'power3.inOut'},14.1);
+tl.fromTo('#a2a-approval',{x:200,y:1600,scale:1.3,opacity:0},{x:140,y:650,scale:1.35,opacity:1,duration:.8,ease:'power3.out',immediateRender:false},14).to('#a2a-approval',{y:1040,scale:.9,rotationX:12,opacity:0,duration:.55},15.75);
+tl.to('#label',{opacity:1,duration:.4},14).to('#reply-label',{opacity:1,duration:.4},16.2);
+for(let i=0;i<3;i++){const at=[14.2,20,24.8][i],out=[19.3,24.1,29.2][i];tl.fromTo('#request-'+i,{x:-800,y:390,scale:1.85,rotationY:16,opacity:0},{x:210,y:385,scale:1.85,rotationY:0,opacity:1,duration:.7,ease:'back.out(1.1)',immediateRender:false},at).fromTo('#reply-'+i,{x:2600,y:590,scale:1.85,rotationY:-16,opacity:0},{x:1370,y:590,scale:1.85,rotationY:0,opacity:1,duration:.8,ease:'back.out(1.15)',immediateRender:false},at+2).to(['#request-'+i,'#reply-'+i],{y:-200,rotationX:12,opacity:0,duration:.6,ease:'power3.in'},out);tl.fromTo('#envelope',{x:1030,y:520,scale:.4,rotation:-20,opacity:0},{x:1150,y:440,scale:.85,rotation:12,opacity:1,duration:.45,ease:'power2.out',immediateRender:false},at+1.1).to('#envelope',{x:1430,y:600,scale:.2,rotation:0,opacity:0,duration:.55,ease:'power2.in',overwrite:'auto'},at+1.55);tl.to('#mo-actor',{x:1210,y:890,rotation:8,duration:.6,ease:'power2.out'},at+1.1).to('#mo-actor',{x:1060,y:950,rotation:-3,duration:.9,ease:'back.out(1.4)'},at+2.1)}
+tl.to('#find-note',{opacity:1,duration:.4},27.1).to('#find-note',{opacity:0,duration:.4},29.1);tl.to('#light',{x:280,y:180,duration:30,ease:'sine.inOut'},0);
+let time=0;const clock={get time(){return time},set time(v){time=v;paintMo(v%6,18*Math.sin(v*.9))}};tl.to(clock,{time:30,duration:30,ease:'none'},0);
+</script><script>/* Film-only additive camera rig. Product DOM, video rate and source data stay intact. */
+window.MochiPacing={apply(config){
+ const stage=document.querySelector('#film'),tl=Object.values(window.__timelines)[0];
+ const rig=document.createElement('div');rig.id='editorial-camera';
+ Object.assign(rig.style,{position:'absolute',inset:'0',transformOrigin:'0 0',pointerEvents:'none'});
+ const elements=[...new Set(config.targets.flatMap(s=>[...stage.querySelectorAll(s)]))];
+ stage.insertBefore(rig,elements[0]);elements.forEach(e=>rig.append(e));
+ const captions=document.createElement('div');
+ Object.assign(captions.style,{position:'absolute',inset:'0',pointerEvents:'none'});
+ const captionNodes=[...stage.children].filter(e=>e.matches('.copy,.copy-group,.headline,h1,h2,#hint,#arrival,#colors-sub'));
+ stage.append(captions);captionNodes.forEach(e=>captions.append(e));
+ const neutral={scale:1,x:0,y:0};
+ function move(at,duration,pose){tl.to(rig,{...pose,duration,ease:'power2.inOut'},at)}
+ const report=[];
+ for(const [start,end,targets,purpose]of config.windows){
+  const poses=targets.map(([scale,cx,cy])=>({scale,x:1280-cx*scale,y:720-cy*scale}));
+  const steps=[...poses,neutral],step=(end-start)/steps.length;
+  // Each stop lasts <=1.2 s. The remainder is a smooth, purposeful camera move.
+  const travel=Math.max(.55,step-1.2);
+  steps.forEach((pose,i)=>move(start+i*step,Math.min(travel,step),pose));
+  // The editorial headline clears the close-up instead of covering native fields.
+  tl.to(captions,{opacity:0,duration:.25},start);
+  tl.to(captions,{opacity:1,duration:.25},end-.25);
+  report.push({start,end,purpose,maxDesignedHold:Math.max(0,step-travel),targets});
+ }
+ // Small perspective paper fields, behind the UI. They move through space, not over text.
+ const field=document.createElement('div');field.id='editorial-paper-field';
+ Object.assign(field.style,{position:'absolute',inset:'0',overflow:'hidden',pointerEvents:'none',perspective:'2200px'});
+ stage.insertBefore(field,stage.firstChild);
+ const colors=['#dbe5cd','#efe0c4','#d6e5df'];
+ for(let i=0;i<3;i++){
+  const paper=document.createElement('div');
+  Object.assign(paper.style,{position:'absolute',width:'820px',height:'1140px',left:(i===1?2160:-650)+'px',top:(i*470-540)+'px',background:colors[i],opacity:'.68',boxShadow:'30px 40px 0 #fffaf550',transformOrigin:'50% 50%'});
+  field.append(paper);tl.set(paper,{rotation:i%2?17:-24,rotationY:i%2?-24:21},0);
+  for(const [k,w]of config.windows.entries())tl.to(paper,{x:(k%2?1:-1)*(110+i*25),y:((k+i)%3-1)*150,rotation:(k%2?1:-1)*(16+i*3),duration:1.1,ease:'power2.inOut'},w[0]+i*.07);
+ }
+ // Endpoint identity is required by the already-rendered inter-chapter bridges.
+ const duration=Number(stage.dataset.duration||tl.duration());
+ tl.fromTo(field,{opacity:0},{opacity:1,duration:.5,immediateRender:false},1.25);
+ tl.to(field,{opacity:0,duration:.4},duration-1.8);
+ if(config.id==='model'){
+  // The model remains the original iframe with its existing deterministic interaction clock.
+  const moves=[
+   [10.5,1.05,{x:65,y:190,scale:1.68}],
+   [12.65,.85,{x:220,y:220,scale:1.48}],
+   [14.65,.8,{x:90,y:180,scale:1.62}],
+   [16.65,.85,{x:130,y:155,scale:1.5}],
+   [18.7,.85,{x:240,y:155,scale:1.45}],
+   [20.65,.9,{x:-400,y:165,scale:1.7}],
+   [22.55,.55,{x:272,y:230,scale:1.4}],
+  ];
+  // The native model clock seeks this GSAP camera before calculating screen cursor positions.
+  // This also works when the renderer suppresses timeline callbacks during random-access seeks.
+  const camera=gsap.timeline({paused:true});let previous={x:272,y:230,scale:1.4};
+  moves.forEach(([at,duration,pose])=>{camera.fromTo('#model',previous,{...pose,duration,ease:'power2.inOut',immediateRender:false},at);previous=pose});
+  window.updateMochiModelCamera=t=>{if(t>=10.5&&t<23.15)camera.seek(t)};
+  kinetic('拖动，一个切点。',11.9,14.5,'left');
+  kinetic('看见，几何关系。',14.6,17.15,'right');
+  kinetic('改变参数，继续探索。',17.2,20.35,'left');
+  kinetic('再展开，为什么。',20.4,22.8,'right');
+ }
+ function kinetic(text,start,end,align){
+  const el=document.createElement('div');el.className='pacing-type';
+  Object.assign(el.style,{position:'absolute',left:align==='left'?'180px':'auto',right:align==='right'?'160px':'auto',top:'28px',height:'95px',font:'700 68px/1.15 MoSans',letterSpacing:'-3px',overflow:'hidden',whiteSpace:'nowrap',pointerEvents:'none',opacity:'0'});
+  for(const char of text){const span=document.createElement('span');span.className='glyph';span.textContent=char;span.style.display='inline-block';el.append(span)}
+  stage.append(el);tl.set(el,{opacity:1},start);
+  tl.fromTo(el.children,{y:100,rotation:8,opacity:0},{y:0,rotation:0,opacity:1,stagger:.022,duration:.55,ease:'power3.out',immediateRender:false},start);
+  tl.to(el,{x:align==='left'?80:-80,duration:.65,ease:'power2.inOut'},end-1.15);
+  tl.to(el.children,{y:-110,rotation:-5,opacity:0,stagger:.016,duration:.35,ease:'power2.in'},end-.4);
+ }
+ window.pacingEvidence={chapter:config.id,windows:report,playbackRate:1};
+}};
+
+MochiPacing.apply({"id":"collaboration","source":"collaboration-chapter","targets":[".native","#states","#label","#reply-label","#find-note"],"windows":[[1.55,3.4,[[1.14,810,700]],"放行前确认"],[10.7,12.6,[[1.2,1830,740]],"返班闭环"],[17.3,19.15,[[1.17,1760,745]],"问询回应"],[22.95,24,[[1.13,1690,760]],"委托接办"],[27.55,28.95,[[1.13,1700,760]],"寻物回应，继续查找"]]});</script><script>/* Editorial stage colors only: never recolor native DOM, video, images or iframe content. */
+window.MochiBrand={apply(config){
+ const {id,palette:p,next,palettes}=config,stage=document.querySelector('#film'),tl=Object.values(window.__timelines)[0],duration=Number(stage.dataset.duration);
+ const ink=p.id==='caramel'?p.glyph:p.eyes;
+ // Preserve inherited native foreground colors before changing the editorial stage.
+ stage.querySelectorAll('.native,#file,#grade-native').forEach(el=>{el.style.color=getComputedStyle(el).color});
+ if(['delivery','mailbox','collaboration'].includes(id)){const light=stage.querySelector('#light');if(light)light.style.background=`radial-gradient(ellipse at 70% 25%,${p.glyph}18,transparent 60%)`;}
+ stage.style.background=p.body;stage.style.color=ink;
+ stage.dataset.brandPalette=p.id;
+ const css=document.createElement('style');css.textContent=`
+ #film .paper-world .paper-room{background:${p.body}!important}
+ #film #world,#film #atmosphere{background:none!important}
+ #film .copy,#film .copy-group,#film .headline,#film .pacing-type,#film #words,#film #chapter,#film #page-state,#film #labels,#film #colors-sub,#film .type,#film .type p{color:${ink}}
+ #film #source-note,#film #note,#film #folio{color:${p.case};background:${p.glyph}e6;border-radius:8px;padding:8px 14px}
+ #film #characters .character{background:radial-gradient(ellipse at 50% 34%,#f3f1df 0%,#f3f1df99 32%,transparent 67%);border-radius:50%}
+ #brand-mark{position:absolute;right:100px;top:64px;width:126px;height:126px;z-index:5;opacity:0;pointer-events:none}
+ `;document.head.append(css);
+ const field=document.querySelector('#editorial-paper-field');
+ if(field)[...field.children].forEach((el,i)=>{el.style.background=i===1?p.glyph:palettes[(palettes.findIndex(x=>x.id===p.id)+i+1)%4]?.body||p.glyph;el.style.opacity='.42'});
+ if(id==='daily'){
+  // Discrete memory and automation sections gain a new palette through moving paper.
+  const swaps=[[0,'sage'],[8,'cream'],[14,'peach'],[22,'cream'],[28,'sage'],[36,'peach'],[42,'cream']];
+  for(const [at,key]of swaps){const theme=palettes.find(x=>x.id===key);tl.to(stage,{backgroundColor:theme.body,duration:.65,ease:'power2.inOut'},at)}
+ }
+ if(next){
+  const wipe=document.createElement('div');wipe.id='brand-color-wipe';
+  Object.assign(wipe.style,{position:'absolute',inset:'-12%',background:next.body,pointerEvents:'none'});
+  stage.insertBefore(wipe,stage.firstChild);
+  const n=Number(id.split('-')[1]);
+  if(n%3===0){tl.fromTo(wipe,{clipPath:'circle(0% at 74% 70%)'},{clipPath:'circle(145% at 74% 70%)',duration:duration*.64,ease:'power3.inOut',immediateRender:false},duration*.05)}
+  else if(n%3===1){tl.fromTo(wipe,{xPercent:115,rotation:-8},{xPercent:0,rotation:0,duration:duration*.64,ease:'power3.inOut',immediateRender:false},duration*.05)}
+  else{tl.fromTo(wipe,{yPercent:115,rotation:8},{yPercent:0,rotation:0,duration:duration*.64,ease:'power3.inOut',immediateRender:false},duration*.05)}
+  const logo=document.createElement('img');logo.id='brand-mark';logo.src='assets/brand.svg';logo.alt='Mochi';if(n===3){logo.style.left='100px';logo.style.right='auto'}stage.append(logo);
+  tl.fromTo(logo,{y:24,scale:.7,opacity:0},{y:0,scale:1,opacity:1,duration:.35,ease:'power3.out',immediateRender:false},duration*.26);
+  tl.to(logo,{y:-24,opacity:0,duration:.28},duration*.60);
+  tl.to('#words',{color:next.id==='caramel'?next.glyph:next.eyes,duration:.35},duration*.25);
+ }
+ window.brandEvidence={id,palette:p.id,background:p.body,next:next?.id||null,productUiModified:false};
+}};
+
+MochiBrand.apply({"id":"collaboration","palette":{"id":"peach","label":"雾桃奶茶","body":"#dab7a3","eyes":"#665044","case":"#79655a","screen":"#51443d","base":"#91786b","front":"#ac9180","glyph":"#fff0dd"},"palettes":[{"id":"caramel","label":"经典焦糖","body":"#a06a32","eyes":"#fff6e6","case":"#4A3826","screen":"#2E2318","base":"#6B4E33","front":"#7A5C3E","glyph":"#FFE7C2"},{"id":"cream","label":"奶油米白","body":"#dfcdaa","eyes":"#584a3e","case":"#756653","screen":"#514a3e","base":"#8c7e68","front":"#a2957f","glyph":"#fff6e6"},{"id":"sage","label":"鼠尾草绿","body":"#adb8a0","eyes":"#384437","case":"#616b5a","screen":"#3f493d","base":"#78826e","front":"#909b84","glyph":"#f3f1df"},{"id":"peach","label":"雾桃奶茶","body":"#dab7a3","eyes":"#665044","case":"#79655a","screen":"#51443d","base":"#91786b","front":"#ac9180","glyph":"#fff0dd"}]});MochiFilmActor.install({"id":"collaboration","palette":{"id":"peach","label":"雾桃奶茶","body":"#dab7a3","eyes":"#665044","case":"#79655a","screen":"#51443d","base":"#91786b","front":"#ac9180","glyph":"#fff0dd"},"palettes":[{"id":"caramel","label":"经典焦糖","body":"#a06a32","eyes":"#fff6e6","case":"#4A3826","screen":"#2E2318","base":"#6B4E33","front":"#7A5C3E","glyph":"#FFE7C2"},{"id":"cream","label":"奶油米白","body":"#dfcdaa","eyes":"#584a3e","case":"#756653","screen":"#514a3e","base":"#8c7e68","front":"#a2957f","glyph":"#fff6e6"},{"id":"sage","label":"鼠尾草绿","body":"#adb8a0","eyes":"#384437","case":"#616b5a","screen":"#3f493d","base":"#78826e","front":"#909b84","glyph":"#f3f1df"},{"id":"peach","label":"雾桃奶茶","body":"#dab7a3","eyes":"#665044","case":"#79655a","screen":"#51443d","base":"#91786b","front":"#ac9180","glyph":"#fff0dd"}]});</script></body></html>

@@ -1,0 +1,139 @@
+{
+  "note": "Thinking has two side dots plus the body as the center dot. Media validation is separate.",
+  "results": [
+    {
+      "id": "greeting",
+      "palette": "cream",
+      "states": [
+        "idle",
+        "wide",
+        "play"
+      ],
+      "samples": 80,
+      "geometryFinite": true,
+      "randomSeekIdentical": true,
+      "thinkingHasTwoSideDots": 0
+    },
+    {
+      "id": "mailbox",
+      "palette": "peach",
+      "states": [
+        "comet",
+        "notify"
+      ],
+      "samples": 180,
+      "geometryFinite": true,
+      "randomSeekIdentical": true,
+      "thinkingHasTwoSideDots": 0
+    },
+    {
+      "id": "collaboration",
+      "palette": "peach",
+      "states": [
+        "idle",
+        "thinking",
+        "notify",
+        "play",
+        "comet"
+      ],
+      "samples": 300,
+      "geometryFinite": true,
+      "randomSeekIdentical": true,
+      "thinkingHasTwoSideDots": 74
+    },
+    {
+      "id": "ending",
+      "palette": "caramel",
+      "states": [
+        "thinking",
+        "idle",
+        "wide",
+        "wink"
+      ],
+      "samples": 80,
+      "geometryFinite": true,
+      "randomSeekIdentical": true,
+      "thinkingHasTwoSideDots": 16
+    },
+    {
+      "id": "bridges/0",
+      "palette": "sage",
+      "states": [
+        "thinking",
+        "idle"
+      ],
+      "samples": 28,
+      "geometryFinite": true,
+      "randomSeekIdentical": true,
+      "thinkingHasTwoSideDots": 16
+    },
+    {
+      "id": "bridges/1",
+      "palette": "caramel",
+      "states": [
+        "burst"
+      ],
+      "samples": 32,
+      "geometryFinite": true,
+      "randomSeekIdentical": true,
+      "thinkingHasTwoSideDots": 0
+    },
+    {
+      "id": "bridges/2",
+      "palette": "cream",
+      "states": [
+        "orbit"
+      ],
+      "samples": 30,
+      "geometryFinite": true,
+      "randomSeekIdentical": true,
+      "thinkingHasTwoSideDots": 0
+    },
+    {
+      "id": "bridges/3",
+      "palette": "peach",
+      "states": [
+        "notify"
+      ],
+      "samples": 44,
+      "geometryFinite": true,
+      "randomSeekIdentical": true,
+      "thinkingHasTwoSideDots": 0
+    },
+    {
+      "id": "bridges/4",
+      "palette": "sage",
+      "states": [
+        "comet"
+      ],
+      "samples": 34,
+      "geometryFinite": true,
+      "randomSeekIdentical": true,
+      "thinkingHasTwoSideDots": 0
+    },
+    {
+      "id": "bridges/5",
+      "palette": "cream",
+      "states": [
+        "thinking",
+        "idle"
+      ],
+      "samples": 26,
+      "geometryFinite": true,
+      "randomSeekIdentical": true,
+      "thinkingHasTwoSideDots": 15
+    },
+    {
+      "id": "bridges/6",
+      "palette": "sage",
+      "states": [
+        "swirl",
+        "wide"
+      ],
+      "samples": 32,
+      "geometryFinite": true,
+      "randomSeekIdentical": true,
+      "thinkingHasTwoSideDots": 0
+    }
+  ]
+}

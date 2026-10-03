@@ -1,0 +1,56 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><script src="assets/gsap.min.js"></script><script src="assets/native.js"></script><link rel="stylesheet" href="assets/native.css"><link rel="stylesheet" href="assets/palettes.css"><style>
+@font-face{font-family:MoSans;src:url('assets/NotoSansCJKsc-Regular.otf')}@font-face{font-family:MoSans;src:url('assets/NotoSansCJKsc-Bold.otf');font-weight:700 900}@font-face{font-family:MoSerif;src:url('assets/NotoSerifCJKsc-SemiBold.otf')}
+*{box-sizing:border-box}body{margin:0}#film{width:2560px;height:1440px;position:relative;overflow:hidden;background:#dfcdaa;color:#584a3e;font-family:MoSans;perspective:2400px}.paper{position:absolute;width:1300px;height:1750px;left:0;top:0;box-shadow:30px 45px 0 #fff6e655}.paper:nth-child(1){background:#adb8a0}.paper:nth-child(2){background:#dab7a3}.paper:nth-child(3){background:#a06a32}#brand-lockup{position:absolute;left:100px;top:75px;display:flex;gap:25px;align-items:center;opacity:0}#brand-lockup img{width:130px;height:130px}#brand-lockup span{font:700 54px MoSans;letter-spacing:-2px}#mo-actor{position:absolute;left:0;top:0;width:420px;height:520px;opacity:0;transform-origin:center;filter:drop-shadow(0 20px 24px #584a3e30)}#mo-actor .orb-companion__laptop{display:none}h1{position:absolute;left:100px;top:845px;width:2360px;margin:0;text-align:center;font:900 154px/1.2 MoSans;letter-spacing:-8px}h1 em{font:600 176px MoSerif;letter-spacing:-10px;font-style:normal;margin-right:35px}.glyph{display:inline-block;opacity:0}#promise{position:absolute;left:100px;top:1100px;width:2360px;text-align:center;font:42px MoSans;opacity:0}#role{position:absolute;top:250px;left:100px;width:2360px;text-align:center;font:32px MoSans;letter-spacing:8px;opacity:0}
+</style><script src="assets/actor.js"></script></head><body><main id="film" data-composition-id="mochi-brand-ending-v8" data-width="2560" data-height="1440" data-fps="120" data-duration="8"><div id="papers"><div class="paper"></div><div class="paper"></div><div class="paper"></div></div><div id="brand-lockup"><img src="assets/brand.svg" alt="Mochi 品牌标识"><span>Mochi</span></div><div id="role">你的 AI 校园工作伙伴</div><div id="mo-actor"></div><h1><em><i class="glyph" style="font-style:normal">M</i><i class="glyph" style="font-style:normal">o</i><i class="glyph" style="font-style:normal">c</i><i class="glyph" style="font-style:normal">h</i><i class="glyph" style="font-style:normal">i</i></em><span class="glyph">已</span><span class="glyph">至</span><span class="glyph">。</span></h1><div id="promise">让校园里的工作，自然连接。</div></main><script>
+initMoActor();const tl=gsap.timeline({paused:true});window.__timelines={'mochi-brand-ending-v8':tl};
+const poses=[[-1160,-680,-21],[2410,380,27],[-1030,1240,20]];
+document.querySelectorAll('.paper').forEach((e,i)=>{const [x,y,r]=poses[i];tl.fromTo(e,{x:x+(i===1?550:-500),y:y+600,rotation:r-20},{x,y,rotation:r,duration:1.1,ease:'power3.out',immediateRender:false},i*.13);tl.to(e,{y:y-120,rotation:r+7,duration:1,ease:'power2.inOut'},3+i*.13);tl.to(e,{x:x+(i===1?-90:100),y:y-230,rotation:r-2,duration:1.1,ease:'power2.inOut'},6+i*.13)});
+tl.fromTo('#brand-lockup',{x:-170,opacity:0},{x:0,opacity:1,duration:.7,ease:'power3.out',immediateRender:false},.45);
+tl.fromTo('#mo-actor',{x:1070,y:1300,scale:.6,rotation:20,opacity:0},{x:1070,y:335,scale:1.3,rotation:0,opacity:1,duration:1.1,ease:'power3.out',immediateRender:false},.15);
+tl.to('#mo-actor',{y:300,scale:1.22,duration:.7,ease:'power2.inOut'},2.1).to('#mo-actor',{y:335,scale:1.3,duration:.7,ease:'power2.inOut'},3.4);
+tl.fromTo('h1 .glyph',{y:190,rotation:8,opacity:0},{y:0,rotation:0,opacity:1,duration:.65,stagger:.085,ease:'power3.out',immediateRender:false},2.45);
+tl.fromTo('#role',{y:30,opacity:0},{y:0,opacity:1,duration:.6,ease:'power2.out',immediateRender:false},4.3);
+tl.to('#mo-actor',{y:300,rotation:-5,duration:.6,ease:'power2.inOut'},5.3).to('#mo-actor',{y:335,rotation:0,duration:.6,ease:'power2.inOut'},6.1);
+tl.fromTo('#promise',{y:55,opacity:0},{y:0,opacity:1,duration:.8,ease:'power3.out',immediateRender:false},6.5);
+tl.to({}, {duration:.01},7.99);
+</script><script>/* Editorial stage colors only: never recolor native DOM, video, images or iframe content. */
+window.MochiBrand={apply(config){
+ const {id,palette:p,next,palettes}=config,stage=document.querySelector('#film'),tl=Object.values(window.__timelines)[0],duration=Number(stage.dataset.duration);
+ const ink=p.id==='caramel'?p.glyph:p.eyes;
+ // Preserve inherited native foreground colors before changing the editorial stage.
+ stage.querySelectorAll('.native,#file,#grade-native').forEach(el=>{el.style.color=getComputedStyle(el).color});
+ if(['delivery','mailbox','collaboration'].includes(id)){const light=stage.querySelector('#light');if(light)light.style.background=`radial-gradient(ellipse at 70% 25%,${p.glyph}18,transparent 60%)`;}
+ stage.style.background=p.body;stage.style.color=ink;
+ stage.dataset.brandPalette=p.id;
+ const css=document.createElement('style');css.textContent=`
+ #film .paper-world .paper-room{background:${p.body}!important}
+ #film #world,#film #atmosphere{background:none!important}
+ #film .copy,#film .copy-group,#film .headline,#film .pacing-type,#film #words,#film #chapter,#film #page-state,#film #labels,#film #colors-sub,#film .type,#film .type p{color:${ink}}
+ #film #source-note,#film #note,#film #folio{color:${p.case};background:${p.glyph}e6;border-radius:8px;padding:8px 14px}
+ #film #characters .character{background:radial-gradient(ellipse at 50% 34%,#f3f1df 0%,#f3f1df99 32%,transparent 67%);border-radius:50%}
+ #brand-mark{position:absolute;right:100px;top:64px;width:126px;height:126px;z-index:5;opacity:0;pointer-events:none}
+ `;document.head.append(css);
+ const field=document.querySelector('#editorial-paper-field');
+ if(field)[...field.children].forEach((el,i)=>{el.style.background=i===1?p.glyph:palettes[(palettes.findIndex(x=>x.id===p.id)+i+1)%4]?.body||p.glyph;el.style.opacity='.42'});
+ if(id==='daily'){
+  // Discrete memory and automation sections gain a new palette through moving paper.
+  const swaps=[[0,'sage'],[8,'cream'],[14,'peach'],[22,'cream'],[28,'sage'],[36,'peach'],[42,'cream']];
+  for(const [at,key]of swaps){const theme=palettes.find(x=>x.id===key);tl.to(stage,{backgroundColor:theme.body,duration:.65,ease:'power2.inOut'},at)}
+ }
+ if(next){
+  const wipe=document.createElement('div');wipe.id='brand-color-wipe';
+  Object.assign(wipe.style,{position:'absolute',inset:'-12%',background:next.body,pointerEvents:'none'});
+  stage.insertBefore(wipe,stage.firstChild);
+  const n=Number(id.split('-')[1]);
+  if(n%3===0){tl.fromTo(wipe,{clipPath:'circle(0% at 74% 70%)'},{clipPath:'circle(145% at 74% 70%)',duration:duration*.64,ease:'power3.inOut',immediateRender:false},duration*.05)}
+  else if(n%3===1){tl.fromTo(wipe,{xPercent:115,rotation:-8},{xPercent:0,rotation:0,duration:duration*.64,ease:'power3.inOut',immediateRender:false},duration*.05)}
+  else{tl.fromTo(wipe,{yPercent:115,rotation:8},{yPercent:0,rotation:0,duration:duration*.64,ease:'power3.inOut',immediateRender:false},duration*.05)}
+  const logo=document.createElement('img');logo.id='brand-mark';logo.src='assets/brand.svg';logo.alt='Mochi';if(n===3){logo.style.left='100px';logo.style.right='auto'}stage.append(logo);
+  tl.fromTo(logo,{y:24,scale:.7,opacity:0},{y:0,scale:1,opacity:1,duration:.35,ease:'power3.out',immediateRender:false},duration*.26);
+  tl.to(logo,{y:-24,opacity:0,duration:.28},duration*.60);
+  tl.to('#words',{color:next.id==='caramel'?next.glyph:next.eyes,duration:.35},duration*.25);
+ }
+ window.brandEvidence={id,palette:p.id,background:p.body,next:next?.id||null,productUiModified:false};
+}};
+
+MochiBrand.apply({"id":"ending","palette":{"id":"cream","label":"奶油米白","body":"#dfcdaa","eyes":"#584a3e","case":"#756653","screen":"#514a3e","base":"#8c7e68","front":"#a2957f","glyph":"#fff6e6"},"palettes":[{"id":"caramel","label":"经典焦糖","body":"#a06a32","eyes":"#fff6e6","case":"#4A3826","screen":"#2E2318","base":"#6B4E33","front":"#7A5C3E","glyph":"#FFE7C2"},{"id":"cream","label":"奶油米白","body":"#dfcdaa","eyes":"#584a3e","case":"#756653","screen":"#514a3e","base":"#8c7e68","front":"#a2957f","glyph":"#fff6e6"},{"id":"sage","label":"鼠尾草绿","body":"#adb8a0","eyes":"#384437","case":"#616b5a","screen":"#3f493d","base":"#78826e","front":"#909b84","glyph":"#f3f1df"},{"id":"peach","label":"雾桃奶茶","body":"#dab7a3","eyes":"#665044","case":"#79655a","screen":"#51443d","base":"#91786b","front":"#ac9180","glyph":"#fff0dd"}]});MochiFilmActor.install({"id":"ending","palette":{"id":"cream","label":"奶油米白","body":"#dfcdaa","eyes":"#584a3e","case":"#756653","screen":"#514a3e","base":"#8c7e68","front":"#a2957f","glyph":"#fff6e6"},"palettes":[{"id":"caramel","label":"经典焦糖","body":"#a06a32","eyes":"#fff6e6","case":"#4A3826","screen":"#2E2318","base":"#6B4E33","front":"#7A5C3E","glyph":"#FFE7C2"},{"id":"cream","label":"奶油米白","body":"#dfcdaa","eyes":"#584a3e","case":"#756653","screen":"#514a3e","base":"#8c7e68","front":"#a2957f","glyph":"#fff6e6"},{"id":"sage","label":"鼠尾草绿","body":"#adb8a0","eyes":"#384437","case":"#616b5a","screen":"#3f493d","base":"#78826e","front":"#909b84","glyph":"#f3f1df"},{"id":"peach","label":"雾桃奶茶","body":"#dab7a3","eyes":"#665044","case":"#79655a","screen":"#51443d","base":"#91786b","front":"#ac9180","glyph":"#fff0dd"}]});</script></body></html>

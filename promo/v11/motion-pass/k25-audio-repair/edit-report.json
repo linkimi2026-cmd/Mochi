@@ -1,6 +1,6 @@
 {
-  "pictureBitstreamHash": "SHA256=a3da4ca5c23030ce76178a5aee7360eba09f6344823f9379d0e0f4196f642b4b",
-  "revision": "7.2-k25-music-stem",
+  "pictureBitstreamHash": "SHA256=e0d4d4a1fa39f886ccf59add68e676a8aaca788a89a95bdb7c52d51153d16e74",
+  "revision": "8.2-k25-music-stem",
   "duration": 299.35,
   "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/k25-audio-repair/media/stems/music.wav",
   "sourceSha256": "63d654100653c531d640a6da64900d7ca4c61c47e419d35849af39e7662c51dd",
@@ -97,7 +97,7 @@
   "syntheticKickAccents": 0,
   "musicBed": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/k25-audio-repair/media/music.wav",
   "finalAudio": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/k25-audio-repair/media/final.wav",
-  "finalAudioSha256": "d0bef17597440259d36259b641ed1305f1a94ba1fdcca158a586675aae4c8bbd",
+  "finalAudioSha256": "e1b4b34ca87a3d9173a9349b227a3a5cc73464dfb244021c6f805e5bef685497",
   "pictureChanges": false,
   "dingTime": 115.45,
   "confirmedLegacyDrift": {

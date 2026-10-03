@@ -1,0 +1,9 @@
+media/
+evidence/
+*/assets/
+*/output/
+bridges/*/assets/
+bridges/*/output/
+*.log
+**/render.log
+assets/

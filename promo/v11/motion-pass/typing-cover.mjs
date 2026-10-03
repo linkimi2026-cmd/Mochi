@@ -11,11 +11,13 @@ const cues=[];
 try{
  const page=await browser.newPage();await page.setViewport({width:2560,height:1440});
  // Source offsets follow the actual compound clip edits, not approximate chapter durations.
- const sourceChapters=timeline.edition===7?
+ const sourceChapters=timeline.edition===8?
+ [['brand-v8/greeting',0,0,8],['brand-v8/opening',0,4,18,4],['brand-v8/team',1,0,23.35],['brand-v8/teaching',2,0,25],['brand-v8/delivery',2,22,16],['brand-v8/model',3,0,26.8],['brand-v8/mailbox',4,0,18],['brand-v8/students',5,0,50],['brand-v8/query',6,0,30],['brand-v8/collaboration',6,30,30],['brand-v8/daily',7,0,48],['brand-v8/ending',7,47.4,8]]:
+ timeline.edition===7?
  [['../greeting-chapter',0,0,4],['pacing-v7/opening',0,4,18],['pacing-v7/team',1,0,23.35],['pacing-v7/teaching',2,0,25],['pacing-v7/delivery',2,22,16],['pacing-v7/model',3,0,26.8],['pacing-v7/mailbox',4,0,18],['pacing-v7/students',5,0,50],['pacing-v7/query',6,0,30],['pacing-v7/collaboration',6,30,30],['pacing-v7/daily',7,0,48],['pacing-v7/ending',7,47.4,8]]:
  [['../greeting-chapter',0,0,4],['../opening-chapter',0,4,18],['../team-dialogue',1,0,23.35],['../teaching-chapter',2,0,22],['../delivery-chapter',2,22,16],['../model-chapter',3,0,26.8],['../mailbox-chapter',4,0,18],['../student-chapter',5,0,50],['native-query',6,0,30],['../collaboration-chapter',6,30,30],['../master-preview/supplement',7,-36,92]];
- const sources=[...sourceChapters,...[0,1,2,4,5,6].map(i=>['bridges/'+i,8+i,0,chapters[8+i].duration])];
- for(const [folder,index,offset,length] of sources){
+ const sources=[...sourceChapters,...[0,1,2,4,5,6].map(i=>[(timeline.edition===8?'brand-v8/':'')+'bridges/'+i,8+i,0,chapters[8+i].duration])];
+ for(const [folder,index,offset,length,sourceFrom=0] of sources){
   const file=resolve(root,folder,'index.html');
   await page.goto(pathToFileURL(file).href,{waitUntil:'load',timeout:30000});
   const events=await page.evaluate(()=>Object.values(window.__timelines||{}).flatMap(tl=>tl.getChildren(true,true,false).flatMap(t=>{
@@ -25,7 +27,7 @@ try{
   if(!events.length)console.log('No staggered typing in',folder);
   const chapter=chapters[index];
   for(const event of events){const sourceTime=offset+event.at,time=chapter.start+sourceTime-chapter.sourceStart;
-   if(event.at<length&&time>=chapter.start&&time<chapter.start+chapter.duration&&event.text.trim())cues.push({time,sourceTime,source:file,text:event.text,kind:'animated-letter'});
+   if(event.at>=sourceFrom&&event.at<length&&time>=chapter.start&&time<chapter.start+chapter.duration&&event.text.trim())cues.push({time,sourceTime,source:file,text:event.text,kind:'animated-letter'});
   }
  }
  // Cover uses the exact existing vector mark. No regeneration or redrawing.

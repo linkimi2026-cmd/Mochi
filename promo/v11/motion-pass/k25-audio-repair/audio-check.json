@@ -1,11 +1,11 @@
 {
-  "revision": "7.2-k25-music-stem",
+  "revision": "8.2-k25-music-stem",
   "sampleRate": 48000,
   "channels": 2,
   "samplesPerChannel": 14368800,
-  "finalAudioSha256": "d0bef17597440259d36259b641ed1305f1a94ba1fdcca158a586675aae4c8bbd",
+  "finalAudioSha256": "e1b4b34ca87a3d9173a9349b227a3a5cc73464dfb244021c6f805e5bef685497",
   "duration": 299.35,
-  "peak": 0.522440493106842,
+  "peak": 0.5257478952407837,
   "finite": true,
   "longSilencesBelowMinus55dB": [],
   "majorCueChecks": [

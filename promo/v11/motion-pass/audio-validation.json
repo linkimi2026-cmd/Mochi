@@ -1,15 +1,15 @@
 {
-  "edition": 7,
+  "edition": 8,
   "tracks": [
     {
       "label": "现有配乐版",
-      "encodedPeak": 0.5436965227127075,
+      "encodedPeak": 0.5450217127799988,
       "finite": true,
       "decodeErrors": 0
     },
     {
       "label": "K2.5参考音轨版",
-      "encodedPeak": 0.7955347895622253,
+      "encodedPeak": 0.5271283984184265,
       "finite": true,
       "decodeErrors": 0
     }

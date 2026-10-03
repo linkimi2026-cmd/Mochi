@@ -1,0 +1,133 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><title>Mochi · 一起完成</title><script src="assets/gsap.min.js"></script><script src="assets/motion.js"></script><link rel="stylesheet" href="assets/motion.css"><link rel="stylesheet" href="assets/native.css"><link rel="stylesheet" href="assets/palettes.css"><script src="assets/native.js"></script><style>
+@font-face{font-family:MoSans;src:url('assets/NotoSansCJKsc-Regular.otf')}@font-face{font-family:MoSans;src:url('assets/NotoSansCJKsc-Bold.otf');font-weight:700 900}@font-face{font-family:MoSerif;src:url('assets/NotoSerifCJKsc-SemiBold.otf')}
+*{box-sizing:border-box}body{margin:0;color:#303b31;font-family:MoSans}#film{width:2560px;height:1440px;position:relative;overflow:hidden;background:#f5f1e8}h1,h2,p{margin:0}.copy{position:absolute;z-index:4;opacity:0}.glyph{display:inline-block;opacity:0}#intro{left:150px;top:130px;font:900 138px/1.3 MoSans;letter-spacing:-6px}#plan-title{left:1660px;top:490px;width:760px;font:700 85px/1.4 MoSans}#deck-title{left:120px;top:210px;width:780px;font:800 84px/1.4 MoSans}#color-title{left:150px;top:130px;font:700 108px/1.4 MoSans}#colors-sub{left:154px;top:310px;font:40px MoSans}#roster{position:absolute;width:920px;height:100px;transform-origin:0 0;left:0;top:0}#roster video{width:100%;height:100%;display:block}.camera{position:absolute;width:2160px;height:1376px;transform-origin:0 0;opacity:0}.camera video{width:100%;height:100%;clip-path:inset(0 20px 25px 0)}#characters{position:absolute;inset:450px 170px auto;display:flex;gap:60px;justify-content:space-around;opacity:0}.character{display:flex;align-items:center;flex-direction:column;gap:56px;transform-origin:50% 50%}.character p{font:34px MoSans}#note{position:absolute;bottom:35px;left:80px;font:25px MoSans;color:#566258}
+</style><script src="assets/actor.js"></script></head><body><main id="film" data-composition-id="mochi-team-dialogue" data-width="2560" data-height="1440" data-duration="24" data-fps="120">
+<h1 id="intro" class="copy">一项任务。<br>几位伙伴，一起完成。</h1><div id="roster"><video id="roster-video" class="clip" src="assets/roster.mp4" muted data-start="0" data-duration="5" data-track-index="1"></video></div>
+<div id="plan-camera" class="camera"><video id="plan-video" class="clip" src="assets/plan.mp4" muted data-start="5" data-duration="14" data-track-index="2"></video></div><h2 id="plan-title" class="copy">教案成员，<br>展开教学思路。</h2>
+<div id="deck-camera" class="camera"><video id="deck-video" class="clip" src="assets/deck.mp4" muted data-start="12" data-duration="7" data-track-index="1"></video></div><h2 id="deck-title" class="copy">课件成员，<br>接着把课堂做出来。</h2>
+<h2 id="color-title" class="copy">每位伙伴，都有自己的色彩。</h2><p id="colors-sub" class="copy">四款内置 Mochi 配色</p><div id="characters"></div><p id="note">真实协作历史回放 · 原成员会话 · 并非新增群聊界面</p><audio id="team-music" src="assets/music-review.wav" data-start="0" data-duration="24" data-track-index="9"></audio></main><script>
+initTeamPalette();const tl=gsap.timeline({paused:true});window.__timelines={'mochi-team-dialogue':tl};const M=window.MochiMotion,p=M.createCursor(document.querySelector('#film'));
+function title(id,at,out){const el=document.querySelector(id);for(const n of [...el.childNodes])if(n.nodeType===3){const f=document.createDocumentFragment();for(const c of n.textContent){const s=document.createElement('span');s.className='glyph';s.textContent=c;f.append(s)}n.replaceWith(f)}tl.set(el,{opacity:1},at).fromTo(el.querySelectorAll('.glyph'),{y:80,rotation:4,opacity:0},{y:0,rotation:0,opacity:1,stagger:.018,duration:.65,ease:'back.out(1.3)',immediateRender:false},at).to(el,{y:-80,opacity:0,duration:.4},out)}
+title('#intro',.1,4.35);title('#plan-title',6,11.5);title('#deck-title',12.5,18.3);title('#color-title',19,23.4);
+M.place(tl,'#roster',{x:110,y:860,scale:2.45},{x:160,y:810,scale:2.35},0,1);
+M.place(tl,'#roster',{x:160,y:810,scale:2.35},{x:160,y:225,scale:1.1},4.1,.9);tl.set('#roster',{opacity:0},5);
+M.place(tl,'#plan-camera',{x:160,y:225,scale:.84},{x:120,y:235,scale:.62},5,1);tl.set('#plan-camera',{opacity:1},5);tl.to('#plan-camera',{x:35,y:160,scale:.75,duration:2.3,ease:'power1.inOut'},8.5);tl.to('#plan-camera',{x:145,y:815,scale:.28,rotation:-3,opacity:.72,duration:1.05,ease:'power3.inOut'},11.25);tl.to('#plan-camera',{y:1600,opacity:0,duration:.8,ease:'power3.in'},18.2);
+M.place(tl,'#deck-camera',{x:2450,y:460,scale:.35,rotation:7},{x:950,y:310,scale:.68,rotation:0},11.65,1.2,'back.out(1.1)');tl.set('#deck-camera',{opacity:1},11.75);tl.to('#deck-camera',{y:-1000,rotation:4,opacity:0,duration:.8,ease:'power3.in'},18.2);
+M.movePointer(tl,p,{x:2400,y:1080},{x:793,y:278},5.8,.6);M.click(tl,p,{x:793,y:278},6.4);tl.to(p.cursor,{opacity:0,duration:.15},6.9);
+M.movePointer(tl,p,{x:1800,y:1150},{x:1295,y:825},14,.65);M.click(tl,p,{x:1295,y:825},14.7);tl.to(p.cursor,{opacity:0,duration:.2},15.4);
+tl.set('#characters',{opacity:1},18.8).fromTo('.character',{y:1050,rotation:8,scale:.6},{y:0,rotation:0,scale:1.25,stagger:.12,duration:1.1,ease:'back.out(1.2)',immediateRender:false},18.8).fromTo('#colors-sub',{y:20,opacity:0},{y:0,opacity:1,duration:.4,immediateRender:false},19.9);
+let filmTime=0;const clock={get time(){return filmTime},set time(t){filmTime=t;window.paintCharacters(t)}};tl.to(clock,{time:24,duration:24,ease:'none'},0);tl.to('#note',{opacity:0,duration:.2},18.6);tl.to('#characters',{y:200,opacity:0,duration:.45},23.55);tl.to('#colors-sub',{opacity:0,duration:.25},23.55);
+</script><script>/* Film-only additive camera rig. Product DOM, video rate and source data stay intact. */
+window.MochiPacing={apply(config){
+ const stage=document.querySelector('#film'),tl=Object.values(window.__timelines)[0];
+ const rig=document.createElement('div');rig.id='editorial-camera';
+ Object.assign(rig.style,{position:'absolute',inset:'0',transformOrigin:'0 0',pointerEvents:'none'});
+ const elements=[...new Set(config.targets.flatMap(s=>[...stage.querySelectorAll(s)]))];
+ stage.insertBefore(rig,elements[0]);elements.forEach(e=>rig.append(e));
+ const captions=document.createElement('div');
+ Object.assign(captions.style,{position:'absolute',inset:'0',pointerEvents:'none'});
+ const captionNodes=[...stage.children].filter(e=>e.matches('.copy,.copy-group,.headline,h1,h2,#hint,#arrival,#colors-sub'));
+ stage.append(captions);captionNodes.forEach(e=>captions.append(e));
+ const neutral={scale:1,x:0,y:0};
+ function move(at,duration,pose){tl.to(rig,{...pose,duration,ease:'power2.inOut'},at)}
+ const report=[];
+ for(const [start,end,targets,purpose]of config.windows){
+  const poses=targets.map(([scale,cx,cy])=>({scale,x:1280-cx*scale,y:720-cy*scale}));
+  const steps=[...poses,neutral],step=(end-start)/steps.length;
+  // Each stop lasts <=1.2 s. The remainder is a smooth, purposeful camera move.
+  const travel=Math.max(.55,step-1.2);
+  steps.forEach((pose,i)=>move(start+i*step,Math.min(travel,step),pose));
+  // The editorial headline clears the close-up instead of covering native fields.
+  tl.to(captions,{opacity:0,duration:.25},start);
+  tl.to(captions,{opacity:1,duration:.25},end-.25);
+  report.push({start,end,purpose,maxDesignedHold:Math.max(0,step-travel),targets});
+ }
+ // Small perspective paper fields, behind the UI. They move through space, not over text.
+ const field=document.createElement('div');field.id='editorial-paper-field';
+ Object.assign(field.style,{position:'absolute',inset:'0',overflow:'hidden',pointerEvents:'none',perspective:'2200px'});
+ stage.insertBefore(field,stage.firstChild);
+ const colors=['#dbe5cd','#efe0c4','#d6e5df'];
+ for(let i=0;i<3;i++){
+  const paper=document.createElement('div');
+  Object.assign(paper.style,{position:'absolute',width:'820px',height:'1140px',left:(i===1?2160:-650)+'px',top:(i*470-540)+'px',background:colors[i],opacity:'.68',boxShadow:'30px 40px 0 #fffaf550',transformOrigin:'50% 50%'});
+  field.append(paper);tl.set(paper,{rotation:i%2?17:-24,rotationY:i%2?-24:21},0);
+  for(const [k,w]of config.windows.entries())tl.to(paper,{x:(k%2?1:-1)*(110+i*25),y:((k+i)%3-1)*150,rotation:(k%2?1:-1)*(16+i*3),duration:1.1,ease:'power2.inOut'},w[0]+i*.07);
+ }
+ // Endpoint identity is required by the already-rendered inter-chapter bridges.
+ const duration=Number(stage.dataset.duration||tl.duration());
+ tl.fromTo(field,{opacity:0},{opacity:1,duration:.5,immediateRender:false},1.25);
+ tl.to(field,{opacity:0,duration:.4},duration-1.8);
+ if(config.id==='model'){
+  // The model remains the original iframe with its existing deterministic interaction clock.
+  const moves=[
+   [10.5,1.05,{x:65,y:190,scale:1.68}],
+   [12.65,.85,{x:220,y:220,scale:1.48}],
+   [14.65,.8,{x:90,y:180,scale:1.62}],
+   [16.65,.85,{x:130,y:155,scale:1.5}],
+   [18.7,.85,{x:240,y:155,scale:1.45}],
+   [20.65,.9,{x:-400,y:165,scale:1.7}],
+   [22.55,.55,{x:272,y:230,scale:1.4}],
+  ];
+  // The native model clock seeks this GSAP camera before calculating screen cursor positions.
+  // This also works when the renderer suppresses timeline callbacks during random-access seeks.
+  const camera=gsap.timeline({paused:true});let previous={x:272,y:230,scale:1.4};
+  moves.forEach(([at,duration,pose])=>{camera.fromTo('#model',previous,{...pose,duration,ease:'power2.inOut',immediateRender:false},at);previous=pose});
+  window.updateMochiModelCamera=t=>{if(t>=10.5&&t<23.15)camera.seek(t)};
+  kinetic('拖动，一个切点。',11.9,14.5,'left');
+  kinetic('看见，几何关系。',14.6,17.15,'right');
+  kinetic('改变参数，继续探索。',17.2,20.35,'left');
+  kinetic('再展开，为什么。',20.4,22.8,'right');
+ }
+ function kinetic(text,start,end,align){
+  const el=document.createElement('div');el.className='pacing-type';
+  Object.assign(el.style,{position:'absolute',left:align==='left'?'180px':'auto',right:align==='right'?'160px':'auto',top:'28px',height:'95px',font:'700 68px/1.15 MoSans',letterSpacing:'-3px',overflow:'hidden',whiteSpace:'nowrap',pointerEvents:'none',opacity:'0'});
+  for(const char of text){const span=document.createElement('span');span.className='glyph';span.textContent=char;span.style.display='inline-block';el.append(span)}
+  stage.append(el);tl.set(el,{opacity:1},start);
+  tl.fromTo(el.children,{y:100,rotation:8,opacity:0},{y:0,rotation:0,opacity:1,stagger:.022,duration:.55,ease:'power3.out',immediateRender:false},start);
+  tl.to(el,{x:align==='left'?80:-80,duration:.65,ease:'power2.inOut'},end-1.15);
+  tl.to(el.children,{y:-110,rotation:-5,opacity:0,stagger:.016,duration:.35,ease:'power2.in'},end-.4);
+ }
+ window.pacingEvidence={chapter:config.id,windows:report,playbackRate:1};
+}};
+
+MochiPacing.apply({"id":"team","source":"team-dialogue","targets":["#roster","#plan-camera","#deck-camera","#characters",".film-pointer-layer"],"windows":[[1.4,4,[[1.2,1170,910]],"Agent 角色名单"],[7,8.4,[[1.12,810,710]],"教案内容"],[15.6,18.05,[[1.25,1730,720]],"课件成员回应"],[20.55,23.1,[[1.15,1100,780],[1.15,1450,780]],"四种原生配色"],[13.1,15.55,[[1.16,1620,730]],"课件会话的操作落点"]]});</script><script>/* Editorial stage colors only: never recolor native DOM, video, images or iframe content. */
+window.MochiBrand={apply(config){
+ const {id,palette:p,next,palettes}=config,stage=document.querySelector('#film'),tl=Object.values(window.__timelines)[0],duration=Number(stage.dataset.duration);
+ const ink=p.id==='caramel'?p.glyph:p.eyes;
+ // Preserve inherited native foreground colors before changing the editorial stage.
+ stage.querySelectorAll('.native,#file,#grade-native').forEach(el=>{el.style.color=getComputedStyle(el).color});
+ if(['delivery','mailbox','collaboration'].includes(id)){const light=stage.querySelector('#light');if(light)light.style.background=`radial-gradient(ellipse at 70% 25%,${p.glyph}18,transparent 60%)`;}
+ stage.style.background=p.body;stage.style.color=ink;
+ stage.dataset.brandPalette=p.id;
+ const css=document.createElement('style');css.textContent=`
+ #film .paper-world .paper-room{background:${p.body}!important}
+ #film #world,#film #atmosphere{background:none!important}
+ #film .copy,#film .copy-group,#film .headline,#film .pacing-type,#film #words,#film #chapter,#film #page-state,#film #labels,#film #colors-sub,#film .type,#film .type p{color:${ink}}
+ #film #source-note,#film #note,#film #folio{color:${p.case};background:${p.glyph}e6;border-radius:8px;padding:8px 14px}
+ #film #characters .character{background:radial-gradient(ellipse at 50% 34%,#f3f1df 0%,#f3f1df99 32%,transparent 67%);border-radius:50%}
+ #brand-mark{position:absolute;right:100px;top:64px;width:126px;height:126px;z-index:5;opacity:0;pointer-events:none}
+ `;document.head.append(css);
+ const field=document.querySelector('#editorial-paper-field');
+ if(field)[...field.children].forEach((el,i)=>{el.style.background=i===1?p.glyph:palettes[(palettes.findIndex(x=>x.id===p.id)+i+1)%4]?.body||p.glyph;el.style.opacity='.42'});
+ if(id==='daily'){
+  // Discrete memory and automation sections gain a new palette through moving paper.
+  const swaps=[[0,'sage'],[8,'cream'],[14,'peach'],[22,'cream'],[28,'sage'],[36,'peach'],[42,'cream']];
+  for(const [at,key]of swaps){const theme=palettes.find(x=>x.id===key);tl.to(stage,{backgroundColor:theme.body,duration:.65,ease:'power2.inOut'},at)}
+ }
+ if(next){
+  const wipe=document.createElement('div');wipe.id='brand-color-wipe';
+  Object.assign(wipe.style,{position:'absolute',inset:'-12%',background:next.body,pointerEvents:'none'});
+  stage.insertBefore(wipe,stage.firstChild);
+  const n=Number(id.split('-')[1]);
+  if(n%3===0){tl.fromTo(wipe,{clipPath:'circle(0% at 74% 70%)'},{clipPath:'circle(145% at 74% 70%)',duration:duration*.64,ease:'power3.inOut',immediateRender:false},duration*.05)}
+  else if(n%3===1){tl.fromTo(wipe,{xPercent:115,rotation:-8},{xPercent:0,rotation:0,duration:duration*.64,ease:'power3.inOut',immediateRender:false},duration*.05)}
+  else{tl.fromTo(wipe,{yPercent:115,rotation:8},{yPercent:0,rotation:0,duration:duration*.64,ease:'power3.inOut',immediateRender:false},duration*.05)}
+  const logo=document.createElement('img');logo.id='brand-mark';logo.src='assets/brand.svg';logo.alt='Mochi';if(n===3){logo.style.left='100px';logo.style.right='auto'}stage.append(logo);
+  tl.fromTo(logo,{y:24,scale:.7,opacity:0},{y:0,scale:1,opacity:1,duration:.35,ease:'power3.out',immediateRender:false},duration*.26);
+  tl.to(logo,{y:-24,opacity:0,duration:.28},duration*.60);
+  tl.to('#words',{color:next.id==='caramel'?next.glyph:next.eyes,duration:.35},duration*.25);
+ }
+ window.brandEvidence={id,palette:p.id,background:p.body,next:next?.id||null,productUiModified:false};
+}};
+
+MochiBrand.apply({"id":"team","palette":{"id":"sage","label":"鼠尾草绿","body":"#adb8a0","eyes":"#384437","case":"#616b5a","screen":"#3f493d","base":"#78826e","front":"#909b84","glyph":"#f3f1df"},"palettes":[{"id":"caramel","label":"经典焦糖","body":"#a06a32","eyes":"#fff6e6","case":"#4A3826","screen":"#2E2318","base":"#6B4E33","front":"#7A5C3E","glyph":"#FFE7C2"},{"id":"cream","label":"奶油米白","body":"#dfcdaa","eyes":"#584a3e","case":"#756653","screen":"#514a3e","base":"#8c7e68","front":"#a2957f","glyph":"#fff6e6"},{"id":"sage","label":"鼠尾草绿","body":"#adb8a0","eyes":"#384437","case":"#616b5a","screen":"#3f493d","base":"#78826e","front":"#909b84","glyph":"#f3f1df"},{"id":"peach","label":"雾桃奶茶","body":"#dab7a3","eyes":"#665044","case":"#79655a","screen":"#51443d","base":"#91786b","front":"#ac9180","glyph":"#fff0dd"}]});MochiFilmActor.install({"id":"team","palette":{"id":"sage","label":"鼠尾草绿","body":"#adb8a0","eyes":"#384437","case":"#616b5a","screen":"#3f493d","base":"#78826e","front":"#909b84","glyph":"#f3f1df"},"palettes":[{"id":"caramel","label":"经典焦糖","body":"#a06a32","eyes":"#fff6e6","case":"#4A3826","screen":"#2E2318","base":"#6B4E33","front":"#7A5C3E","glyph":"#FFE7C2"},{"id":"cream","label":"奶油米白","body":"#dfcdaa","eyes":"#584a3e","case":"#756653","screen":"#514a3e","base":"#8c7e68","front":"#a2957f","glyph":"#fff6e6"},{"id":"sage","label":"鼠尾草绿","body":"#adb8a0","eyes":"#384437","case":"#616b5a","screen":"#3f493d","base":"#78826e","front":"#909b84","glyph":"#f3f1df"},{"id":"peach","label":"雾桃奶茶","body":"#dab7a3","eyes":"#665044","case":"#79655a","screen":"#51443d","base":"#91786b","front":"#ac9180","glyph":"#fff0dd"}]});</script></body></html>
