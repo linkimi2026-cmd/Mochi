@@ -1,0 +1,95 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><script src="assets/gsap.min.js"></script><script src="assets/native.js"></script><link rel="stylesheet" href="assets/native.css"><style>@font-face{font-family:'PingFang SC';src:local('PingFangSC-Regular')}
+@font-face{font-family:'Microsoft YaHei';src:local('Microsoft YaHei')}
+@font-face{font-family:'Songti SC';src:local('Songti SC')}
+@font-face{font-family:'STSong';src:local('STSong')}
+@font-face{font-family:'Source Han Serif SC';src:local('Source Han Serif SC')}
+@font-face{font-family:'Noto Sans CJK SC';src:url('assets/NotoSansCJKsc-Regular.otf')}
+@font-face{font-family:'Noto Serif CJK SC';src:url('assets/NotoSerifCJKsc-SemiBold.otf')}
+@font-face{font-family:MoSans;src:url('assets/NotoSansCJKsc-Regular.otf')}@font-face{font-family:MoSans;src:url('assets/NotoSansCJKsc-Bold.otf');font-weight:700}*{box-sizing:border-box}body{margin:0}#film{width:2560px;height:1440px;position:relative;overflow:hidden;background:#f5f2e6;color:#294235;font-family:MoSans;perspective:2400px}#light{position:absolute;inset:-30%;background:radial-gradient(ellipse at 75% 30%,#d9e8cc,transparent 60%),radial-gradient(ellipse at 20% 70%,#edddbb,transparent 55%)}h1{position:absolute;left:140px;top:70px;font:700 100px/1.2 MoSans;margin:0}#second-title{opacity:0}.native{position:absolute;width:800px;left:0;top:0;transform-origin:0 0;background:#faf8ef;border-radius:22px;padding:24px;box-shadow:0 36px 80px #38473418;opacity:0}.native *{animation:none!important}#note{position:absolute;left:100px;bottom:32px;font:25px MoSans;color:#61715d}#sent-label,#received-label{position:absolute;font:700 40px MoSans;top:280px;opacity:0}#sent-label{left:210px}#received-label{left:1530px}#file{position:absolute;left:0;top:0;padding:32px 42px;background:#fcf9ef;border:2px solid #a9b799;border-radius:20px;box-shadow:0 22px 32px #364b3528;font:700 40px MoSans;opacity:0}#file small{display:block;font:26px MoSans;margin-top:15px}
+</style></head><body><main id="film" data-composition-id="mochi-delivery" data-width="2560" data-height="1440" data-duration="16" data-fps="120"><div id="light"></div><h1 id="first-title">连接教室，从双方确认开始。</h1><h1 id="second-title">做好的课件，送到课堂。</h1><div id="pair-request" class="native"></div><div id="pair-ready" class="native"></div><div id="file-sent" class="native"></div><div id="file-received" class="native"></div><div id="file-read" class="native"></div><div id="file">一次函数课件<small>PPTX · 真实文件投递</small></div><div id="sent-label">教师端</div><div id="received-label">教室端</div><div id="note">真实签名传输记录 · 原产品组件重放 · 已送达 / 已读状态分别展示</div></main><script>
+initDelivery();const tl=gsap.timeline({paused:true});window.__timelines={'mochi-delivery':tl};
+tl.fromTo('#pair-request',{x:260,y:450,scale:.7,rotation:-4,opacity:0},{x:230,y:380,scale:1.1,rotation:0,opacity:1,duration:.8,ease:'back.out(1.2)',immediateRender:false},0);
+tl.fromTo('#pair-ready',{x:2200,y:490,scale:.7,opacity:0},{x:1450,y:380,scale:1.1,opacity:1,duration:.9,ease:'back.out(1.15)',immediateRender:false},1.5);
+tl.to('#pair-request',{y:1600,rotation:8,opacity:0,duration:.65,ease:'power3.in'},4.2);tl.to('#pair-ready',{y:-1000,rotation:-6,opacity:0,duration:.65,ease:'power3.in'},4.35);
+tl.to('#first-title',{y:-140,opacity:0,duration:.5},4.1);tl.fromTo('#second-title',{y:70,opacity:0},{y:0,opacity:1,duration:.65,ease:'back.out(1.2)',immediateRender:false},4.55);
+tl.fromTo('#file-sent',{x:-900,y:370,scale:1.08,opacity:0},{x:150,y:370,scale:1.08,opacity:1,duration:.8,ease:'power3.out',immediateRender:false},4.7);
+tl.fromTo('#file-received',{x:2670,y:370,scale:1.08,opacity:0},{x:1450,y:370,scale:1.08,opacity:1,duration:.8,ease:'power3.out',immediateRender:false},5.4);
+tl.to('#sent-label,#received-label',{opacity:1,duration:.4},5.4);
+tl.fromTo('#file',{x:640,y:940,scale:.6,rotation:-10,opacity:0},{x:1060,y:700,scale:1,rotation:0,opacity:1,duration:.6,ease:'back.out(1.2)',immediateRender:false},5.8);tl.to('#file',{x:1740,y:540,scale:.3,rotation:8,opacity:0,duration:.7,ease:'power3.inOut'},6.8);
+tl.to('#file-sent',{y:395,scale:1.04,duration:.18},9.7);tl.to('#file-sent',{opacity:0,duration:.12},9.88);
+tl.fromTo('#file-read',{x:150,y:395,scale:1.04,opacity:0},{x:150,y:370,scale:1.08,opacity:1,duration:.3,ease:'back.out(1.3)',immediateRender:false},9.9);
+tl.to('#light',{x:180,y:-70,duration:16,ease:'sine.inOut'},0);tl.to({}, {duration:.01},15.99);
+</script><script>/* Film-only additive camera rig. Product DOM, video rate and source data stay intact. */
+window.MochiPacing={apply(config){
+ const stage=document.querySelector('#film'),tl=Object.values(window.__timelines)[0];
+ const rig=document.createElement('div');rig.id='editorial-camera';
+ Object.assign(rig.style,{position:'absolute',inset:'0',transformOrigin:'0 0',pointerEvents:'none'});
+ const elements=[...new Set(config.targets.flatMap(s=>[...stage.querySelectorAll(s)]))];
+ stage.insertBefore(rig,elements[0]);elements.forEach(e=>rig.append(e));
+ const captions=document.createElement('div');
+ Object.assign(captions.style,{position:'absolute',inset:'0',pointerEvents:'none'});
+ const captionNodes=[...stage.children].filter(e=>e.matches('.copy,.copy-group,.headline,h1,h2,#hint,#arrival,#colors-sub'));
+ stage.append(captions);captionNodes.forEach(e=>captions.append(e));
+ const neutral={scale:1,x:0,y:0};
+ function move(at,duration,pose){tl.to(rig,{...pose,duration,ease:'power2.inOut'},at)}
+ const report=[];
+ for(const [start,end,targets,purpose]of config.windows){
+  const poses=targets.map(([scale,cx,cy])=>({scale,x:1280-cx*scale,y:720-cy*scale}));
+  const steps=[...poses,neutral],step=(end-start)/steps.length;
+  // Each stop lasts <=1.2 s. The remainder is a smooth, purposeful camera move.
+  const travel=Math.max(.55,step-1.2);
+  steps.forEach((pose,i)=>move(start+i*step,Math.min(travel,step),pose));
+  // The editorial headline clears the close-up instead of covering native fields.
+  tl.to(captions,{opacity:0,duration:.25},start);
+  tl.to(captions,{opacity:1,duration:.25},end-.25);
+  report.push({start,end,purpose,maxDesignedHold:Math.max(0,step-travel),targets});
+ }
+ // Small perspective paper fields, behind the UI. They move through space, not over text.
+ const field=document.createElement('div');field.id='editorial-paper-field';
+ Object.assign(field.style,{position:'absolute',inset:'0',overflow:'hidden',pointerEvents:'none',perspective:'2200px'});
+ stage.insertBefore(field,stage.firstChild);
+ const colors=['#dbe5cd','#efe0c4','#d6e5df'];
+ for(let i=0;i<3;i++){
+  const paper=document.createElement('div');
+  Object.assign(paper.style,{position:'absolute',width:'820px',height:'1140px',left:(i===1?2160:-650)+'px',top:(i*470-540)+'px',background:colors[i],opacity:'.68',boxShadow:'30px 40px 0 #fffaf550',transformOrigin:'50% 50%'});
+  field.append(paper);tl.set(paper,{rotation:i%2?17:-24,rotationY:i%2?-24:21},0);
+  for(const [k,w]of config.windows.entries())tl.to(paper,{x:(k%2?1:-1)*(110+i*25),y:((k+i)%3-1)*150,rotation:(k%2?1:-1)*(16+i*3),duration:1.1,ease:'power2.inOut'},w[0]+i*.07);
+ }
+ // Endpoint identity is required by the already-rendered inter-chapter bridges.
+ const duration=Number(stage.dataset.duration||tl.duration());
+ tl.fromTo(field,{opacity:0},{opacity:1,duration:.5,immediateRender:false},1.25);
+ tl.to(field,{opacity:0,duration:.4},duration-1.8);
+ if(config.id==='model'){
+  // The model remains the original iframe with its existing deterministic interaction clock.
+  const moves=[
+   [10.5,1.05,{x:65,y:190,scale:1.68}],
+   [12.65,.85,{x:220,y:220,scale:1.48}],
+   [14.65,.8,{x:90,y:180,scale:1.62}],
+   [16.65,.85,{x:130,y:155,scale:1.5}],
+   [18.7,.85,{x:240,y:155,scale:1.45}],
+   [20.65,.9,{x:-400,y:165,scale:1.7}],
+   [22.55,.55,{x:272,y:230,scale:1.4}],
+  ];
+  // The native model clock seeks this GSAP camera before calculating screen cursor positions.
+  // This also works when the renderer suppresses timeline callbacks during random-access seeks.
+  const camera=gsap.timeline({paused:true});let previous={x:272,y:230,scale:1.4};
+  moves.forEach(([at,duration,pose])=>{camera.fromTo('#model',previous,{...pose,duration,ease:'power2.inOut',immediateRender:false},at);previous=pose});
+  window.updateMochiModelCamera=t=>{if(t>=10.5&&t<23.15)camera.seek(t)};
+  kinetic('拖动，一个切点。',11.9,14.5,'left');
+  kinetic('看见，几何关系。',14.6,17.15,'right');
+  kinetic('改变参数，继续探索。',17.2,20.35,'left');
+  kinetic('再展开，为什么。',20.4,22.8,'right');
+ }
+ function kinetic(text,start,end,align){
+  const el=document.createElement('div');el.className='pacing-type';
+  Object.assign(el.style,{position:'absolute',left:align==='left'?'180px':'auto',right:align==='right'?'160px':'auto',top:'28px',height:'95px',font:'700 68px/1.15 MoSans',letterSpacing:'-3px',overflow:'hidden',whiteSpace:'nowrap',pointerEvents:'none',opacity:'0'});
+  for(const char of text){const span=document.createElement('span');span.className='glyph';span.textContent=char;span.style.display='inline-block';el.append(span)}
+  stage.append(el);tl.set(el,{opacity:1},start);
+  tl.fromTo(el.children,{y:100,rotation:8,opacity:0},{y:0,rotation:0,opacity:1,stagger:.022,duration:.55,ease:'power3.out',immediateRender:false},start);
+  tl.to(el,{x:align==='left'?80:-80,duration:.65,ease:'power2.inOut'},end-1.15);
+  tl.to(el.children,{y:-110,rotation:-5,opacity:0,stagger:.016,duration:.35,ease:'power2.in'},end-.4);
+ }
+ window.pacingEvidence={chapter:config.id,windows:report,playbackRate:1};
+}};
+
+MochiPacing.apply({"id":"delivery","source":"delivery-chapter","targets":[".native","#file","#sent-label","#received-label"],"windows":[[2.65,4.05,[[1.12,1850,740]],"双方确认"],[7.7,9.6,[[1.24,1870,680]],"教室端送达"],[10.4,15.2,[[1.25,630,720],[1.13,1310,740]],"教师回执到双端关系"]]});</script></body></html>

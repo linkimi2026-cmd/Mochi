@@ -1,17 +1,17 @@
 {
-  "output": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/output/Mochi_V11_第六版_空间接续_2K120.mp4",
-  "edition": 6,
+  "edition": 7,
   "width": 2560,
   "height": 1440,
   "fps": 120,
-  "duration": 299.95,
+  "duration": 299.34999999999997,
+  "output": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/media/picture.mp4",
   "chapters": [
     {
       "type": "chapter",
       "name": "Mo问候、首页与需求",
       "start": 0,
       "duration": 20.8,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/greeting-chapter/output/greeting-and-opening.mp4",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/media/opening.mp4",
       "sourceStart": 0
     },
     {
@@ -26,7 +26,7 @@
       "name": "多Agent与内置配色",
       "start": 23.6,
       "duration": 20.950000000000003,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/output/team-dialogue.mp4",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/output/video.mp4",
       "sourceStart": 1.2
     },
     {
@@ -41,7 +41,7 @@
       "name": "真实课件与教学成果",
       "start": 47.75000000000001,
       "duration": 35.599999999999994,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/delivery-chapter/output/teaching-and-delivery.mp4",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/media/teaching-delivery.mp4",
       "sourceStart": 1.2
     },
     {
@@ -56,7 +56,7 @@
       "name": "交互模型",
       "start": 86.35,
       "duration": 24.400000000000002,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/model-chapter/output/model-journey.mp4",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/output/video.mp4",
       "sourceStart": 1.2
     },
     {
@@ -71,7 +71,7 @@
       "name": "叮咚与小信箱",
       "start": 115.15,
       "duration": 15.600000000000001,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/mailbox-chapter/output/mailbox-review.mp4",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/mailbox/output/video.mp4",
       "sourceStart": 1.2
     },
     {
@@ -86,7 +86,7 @@
       "name": "跨端消息与叫人",
       "start": 134.15,
       "duration": 47.599999999999994,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/output/student-chapter-paper-world.mp4",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/output/video.mp4",
       "sourceStart": 1.2
     },
     {
@@ -101,7 +101,7 @@
       "name": "Mochi原生查人、流转与教师协作",
       "start": 184.35,
       "duration": 57.599999999999994,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/collaboration-chapter/output/query-movement-a2a.mp4",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/media/query-collaboration.mp4",
       "sourceStart": 1.2
     },
     {
@@ -115,8 +115,8 @@
       "type": "chapter",
       "name": "记忆、自动化与结尾",
       "start": 245.14999999999998,
-      "duration": 54.8,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/assets/daily-with-ending.mp4",
+      "duration": 54.199999999999996,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/media/daily-ending.mp4",
       "sourceStart": 1.2
     }
   ]

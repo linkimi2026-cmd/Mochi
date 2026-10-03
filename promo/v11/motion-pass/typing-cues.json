@@ -3,78 +3,78 @@
   "generator": "client-plugins/jxl-theme/scripts/mechanical-audio.mjs",
   "cues": [
     {
-      "time": 1.22,
-      "sourceTime": 1.22,
+      "time": 1.41,
+      "sourceTime": 1.41,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/greeting-chapter/index.html",
       "text": "哈",
       "kind": "animated-letter"
     },
     {
-      "time": 1.255,
-      "sourceTime": 1.255,
+      "time": 1.4449999999999998,
+      "sourceTime": 1.4449999999999998,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/greeting-chapter/index.html",
       "text": "喽",
       "kind": "animated-letter"
     },
     {
-      "time": 1.29,
-      "sourceTime": 1.29,
+      "time": 1.48,
+      "sourceTime": 1.48,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/greeting-chapter/index.html",
       "text": "，",
       "kind": "animated-letter"
     },
     {
-      "time": 1.325,
-      "sourceTime": 1.325,
+      "time": 1.515,
+      "sourceTime": 1.515,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/greeting-chapter/index.html",
       "text": "我",
       "kind": "animated-letter"
     },
     {
-      "time": 1.3599999999999999,
-      "sourceTime": 1.3599999999999999,
+      "time": 1.5499999999999998,
+      "sourceTime": 1.5499999999999998,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/greeting-chapter/index.html",
       "text": "是",
       "kind": "animated-letter"
     },
     {
-      "time": 1.43,
-      "sourceTime": 1.43,
+      "time": 1.6199999999999999,
+      "sourceTime": 1.6199999999999999,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/greeting-chapter/index.html",
       "text": "M",
       "kind": "animated-letter"
     },
     {
-      "time": 1.465,
-      "sourceTime": 1.465,
+      "time": 1.655,
+      "sourceTime": 1.655,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/greeting-chapter/index.html",
       "text": "o",
       "kind": "animated-letter"
     },
     {
-      "time": 1.5,
-      "sourceTime": 1.5,
+      "time": 1.69,
+      "sourceTime": 1.69,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/greeting-chapter/index.html",
       "text": "c",
       "kind": "animated-letter"
     },
     {
-      "time": 1.5350000000000001,
-      "sourceTime": 1.5350000000000001,
+      "time": 1.725,
+      "sourceTime": 1.725,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/greeting-chapter/index.html",
       "text": "h",
       "kind": "animated-letter"
     },
     {
-      "time": 1.57,
-      "sourceTime": 1.57,
+      "time": 1.76,
+      "sourceTime": 1.76,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/greeting-chapter/index.html",
       "text": "i",
       "kind": "animated-letter"
     },
     {
-      "time": 1.605,
-      "sourceTime": 1.605,
+      "time": 1.795,
+      "sourceTime": 1.795,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/greeting-chapter/index.html",
       "text": "。",
       "kind": "animated-letter"
@@ -82,217 +82,217 @@
     {
       "time": 4.1,
       "sourceTime": 4.1,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "M",
       "kind": "animated-letter"
     },
     {
       "time": 4.125,
       "sourceTime": 4.125,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "o",
       "kind": "animated-letter"
     },
     {
       "time": 4.15,
       "sourceTime": 4.15,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "c",
       "kind": "animated-letter"
     },
     {
       "time": 4.175,
       "sourceTime": 4.175,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "h",
       "kind": "animated-letter"
     },
     {
       "time": 4.2,
       "sourceTime": 4.2,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "i",
       "kind": "animated-letter"
     },
     {
       "time": 9.3,
       "sourceTime": 9.3,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "常",
       "kind": "animated-letter"
     },
     {
       "time": 9.325,
       "sourceTime": 9.325,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "用",
       "kind": "animated-letter"
     },
     {
       "time": 9.35,
       "sourceTime": 9.35,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "能",
       "kind": "animated-letter"
     },
     {
       "time": 9.375,
       "sourceTime": 9.375,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "力",
       "kind": "animated-letter"
     },
     {
       "time": 9.399999999999999,
       "sourceTime": 9.399999999999999,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "，",
       "kind": "animated-letter"
     },
     {
       "time": 9.425,
       "sourceTime": 9.425,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "随",
       "kind": "animated-letter"
     },
     {
       "time": 9.45,
       "sourceTime": 9.45,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "手",
       "kind": "animated-letter"
     },
     {
       "time": 9.475,
       "sourceTime": 9.475,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "就",
       "kind": "animated-letter"
     },
     {
       "time": 9.5,
       "sourceTime": 9.5,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "绪",
       "kind": "animated-letter"
     },
     {
       "time": 9.524999999999999,
       "sourceTime": 9.524999999999999,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "。",
       "kind": "animated-letter"
     },
     {
       "time": 14.6,
       "sourceTime": 14.6,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "从",
       "kind": "animated-letter"
     },
     {
       "time": 14.625,
       "sourceTime": 14.625,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "一",
       "kind": "animated-letter"
     },
     {
       "time": 14.65,
       "sourceTime": 14.65,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "个",
       "kind": "animated-letter"
     },
     {
       "time": 14.674999999999999,
       "sourceTime": 14.674999999999999,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "示",
       "kind": "animated-letter"
     },
     {
       "time": 14.7,
       "sourceTime": 14.7,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "例",
       "kind": "animated-letter"
     },
     {
       "time": 14.725,
       "sourceTime": 14.725,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "开",
       "kind": "animated-letter"
     },
     {
       "time": 14.75,
       "sourceTime": 14.75,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "始",
       "kind": "animated-letter"
     },
     {
       "time": 14.775,
       "sourceTime": 14.775,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "，",
       "kind": "animated-letter"
     },
     {
       "time": 14.799999999999999,
       "sourceTime": 14.799999999999999,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "再",
       "kind": "animated-letter"
     },
     {
       "time": 14.825,
       "sourceTime": 14.825,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "写",
       "kind": "animated-letter"
     },
     {
       "time": 14.85,
       "sourceTime": 14.85,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "成",
       "kind": "animated-letter"
     },
     {
       "time": 14.875,
       "sourceTime": 14.875,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "你",
       "kind": "animated-letter"
     },
     {
       "time": 14.9,
       "sourceTime": 14.9,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "的",
       "kind": "animated-letter"
     },
     {
       "time": 14.924999999999999,
       "sourceTime": 14.924999999999999,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "想",
       "kind": "animated-letter"
     },
     {
       "time": 14.95,
       "sourceTime": 14.95,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "法",
       "kind": "animated-letter"
     },
     {
       "time": 14.975,
       "sourceTime": 14.975,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "。",
       "kind": "animated-letter"
     },
@@ -369,273 +369,273 @@
     {
       "time": 28.400000000000002,
       "sourceTime": 6,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "教",
       "kind": "animated-letter"
     },
     {
       "time": 28.418000000000003,
       "sourceTime": 6.018,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "案",
       "kind": "animated-letter"
     },
     {
       "time": 28.436000000000003,
       "sourceTime": 6.036,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "成",
       "kind": "animated-letter"
     },
     {
       "time": 28.454000000000004,
       "sourceTime": 6.054,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "员",
       "kind": "animated-letter"
     },
     {
       "time": 28.472,
       "sourceTime": 6.072,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "，",
       "kind": "animated-letter"
     },
     {
       "time": 28.490000000000002,
       "sourceTime": 6.09,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "展",
       "kind": "animated-letter"
     },
     {
       "time": 28.508000000000003,
       "sourceTime": 6.108,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "开",
       "kind": "animated-letter"
     },
     {
       "time": 28.526000000000003,
       "sourceTime": 6.126,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "教",
       "kind": "animated-letter"
     },
     {
       "time": 28.544,
       "sourceTime": 6.144,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "学",
       "kind": "animated-letter"
     },
     {
       "time": 28.562,
       "sourceTime": 6.162,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "思",
       "kind": "animated-letter"
     },
     {
       "time": 28.580000000000002,
       "sourceTime": 6.18,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "路",
       "kind": "animated-letter"
     },
     {
       "time": 28.598000000000003,
       "sourceTime": 6.198,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "。",
       "kind": "animated-letter"
     },
     {
       "time": 34.9,
       "sourceTime": 12.5,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "课",
       "kind": "animated-letter"
     },
     {
       "time": 34.918,
       "sourceTime": 12.518,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "件",
       "kind": "animated-letter"
     },
     {
       "time": 34.936,
       "sourceTime": 12.536,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "成",
       "kind": "animated-letter"
     },
     {
       "time": 34.954,
       "sourceTime": 12.554,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "员",
       "kind": "animated-letter"
     },
     {
       "time": 34.971999999999994,
       "sourceTime": 12.572,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "，",
       "kind": "animated-letter"
     },
     {
       "time": 34.989999999999995,
       "sourceTime": 12.59,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "接",
       "kind": "animated-letter"
     },
     {
       "time": 35.007999999999996,
       "sourceTime": 12.608,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "着",
       "kind": "animated-letter"
     },
     {
       "time": 35.025999999999996,
       "sourceTime": 12.626,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "把",
       "kind": "animated-letter"
     },
     {
       "time": 35.044,
       "sourceTime": 12.644,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "课",
       "kind": "animated-letter"
     },
     {
       "time": 35.062,
       "sourceTime": 12.662,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "堂",
       "kind": "animated-letter"
     },
     {
       "time": 35.08,
       "sourceTime": 12.68,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "做",
       "kind": "animated-letter"
     },
     {
       "time": 35.098,
       "sourceTime": 12.698,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "出",
       "kind": "animated-letter"
     },
     {
       "time": 35.116,
       "sourceTime": 12.716,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "来",
       "kind": "animated-letter"
     },
     {
       "time": 35.134,
       "sourceTime": 12.734,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "。",
       "kind": "animated-letter"
     },
     {
       "time": 41.4,
       "sourceTime": 19,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "每",
       "kind": "animated-letter"
     },
     {
       "time": 41.418,
       "sourceTime": 19.018,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "位",
       "kind": "animated-letter"
     },
     {
       "time": 41.436,
       "sourceTime": 19.036,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "伙",
       "kind": "animated-letter"
     },
     {
       "time": 41.45399999999999,
       "sourceTime": 19.054,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "伴",
       "kind": "animated-letter"
     },
     {
       "time": 41.471999999999994,
       "sourceTime": 19.072,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "，",
       "kind": "animated-letter"
     },
     {
       "time": 41.489999999999995,
       "sourceTime": 19.09,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "都",
       "kind": "animated-letter"
     },
     {
       "time": 41.507999999999996,
       "sourceTime": 19.108,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "有",
       "kind": "animated-letter"
     },
     {
       "time": 41.525999999999996,
       "sourceTime": 19.126,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "自",
       "kind": "animated-letter"
     },
     {
       "time": 41.544,
       "sourceTime": 19.144,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "己",
       "kind": "animated-letter"
     },
     {
       "time": 41.562,
       "sourceTime": 19.162,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "的",
       "kind": "animated-letter"
     },
     {
       "time": 41.58,
       "sourceTime": 19.18,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "色",
       "kind": "animated-letter"
     },
     {
       "time": 41.598,
       "sourceTime": 19.198,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "彩",
       "kind": "animated-letter"
     },
     {
       "time": 41.616,
       "sourceTime": 19.216,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "。",
       "kind": "animated-letter"
     },
@@ -698,245 +698,245 @@
     {
       "time": 50.800000000000004,
       "sourceTime": 4.25,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "还",
       "kind": "animated-letter"
     },
     {
       "time": 50.824000000000005,
       "sourceTime": 4.274,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "可",
       "kind": "animated-letter"
     },
     {
       "time": 50.848000000000006,
       "sourceTime": 4.298,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "以",
       "kind": "animated-letter"
     },
     {
       "time": 50.87200000000001,
       "sourceTime": 4.322,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "，",
       "kind": "animated-letter"
     },
     {
       "time": 50.896,
       "sourceTime": 4.346,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "再",
       "kind": "animated-letter"
     },
     {
       "time": 50.92,
       "sourceTime": 4.37,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "改",
       "kind": "animated-letter"
     },
     {
       "time": 50.944,
       "sourceTime": 4.394,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "得",
       "kind": "animated-letter"
     },
     {
       "time": 50.968,
       "sourceTime": 4.418,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "清",
       "kind": "animated-letter"
     },
     {
       "time": 50.992000000000004,
       "sourceTime": 4.442,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "楚",
       "kind": "animated-letter"
     },
     {
       "time": 51.016000000000005,
       "sourceTime": 4.466,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "一",
       "kind": "animated-letter"
     },
     {
       "time": 51.040000000000006,
       "sourceTime": 4.49,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "点",
       "kind": "animated-letter"
     },
     {
       "time": 51.06400000000001,
       "sourceTime": 4.514,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "。",
       "kind": "animated-letter"
     },
     {
       "time": 58.900000000000006,
       "sourceTime": 12.35,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "每",
       "kind": "animated-letter"
     },
     {
       "time": 58.92400000000001,
       "sourceTime": 12.373999999999999,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "一",
       "kind": "animated-letter"
     },
     {
       "time": 58.94800000000001,
       "sourceTime": 12.398,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "种",
       "kind": "animated-letter"
     },
     {
       "time": 58.972,
       "sourceTime": 12.421999999999999,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "成",
       "kind": "animated-letter"
     },
     {
       "time": 58.996,
       "sourceTime": 12.446,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "果",
       "kind": "animated-letter"
     },
     {
       "time": 59.02,
       "sourceTime": 12.469999999999999,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "，",
       "kind": "animated-letter"
     },
     {
       "time": 59.044000000000004,
       "sourceTime": 12.494,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "都",
       "kind": "animated-letter"
     },
     {
       "time": 59.068000000000005,
       "sourceTime": 12.517999999999999,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "能",
       "kind": "animated-letter"
     },
     {
       "time": 59.092000000000006,
       "sourceTime": 12.542,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "接",
       "kind": "animated-letter"
     },
     {
       "time": 59.116,
       "sourceTime": 12.565999999999999,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "着",
       "kind": "animated-letter"
     },
     {
       "time": 59.14,
       "sourceTime": 12.59,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "用",
       "kind": "animated-letter"
     },
     {
       "time": 59.164,
       "sourceTime": 12.613999999999999,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "。",
       "kind": "animated-letter"
     },
     {
       "time": 68.05,
       "sourceTime": 21.5,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "准",
       "kind": "animated-letter"
     },
     {
       "time": 68.074,
       "sourceTime": 21.524,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "备",
       "kind": "animated-letter"
     },
     {
       "time": 68.098,
       "sourceTime": 21.548,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "好",
       "kind": "animated-letter"
     },
     {
       "time": 68.122,
       "sourceTime": 21.572,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "了",
       "kind": "animated-letter"
     },
     {
       "time": 68.146,
       "sourceTime": 21.596,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "，",
       "kind": "animated-letter"
     },
     {
       "time": 68.17,
       "sourceTime": 21.62,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "就",
       "kind": "animated-letter"
     },
     {
       "time": 68.194,
       "sourceTime": 21.644,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "送",
       "kind": "animated-letter"
     },
     {
       "time": 68.218,
       "sourceTime": 21.668,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "到",
       "kind": "animated-letter"
     },
     {
       "time": 68.242,
       "sourceTime": 21.692,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "教",
       "kind": "animated-letter"
     },
     {
       "time": 68.266,
       "sourceTime": 21.716,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "室",
       "kind": "animated-letter"
     },
     {
       "time": 68.29,
       "sourceTime": 21.74,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "。",
       "kind": "animated-letter"
     },
@@ -992,259 +992,497 @@
     {
       "time": 95.14999999999999,
       "sourceTime": 10,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/model-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
       "text": "拖",
       "kind": "animated-letter"
     },
     {
       "time": 95.175,
       "sourceTime": 10.025,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/model-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
       "text": "动",
       "kind": "animated-letter"
     },
     {
       "time": 95.19999999999999,
       "sourceTime": 10.05,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/model-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
       "text": "，",
       "kind": "animated-letter"
     },
     {
       "time": 95.225,
       "sourceTime": 10.075,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/model-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
       "text": "观",
       "kind": "animated-letter"
     },
     {
       "time": 95.24999999999999,
       "sourceTime": 10.1,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/model-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
       "text": "察",
       "kind": "animated-letter"
     },
     {
       "time": 95.27499999999999,
       "sourceTime": 10.125,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/model-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
       "text": "。",
       "kind": "animated-letter"
     },
     {
       "time": 95.3,
       "sourceTime": 10.15,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/model-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
       "text": "再",
       "kind": "animated-letter"
     },
     {
       "time": 95.32499999999999,
       "sourceTime": 10.175,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/model-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
       "text": "问",
       "kind": "animated-letter"
     },
     {
       "time": 95.35,
       "sourceTime": 10.2,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/model-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
       "text": "一",
       "kind": "animated-letter"
     },
     {
       "time": 95.37499999999999,
       "sourceTime": 10.225,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/model-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
       "text": "个",
       "kind": "animated-letter"
     },
     {
       "time": 95.39999999999999,
       "sourceTime": 10.25,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/model-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
       "text": "为",
       "kind": "animated-letter"
     },
     {
       "time": 95.425,
       "sourceTime": 10.275,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/model-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
       "text": "什",
       "kind": "animated-letter"
     },
     {
       "time": 95.44999999999999,
       "sourceTime": 10.3,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/model-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
       "text": "么",
       "kind": "animated-letter"
     },
     {
       "time": 95.475,
       "sourceTime": 10.325,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/model-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "。",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 97.05,
+      "sourceTime": 11.9,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "拖",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 97.07199999999999,
+      "sourceTime": 11.922,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "动",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 97.094,
+      "sourceTime": 11.944,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "，",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 97.116,
+      "sourceTime": 11.966000000000001,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "一",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 97.13799999999999,
+      "sourceTime": 11.988,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "个",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 97.16,
+      "sourceTime": 12.01,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "切",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 97.18199999999999,
+      "sourceTime": 12.032,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "点",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 97.204,
+      "sourceTime": 12.054,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "。",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 99.74999999999999,
+      "sourceTime": 14.6,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "看",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 99.77199999999999,
+      "sourceTime": 14.622,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "见",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 99.794,
+      "sourceTime": 14.644,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "，",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 99.81599999999999,
+      "sourceTime": 14.666,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "几",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 99.838,
+      "sourceTime": 14.687999999999999,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "何",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 99.85999999999999,
+      "sourceTime": 14.709999999999999,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "关",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 99.88199999999999,
+      "sourceTime": 14.732,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "系",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 99.904,
+      "sourceTime": 14.754,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "。",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 102.35,
+      "sourceTime": 17.2,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "改",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 102.37199999999999,
+      "sourceTime": 17.221999999999998,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "变",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 102.39399999999999,
+      "sourceTime": 17.244,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "参",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 102.41599999999998,
+      "sourceTime": 17.266,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "数",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 102.43799999999999,
+      "sourceTime": 17.288,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "，",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 102.46,
+      "sourceTime": 17.31,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "继",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 102.48199999999999,
+      "sourceTime": 17.332,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "续",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 102.50399999999999,
+      "sourceTime": 17.354,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "探",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 102.526,
+      "sourceTime": 17.375999999999998,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "索",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 102.54799999999999,
+      "sourceTime": 17.398,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "。",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 105.55,
+      "sourceTime": 20.4,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "再",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 105.57199999999999,
+      "sourceTime": 20.421999999999997,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "展",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 105.594,
+      "sourceTime": 20.444,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "开",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 105.61599999999999,
+      "sourceTime": 20.465999999999998,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "，",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 105.63799999999999,
+      "sourceTime": 20.488,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "为",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 105.65999999999998,
+      "sourceTime": 20.509999999999998,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "什",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 105.68199999999999,
+      "sourceTime": 20.532,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "么",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 105.704,
+      "sourceTime": 20.554,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
       "text": "。",
       "kind": "animated-letter"
     },
     {
       "time": 109.35,
       "sourceTime": 24.2,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/model-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
       "text": "让",
       "kind": "animated-letter"
     },
     {
       "time": 109.37499999999999,
       "sourceTime": 24.224999999999998,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/model-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
       "text": "知",
       "kind": "animated-letter"
     },
     {
       "time": 109.39999999999999,
       "sourceTime": 24.25,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/model-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
       "text": "识",
       "kind": "animated-letter"
     },
     {
       "time": 109.425,
       "sourceTime": 24.275,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/model-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
       "text": "，",
       "kind": "animated-letter"
     },
     {
       "time": 109.44999999999999,
       "sourceTime": 24.3,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/model-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
       "text": "在",
       "kind": "animated-letter"
     },
     {
       "time": 109.475,
       "sourceTime": 24.325,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/model-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
       "text": "眼",
       "kind": "animated-letter"
     },
     {
       "time": 109.49999999999999,
       "sourceTime": 24.349999999999998,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/model-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
       "text": "前",
       "kind": "animated-letter"
     },
     {
       "time": 109.52499999999999,
       "sourceTime": 24.375,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/model-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
       "text": "发",
       "kind": "animated-letter"
     },
     {
       "time": 109.55,
       "sourceTime": 24.4,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/model-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
       "text": "生",
       "kind": "animated-letter"
     },
     {
       "time": 109.57499999999999,
       "sourceTime": 24.425,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/model-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
       "text": "。",
       "kind": "animated-letter"
     },
     {
       "time": 120.35000000000001,
       "sourceTime": 6.4,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/mailbox-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/mailbox/index.html",
       "text": "打",
       "kind": "animated-letter"
     },
     {
       "time": 120.38000000000001,
       "sourceTime": 6.430000000000001,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/mailbox-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/mailbox/index.html",
       "text": "开",
       "kind": "animated-letter"
     },
     {
       "time": 120.41,
       "sourceTime": 6.46,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/mailbox-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/mailbox/index.html",
       "text": "小",
       "kind": "animated-letter"
     },
     {
       "time": 120.44,
       "sourceTime": 6.49,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/mailbox-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/mailbox/index.html",
       "text": "信",
       "kind": "animated-letter"
     },
     {
       "time": 120.47,
       "sourceTime": 6.5200000000000005,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/mailbox-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/mailbox/index.html",
       "text": "箱",
       "kind": "animated-letter"
     },
     {
       "time": 120.5,
       "sourceTime": 6.550000000000001,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/mailbox-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/mailbox/index.html",
       "text": "，",
       "kind": "animated-letter"
     },
     {
       "time": 120.53,
       "sourceTime": 6.58,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/mailbox-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/mailbox/index.html",
       "text": "接",
       "kind": "animated-letter"
     },
     {
       "time": 120.56,
       "sourceTime": 6.61,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/mailbox-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/mailbox/index.html",
       "text": "住",
       "kind": "animated-letter"
     },
     {
       "time": 120.59,
       "sourceTime": 6.640000000000001,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/mailbox-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/mailbox/index.html",
       "text": "每",
       "kind": "animated-letter"
     },
     {
       "time": 120.62,
       "sourceTime": 6.67,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/mailbox-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/mailbox/index.html",
       "text": "一",
       "kind": "animated-letter"
     },
     {
       "time": 120.65,
       "sourceTime": 6.7,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/mailbox-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/mailbox/index.html",
       "text": "封",
       "kind": "animated-letter"
     },
     {
       "time": 120.68,
       "sourceTime": 6.73,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/mailbox-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/mailbox/index.html",
       "text": "信",
       "kind": "animated-letter"
     },
     {
       "time": 120.71000000000001,
       "sourceTime": 6.760000000000001,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/mailbox-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/mailbox/index.html",
       "text": "。",
       "kind": "animated-letter"
     },
@@ -1342,448 +1580,448 @@
     {
       "time": 139.95000000000002,
       "sourceTime": 7,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "确",
       "kind": "animated-letter"
     },
     {
       "time": 139.97500000000002,
       "sourceTime": 7.025,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "认",
       "kind": "animated-letter"
     },
     {
       "time": 140.00000000000003,
       "sourceTime": 7.05,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "时",
       "kind": "animated-letter"
     },
     {
       "time": 140.025,
       "sourceTime": 7.075,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "间",
       "kind": "animated-letter"
     },
     {
       "time": 140.05,
       "sourceTime": 7.1,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "，",
       "kind": "animated-letter"
     },
     {
       "time": 140.07500000000002,
       "sourceTime": 7.125,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "也",
       "kind": "animated-letter"
     },
     {
       "time": 140.10000000000002,
       "sourceTime": 7.15,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "接",
       "kind": "animated-letter"
     },
     {
       "time": 140.12500000000003,
       "sourceTime": 7.175,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "住",
       "kind": "animated-letter"
     },
     {
       "time": 140.15,
       "sourceTime": 7.2,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "问",
       "kind": "animated-letter"
     },
     {
       "time": 140.175,
       "sourceTime": 7.225,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "题",
       "kind": "animated-letter"
     },
     {
       "time": 140.20000000000002,
       "sourceTime": 7.25,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "。",
       "kind": "animated-letter"
     },
     {
       "time": 145.95000000000002,
       "sourceTime": 13,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "老",
       "kind": "animated-letter"
     },
     {
       "time": 145.97500000000002,
       "sourceTime": 13.025,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "师",
       "kind": "animated-letter"
     },
     {
       "time": 146.00000000000003,
       "sourceTime": 13.05,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "的",
       "kind": "animated-letter"
     },
     {
       "time": 146.025,
       "sourceTime": 13.075,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "安",
       "kind": "animated-letter"
     },
     {
       "time": 146.05,
       "sourceTime": 13.1,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "排",
       "kind": "animated-letter"
     },
     {
       "time": 146.07500000000002,
       "sourceTime": 13.125,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "，",
       "kind": "animated-letter"
     },
     {
       "time": 146.10000000000002,
       "sourceTime": 13.15,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "教",
       "kind": "animated-letter"
     },
     {
       "time": 146.12500000000003,
       "sourceTime": 13.175,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "室",
       "kind": "animated-letter"
     },
     {
       "time": 146.15,
       "sourceTime": 13.2,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "收",
       "kind": "animated-letter"
     },
     {
       "time": 146.175,
       "sourceTime": 13.225,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "得",
       "kind": "animated-letter"
     },
     {
       "time": 146.20000000000002,
       "sourceTime": 13.25,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "到",
       "kind": "animated-letter"
     },
     {
       "time": 146.22500000000002,
       "sourceTime": 13.275,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "。",
       "kind": "animated-letter"
     },
     {
       "time": 151.95000000000002,
       "sourceTime": 19,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "每",
       "kind": "animated-letter"
     },
     {
       "time": 151.97500000000002,
       "sourceTime": 19.025,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "一",
       "kind": "animated-letter"
     },
     {
       "time": 152.00000000000003,
       "sourceTime": 19.05,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "种",
       "kind": "animated-letter"
     },
     {
       "time": 152.025,
       "sourceTime": 19.075,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "诉",
       "kind": "animated-letter"
     },
     {
       "time": 152.05,
       "sourceTime": 19.1,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "求",
       "kind": "animated-letter"
     },
     {
       "time": 152.07500000000002,
       "sourceTime": 19.125,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "，",
       "kind": "animated-letter"
     },
     {
       "time": 152.10000000000002,
       "sourceTime": 19.15,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "都",
       "kind": "animated-letter"
     },
     {
       "time": 152.12500000000003,
       "sourceTime": 19.175,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "有",
       "kind": "animated-letter"
     },
     {
       "time": 152.15,
       "sourceTime": 19.2,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "去",
       "kind": "animated-letter"
     },
     {
       "time": 152.175,
       "sourceTime": 19.225,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "向",
       "kind": "animated-letter"
     },
     {
       "time": 152.20000000000002,
       "sourceTime": 19.25,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "。",
       "kind": "animated-letter"
     },
     {
       "time": 156.95000000000002,
       "sourceTime": 24,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "需",
       "kind": "animated-letter"
     },
     {
       "time": 156.97500000000002,
       "sourceTime": 24.025,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "要",
       "kind": "animated-letter"
     },
     {
       "time": 157.00000000000003,
       "sourceTime": 24.05,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "找",
       "kind": "animated-letter"
     },
     {
       "time": 157.025,
       "sourceTime": 24.075,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "同",
       "kind": "animated-letter"
     },
     {
       "time": 157.05,
       "sourceTime": 24.1,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "学",
       "kind": "animated-letter"
     },
     {
       "time": 157.07500000000002,
       "sourceTime": 24.125,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "？",
       "kind": "animated-letter"
     },
     {
       "time": 168.95000000000002,
       "sourceTime": 36,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "送",
       "kind": "animated-letter"
     },
     {
       "time": 168.97500000000002,
       "sourceTime": 36.025,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "达",
       "kind": "animated-letter"
     },
     {
       "time": 169,
       "sourceTime": 36.05,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "之",
       "kind": "animated-letter"
     },
     {
       "time": 169.02500000000003,
       "sourceTime": 36.075,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "后",
       "kind": "animated-letter"
     },
     {
       "time": 169.05,
       "sourceTime": 36.1,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "，",
       "kind": "animated-letter"
     },
     {
       "time": 169.07500000000002,
       "sourceTime": 36.125,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "还",
       "kind": "animated-letter"
     },
     {
       "time": 169.10000000000002,
       "sourceTime": 36.15,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "有",
       "kind": "animated-letter"
     },
     {
       "time": 169.125,
       "sourceTime": 36.175,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "回",
       "kind": "animated-letter"
     },
     {
       "time": 169.15000000000003,
       "sourceTime": 36.2,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "应",
       "kind": "animated-letter"
     },
     {
       "time": 169.175,
       "sourceTime": 36.225,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "。",
       "kind": "animated-letter"
     },
     {
       "time": 175.95000000000002,
       "sourceTime": 43,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "把",
       "kind": "animated-letter"
     },
     {
       "time": 175.97500000000002,
       "sourceTime": 43.025,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "事",
       "kind": "animated-letter"
     },
     {
       "time": 176,
       "sourceTime": 43.05,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "情",
       "kind": "animated-letter"
     },
     {
       "time": 176.02500000000003,
       "sourceTime": 43.075,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "，",
       "kind": "animated-letter"
     },
     {
       "time": 176.05,
       "sourceTime": 43.1,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "接",
       "kind": "animated-letter"
     },
     {
       "time": 176.07500000000002,
       "sourceTime": 43.125,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "到",
       "kind": "animated-letter"
     },
     {
       "time": 176.10000000000002,
       "sourceTime": 43.15,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "需",
       "kind": "animated-letter"
     },
     {
       "time": 176.125,
       "sourceTime": 43.175,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "要",
       "kind": "animated-letter"
     },
     {
       "time": 176.15000000000003,
       "sourceTime": 43.2,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "它",
       "kind": "animated-letter"
     },
     {
       "time": 176.175,
       "sourceTime": 43.225,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "的",
       "kind": "animated-letter"
     },
     {
       "time": 176.20000000000002,
       "sourceTime": 43.25,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "人",
       "kind": "animated-letter"
     },
     {
       "time": 176.22500000000002,
       "sourceTime": 43.275,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "那",
       "kind": "animated-letter"
     },
     {
       "time": 176.25,
       "sourceTime": 43.3,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "里",
       "kind": "animated-letter"
     },
     {
       "time": 176.27500000000003,
       "sourceTime": 43.325,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "。",
       "kind": "animated-letter"
     },
@@ -1832,231 +2070,231 @@
     {
       "time": 203.75,
       "sourceTime": 20.6,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/native-query/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/query/index.html",
       "text": "记",
       "kind": "animated-letter"
     },
     {
       "time": 203.772,
       "sourceTime": 20.622,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/native-query/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/query/index.html",
       "text": "录",
       "kind": "animated-letter"
     },
     {
       "time": 203.794,
       "sourceTime": 20.644000000000002,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/native-query/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/query/index.html",
       "text": "，",
       "kind": "animated-letter"
     },
     {
       "time": 203.816,
       "sourceTime": 20.666,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/native-query/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/query/index.html",
       "text": "在",
       "kind": "animated-letter"
     },
     {
       "time": 203.83800000000002,
       "sourceTime": 20.688000000000002,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/native-query/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/query/index.html",
       "text": "对",
       "kind": "animated-letter"
     },
     {
       "time": 203.86,
       "sourceTime": 20.71,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/native-query/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/query/index.html",
       "text": "话",
       "kind": "animated-letter"
     },
     {
       "time": 203.882,
       "sourceTime": 20.732000000000003,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/native-query/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/query/index.html",
       "text": "里",
       "kind": "animated-letter"
     },
     {
       "time": 203.904,
       "sourceTime": 20.754,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/native-query/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/query/index.html",
       "text": "找",
       "kind": "animated-letter"
     },
     {
       "time": 203.92600000000002,
       "sourceTime": 20.776,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/native-query/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/query/index.html",
       "text": "到",
       "kind": "animated-letter"
     },
     {
       "time": 203.948,
       "sourceTime": 20.798000000000002,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/native-query/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/query/index.html",
       "text": "。",
       "kind": "animated-letter"
     },
     {
       "time": 213.15,
       "sourceTime": 30,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/collaboration-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/collaboration/index.html",
       "text": "放",
       "kind": "animated-letter"
     },
     {
       "time": 213.172,
       "sourceTime": 30.022,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/collaboration-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/collaboration/index.html",
       "text": "行",
       "kind": "animated-letter"
     },
     {
       "time": 213.19400000000002,
       "sourceTime": 30.044,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/collaboration-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/collaboration/index.html",
       "text": "有",
       "kind": "animated-letter"
     },
     {
       "time": 213.216,
       "sourceTime": 30.066,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/collaboration-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/collaboration/index.html",
       "text": "确",
       "kind": "animated-letter"
     },
     {
       "time": 213.238,
       "sourceTime": 30.088,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/collaboration-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/collaboration/index.html",
       "text": "认",
       "kind": "animated-letter"
     },
     {
       "time": 213.26,
       "sourceTime": 30.11,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/collaboration-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/collaboration/index.html",
       "text": "，",
       "kind": "animated-letter"
     },
     {
       "time": 213.282,
       "sourceTime": 30.132,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/collaboration-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/collaboration/index.html",
       "text": "返",
       "kind": "animated-letter"
     },
     {
       "time": 213.304,
       "sourceTime": 30.154,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/collaboration-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/collaboration/index.html",
       "text": "班",
       "kind": "animated-letter"
     },
     {
       "time": 213.326,
       "sourceTime": 30.176,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/collaboration-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/collaboration/index.html",
       "text": "有",
       "kind": "animated-letter"
     },
     {
       "time": 213.348,
       "sourceTime": 30.198,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/collaboration-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/collaboration/index.html",
       "text": "回",
       "kind": "animated-letter"
     },
     {
       "time": 213.37,
       "sourceTime": 30.22,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/collaboration-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/collaboration/index.html",
       "text": "音",
       "kind": "animated-letter"
     },
     {
       "time": 213.392,
       "sourceTime": 30.242,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/collaboration-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/collaboration/index.html",
       "text": "。",
       "kind": "animated-letter"
     },
     {
       "time": 227.15,
       "sourceTime": 44,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/collaboration-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/collaboration/index.html",
       "text": "让",
       "kind": "animated-letter"
     },
     {
       "time": 227.172,
       "sourceTime": 44.022,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/collaboration-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/collaboration/index.html",
       "text": "老",
       "kind": "animated-letter"
     },
     {
       "time": 227.19400000000002,
       "sourceTime": 44.044,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/collaboration-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/collaboration/index.html",
       "text": "师",
       "kind": "animated-letter"
     },
     {
       "time": 227.216,
       "sourceTime": 44.066,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/collaboration-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/collaboration/index.html",
       "text": "之",
       "kind": "animated-letter"
     },
     {
       "time": 227.238,
       "sourceTime": 44.088,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/collaboration-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/collaboration/index.html",
       "text": "间",
       "kind": "animated-letter"
     },
     {
       "time": 227.26,
       "sourceTime": 44.11,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/collaboration-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/collaboration/index.html",
       "text": "，",
       "kind": "animated-letter"
     },
     {
       "time": 227.282,
       "sourceTime": 44.132,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/collaboration-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/collaboration/index.html",
       "text": "也",
       "kind": "animated-letter"
     },
     {
       "time": 227.304,
       "sourceTime": 44.153999999999996,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/collaboration-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/collaboration/index.html",
       "text": "有",
       "kind": "animated-letter"
     },
     {
       "time": 227.32600000000002,
       "sourceTime": 44.176,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/collaboration-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/collaboration/index.html",
       "text": "默",
       "kind": "animated-letter"
     },
     {
       "time": 227.348,
       "sourceTime": 44.198,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/collaboration-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/collaboration/index.html",
       "text": "契",
       "kind": "animated-letter"
     },
     {
       "time": 227.37,
       "sourceTime": 44.22,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/collaboration-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/collaboration/index.html",
       "text": "。",
       "kind": "animated-letter"
     },
@@ -2138,451 +2376,493 @@
       "kind": "animated-letter"
     },
     {
-      "time": 252.04999999999998,
-      "sourceTime": 8.100000000000001,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
+      "time": 252.03,
+      "sourceTime": 8.08,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
       "text": "记",
       "kind": "animated-letter"
     },
     {
-      "time": 252.075,
-      "sourceTime": 8.125,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
+      "time": 252.058,
+      "sourceTime": 8.108,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
       "text": "住",
       "kind": "animated-letter"
     },
     {
-      "time": 252.1,
-      "sourceTime": 8.149999999999999,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
+      "time": 252.08599999999998,
+      "sourceTime": 8.136,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
       "text": "，",
       "kind": "animated-letter"
     },
     {
-      "time": 252.125,
-      "sourceTime": 8.175000000000004,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
+      "time": 252.11399999999998,
+      "sourceTime": 8.164,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
       "text": "也",
       "kind": "animated-letter"
     },
     {
-      "time": 252.14999999999998,
-      "sourceTime": 8.200000000000003,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "能",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 252.17499999999998,
-      "sourceTime": 8.225000000000001,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "说",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 252.2,
-      "sourceTime": 8.25,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "明",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 252.225,
-      "sourceTime": 8.274999999999999,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "依",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 252.25,
-      "sourceTime": 8.300000000000004,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "据",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 252.27499999999998,
-      "sourceTime": 8.325000000000003,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "。",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 258.05,
-      "sourceTime": 14.100000000000001,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "慢",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 258.075,
-      "sourceTime": 14.125,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "慢",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 258.09999999999997,
-      "sourceTime": 14.149999999999999,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "了",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 258.125,
-      "sourceTime": 14.175000000000004,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "解",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 258.15,
-      "sourceTime": 14.200000000000003,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "你",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 258.175,
-      "sourceTime": 14.225000000000001,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "的",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 258.2,
-      "sourceTime": 14.25,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "习",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 258.22499999999997,
-      "sourceTime": 14.274999999999999,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "惯",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 258.25,
-      "sourceTime": 14.300000000000004,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "。",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 266.05,
-      "sourceTime": 22.1,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "决",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 266.075,
-      "sourceTime": 22.125,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "定",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 266.09999999999997,
-      "sourceTime": 22.15,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "权",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 266.125,
-      "sourceTime": 22.175000000000004,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "，",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 266.15,
-      "sourceTime": 22.200000000000003,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "始",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 266.175,
-      "sourceTime": 22.225,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "终",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 266.2,
-      "sourceTime": 22.25,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "在",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 266.22499999999997,
-      "sourceTime": 22.275,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "你",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 266.25,
-      "sourceTime": 22.300000000000004,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "。",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 272.05,
-      "sourceTime": 28.099999999999994,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "把",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 272.075,
-      "sourceTime": 28.125,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "经",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 272.09999999999997,
-      "sourceTime": 28.14999999999999,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "历",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 272.125,
-      "sourceTime": 28.174999999999997,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "，",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 272.15,
-      "sourceTime": 28.19999999999999,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "串",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 272.175,
-      "sourceTime": 28.224999999999994,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "成",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 272.2,
-      "sourceTime": 28.25,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "一",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 272.22499999999997,
-      "sourceTime": 28.27499999999999,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "段",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 272.25,
-      "sourceTime": 28.299999999999997,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "历",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 272.275,
-      "sourceTime": 28.32499999999999,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "史",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 272.3,
-      "sourceTime": 28.349999999999994,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "。",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 280.05,
-      "sourceTime": 36.099999999999994,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "约",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 280.075,
-      "sourceTime": 36.125,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "定",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 280.09999999999997,
-      "sourceTime": 36.14999999999999,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "好",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 280.125,
-      "sourceTime": 36.175,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "，",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 280.15,
-      "sourceTime": 36.19999999999999,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "再",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 280.175,
-      "sourceTime": 36.224999999999994,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "按",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 280.2,
-      "sourceTime": 36.25,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "时",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 280.22499999999997,
-      "sourceTime": 36.27499999999999,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "出",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 280.25,
-      "sourceTime": 36.3,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "现",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 280.275,
-      "sourceTime": 36.32499999999999,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "。",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 286.05,
-      "sourceTime": 42.099999999999994,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "执",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 286.075,
-      "sourceTime": 42.125,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "行",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 286.09999999999997,
-      "sourceTime": 42.14999999999999,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "之",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 286.125,
-      "sourceTime": 42.175,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "后",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 286.15,
-      "sourceTime": 42.19999999999999,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "，",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 286.175,
-      "sourceTime": 42.224999999999994,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "也",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 286.2,
-      "sourceTime": 42.25,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
+      "time": 252.142,
+      "sourceTime": 8.192,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
       "text": "有",
       "kind": "animated-letter"
     },
     {
-      "time": 286.22499999999997,
-      "sourceTime": 42.27499999999999,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
+      "time": 252.17,
+      "sourceTime": 8.22,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "依",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 252.19799999999998,
+      "sourceTime": 8.248,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "据",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 252.226,
+      "sourceTime": 8.276,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "。",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 258.03,
+      "sourceTime": 14.08,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "慢",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 258.058,
+      "sourceTime": 14.108,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "慢",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 258.086,
+      "sourceTime": 14.136,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "了",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 258.114,
+      "sourceTime": 14.164,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "解",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 258.142,
+      "sourceTime": 14.192,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "，",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 258.17,
+      "sourceTime": 14.22,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "你",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 258.198,
+      "sourceTime": 14.248,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "的",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 258.226,
+      "sourceTime": 14.276,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "习",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 258.25399999999996,
+      "sourceTime": 14.304,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "惯",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 258.282,
+      "sourceTime": 14.332,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "。",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 266.03,
+      "sourceTime": 22.08,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "决",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 266.058,
+      "sourceTime": 22.107999999999997,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "定",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 266.086,
+      "sourceTime": 22.136,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "权",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 266.114,
+      "sourceTime": 22.163999999999998,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "，",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 266.142,
+      "sourceTime": 22.191999999999997,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "始",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 266.17,
+      "sourceTime": 22.22,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "终",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 266.198,
+      "sourceTime": 22.247999999999998,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "在",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 266.226,
+      "sourceTime": 22.276,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "你",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 266.25399999999996,
+      "sourceTime": 22.304,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "。",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 272.03,
+      "sourceTime": 28.08,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "把",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 272.058,
+      "sourceTime": 28.107999999999997,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "经",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 272.086,
+      "sourceTime": 28.136,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "历",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 272.114,
+      "sourceTime": 28.163999999999998,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "，",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 272.142,
+      "sourceTime": 28.191999999999997,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "串",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 272.17,
+      "sourceTime": 28.22,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "成",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 272.198,
+      "sourceTime": 28.247999999999998,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "历",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 272.226,
+      "sourceTime": 28.276,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "史",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 272.25399999999996,
+      "sourceTime": 28.304,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "。",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 280.03,
+      "sourceTime": 36.08,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "约",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 280.058,
+      "sourceTime": 36.108,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "定",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 280.08599999999996,
+      "sourceTime": 36.135999999999996,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "好",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 280.114,
+      "sourceTime": 36.164,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "，",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 280.142,
+      "sourceTime": 36.192,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "按",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 280.17,
+      "sourceTime": 36.22,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "时",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 280.198,
+      "sourceTime": 36.248,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "出",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 280.226,
+      "sourceTime": 36.275999999999996,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "现",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 280.25399999999996,
+      "sourceTime": 36.303999999999995,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "。",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 286.03,
+      "sourceTime": 42.08,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "执",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 286.058,
+      "sourceTime": 42.108,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "行",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 286.08599999999996,
+      "sourceTime": 42.135999999999996,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "之",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 286.114,
+      "sourceTime": 42.164,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "后",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 286.142,
+      "sourceTime": 42.192,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "，",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 286.17,
+      "sourceTime": 42.22,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "也",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 286.198,
+      "sourceTime": 42.248,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "有",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 286.226,
+      "sourceTime": 42.275999999999996,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
       "text": "记",
       "kind": "animated-letter"
     },
     {
-      "time": 286.25,
-      "sourceTime": 42.3,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
+      "time": 286.25399999999996,
+      "sourceTime": 42.303999999999995,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
       "text": "录",
       "kind": "animated-letter"
     },
     {
-      "time": 286.275,
-      "sourceTime": 42.32499999999999,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
+      "time": 286.282,
+      "sourceTime": 42.332,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
       "text": "。",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 292.55,
+      "sourceTime": 48.6,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/ending/index.html",
+      "text": "M",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 292.65,
+      "sourceTime": 48.699999999999996,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/ending/index.html",
+      "text": "o",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 292.75,
+      "sourceTime": 48.8,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/ending/index.html",
+      "text": "c",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 292.84999999999997,
+      "sourceTime": 48.9,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/ending/index.html",
+      "text": "h",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 292.95,
+      "sourceTime": 49,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/ending/index.html",
+      "text": "i",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 294.25,
+      "sourceTime": 50.3,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/ending/index.html",
+      "text": "已",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 294.38,
+      "sourceTime": 50.43,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/ending/index.html",
+      "text": "至",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 294.51,
+      "sourceTime": 50.56,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/ending/index.html",
+      "text": "。",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 295.95,
+      "sourceTime": 52,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/ending/index.html",
+      "text": "让校园里的工作，",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 296.33,
+      "sourceTime": 52.379999999999995,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/ending/index.html",
+      "text": "自然连接。",
       "kind": "animated-letter"
     }
   ],
   "played": [
     {
-      "time": 1.22,
-      "sourceTime": 1.22,
+      "time": 1.41,
+      "sourceTime": 1.41,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/greeting-chapter/index.html",
       "text": "哈",
       "kind": "animated-letter"
     },
     {
-      "time": 1.325,
-      "sourceTime": 1.325,
+      "time": 1.515,
+      "sourceTime": 1.515,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/greeting-chapter/index.html",
       "text": "我",
       "kind": "animated-letter"
     },
     {
-      "time": 1.43,
-      "sourceTime": 1.43,
+      "time": 1.6199999999999999,
+      "sourceTime": 1.6199999999999999,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/greeting-chapter/index.html",
       "text": "M",
       "kind": "animated-letter"
     },
     {
-      "time": 1.465,
-      "sourceTime": 1.465,
+      "time": 1.655,
+      "sourceTime": 1.655,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/greeting-chapter/index.html",
       "text": "o",
       "kind": "animated-letter"
     },
     {
-      "time": 1.57,
-      "sourceTime": 1.57,
+      "time": 1.76,
+      "sourceTime": 1.76,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/greeting-chapter/index.html",
       "text": "i",
       "kind": "animated-letter"
@@ -2590,91 +2870,91 @@
     {
       "time": 4.1,
       "sourceTime": 4.1,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "M",
       "kind": "animated-letter"
     },
     {
       "time": 4.125,
       "sourceTime": 4.125,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "o",
       "kind": "animated-letter"
     },
     {
       "time": 4.2,
       "sourceTime": 4.2,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "i",
       "kind": "animated-letter"
     },
     {
       "time": 9.3,
       "sourceTime": 9.3,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "常",
       "kind": "animated-letter"
     },
     {
       "time": 9.35,
       "sourceTime": 9.35,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "能",
       "kind": "animated-letter"
     },
     {
       "time": 9.425,
       "sourceTime": 9.425,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "随",
       "kind": "animated-letter"
     },
     {
       "time": 9.5,
       "sourceTime": 9.5,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "绪",
       "kind": "animated-letter"
     },
     {
       "time": 14.6,
       "sourceTime": 14.6,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "从",
       "kind": "animated-letter"
     },
     {
       "time": 14.625,
       "sourceTime": 14.625,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "一",
       "kind": "animated-letter"
     },
     {
       "time": 14.7,
       "sourceTime": 14.7,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "例",
       "kind": "animated-letter"
     },
     {
       "time": 14.775,
       "sourceTime": 14.775,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "，",
       "kind": "animated-letter"
     },
     {
       "time": 14.85,
       "sourceTime": 14.85,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "成",
       "kind": "animated-letter"
     },
     {
       "time": 14.924999999999999,
       "sourceTime": 14.924999999999999,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/opening-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/opening/index.html",
       "text": "想",
       "kind": "animated-letter"
     },
@@ -2709,105 +2989,105 @@
     {
       "time": 28.400000000000002,
       "sourceTime": 6,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "教",
       "kind": "animated-letter"
     },
     {
       "time": 28.436000000000003,
       "sourceTime": 6.036,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "成",
       "kind": "animated-letter"
     },
     {
       "time": 28.490000000000002,
       "sourceTime": 6.09,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "展",
       "kind": "animated-letter"
     },
     {
       "time": 28.544,
       "sourceTime": 6.144,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "学",
       "kind": "animated-letter"
     },
     {
       "time": 28.598000000000003,
       "sourceTime": 6.198,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "。",
       "kind": "animated-letter"
     },
     {
       "time": 34.9,
       "sourceTime": 12.5,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "课",
       "kind": "animated-letter"
     },
     {
       "time": 34.936,
       "sourceTime": 12.536,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "成",
       "kind": "animated-letter"
     },
     {
       "time": 34.989999999999995,
       "sourceTime": 12.59,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "接",
       "kind": "animated-letter"
     },
     {
       "time": 35.044,
       "sourceTime": 12.644,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "课",
       "kind": "animated-letter"
     },
     {
       "time": 35.098,
       "sourceTime": 12.698,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "出",
       "kind": "animated-letter"
     },
     {
       "time": 41.4,
       "sourceTime": 19,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "每",
       "kind": "animated-letter"
     },
     {
       "time": 41.45399999999999,
       "sourceTime": 19.054,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "伴",
       "kind": "animated-letter"
     },
     {
       "time": 41.507999999999996,
       "sourceTime": 19.108,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "有",
       "kind": "animated-letter"
     },
     {
       "time": 41.562,
       "sourceTime": 19.162,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "的",
       "kind": "animated-letter"
     },
     {
       "time": 41.616,
       "sourceTime": 19.216,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/team-dialogue/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/team/index.html",
       "text": "。",
       "kind": "animated-letter"
     },
@@ -2835,84 +3115,84 @@
     {
       "time": 50.800000000000004,
       "sourceTime": 4.25,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "还",
       "kind": "animated-letter"
     },
     {
       "time": 50.87200000000001,
       "sourceTime": 4.322,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "，",
       "kind": "animated-letter"
     },
     {
       "time": 50.944,
       "sourceTime": 4.394,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "得",
       "kind": "animated-letter"
     },
     {
       "time": 51.016000000000005,
       "sourceTime": 4.466,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "一",
       "kind": "animated-letter"
     },
     {
       "time": 58.900000000000006,
       "sourceTime": 12.35,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "每",
       "kind": "animated-letter"
     },
     {
       "time": 58.972,
       "sourceTime": 12.421999999999999,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "成",
       "kind": "animated-letter"
     },
     {
       "time": 59.044000000000004,
       "sourceTime": 12.494,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "都",
       "kind": "animated-letter"
     },
     {
       "time": 59.116,
       "sourceTime": 12.565999999999999,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "着",
       "kind": "animated-letter"
     },
     {
       "time": 68.05,
       "sourceTime": 21.5,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "准",
       "kind": "animated-letter"
     },
     {
       "time": 68.122,
       "sourceTime": 21.572,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "了",
       "kind": "animated-letter"
     },
     {
       "time": 68.194,
       "sourceTime": 21.644,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "送",
       "kind": "animated-letter"
     },
     {
       "time": 68.266,
       "sourceTime": 21.716,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/teaching-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/teaching/index.html",
       "text": "室",
       "kind": "animated-letter"
     },
@@ -2940,99 +3220,197 @@
     {
       "time": 95.14999999999999,
       "sourceTime": 10,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/model-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
       "text": "拖",
       "kind": "animated-letter"
     },
     {
       "time": 95.225,
       "sourceTime": 10.075,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/model-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
       "text": "观",
       "kind": "animated-letter"
     },
     {
       "time": 95.3,
       "sourceTime": 10.15,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/model-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
       "text": "再",
       "kind": "animated-letter"
     },
     {
       "time": 95.37499999999999,
       "sourceTime": 10.225,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/model-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
       "text": "个",
       "kind": "animated-letter"
     },
     {
       "time": 95.44999999999999,
       "sourceTime": 10.3,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/model-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
       "text": "么",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 97.05,
+      "sourceTime": 11.9,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "拖",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 97.07199999999999,
+      "sourceTime": 11.922,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "动",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 97.13799999999999,
+      "sourceTime": 11.988,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "个",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 97.204,
+      "sourceTime": 12.054,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "。",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 99.74999999999999,
+      "sourceTime": 14.6,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "看",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 99.794,
+      "sourceTime": 14.644,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "，",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 99.85999999999999,
+      "sourceTime": 14.709999999999999,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "关",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 102.35,
+      "sourceTime": 17.2,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "改",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 102.41599999999998,
+      "sourceTime": 17.266,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "数",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 102.48199999999999,
+      "sourceTime": 17.332,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "续",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 102.54799999999999,
+      "sourceTime": 17.398,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "。",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 105.55,
+      "sourceTime": 20.4,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "再",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 105.594,
+      "sourceTime": 20.444,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "开",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 105.65999999999998,
+      "sourceTime": 20.509999999999998,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "什",
       "kind": "animated-letter"
     },
     {
       "time": 109.35,
       "sourceTime": 24.2,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/model-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
       "text": "让",
       "kind": "animated-letter"
     },
     {
-      "time": 109.37499999999999,
-      "sourceTime": 24.224999999999998,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/model-chapter/index.html",
-      "text": "知",
+      "time": 109.425,
+      "sourceTime": 24.275,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "，",
       "kind": "animated-letter"
     },
     {
-      "time": 109.44999999999999,
-      "sourceTime": 24.3,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/model-chapter/index.html",
-      "text": "在",
+      "time": 109.49999999999999,
+      "sourceTime": 24.349999999999998,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "前",
       "kind": "animated-letter"
     },
     {
-      "time": 109.52499999999999,
-      "sourceTime": 24.375,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/model-chapter/index.html",
-      "text": "发",
+      "time": 109.57499999999999,
+      "sourceTime": 24.425,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/model/index.html",
+      "text": "。",
       "kind": "animated-letter"
     },
     {
       "time": 120.35000000000001,
       "sourceTime": 6.4,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/mailbox-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/mailbox/index.html",
       "text": "打",
       "kind": "animated-letter"
     },
     {
-      "time": 120.44,
-      "sourceTime": 6.49,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/mailbox-chapter/index.html",
+      "time": 120.41,
+      "sourceTime": 6.46,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/mailbox/index.html",
+      "text": "小",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 120.5,
+      "sourceTime": 6.550000000000001,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/mailbox/index.html",
+      "text": "，",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 120.59,
+      "sourceTime": 6.640000000000001,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/mailbox/index.html",
+      "text": "每",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 120.68,
+      "sourceTime": 6.73,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/mailbox/index.html",
       "text": "信",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 120.53,
-      "sourceTime": 6.58,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/mailbox-chapter/index.html",
-      "text": "接",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 120.62,
-      "sourceTime": 6.67,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/mailbox-chapter/index.html",
-      "text": "一",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 120.71000000000001,
-      "sourceTime": 6.760000000000001,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/mailbox-chapter/index.html",
-      "text": "。",
       "kind": "animated-letter"
     },
     {
@@ -3043,206 +3421,220 @@
       "kind": "animated-letter"
     },
     {
-      "time": 131.492,
-      "sourceTime": 0.742,
+      "time": 131.478,
+      "sourceTime": 0.728,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/bridges/4/index.html",
-      "text": "信",
+      "text": "封",
       "kind": "animated-letter"
     },
     {
-      "time": 131.534,
-      "sourceTime": 0.784,
+      "time": 131.52,
+      "sourceTime": 0.77,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/bridges/4/index.html",
-      "text": "园",
+      "text": "校",
       "kind": "animated-letter"
     },
     {
-      "time": 131.576,
-      "sourceTime": 0.826,
+      "time": 131.562,
+      "sourceTime": 0.8119999999999999,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/bridges/4/index.html",
-      "text": "近",
+      "text": "就",
       "kind": "animated-letter"
     },
     {
-      "time": 131.618,
-      "sourceTime": 0.868,
+      "time": 131.604,
+      "sourceTime": 0.854,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/bridges/4/index.html",
-      "text": "点",
+      "text": "一",
       "kind": "animated-letter"
     },
     {
       "time": 139.95000000000002,
       "sourceTime": 7,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "确",
       "kind": "animated-letter"
     },
     {
-      "time": 139.97500000000002,
-      "sourceTime": 7.025,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
-      "text": "认",
+      "time": 140.025,
+      "sourceTime": 7.075,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
+      "text": "间",
       "kind": "animated-letter"
     },
     {
-      "time": 140.05,
-      "sourceTime": 7.1,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
-      "text": "，",
+      "time": 140.10000000000002,
+      "sourceTime": 7.15,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
+      "text": "接",
       "kind": "animated-letter"
     },
     {
-      "time": 140.12500000000003,
-      "sourceTime": 7.175,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
-      "text": "住",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 140.20000000000002,
-      "sourceTime": 7.25,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
-      "text": "。",
+      "time": 140.175,
+      "sourceTime": 7.225,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
+      "text": "题",
       "kind": "animated-letter"
     },
     {
       "time": 145.95000000000002,
       "sourceTime": 13,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "老",
       "kind": "animated-letter"
     },
     {
-      "time": 146.00000000000003,
-      "sourceTime": 13.05,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
-      "text": "的",
+      "time": 145.97500000000002,
+      "sourceTime": 13.025,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
+      "text": "师",
       "kind": "animated-letter"
     },
     {
-      "time": 146.07500000000002,
-      "sourceTime": 13.125,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
-      "text": "，",
+      "time": 146.05,
+      "sourceTime": 13.1,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
+      "text": "排",
       "kind": "animated-letter"
     },
     {
-      "time": 146.15,
-      "sourceTime": 13.2,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
-      "text": "收",
+      "time": 146.12500000000003,
+      "sourceTime": 13.175,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
+      "text": "室",
       "kind": "animated-letter"
     },
     {
-      "time": 146.22500000000002,
-      "sourceTime": 13.275,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
-      "text": "。",
+      "time": 146.20000000000002,
+      "sourceTime": 13.25,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
+      "text": "到",
       "kind": "animated-letter"
     },
     {
       "time": 151.95000000000002,
       "sourceTime": 19,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "每",
       "kind": "animated-letter"
     },
     {
-      "time": 152.00000000000003,
-      "sourceTime": 19.05,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
-      "text": "种",
+      "time": 151.97500000000002,
+      "sourceTime": 19.025,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
+      "text": "一",
       "kind": "animated-letter"
     },
     {
-      "time": 152.07500000000002,
-      "sourceTime": 19.125,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
-      "text": "，",
+      "time": 152.05,
+      "sourceTime": 19.1,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
+      "text": "求",
       "kind": "animated-letter"
     },
     {
-      "time": 152.15,
-      "sourceTime": 19.2,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
-      "text": "去",
+      "time": 152.12500000000003,
+      "sourceTime": 19.175,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
+      "text": "有",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 152.20000000000002,
+      "sourceTime": 19.25,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
+      "text": "。",
       "kind": "animated-letter"
     },
     {
       "time": 156.95000000000002,
       "sourceTime": 24,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "需",
       "kind": "animated-letter"
     },
     {
-      "time": 157.025,
-      "sourceTime": 24.075,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
-      "text": "同",
+      "time": 157.00000000000003,
+      "sourceTime": 24.05,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
+      "text": "找",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 157.07500000000002,
+      "sourceTime": 24.125,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
+      "text": "？",
       "kind": "animated-letter"
     },
     {
       "time": 168.95000000000002,
       "sourceTime": 36,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "送",
       "kind": "animated-letter"
     },
     {
-      "time": 169.02500000000003,
-      "sourceTime": 36.075,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
-      "text": "后",
+      "time": 169,
+      "sourceTime": 36.05,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
+      "text": "之",
       "kind": "animated-letter"
     },
     {
-      "time": 169.10000000000002,
-      "sourceTime": 36.15,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
-      "text": "有",
+      "time": 169.07500000000002,
+      "sourceTime": 36.125,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
+      "text": "还",
       "kind": "animated-letter"
     },
     {
-      "time": 169.175,
-      "sourceTime": 36.225,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
-      "text": "。",
+      "time": 169.15000000000003,
+      "sourceTime": 36.2,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
+      "text": "应",
       "kind": "animated-letter"
     },
     {
       "time": 175.95000000000002,
       "sourceTime": 43,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
       "text": "把",
       "kind": "animated-letter"
     },
     {
-      "time": 176,
-      "sourceTime": 43.05,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
-      "text": "情",
+      "time": 175.97500000000002,
+      "sourceTime": 43.025,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
+      "text": "事",
       "kind": "animated-letter"
     },
     {
-      "time": 176.07500000000002,
-      "sourceTime": 43.125,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
-      "text": "到",
+      "time": 176.05,
+      "sourceTime": 43.1,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
+      "text": "接",
       "kind": "animated-letter"
     },
     {
-      "time": 176.15000000000003,
-      "sourceTime": 43.2,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
-      "text": "它",
+      "time": 176.125,
+      "sourceTime": 43.175,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
+      "text": "要",
       "kind": "animated-letter"
     },
     {
-      "time": 176.22500000000002,
-      "sourceTime": 43.275,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/student-chapter/index.html",
-      "text": "那",
+      "time": 176.20000000000002,
+      "sourceTime": 43.25,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
+      "text": "人",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 176.27500000000003,
+      "sourceTime": 43.325,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/students/index.html",
+      "text": "。",
       "kind": "animated-letter"
     },
     {
@@ -3253,101 +3645,115 @@
       "kind": "animated-letter"
     },
     {
-      "time": 182.338,
-      "sourceTime": 0.5880000000000001,
+      "time": 182.324,
+      "sourceTime": 0.5740000000000001,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/bridges/5/index.html",
-      "text": "哪",
+      "text": "在",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 182.366,
+      "sourceTime": 0.6160000000000001,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/bridges/5/index.html",
+      "text": "？",
       "kind": "animated-letter"
     },
     {
       "time": 203.75,
       "sourceTime": 20.6,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/native-query/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/query/index.html",
       "text": "记",
       "kind": "animated-letter"
     },
     {
-      "time": 203.816,
-      "sourceTime": 20.666,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/native-query/index.html",
-      "text": "在",
+      "time": 203.794,
+      "sourceTime": 20.644000000000002,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/query/index.html",
+      "text": "，",
       "kind": "animated-letter"
     },
     {
-      "time": 203.882,
-      "sourceTime": 20.732000000000003,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/native-query/index.html",
-      "text": "里",
+      "time": 203.86,
+      "sourceTime": 20.71,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/query/index.html",
+      "text": "话",
       "kind": "animated-letter"
     },
     {
-      "time": 203.948,
-      "sourceTime": 20.798000000000002,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/native-query/index.html",
-      "text": "。",
+      "time": 203.92600000000002,
+      "sourceTime": 20.776,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/query/index.html",
+      "text": "到",
       "kind": "animated-letter"
     },
     {
       "time": 213.15,
       "sourceTime": 30,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/collaboration-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/collaboration/index.html",
       "text": "放",
       "kind": "animated-letter"
     },
     {
-      "time": 213.19400000000002,
-      "sourceTime": 30.044,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/collaboration-chapter/index.html",
-      "text": "有",
+      "time": 213.172,
+      "sourceTime": 30.022,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/collaboration/index.html",
+      "text": "行",
       "kind": "animated-letter"
     },
     {
-      "time": 213.26,
-      "sourceTime": 30.11,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/collaboration-chapter/index.html",
-      "text": "，",
+      "time": 213.238,
+      "sourceTime": 30.088,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/collaboration/index.html",
+      "text": "认",
       "kind": "animated-letter"
     },
     {
-      "time": 213.326,
-      "sourceTime": 30.176,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/collaboration-chapter/index.html",
-      "text": "有",
+      "time": 213.304,
+      "sourceTime": 30.154,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/collaboration/index.html",
+      "text": "班",
       "kind": "animated-letter"
     },
     {
-      "time": 213.392,
-      "sourceTime": 30.242,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/collaboration-chapter/index.html",
-      "text": "。",
+      "time": 213.37,
+      "sourceTime": 30.22,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/collaboration/index.html",
+      "text": "音",
       "kind": "animated-letter"
     },
     {
       "time": 227.15,
       "sourceTime": 44,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/collaboration-chapter/index.html",
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/collaboration/index.html",
       "text": "让",
       "kind": "animated-letter"
     },
     {
-      "time": 227.19400000000002,
-      "sourceTime": 44.044,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/collaboration-chapter/index.html",
-      "text": "师",
+      "time": 227.172,
+      "sourceTime": 44.022,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/collaboration/index.html",
+      "text": "老",
       "kind": "animated-letter"
     },
     {
-      "time": 227.26,
-      "sourceTime": 44.11,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/collaboration-chapter/index.html",
-      "text": "，",
+      "time": 227.238,
+      "sourceTime": 44.088,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/collaboration/index.html",
+      "text": "间",
       "kind": "animated-letter"
     },
     {
-      "time": 227.32600000000002,
-      "sourceTime": 44.176,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/collaboration-chapter/index.html",
-      "text": "默",
+      "time": 227.304,
+      "sourceTime": 44.153999999999996,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/collaboration/index.html",
+      "text": "有",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 227.37,
+      "sourceTime": 44.22,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/collaboration/index.html",
+      "text": "。",
       "kind": "animated-letter"
     },
     {
@@ -3358,178 +3764,234 @@
       "kind": "animated-letter"
     },
     {
-      "time": 242.664,
-      "sourceTime": 0.7140000000000001,
+      "time": 242.64999999999998,
+      "sourceTime": 0.7000000000000001,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/bridges/6/index.html",
-      "text": "天",
+      "text": "今",
       "kind": "animated-letter"
     },
     {
-      "time": 242.706,
-      "sourceTime": 0.756,
+      "time": 242.69199999999998,
+      "sourceTime": 0.742,
       "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/bridges/6/index.html",
+      "text": "也",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 242.73399999999998,
+      "sourceTime": 0.784,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/bridges/6/index.html",
+      "text": "明",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 252.03,
+      "sourceTime": 8.08,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
       "text": "记",
       "kind": "animated-letter"
     },
     {
-      "time": 242.748,
-      "sourceTime": 0.798,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/bridges/6/index.html",
-      "text": "天",
+      "time": 252.11399999999998,
+      "sourceTime": 8.164,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "也",
       "kind": "animated-letter"
     },
     {
-      "time": 252.04999999999998,
-      "sourceTime": 8.100000000000001,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "记",
+      "time": 252.19799999999998,
+      "sourceTime": 8.248,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "据",
       "kind": "animated-letter"
     },
     {
-      "time": 252.075,
-      "sourceTime": 8.125,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "住",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 252.14999999999998,
-      "sourceTime": 8.200000000000003,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "能",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 252.225,
-      "sourceTime": 8.274999999999999,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "依",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 258.05,
-      "sourceTime": 14.100000000000001,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
+      "time": 258.03,
+      "sourceTime": 14.08,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
       "text": "慢",
       "kind": "animated-letter"
     },
     {
-      "time": 258.125,
-      "sourceTime": 14.175000000000004,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "解",
+      "time": 258.058,
+      "sourceTime": 14.108,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "慢",
       "kind": "animated-letter"
     },
     {
-      "time": 258.2,
-      "sourceTime": 14.25,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
+      "time": 258.142,
+      "sourceTime": 14.192,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "，",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 258.226,
+      "sourceTime": 14.276,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
       "text": "习",
       "kind": "animated-letter"
     },
     {
-      "time": 266.05,
-      "sourceTime": 22.1,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
+      "time": 266.03,
+      "sourceTime": 22.08,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
       "text": "决",
       "kind": "animated-letter"
     },
     {
-      "time": 266.125,
-      "sourceTime": 22.175000000000004,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
+      "time": 266.114,
+      "sourceTime": 22.163999999999998,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
       "text": "，",
       "kind": "animated-letter"
     },
     {
-      "time": 266.2,
-      "sourceTime": 22.25,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
+      "time": 266.198,
+      "sourceTime": 22.247999999999998,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
       "text": "在",
       "kind": "animated-letter"
     },
     {
-      "time": 272.05,
-      "sourceTime": 28.099999999999994,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
+      "time": 272.03,
+      "sourceTime": 28.08,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
       "text": "把",
       "kind": "animated-letter"
     },
     {
-      "time": 272.125,
-      "sourceTime": 28.174999999999997,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
+      "time": 272.114,
+      "sourceTime": 28.163999999999998,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
       "text": "，",
       "kind": "animated-letter"
     },
     {
-      "time": 272.2,
-      "sourceTime": 28.25,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "一",
+      "time": 272.198,
+      "sourceTime": 28.247999999999998,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "历",
       "kind": "animated-letter"
     },
     {
-      "time": 272.275,
-      "sourceTime": 28.32499999999999,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "史",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 280.05,
-      "sourceTime": 36.099999999999994,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
+      "time": 280.03,
+      "sourceTime": 36.08,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
       "text": "约",
       "kind": "animated-letter"
     },
     {
-      "time": 280.075,
-      "sourceTime": 36.125,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "定",
+      "time": 280.114,
+      "sourceTime": 36.164,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
+      "text": "，",
       "kind": "animated-letter"
     },
     {
-      "time": 280.15,
-      "sourceTime": 36.19999999999999,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
-      "text": "再",
-      "kind": "animated-letter"
-    },
-    {
-      "time": 280.22499999999997,
-      "sourceTime": 36.27499999999999,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
+      "time": 280.198,
+      "sourceTime": 36.248,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
       "text": "出",
       "kind": "animated-letter"
     },
     {
-      "time": 286.05,
-      "sourceTime": 42.099999999999994,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
+      "time": 286.03,
+      "sourceTime": 42.08,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
       "text": "执",
       "kind": "animated-letter"
     },
     {
-      "time": 286.125,
-      "sourceTime": 42.175,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
+      "time": 286.114,
+      "sourceTime": 42.164,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
       "text": "后",
       "kind": "animated-letter"
     },
     {
-      "time": 286.2,
-      "sourceTime": 42.25,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
+      "time": 286.198,
+      "sourceTime": 42.248,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
       "text": "有",
       "kind": "animated-letter"
     },
     {
-      "time": 286.275,
-      "sourceTime": 42.32499999999999,
-      "source": "/Users/a1379/Documents/Mochi/promo/v11/master-preview/supplement/index.html",
+      "time": 286.282,
+      "sourceTime": 42.332,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/daily/index.html",
       "text": "。",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 292.55,
+      "sourceTime": 48.6,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/ending/index.html",
+      "text": "M",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 292.65,
+      "sourceTime": 48.699999999999996,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/ending/index.html",
+      "text": "o",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 292.75,
+      "sourceTime": 48.8,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/ending/index.html",
+      "text": "c",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 292.84999999999997,
+      "sourceTime": 48.9,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/ending/index.html",
+      "text": "h",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 292.95,
+      "sourceTime": 49,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/ending/index.html",
+      "text": "i",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 294.25,
+      "sourceTime": 50.3,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/ending/index.html",
+      "text": "已",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 294.38,
+      "sourceTime": 50.43,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/ending/index.html",
+      "text": "至",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 294.51,
+      "sourceTime": 50.56,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/ending/index.html",
+      "text": "。",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 295.95,
+      "sourceTime": 52,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/ending/index.html",
+      "text": "让校园里的工作，",
+      "kind": "animated-letter"
+    },
+    {
+      "time": 296.33,
+      "sourceTime": 52.379999999999995,
+      "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/pacing-v7/ending/index.html",
+      "text": "自然连接。",
       "kind": "animated-letter"
     }
   ],

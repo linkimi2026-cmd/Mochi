@@ -1,0 +1,386 @@
+{
+  "edition": 7,
+  "method": "Source timeline and full-film contact-sheet review located these stagnant information focuses. Camera travels between named actual UI targets; background motion is not counted as a focus change. Designed holds are bounded, not a claim that every pixel/semantic beat has been independently classified.",
+  "windows": [
+    {
+      "chapter": "opening",
+      "sourceStart": 6.2,
+      "sourceEnd": 9.2,
+      "filmStart": 10.2,
+      "filmEnd": 13.2,
+      "focus": "场景预设：入口到示例",
+      "maxDesignedStationarySeconds": 0.45,
+      "playbackRateChange": 0
+    },
+    {
+      "chapter": "opening",
+      "sourceStart": 12.2,
+      "sourceEnd": 15.8,
+      "filmStart": 16.2,
+      "filmEnd": 19.8,
+      "focus": "需求示例：列表到输入框",
+      "maxDesignedStationarySeconds": 0.65,
+      "playbackRateChange": 0
+    },
+    {
+      "chapter": "team",
+      "sourceStart": 1.4,
+      "sourceEnd": 4,
+      "filmStart": 23.8,
+      "filmEnd": 26.4,
+      "focus": "Agent 角色名单",
+      "maxDesignedStationarySeconds": 0.75,
+      "playbackRateChange": 0
+    },
+    {
+      "chapter": "team",
+      "sourceStart": 7,
+      "sourceEnd": 8.4,
+      "filmStart": 29.4,
+      "filmEnd": 30.8,
+      "focus": "教案内容",
+      "maxDesignedStationarySeconds": 0.15,
+      "playbackRateChange": 0
+    },
+    {
+      "chapter": "team",
+      "sourceStart": 15.6,
+      "sourceEnd": 18.05,
+      "filmStart": 38.0,
+      "filmEnd": 40.45,
+      "focus": "课件成员回应",
+      "maxDesignedStationarySeconds": 0.675,
+      "playbackRateChange": 0
+    },
+    {
+      "chapter": "team",
+      "sourceStart": 20.55,
+      "sourceEnd": 23.1,
+      "filmStart": 42.95,
+      "filmEnd": 45.5,
+      "focus": "四种原生配色",
+      "maxDesignedStationarySeconds": 0.3,
+      "playbackRateChange": 0
+    },
+    {
+      "chapter": "teaching",
+      "sourceStart": 1.75,
+      "sourceEnd": 3.65,
+      "filmStart": 48.3,
+      "filmEnd": 50.2,
+      "focus": "课件封面与内容",
+      "maxDesignedStationarySeconds": 0.4,
+      "playbackRateChange": 0
+    },
+    {
+      "chapter": "teaching",
+      "sourceStart": 8.9,
+      "sourceEnd": 10.6,
+      "filmStart": 55.45,
+      "filmEnd": 57.15,
+      "focus": "可编辑图表",
+      "maxDesignedStationarySeconds": 0.3,
+      "playbackRateChange": 0
+    },
+    {
+      "chapter": "teaching",
+      "sourceStart": 13.8,
+      "sourceEnd": 19.65,
+      "filmStart": 60.35,
+      "filmEnd": 66.2,
+      "focus": "课件、练习、成绩图表依次成为主体",
+      "maxDesignedStationarySeconds": 0.912,
+      "playbackRateChange": 0
+    },
+    {
+      "chapter": "delivery",
+      "sourceStart": 2.65,
+      "sourceEnd": 4.05,
+      "filmStart": 71.2,
+      "filmEnd": 72.6,
+      "focus": "双方确认",
+      "maxDesignedStationarySeconds": 0.15,
+      "playbackRateChange": 0
+    },
+    {
+      "chapter": "delivery",
+      "sourceStart": 7.7,
+      "sourceEnd": 9.6,
+      "filmStart": 76.25,
+      "filmEnd": 78.15,
+      "focus": "教室端送达",
+      "maxDesignedStationarySeconds": 0.4,
+      "playbackRateChange": 0
+    },
+    {
+      "chapter": "delivery",
+      "sourceStart": 10.4,
+      "sourceEnd": 15.2,
+      "filmStart": 78.95,
+      "filmEnd": 83.75,
+      "focus": "教师回执到双端关系",
+      "maxDesignedStationarySeconds": 1.05,
+      "playbackRateChange": 0
+    },
+    {
+      "chapter": "model",
+      "sourceStart": 4.25,
+      "sourceEnd": 5.8,
+      "filmStart": 89.4,
+      "filmEnd": 90.95,
+      "focus": "真实请求已发送",
+      "maxDesignedStationarySeconds": 0.225,
+      "playbackRateChange": 0
+    },
+    {
+      "chapter": "mailbox",
+      "sourceStart": 8.3,
+      "sourceEnd": 13.6,
+      "filmStart": 122.25,
+      "filmEnd": 127.55,
+      "focus": "来信类别到消息状态",
+      "maxDesignedStationarySeconds": 1.2,
+      "playbackRateChange": 0
+    },
+    {
+      "chapter": "mailbox",
+      "sourceStart": 15,
+      "sourceEnd": 16.7,
+      "filmStart": 128.95,
+      "filmEnd": 130.65,
+      "focus": "保留来处的信箱",
+      "maxDesignedStationarySeconds": 0.3,
+      "playbackRateChange": 0
+    },
+    {
+      "chapter": "students",
+      "sourceStart": 1.65,
+      "sourceEnd": 6.8,
+      "filmStart": 134.6,
+      "filmEnd": 139.75,
+      "focus": "预约：谁、何时、带什么",
+      "maxDesignedStationarySeconds": 1.167,
+      "playbackRateChange": 0
+    },
+    {
+      "chapter": "students",
+      "sourceStart": 8.05,
+      "sourceEnd": 12.8,
+      "filmStart": 141.0,
+      "filmEnd": 145.75,
+      "focus": "请求到老师确认",
+      "maxDesignedStationarySeconds": 1.033,
+      "playbackRateChange": 0
+    },
+    {
+      "chapter": "students",
+      "sourceStart": 16.45,
+      "sourceEnd": 18.8,
+      "filmStart": 149.4,
+      "filmEnd": 151.75,
+      "focus": "教室收到回信",
+      "maxDesignedStationarySeconds": 0.625,
+      "playbackRateChange": 0
+    },
+    {
+      "chapter": "students",
+      "sourceStart": 20.65,
+      "sourceEnd": 23.8,
+      "filmStart": 153.6,
+      "filmEnd": 156.75,
+      "focus": "提问和补做两种状态",
+      "maxDesignedStationarySeconds": 0.5,
+      "playbackRateChange": 0
+    },
+    {
+      "chapter": "students",
+      "sourceStart": 25.55,
+      "sourceEnd": 28.1,
+      "filmStart": 158.5,
+      "filmEnd": 161.05,
+      "focus": "叫人：时间、地点、材料",
+      "maxDesignedStationarySeconds": 0.725,
+      "playbackRateChange": 0
+    },
+    {
+      "chapter": "students",
+      "sourceStart": 33.4,
+      "sourceEnd": 35.8,
+      "filmStart": 166.35,
+      "filmEnd": 168.75,
+      "focus": "已看到状态",
+      "maxDesignedStationarySeconds": 0.65,
+      "playbackRateChange": 0
+    },
+    {
+      "chapter": "students",
+      "sourceStart": 39.1,
+      "sourceEnd": 42.8,
+      "filmStart": 172.05,
+      "filmEnd": 175.75,
+      "focus": "回执内容与两端关系",
+      "maxDesignedStationarySeconds": 0.683,
+      "playbackRateChange": 0
+    },
+    {
+      "chapter": "students",
+      "sourceStart": 44.6,
+      "sourceEnd": 48.65,
+      "filmStart": 177.55,
+      "filmEnd": 181.6,
+      "focus": "预约到通知，连接同一校园",
+      "maxDesignedStationarySeconds": 0.8,
+      "playbackRateChange": 0
+    },
+    {
+      "chapter": "query",
+      "sourceStart": 8.3,
+      "sourceEnd": 12.05,
+      "filmStart": 191.45,
+      "filmEnd": 195.2,
+      "focus": "查找工具与执行进展",
+      "maxDesignedStationarySeconds": 0.7,
+      "playbackRateChange": 0
+    },
+    {
+      "chapter": "query",
+      "sourceStart": 14.6,
+      "sourceEnd": 18.9,
+      "filmStart": 197.75,
+      "filmEnd": 202.05,
+      "focus": "原对话中的查询结果",
+      "maxDesignedStationarySeconds": 0.883,
+      "playbackRateChange": 0
+    },
+    {
+      "chapter": "query",
+      "sourceStart": 21.4,
+      "sourceEnd": 29.5,
+      "filmStart": 204.55,
+      "filmEnd": 212.65,
+      "focus": "学生、目的地、状态，三处真实字段",
+      "maxDesignedStationarySeconds": 1.2,
+      "playbackRateChange": 0
+    },
+    {
+      "chapter": "collaboration",
+      "sourceStart": 1.55,
+      "sourceEnd": 3.4,
+      "filmStart": 214.7,
+      "filmEnd": 216.55,
+      "focus": "放行前确认",
+      "maxDesignedStationarySeconds": 0.375,
+      "playbackRateChange": 0
+    },
+    {
+      "chapter": "collaboration",
+      "sourceStart": 10.7,
+      "sourceEnd": 12.6,
+      "filmStart": 223.85,
+      "filmEnd": 225.75,
+      "focus": "返班闭环",
+      "maxDesignedStationarySeconds": 0.4,
+      "playbackRateChange": 0
+    },
+    {
+      "chapter": "collaboration",
+      "sourceStart": 17.3,
+      "sourceEnd": 19.15,
+      "filmStart": 230.45,
+      "filmEnd": 232.3,
+      "focus": "问询回应",
+      "maxDesignedStationarySeconds": 0.375,
+      "playbackRateChange": 0
+    },
+    {
+      "chapter": "collaboration",
+      "sourceStart": 22.95,
+      "sourceEnd": 24,
+      "filmStart": 236.1,
+      "filmEnd": 237.15,
+      "focus": "委托接办",
+      "maxDesignedStationarySeconds": 0,
+      "playbackRateChange": 0
+    },
+    {
+      "chapter": "collaboration",
+      "sourceStart": 27.55,
+      "sourceEnd": 28.95,
+      "filmStart": 240.7,
+      "filmEnd": 242.1,
+      "focus": "寻物回应，继续查找",
+      "maxDesignedStationarySeconds": 0.15,
+      "playbackRateChange": 0
+    },
+    {
+      "chapter": "opening",
+      "sourceStart": 1.15,
+      "sourceEnd": 3.25,
+      "filmStart": 5.15,
+      "filmEnd": 7.25,
+      "focus": "首页问候进入工作入口",
+      "maxDesignedStationarySeconds": 0.5,
+      "playbackRateChange": 0
+    },
+    {
+      "chapter": "team",
+      "sourceStart": 13.1,
+      "sourceEnd": 15.55,
+      "filmStart": 35.5,
+      "filmEnd": 37.95,
+      "focus": "课件会话的操作落点",
+      "maxDesignedStationarySeconds": 0.675,
+      "playbackRateChange": 0
+    },
+    {
+      "chapter": "query",
+      "sourceStart": 2.55,
+      "sourceEnd": 5.1,
+      "filmStart": 185.7,
+      "filmEnd": 188.25,
+      "focus": "查人输入与发送入口",
+      "maxDesignedStationarySeconds": 0.725,
+      "playbackRateChange": 0
+    }
+  ],
+  "windowCount": 34,
+  "model": "Separate native model camera follows point, auxiliary lines, parameter, derivation; designed stops 0.8–1.2s. Model interaction clock unchanged.",
+  "daily": "Seven scenes replaced, each content camera changes after <=1.0s pause; editorial heading clears before close-up.",
+  "ending": "Folded letter, serif Mochi, bold 已至, seal and two-part tagline at separate cues.",
+  "technicalFreezeAudit": {
+    "status": "passed",
+    "report": "../validation.json",
+    "sampleFps": 15,
+    "resolution": [
+      320,
+      180
+    ],
+    "minimumSeconds": 1.5,
+    "intervals": [],
+    "blackIntervals": []
+  },
+  "artisticApproval": false,
+  "audioVersions": [
+    "own",
+    "k25"
+  ],
+  "excludedFeatures": [
+    "voice",
+    "camera question capture",
+    "timetable"
+  ],
+  "initialFreezeFindingsSeconds": [
+    [
+      5,
+      6.733333
+    ],
+    [
+      35.8,
+      38
+    ],
+    [
+      186.066667,
+      188.066667
+    ]
+  ]
+}

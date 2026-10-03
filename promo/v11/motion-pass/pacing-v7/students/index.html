@@ -1,0 +1,224 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><title>Mochi · 学生请求与叫人章节</title>
+<script src="assets/gsap.min.js"></script><script src="assets/motion.js"></script>
+<script src="assets/paper-transfer.js"></script><link rel="stylesheet" href="assets/paper-transfer.css">
+<script src="assets/paper-world.js"></script><link rel="stylesheet" href="assets/paper-world.css">
+<link rel="stylesheet" href="assets/native.css"><link rel="stylesheet" href="assets/motion.css">
+<style>
+@font-face{font-family:'PingFang SC';src:local('PingFangSC-Regular')}
+@font-face{font-family:'Microsoft YaHei';src:local('Microsoft YaHei')}
+@font-face{font-family:'Songti SC';src:local('Songti SC')}
+@font-face{font-family:'STSong';src:local('STSong')}
+@font-face{font-family:'Source Han Serif SC';src:local('Source Han Serif SC')}
+@font-face{font-family:'Noto Sans CJK SC';src:url('assets/NotoSansCJKsc-Regular.otf')}
+@font-face{font-family:'Noto Serif CJK SC';src:url('assets/NotoSerifCJKsc-SemiBold.otf')}
+@font-face{font-family:MoSans;src:url('assets/NotoSansCJKsc-Regular.otf')}
+@font-face{font-family:MoSans;src:url('assets/NotoSansCJKsc-Bold.otf');font-weight:700 900}
+@font-face{font-family:MoSerif;src:url('assets/NotoSerifCJKsc-SemiBold.otf')}
+*{box-sizing:border-box}html,body{margin:0}body{color:#293e35;font-family:MoSans,sans-serif}
+#film{position:relative;width:2560px;height:1440px;overflow:hidden;background:#e6ecdf}
+.card{position:absolute;left:0;top:0;width:700px;transform-origin:0 0;background:#faf9f6;padding:28px;border-radius:16px;box-shadow:0 16px 44px #304b3324}
+.native{font-size:14px}.card.wide{width:900px}.card .role{font:20px MoSans;color:#526c55;margin-bottom:18px}
+#call-confirm{z-index:15;opacity:0;visibility:hidden}#call-received .result{position:absolute;left:28px;right:28px;top:70px;opacity:0;visibility:hidden}#call-received{height:700px}#call-received .paper-piece{position:absolute;left:28px;top:70px;width:844px;pointer-events:none;opacity:0;visibility:hidden}
+#headline{position:absolute;left:180px;top:160px;font:95px/1.3 MoSerif;letter-spacing:-2px}
+#subline{position:absolute;left:188px;top:318px;font:35px/1.6 MoSans;color:#566951;max-width:650px}
+#chapter-label{position:absolute;left:85px;top:50px;font:25px MoSans;color:#52664a}
+#caption{position:absolute;left:100px;bottom:66px;width:2360px;text-align:center;font:36px/1.5 MoSans}
+#provenance{position:absolute;right:80px;top:58px;font:22px MoSans;color:#52664a}
+
+.copy-group{position:absolute;inset:0;pointer-events:none;visibility:hidden}
+.copy-title{position:absolute;font:92px/1.22 MoSerif;letter-spacing:-2px;white-space:nowrap}
+.copy-sub{position:absolute;font:34px/1.6 MoSans;color:#566951;max-width:650px}
+.copy-caption{position:absolute;left:100px;bottom:66px;width:2360px;text-align:center;font:34px/1.5 MoSans}
+.copy-word{display:inline-block}
+.copy-title.display{font-family:MoSans,sans-serif;font-weight:800;letter-spacing:-5px}
+#appointment{opacity:0;visibility:hidden}
+</style></head><body><main id="film" data-composition-id="mochi-students" data-width="2560" data-height="1440" data-duration="50" data-fps="120">
+<div id="appointment-before" class="card" data-layout-allow-overflow><div class="role">教师端 · 收到预约</div><div id="native-appointment-before" class="native mochi-lan-mailbox"></div></div>
+<div id="appointment" class="card" data-layout-allow-overflow><div class="role">教师端 · 预约已回复</div><div id="native-appointment" class="native mochi-lan-mailbox"></div></div>
+<div id="appointment-reply" class="card" data-layout-allow-overflow><div class="role">教室端 · 收到老师回信</div><div id="native-appointment-reply" class="native mochi-lan-mailbox"></div></div>
+<div id="question" class="card" data-layout-allow-overflow><div class="role">学生提问</div><div id="native-question" class="native mochi-lan-mailbox"></div></div>
+<div id="makeup" class="card" data-layout-allow-overflow><div class="role">补做申请</div><div id="native-makeup" class="native mochi-lan-mailbox"></div></div>
+<div id="call-received" class="card wide" data-layout-allow-overflow><div class="role">教室端 · 叫人通知</div><div id="native-call-new" class="native mochi-lan-mailbox"></div><div id="native-call-received" class="native mochi-lan-mailbox result"></div></div>
+<div id="call-confirm" class="card" data-layout-allow-overflow data-layout-allow-overlap data-layout-allow-occlusion><div id="native-call-confirm" class="native mochi-lan-mailbox"></div></div>
+<div id="call-sent" class="card wide" data-layout-allow-overflow><div class="role">教师端 · 收到已看到回执</div><div id="native-call-sent" class="native mochi-lan-mailbox"></div></div>
+<div id="headline"></div><div id="subline"></div><div id="caption"></div>
+<div id="chapter-label">Mochi / 连接学生与老师</div><div id="provenance">真实演示记录 · 原界面组件重放</div>
+</main><script src="assets/native.js"></script><script>
+window.initStudentChapter();
+const tl=gsap.timeline({paused:true});window.__timelines={'mochi-students':tl};
+const M=window.MochiMotion,stage=document.querySelector('#film'),pointer=M.createCursor(stage);
+const world=window.MochiWorld.create(stage,tl);
+world.travel(1,13.15,2.4);
+world.travel(.45,19,1.5);
+world.travel(1,24,1.5);
+world.travel(0,36.15,2.25);
+world.travel(2,43,3);
+tl.set('#call-confirm',{x:150,y:600,scale:1.15,autoAlpha:0},0);
+tl.set('#native-call-received',{autoAlpha:0},0);
+const ids=['appointment-before','appointment','appointment-reply','question','makeup','call-received','call-sent'];
+ids.forEach((id,i)=>tl.set('#'+id,{x:2900+i*100,y:300,scale:1,rotation:0},0));
+let previousCopy;
+function copy(at,title,sub,caption,layout='center'){
+  const group=document.createElement('section');group.className='copy-group';
+  const heading=document.createElement('div');heading.className='copy-title';
+  for(const char of Array.from(title)){const span=document.createElement('span');span.className='copy-word';span.textContent=char;heading.append(span)}
+  const description=document.createElement('div');description.className='copy-sub';description.textContent=sub;
+  const footer=document.createElement('div');footer.className='copy-caption';footer.textContent=caption;
+  group.append(heading,description,footer);stage.append(group);
+  const center=layout==='center';
+  Object.assign(heading.style,center?{left:'0',top:'155px',width:'2560px',textAlign:'center'}:{left:'150px',top:'205px'});
+  Object.assign(description.style,center?{left:'0',top:'285px',maxWidth:'none',width:'2560px',textAlign:'center'}:{left:'155px',top:'350px',maxWidth:'650px'});
+  const styles={
+    7:{left:'155px',top:'140px',width:'auto',textAlign:'left',fontSize:'104px'},
+    13:{left:'0',top:'145px',width:'2560px',textAlign:'center',fontSize:'106px'},
+    19:{left:'0',top:'145px',width:'2380px',textAlign:'right',fontSize:'98px'},
+    36:{left:'150px',top:'205px',width:'auto',textAlign:'left',fontSize:'84px'},
+    43:{left:'0',top:'145px',width:'2560px',textAlign:'center',fontSize:'100px'},
+  };
+  if(styles[at]){heading.classList.add('display');Object.assign(heading.style,styles[at]);}
+  if(at===7)Object.assign(description.style,{left:'165px',width:'auto',textAlign:'left',top:'285px'});
+  if(at===19)Object.assign(description.style,{left:'0',width:'2360px',textAlign:'right',top:'280px'});
+  tl.set(group,{autoAlpha:0},0);
+  if(previousCopy)tl.to(previousCopy,{y:-38,autoAlpha:0,duration:.35,ease:'power2.in'},Math.max(0,at-.35));
+  tl.set(group,{autoAlpha:1},at);
+  const entrance=at===19?{x:65,y:0,rotation:0}:at===43?{x:0,y:45,rotation:-5}:{x:0,y:70,rotation:3};
+  tl.fromTo(heading.children,{...entrance,opacity:0},{x:0,y:0,rotation:0,opacity:1,stagger:.025,duration:.68,ease:'back.out(1.25)',immediateRender:false},at);
+  tl.fromTo(description,{y:24,opacity:0},{y:0,opacity:1,duration:.55,ease:'power3.out',immediateRender:false},at+.2);
+  tl.fromTo(footer,{y:15,opacity:0},{y:0,opacity:1,duration:.4,ease:'power2.out',immediateRender:false},at+.32);
+  previousCopy=group;
+}
+function move(id,from,to,at,duration=1.05,ease='power3.inOut'){M.place(tl,'#'+id,from,to,at,duration,ease)}
+const request={x:630,y:410,scale:1.85,rotation:0};
+copy(0,'学生的问题，有人接住。','预约、提问、补做，进入老师的工作。','小林想约今天 16:30，带上数学随堂练习第 3 题。');
+move('appointment-before',{x:650,y:1510,scale:1.6,rotation:5},request,.2,1.2,'back.out(1.18)');
+// The same request keeps its place while its verified reply state appears.
+move('appointment',{...request},request,0,.01);
+tl.set('#appointment',{autoAlpha:0},0);
+copy(7,'确认时间，也接住问题。','原始请求与老师回复，保留在一起。','真实记录：老师确认 16:30 到办公室，带上对应练习。');
+tl.to('#appointment-before',{autoAlpha:0,duration:.24,ease:'power1.in'},7);
+tl.fromTo('#appointment',{autoAlpha:0,y:425},{autoAlpha:1,y:410,duration:.55,ease:'back.out(1.35)',immediateRender:false},7.12);
+copy(13,'老师的安排，教室收得到。','同一条回复，在两端接续。','教师端确认预约 → 教室端收到回信。');
+const teacherLeft={x:200,y:440,scale:1.35,rotation:-2};
+const classroomRight={x:1330,y:540,scale:1.45,rotation:0};
+move('appointment',request,teacherLeft,13,1.05);
+const arrival=window.MochiPaper.transfer(tl,{stage,source:document.querySelector('#native-appointment'),at:13.15,from:{x:760,y:690},to:{x:1640,y:650}});
+move('appointment-reply',{x:1570,y:620,scale:.35,rotationY:-65,rotation:8},{...classroomRight,rotationY:0},arrival,.9,'back.out(1.15)');
+tl.fromTo('#appointment-reply',{autoAlpha:0},{autoAlpha:1,duration:.35,immediateRender:false},arrival);
+copy(19,'每一种诉求，都有去向。','提问与补做，也保留各自的处理状态。','小陈的问题尚未回复，小周的补做申请仍待处理。');
+move('appointment',teacherLeft,{x:-1100,y:400,scale:1.1,rotation:-5},19);
+move('appointment-reply',classroomRight,{x:2700,y:500,scale:1.15,rotation:5},19);
+const question={x:245,y:460,scale:1.4,rotation:-2},makeup={x:1370,y:600,scale:1.35,rotation:2};
+move('question',{x:245,y:1550,scale:1.3,rotation:-5},question,19.12,1.05,'back.out(1.15)');
+move('makeup',{x:1370,y:1650,scale:1.2,rotation:5},makeup,19.3,1.05,'back.out(1.15)');
+copy(24,'需要找同学？','把时间、地点、要带的材料，一次说明白。','小陈：第二节课后到教师办公室，带英语阅读练习第 2 题。','left');
+move('question',question,{x:-1200,y:350,scale:.8,rotation:-7},24);
+move('makeup',makeup,{x:1500,y:-1100,scale:.8,rotation:7},24);
+const callPosition={x:1110,y:275,scale:1.35,rotation:0};
+move('call-received',{x:2850,y:275,scale:1.15,rotation:4},callPosition,24.15,1.15,'back.out(1.2)');
+function pointIn(cardId,selector,x,y,scale){const c=document.querySelector(cardId).getBoundingClientRect(),b=document.querySelector(selector).getBoundingClientRect();return{x:x+(b.x-c.x+b.width*.72)*scale,y:y+(b.y-c.y+b.height*.55)*scale}}
+const readPoint=pointIn('#call-received','#native-call-new button',1110,275,1.35);
+const confirmPoint=pointIn('#call-confirm','#native-call-confirm button',150,600,1.15);
+M.movePointer(tl,pointer,{x:readPoint.x+220,y:readPoint.y+90},readPoint,28.3,.7);M.click(tl,pointer,readPoint,29.1);
+tl.fromTo('#call-confirm',{y:635,scale:1.1,autoAlpha:0},{y:600,scale:1.15,autoAlpha:1,duration:.55,ease:'back.out(1.2)',immediateRender:false},29.25);
+M.movePointer(tl,pointer,readPoint,confirmPoint,30.35,.65);M.click(tl,pointer,confirmPoint,31.2);
+tl.to('#call-confirm',{autoAlpha:0,y:565,duration:.35,ease:'power2.in'},31.45);
+tl.to(pointer.cursor,{opacity:0,duration:.2},31.7);
+// Reuse the product's paper tear geometry with deterministic GSAP instead of live WAAPI time.
+const original=document.querySelector('#native-call-new');
+for(let side=0;side<2;side++){
+  const piece=original.cloneNode(true);piece.removeAttribute('id');piece.classList.add('paper-piece');
+  piece.querySelectorAll('[id]').forEach(node=>node.removeAttribute('id'));
+  const edge=Array.from({length:21},(_,i)=>`${i*5}% ${i%2?51:49}%`);
+  piece.style.clipPath=`polygon(${side?edge.join(',')+',100% 100%,0 100%':'0 0,100% 0,'+edge.reverse().join(',')})`;
+  original.parentElement.append(piece);tl.set(piece,{autoAlpha:0},0);
+  tl.fromTo(piece,{x:0,y:0,rotation:0,autoAlpha:1},{x:side?32:-24,y:side?60:-18,rotation:side?7:-5,autoAlpha:0,duration:.42,ease:'power2.out',immediateRender:false},32.2);
+}
+tl.set(original,{autoAlpha:0},32.2);tl.fromTo('#native-call-received',{y:18,autoAlpha:0},{y:0,autoAlpha:1,duration:.55,ease:'power3.out',immediateRender:false},32.65);
+
+copy(36,'送达之后，还有回应。','接收与已读，两种状态分得清。','教室确认已读，教师端收到对应回执。','left');
+const receivedLeft={x:160,y:600,scale:.62,rotation:-3};
+const receiptRight={x:1080,y:335,scale:1.45,rotation:0};
+move('call-received',callPosition,receivedLeft,36,1.1);
+const receiptArrival=window.MochiPaper.transfer(tl,{stage,source:document.querySelector('#native-call-received'),at:36.15,from:{x:480,y:815},to:{x:1580,y:650},duration:1.05,form:'envelope'});
+move('call-sent',{x:1540,y:580,scale:.35,rotationX:-65,rotation:5},{...receiptRight,rotationX:0},receiptArrival,1.0,'back.out(1.12)');
+tl.fromTo('#call-sent',{autoAlpha:0},{autoAlpha:1,duration:.35,immediateRender:false},receiptArrival);
+copy(43,'把事情，接到需要它的人那里。','从教室，连接整个校园。','预约、问题、通知与回执，都有来处，也有去向。');
+move('call-received',receivedLeft,{x:-900,y:650,scale:.62,rotation:-8},43,1.1);
+move('call-sent',receiptRight,{x:1500,y:510,scale:1,rotation:3},43,1.2);
+move('appointment',{x:-1100,y:400,scale:1.1,rotation:-5},{x:170,y:485,scale:1.05,rotation:-4},43.1,1.2,'back.out(1.1)');
+move('appointment-reply',{x:2700,y:500,scale:1.15,rotation:5},{x:840,y:830,scale:1,rotation:1},43.25,1.25,'back.out(1.1)');
+tl.to({clock:0},{clock:50,duration:50,ease:'none'},0);window.seekFilm=t=>tl.seek(t);
+</script><script>/* Film-only additive camera rig. Product DOM, video rate and source data stay intact. */
+window.MochiPacing={apply(config){
+ const stage=document.querySelector('#film'),tl=Object.values(window.__timelines)[0];
+ const rig=document.createElement('div');rig.id='editorial-camera';
+ Object.assign(rig.style,{position:'absolute',inset:'0',transformOrigin:'0 0',pointerEvents:'none'});
+ const elements=[...new Set(config.targets.flatMap(s=>[...stage.querySelectorAll(s)]))];
+ stage.insertBefore(rig,elements[0]);elements.forEach(e=>rig.append(e));
+ const captions=document.createElement('div');
+ Object.assign(captions.style,{position:'absolute',inset:'0',pointerEvents:'none'});
+ const captionNodes=[...stage.children].filter(e=>e.matches('.copy,.copy-group,.headline,h1,h2,#hint,#arrival,#colors-sub'));
+ stage.append(captions);captionNodes.forEach(e=>captions.append(e));
+ const neutral={scale:1,x:0,y:0};
+ function move(at,duration,pose){tl.to(rig,{...pose,duration,ease:'power2.inOut'},at)}
+ const report=[];
+ for(const [start,end,targets,purpose]of config.windows){
+  const poses=targets.map(([scale,cx,cy])=>({scale,x:1280-cx*scale,y:720-cy*scale}));
+  const steps=[...poses,neutral],step=(end-start)/steps.length;
+  // Each stop lasts <=1.2 s. The remainder is a smooth, purposeful camera move.
+  const travel=Math.max(.55,step-1.2);
+  steps.forEach((pose,i)=>move(start+i*step,Math.min(travel,step),pose));
+  // The editorial headline clears the close-up instead of covering native fields.
+  tl.to(captions,{opacity:0,duration:.25},start);
+  tl.to(captions,{opacity:1,duration:.25},end-.25);
+  report.push({start,end,purpose,maxDesignedHold:Math.max(0,step-travel),targets});
+ }
+ // Small perspective paper fields, behind the UI. They move through space, not over text.
+ const field=document.createElement('div');field.id='editorial-paper-field';
+ Object.assign(field.style,{position:'absolute',inset:'0',overflow:'hidden',pointerEvents:'none',perspective:'2200px'});
+ stage.insertBefore(field,stage.firstChild);
+ const colors=['#dbe5cd','#efe0c4','#d6e5df'];
+ for(let i=0;i<3;i++){
+  const paper=document.createElement('div');
+  Object.assign(paper.style,{position:'absolute',width:'820px',height:'1140px',left:(i===1?2160:-650)+'px',top:(i*470-540)+'px',background:colors[i],opacity:'.68',boxShadow:'30px 40px 0 #fffaf550',transformOrigin:'50% 50%'});
+  field.append(paper);tl.set(paper,{rotation:i%2?17:-24,rotationY:i%2?-24:21},0);
+  for(const [k,w]of config.windows.entries())tl.to(paper,{x:(k%2?1:-1)*(110+i*25),y:((k+i)%3-1)*150,rotation:(k%2?1:-1)*(16+i*3),duration:1.1,ease:'power2.inOut'},w[0]+i*.07);
+ }
+ // Endpoint identity is required by the already-rendered inter-chapter bridges.
+ const duration=Number(stage.dataset.duration||tl.duration());
+ tl.fromTo(field,{opacity:0},{opacity:1,duration:.5,immediateRender:false},1.25);
+ tl.to(field,{opacity:0,duration:.4},duration-1.8);
+ if(config.id==='model'){
+  // The model remains the original iframe with its existing deterministic interaction clock.
+  const moves=[
+   [10.5,1.05,{x:65,y:190,scale:1.68}],
+   [12.65,.85,{x:220,y:220,scale:1.48}],
+   [14.65,.8,{x:90,y:180,scale:1.62}],
+   [16.65,.85,{x:130,y:155,scale:1.5}],
+   [18.7,.85,{x:240,y:155,scale:1.45}],
+   [20.65,.9,{x:-400,y:165,scale:1.7}],
+   [22.55,.55,{x:272,y:230,scale:1.4}],
+  ];
+  // The native model clock seeks this GSAP camera before calculating screen cursor positions.
+  // This also works when the renderer suppresses timeline callbacks during random-access seeks.
+  const camera=gsap.timeline({paused:true});let previous={x:272,y:230,scale:1.4};
+  moves.forEach(([at,duration,pose])=>{camera.fromTo('#model',previous,{...pose,duration,ease:'power2.inOut',immediateRender:false},at);previous=pose});
+  window.updateMochiModelCamera=t=>{if(t>=10.5&&t<23.15)camera.seek(t)};
+  kinetic('拖动，一个切点。',11.9,14.5,'left');
+  kinetic('看见，几何关系。',14.6,17.15,'right');
+  kinetic('改变参数，继续探索。',17.2,20.35,'left');
+  kinetic('再展开，为什么。',20.4,22.8,'right');
+ }
+ function kinetic(text,start,end,align){
+  const el=document.createElement('div');el.className='pacing-type';
+  Object.assign(el.style,{position:'absolute',left:align==='left'?'180px':'auto',right:align==='right'?'160px':'auto',top:'28px',height:'95px',font:'700 68px/1.15 MoSans',letterSpacing:'-3px',overflow:'hidden',whiteSpace:'nowrap',pointerEvents:'none',opacity:'0'});
+  for(const char of text){const span=document.createElement('span');span.className='glyph';span.textContent=char;span.style.display='inline-block';el.append(span)}
+  stage.append(el);tl.set(el,{opacity:1},start);
+  tl.fromTo(el.children,{y:100,rotation:8,opacity:0},{y:0,rotation:0,opacity:1,stagger:.022,duration:.55,ease:'power3.out',immediateRender:false},start);
+  tl.to(el,{x:align==='left'?80:-80,duration:.65,ease:'power2.inOut'},end-1.15);
+  tl.to(el.children,{y:-110,rotation:-5,opacity:0,stagger:.016,duration:.35,ease:'power2.in'},end-.4);
+ }
+ window.pacingEvidence={chapter:config.id,windows:report,playbackRate:1};
+}};
+
+MochiPacing.apply({"id":"students","source":"student-chapter","targets":[".card"],"windows":[[1.65,6.8,[[1.24,1270,640],[1.24,1260,875]],"预约：谁、何时、带什么"],[8.05,12.8,[[1.21,1260,670],[1.24,1270,920]],"请求到老师确认"],[16.45,18.8,[[1.2,1790,820]],"教室收到回信"],[20.65,23.8,[[1.16,710,770],[1.17,1780,850]],"提问和补做两种状态"],[25.55,28.1,[[1.22,1720,720]],"叫人：时间、地点、材料"],[33.4,35.8,[[1.18,1700,725]],"已看到状态"],[39.1,42.8,[[1.22,1730,760],[1.12,1140,820]],"回执内容与两端关系"],[44.6,48.65,[[1.17,660,780],[1.16,1770,800]],"预约到通知，连接同一校园"]]});</script></body></html>

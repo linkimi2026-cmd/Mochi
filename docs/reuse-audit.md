@@ -675,3 +675,8 @@ Promptfoo实际接入结果：临时安装0.123.0，常规安装解析可选依�
 部分采用：延续现有HyperFrames0.8.36/Apache-2.0、GSAP3.15.0及本仓paper-transfer机制，不安装新框架，不改变依赖。框架用于确定性120fps渲染、GSAP用于层次空间/遮罩/时间轴，原组件继续提供Mo和真实界面。参考桌面K2.6约32–36秒、K3约23–27秒的实际抽帧，迁移局部→成果群→新主体的镜头逻辑；Github示例与桌面原片分开记录。无需重写基础动画引擎。来源、事实、推测和验证边界见promo/v11/motion-pass/reference-study.md。
 
 六个转场分别采用横移、成果群推进、折纸/圆形视窗、原信箱折为信封、对话视窗聚焦、上下翻页；保持原功能段与时长，保留已有叮咚投递。背景真实课件只用于相关章节，顶部渐隐保障阅读。维护代价为一个独立编舞构建器、原媒体起止点与音轨重新映射；产品源码不变。render/build旧入口仍保留，第六版需在旧build之后运行bridge-scenes.mjs，避免被旧模板覆盖。
+
+
+#### V11 第七版：完整动画生态与信息停留复核
+
+2026-10-03。先检索完整框架/发布片，后查转场组件；实际搜索、GitHub SHA、源码/许可证/维护/依赖兼容性与采用理由完整记录于 `promo/v11/motion-pass/reuse-comparison-v7.md`。确认 HyperFrames launches、Remotion、transitions-video、Motion Canvas、Motion 五个真实仓库；所有查询成功。Remotion 自有许可，Motion/Motion Canvas 为 MIT，HyperFrames 示例 Apache-2.0 不包含第三方媒体授权。保持现有固定 HyperFrames/GSAP，部分采用连续空间和动态字形编排，不另迁移引擎或修改真实 UI。新编舞隔离在 promo，正常操作不任意倍速；静止阅读焦点上限 1.5 秒，背景缓动不充当内容推进。原片软件来源未验证，艺术验收不得由编码检查代替。

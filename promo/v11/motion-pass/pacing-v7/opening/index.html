@@ -1,0 +1,114 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><title>Mochi · 真实首页与场景预设</title>
+<script src="assets/gsap.min.js"></script><script src="assets/motion.js"></script><link rel="stylesheet" href="assets/motion.css">
+<style>
+@font-face{font-family:MoSans;src:url('assets/NotoSansCJKsc-Regular.otf')}@font-face{font-family:MoSans;src:url('assets/NotoSansCJKsc-Bold.otf');font-weight:700 900}@font-face{font-family:MoSerif;src:url('assets/NotoSerifCJKsc-SemiBold.otf')}
+*{box-sizing:border-box}body{margin:0;color:#263e35;font-family:MoSans}#film{width:2560px;height:1440px;position:relative;overflow:hidden;background:#f5f1e8}
+.camera{position:absolute;left:0;top:0;width:2160px;height:1376px;transform-origin:0 0}
+.camera video{position:absolute;inset:0;width:2160px;height:1376px;display:block;clip-path:inset(0 18px 28px 0)}
+#home-camera{transform:translate(-100px,-240px) scale(1.3)}#scene-camera{transform:translate(-250px,-490px) scale(1.1)}#example-camera{transform:translate(-160px,-200px) scale(1.25)}
+.copy{position:absolute;pointer-events:none;opacity:0;z-index:20}.glyph{display:inline-block;opacity:0}.copy p{opacity:0}h1,h2,p{margin:0}#greeting-copy{left:160px;top:92px}#greeting-copy h1{font:900 128px/1.1 MoSans;letter-spacing:-7px}#greeting-copy p{font:38px/1.5 MoSerif;margin-top:22px}
+#scene-copy{left:1440px;top:875px;width:1020px}#scene-copy h2{font:900 82px/1.3 MoSans;letter-spacing:-4px}#scene-copy p{font:34px/1.75 MoSans;margin-top:36px;max-width:950px}
+#example-copy{left:260px;top:1290px}#example-copy h2{font:700 50px/1.4 MoSans;letter-spacing:-1px}
+#source-note{position:absolute;left:80px;bottom:30px;font:23px MoSans;color:#536354}#light{position:absolute;inset:0;pointer-events:none;opacity:0;background:#f5f1e8}
+</style></head><body><main id="film" data-composition-id="mochi-opening" data-width="2560" data-height="1440" data-duration="18" data-fps="120">
+<div id="home-camera" class="camera" data-layout-allow-overflow><video id="home-video" class="clip" src="assets/home.mp4" muted playsinline data-start="0" data-duration="4" data-track-index="1"></video></div>
+<div id="scene-camera" class="camera" data-layout-allow-overflow><video id="scene-video" class="clip" src="assets/scenes.mp4" muted playsinline data-start="4" data-duration="6" data-track-index="1"></video></div>
+<div id="example-camera" class="camera" data-layout-allow-overflow><video id="example-video" class="clip" src="assets/examples.mp4" muted playsinline data-start="10" data-duration="8" data-track-index="1"></video></div>
+<section id="greeting-copy" class="copy"><h1>Mochi</h1><p>一声问候，一个开始。</p></section>
+<section id="scene-copy" class="copy"><h2>常用能力，<br>随手就绪。</h2><p>预置场景与 Agent 配置<br>备课、资料、成绩、班级协作</p></section>
+<section id="example-copy" class="copy"><h2>从一个示例开始，再写成你的想法。</h2></section>
+<div id="source-note">真实 Mochi 窗口录制 · 节日演示日期：10 月 1 日</div><div id="light"></div>
+<audio id="opening-music" src="assets/music-review.wav" data-start="0" data-duration="18" data-track-index="9"></audio></main><script>
+const tl=gsap.timeline({paused:true});window.__timelines={'mochi-opening':tl};const M=window.MochiMotion,p=M.createCursor(document.querySelector('#film'));
+function headline(id,at,out){const el=document.querySelector(id),h=el.querySelector('h1,h2');for(const node of [...h.childNodes]){if(node.nodeType!==3)continue;const f=document.createDocumentFragment();for(const letter of node.textContent){const span=document.createElement('span');span.className='glyph';span.textContent=letter;f.append(span)}node.replaceWith(f)}
+tl.set(el,{opacity:1},at);tl.fromTo(el.querySelectorAll('.glyph'),{y:55,rotation:2,opacity:0},{y:0,rotation:0,opacity:1,stagger:.025,duration:.62,ease:'back.out(1.15)',immediateRender:false},at);const paragraphs=el.querySelectorAll('p');if(paragraphs.length)tl.fromTo(paragraphs,{y:25,opacity:0},{y:0,opacity:1,duration:.55,immediateRender:false},at+.7);tl.to(el,{y:-65,opacity:0,duration:.45,ease:'power2.in'},out)}
+headline('#greeting-copy',.1,2.6);headline('#scene-copy',5.3,9.35);headline('#example-copy',10.6,17.35);
+M.place(tl,'#home-camera',{x:-100,y:-240,scale:1.3},{x:-250,y:-490,scale:1.1},2.8,1.2);
+M.place(tl,'#scene-camera',{x:-250,y:-490,scale:1.1},{x:-580,y:-800,scale:1.5},4.7,1.1);
+// The cursor stays in screen coordinates. Its position follows the camera algebra,
+// while its 48 × 60 pixel shape never receives the camera scale.
+M.movePointer(tl,p,{x:2100,y:1070},{x:560,y:235},3.15,.7);M.click(tl,p,{x:560,y:235},4.75);
+M.movePointer(tl,p,{x:560,y:235},{x:725,y:350},4.85,.8);tl.to(p.cursor,{opacity:0,duration:.2},5.85);
+// A brief exposure bridge marks the editorial cut between two actual presets.
+tl.fromTo('#light',{opacity:0},{opacity:1,duration:.18,immediateRender:false},9.82);tl.to('#light',{opacity:0,duration:.3},10);
+M.movePointer(tl,p,{x:1580,y:1030},{x:500,y:715},10.05,.4);M.click(tl,p,{x:500,y:715},10.42);
+M.movePointer(tl,p,{x:500,y:715},{x:860,y:750},11.1,.65);tl.to(p.cursor,{opacity:0,duration:.2},12);
+// Waiting from source 47–56 s is removed; the selection itself remains at normal speed.
+M.movePointer(tl,p,{x:1440,y:930},{x:710,y:750},16.0,.55);M.click(tl,p,{x:710,y:750},16.65);
+M.movePointer(tl,p,{x:710,y:750},{x:2250,y:1130},16.95,.65);tl.to(p.cursor,{opacity:0,duration:.2},17.6);
+M.place(tl,'#example-camera',{x:-160,y:-200,scale:1.25},{x:-250,y:-360,scale:1.45},17.05,.95);
+tl.to('#source-note',{opacity:0,duration:.2},9.8);tl.to({}, {duration:.01},17.99);
+</script><script>/* Film-only additive camera rig. Product DOM, video rate and source data stay intact. */
+window.MochiPacing={apply(config){
+ const stage=document.querySelector('#film'),tl=Object.values(window.__timelines)[0];
+ const rig=document.createElement('div');rig.id='editorial-camera';
+ Object.assign(rig.style,{position:'absolute',inset:'0',transformOrigin:'0 0',pointerEvents:'none'});
+ const elements=[...new Set(config.targets.flatMap(s=>[...stage.querySelectorAll(s)]))];
+ stage.insertBefore(rig,elements[0]);elements.forEach(e=>rig.append(e));
+ const captions=document.createElement('div');
+ Object.assign(captions.style,{position:'absolute',inset:'0',pointerEvents:'none'});
+ const captionNodes=[...stage.children].filter(e=>e.matches('.copy,.copy-group,.headline,h1,h2,#hint,#arrival,#colors-sub'));
+ stage.append(captions);captionNodes.forEach(e=>captions.append(e));
+ const neutral={scale:1,x:0,y:0};
+ function move(at,duration,pose){tl.to(rig,{...pose,duration,ease:'power2.inOut'},at)}
+ const report=[];
+ for(const [start,end,targets,purpose]of config.windows){
+  const poses=targets.map(([scale,cx,cy])=>({scale,x:1280-cx*scale,y:720-cy*scale}));
+  const steps=[...poses,neutral],step=(end-start)/steps.length;
+  // Each stop lasts <=1.2 s. The remainder is a smooth, purposeful camera move.
+  const travel=Math.max(.55,step-1.2);
+  steps.forEach((pose,i)=>move(start+i*step,Math.min(travel,step),pose));
+  // The editorial headline clears the close-up instead of covering native fields.
+  tl.to(captions,{opacity:0,duration:.25},start);
+  tl.to(captions,{opacity:1,duration:.25},end-.25);
+  report.push({start,end,purpose,maxDesignedHold:Math.max(0,step-travel),targets});
+ }
+ // Small perspective paper fields, behind the UI. They move through space, not over text.
+ const field=document.createElement('div');field.id='editorial-paper-field';
+ Object.assign(field.style,{position:'absolute',inset:'0',overflow:'hidden',pointerEvents:'none',perspective:'2200px'});
+ stage.insertBefore(field,stage.firstChild);
+ const colors=['#dbe5cd','#efe0c4','#d6e5df'];
+ for(let i=0;i<3;i++){
+  const paper=document.createElement('div');
+  Object.assign(paper.style,{position:'absolute',width:'820px',height:'1140px',left:(i===1?2160:-650)+'px',top:(i*470-540)+'px',background:colors[i],opacity:'.68',boxShadow:'30px 40px 0 #fffaf550',transformOrigin:'50% 50%'});
+  field.append(paper);tl.set(paper,{rotation:i%2?17:-24,rotationY:i%2?-24:21},0);
+  for(const [k,w]of config.windows.entries())tl.to(paper,{x:(k%2?1:-1)*(110+i*25),y:((k+i)%3-1)*150,rotation:(k%2?1:-1)*(16+i*3),duration:1.1,ease:'power2.inOut'},w[0]+i*.07);
+ }
+ // Endpoint identity is required by the already-rendered inter-chapter bridges.
+ const duration=Number(stage.dataset.duration||tl.duration());
+ tl.fromTo(field,{opacity:0},{opacity:1,duration:.5,immediateRender:false},1.25);
+ tl.to(field,{opacity:0,duration:.4},duration-1.8);
+ if(config.id==='model'){
+  // The model remains the original iframe with its existing deterministic interaction clock.
+  const moves=[
+   [10.5,1.05,{x:65,y:190,scale:1.68}],
+   [12.65,.85,{x:220,y:220,scale:1.48}],
+   [14.65,.8,{x:90,y:180,scale:1.62}],
+   [16.65,.85,{x:130,y:155,scale:1.5}],
+   [18.7,.85,{x:240,y:155,scale:1.45}],
+   [20.65,.9,{x:-400,y:165,scale:1.7}],
+   [22.55,.55,{x:272,y:230,scale:1.4}],
+  ];
+  // The native model clock seeks this GSAP camera before calculating screen cursor positions.
+  // This also works when the renderer suppresses timeline callbacks during random-access seeks.
+  const camera=gsap.timeline({paused:true});let previous={x:272,y:230,scale:1.4};
+  moves.forEach(([at,duration,pose])=>{camera.fromTo('#model',previous,{...pose,duration,ease:'power2.inOut',immediateRender:false},at);previous=pose});
+  window.updateMochiModelCamera=t=>{if(t>=10.5&&t<23.15)camera.seek(t)};
+  kinetic('拖动，一个切点。',11.9,14.5,'left');
+  kinetic('看见，几何关系。',14.6,17.15,'right');
+  kinetic('改变参数，继续探索。',17.2,20.35,'left');
+  kinetic('再展开，为什么。',20.4,22.8,'right');
+ }
+ function kinetic(text,start,end,align){
+  const el=document.createElement('div');el.className='pacing-type';
+  Object.assign(el.style,{position:'absolute',left:align==='left'?'180px':'auto',right:align==='right'?'160px':'auto',top:'28px',height:'95px',font:'700 68px/1.15 MoSans',letterSpacing:'-3px',overflow:'hidden',whiteSpace:'nowrap',pointerEvents:'none',opacity:'0'});
+  for(const char of text){const span=document.createElement('span');span.className='glyph';span.textContent=char;span.style.display='inline-block';el.append(span)}
+  stage.append(el);tl.set(el,{opacity:1},start);
+  tl.fromTo(el.children,{y:100,rotation:8,opacity:0},{y:0,rotation:0,opacity:1,stagger:.022,duration:.55,ease:'power3.out',immediateRender:false},start);
+  tl.to(el,{x:align==='left'?80:-80,duration:.65,ease:'power2.inOut'},end-1.15);
+  tl.to(el.children,{y:-110,rotation:-5,opacity:0,stagger:.016,duration:.35,ease:'power2.in'},end-.4);
+ }
+ window.pacingEvidence={chapter:config.id,windows:report,playbackRate:1};
+}};
+
+MochiPacing.apply({"id":"opening","source":"opening-chapter","targets":["#home-camera","#scene-camera","#example-camera",".film-pointer-layer"],"windows":[[6.2,9.2,[[1.18,890,560],[1.2,960,710]],"场景预设：入口到示例"],[12.2,15.8,[[1.18,1220,630],[1.22,1230,910]],"需求示例：列表到输入框"],[1.15,3.25,[[1.15,1240,590]],"首页问候进入工作入口"]]});</script></body></html>

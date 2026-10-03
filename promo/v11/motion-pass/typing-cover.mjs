@@ -11,7 +11,10 @@ const cues=[];
 try{
  const page=await browser.newPage();await page.setViewport({width:2560,height:1440});
  // Source offsets follow the actual compound clip edits, not approximate chapter durations.
- const sources=[['../greeting-chapter',0,0,4],['../opening-chapter',0,4,18],['../team-dialogue',1,0,23.35],['../teaching-chapter',2,0,22],['../delivery-chapter',2,22,16],['../model-chapter',3,0,26.8],['../mailbox-chapter',4,0,18],['../student-chapter',5,0,50],['native-query',6,0,30],['../collaboration-chapter',6,30,30],['../master-preview/supplement',7,-36,92],...[0,1,2,4,5,6].map(i=>['bridges/'+i,8+i,0,chapters[8+i].duration])];
+ const sourceChapters=timeline.edition===7?
+ [['../greeting-chapter',0,0,4],['pacing-v7/opening',0,4,18],['pacing-v7/team',1,0,23.35],['pacing-v7/teaching',2,0,25],['pacing-v7/delivery',2,22,16],['pacing-v7/model',3,0,26.8],['pacing-v7/mailbox',4,0,18],['pacing-v7/students',5,0,50],['pacing-v7/query',6,0,30],['pacing-v7/collaboration',6,30,30],['pacing-v7/daily',7,0,48],['pacing-v7/ending',7,47.4,8]]:
+ [['../greeting-chapter',0,0,4],['../opening-chapter',0,4,18],['../team-dialogue',1,0,23.35],['../teaching-chapter',2,0,22],['../delivery-chapter',2,22,16],['../model-chapter',3,0,26.8],['../mailbox-chapter',4,0,18],['../student-chapter',5,0,50],['native-query',6,0,30],['../collaboration-chapter',6,30,30],['../master-preview/supplement',7,-36,92]];
+ const sources=[...sourceChapters,...[0,1,2,4,5,6].map(i=>['bridges/'+i,8+i,0,chapters[8+i].duration])];
  for(const [folder,index,offset,length] of sources){
   const file=resolve(root,folder,'index.html');
   await page.goto(pathToFileURL(file).href,{waitUntil:'load',timeout:30000});

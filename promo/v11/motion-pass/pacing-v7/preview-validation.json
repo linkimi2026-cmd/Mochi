@@ -1,0 +1,3132 @@
+[
+  {
+    "id": "opening",
+    "time": 7.699999999999999,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": {
+      "chapter": "opening",
+      "windows": [
+        {
+          "start": 6.2,
+          "end": 9.2,
+          "purpose": "场景预设：入口到示例",
+          "maxDesignedHold": 0.4499999999999996,
+          "targets": [
+            [
+              1.18,
+              890,
+              560
+            ],
+            [
+              1.2,
+              960,
+              710
+            ]
+          ]
+        },
+        {
+          "start": 12.2,
+          "end": 15.8,
+          "purpose": "需求示例：列表到输入框",
+          "maxDesignedHold": 0.6500000000000004,
+          "targets": [
+            [
+              1.18,
+              1220,
+              630
+            ],
+            [
+              1.22,
+              1230,
+              910
+            ]
+          ]
+        },
+        {
+          "start": 1.15,
+          "end": 3.25,
+          "purpose": "首页问候进入工作入口",
+          "maxDesignedHold": 0.5,
+          "targets": [
+            [
+              1.15,
+              1240,
+              590
+            ]
+          ]
+        }
+      ],
+      "playbackRate": 1
+    },
+    "errors": []
+  },
+  {
+    "id": "opening",
+    "time": 14,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": {
+      "chapter": "opening",
+      "windows": [
+        {
+          "start": 6.2,
+          "end": 9.2,
+          "purpose": "场景预设：入口到示例",
+          "maxDesignedHold": 0.4499999999999996,
+          "targets": [
+            [
+              1.18,
+              890,
+              560
+            ],
+            [
+              1.2,
+              960,
+              710
+            ]
+          ]
+        },
+        {
+          "start": 12.2,
+          "end": 15.8,
+          "purpose": "需求示例：列表到输入框",
+          "maxDesignedHold": 0.6500000000000004,
+          "targets": [
+            [
+              1.18,
+              1220,
+              630
+            ],
+            [
+              1.22,
+              1230,
+              910
+            ]
+          ]
+        },
+        {
+          "start": 1.15,
+          "end": 3.25,
+          "purpose": "首页问候进入工作入口",
+          "maxDesignedHold": 0.5,
+          "targets": [
+            [
+              1.15,
+              1240,
+              590
+            ]
+          ]
+        }
+      ],
+      "playbackRate": 1
+    },
+    "errors": []
+  },
+  {
+    "id": "opening",
+    "time": 2.2,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": {
+      "chapter": "opening",
+      "windows": [
+        {
+          "start": 6.2,
+          "end": 9.2,
+          "purpose": "场景预设：入口到示例",
+          "maxDesignedHold": 0.4499999999999996,
+          "targets": [
+            [
+              1.18,
+              890,
+              560
+            ],
+            [
+              1.2,
+              960,
+              710
+            ]
+          ]
+        },
+        {
+          "start": 12.2,
+          "end": 15.8,
+          "purpose": "需求示例：列表到输入框",
+          "maxDesignedHold": 0.6500000000000004,
+          "targets": [
+            [
+              1.18,
+              1220,
+              630
+            ],
+            [
+              1.22,
+              1230,
+              910
+            ]
+          ]
+        },
+        {
+          "start": 1.15,
+          "end": 3.25,
+          "purpose": "首页问候进入工作入口",
+          "maxDesignedHold": 0.5,
+          "targets": [
+            [
+              1.15,
+              1240,
+              590
+            ]
+          ]
+        }
+      ],
+      "playbackRate": 1
+    },
+    "errors": []
+  },
+  {
+    "id": "team",
+    "time": 2.7,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": {
+      "chapter": "team",
+      "windows": [
+        {
+          "start": 1.4,
+          "end": 4,
+          "purpose": "Agent 角色名单",
+          "maxDesignedHold": 0.75,
+          "targets": [
+            [
+              1.2,
+              1170,
+              910
+            ]
+          ]
+        },
+        {
+          "start": 7,
+          "end": 8.4,
+          "purpose": "教案内容",
+          "maxDesignedHold": 0.15000000000000013,
+          "targets": [
+            [
+              1.12,
+              810,
+              710
+            ]
+          ]
+        },
+        {
+          "start": 15.6,
+          "end": 18.05,
+          "purpose": "课件成员回应",
+          "maxDesignedHold": 0.6750000000000005,
+          "targets": [
+            [
+              1.25,
+              1730,
+              720
+            ]
+          ]
+        },
+        {
+          "start": 20.55,
+          "end": 23.1,
+          "purpose": "四种原生配色",
+          "maxDesignedHold": 0.30000000000000016,
+          "targets": [
+            [
+              1.15,
+              1100,
+              780
+            ],
+            [
+              1.15,
+              1450,
+              780
+            ]
+          ]
+        },
+        {
+          "start": 13.1,
+          "end": 15.55,
+          "purpose": "课件会话的操作落点",
+          "maxDesignedHold": 0.6750000000000005,
+          "targets": [
+            [
+              1.16,
+              1620,
+              730
+            ]
+          ]
+        }
+      ],
+      "playbackRate": 1
+    },
+    "errors": []
+  },
+  {
+    "id": "team",
+    "time": 7.7,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": {
+      "chapter": "team",
+      "windows": [
+        {
+          "start": 1.4,
+          "end": 4,
+          "purpose": "Agent 角色名单",
+          "maxDesignedHold": 0.75,
+          "targets": [
+            [
+              1.2,
+              1170,
+              910
+            ]
+          ]
+        },
+        {
+          "start": 7,
+          "end": 8.4,
+          "purpose": "教案内容",
+          "maxDesignedHold": 0.15000000000000013,
+          "targets": [
+            [
+              1.12,
+              810,
+              710
+            ]
+          ]
+        },
+        {
+          "start": 15.6,
+          "end": 18.05,
+          "purpose": "课件成员回应",
+          "maxDesignedHold": 0.6750000000000005,
+          "targets": [
+            [
+              1.25,
+              1730,
+              720
+            ]
+          ]
+        },
+        {
+          "start": 20.55,
+          "end": 23.1,
+          "purpose": "四种原生配色",
+          "maxDesignedHold": 0.30000000000000016,
+          "targets": [
+            [
+              1.15,
+              1100,
+              780
+            ],
+            [
+              1.15,
+              1450,
+              780
+            ]
+          ]
+        },
+        {
+          "start": 13.1,
+          "end": 15.55,
+          "purpose": "课件会话的操作落点",
+          "maxDesignedHold": 0.6750000000000005,
+          "targets": [
+            [
+              1.16,
+              1620,
+              730
+            ]
+          ]
+        }
+      ],
+      "playbackRate": 1
+    },
+    "errors": []
+  },
+  {
+    "id": "team",
+    "time": 16.825,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": {
+      "chapter": "team",
+      "windows": [
+        {
+          "start": 1.4,
+          "end": 4,
+          "purpose": "Agent 角色名单",
+          "maxDesignedHold": 0.75,
+          "targets": [
+            [
+              1.2,
+              1170,
+              910
+            ]
+          ]
+        },
+        {
+          "start": 7,
+          "end": 8.4,
+          "purpose": "教案内容",
+          "maxDesignedHold": 0.15000000000000013,
+          "targets": [
+            [
+              1.12,
+              810,
+              710
+            ]
+          ]
+        },
+        {
+          "start": 15.6,
+          "end": 18.05,
+          "purpose": "课件成员回应",
+          "maxDesignedHold": 0.6750000000000005,
+          "targets": [
+            [
+              1.25,
+              1730,
+              720
+            ]
+          ]
+        },
+        {
+          "start": 20.55,
+          "end": 23.1,
+          "purpose": "四种原生配色",
+          "maxDesignedHold": 0.30000000000000016,
+          "targets": [
+            [
+              1.15,
+              1100,
+              780
+            ],
+            [
+              1.15,
+              1450,
+              780
+            ]
+          ]
+        },
+        {
+          "start": 13.1,
+          "end": 15.55,
+          "purpose": "课件会话的操作落点",
+          "maxDesignedHold": 0.6750000000000005,
+          "targets": [
+            [
+              1.16,
+              1620,
+              730
+            ]
+          ]
+        }
+      ],
+      "playbackRate": 1
+    },
+    "errors": []
+  },
+  {
+    "id": "team",
+    "time": 21.825000000000003,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": {
+      "chapter": "team",
+      "windows": [
+        {
+          "start": 1.4,
+          "end": 4,
+          "purpose": "Agent 角色名单",
+          "maxDesignedHold": 0.75,
+          "targets": [
+            [
+              1.2,
+              1170,
+              910
+            ]
+          ]
+        },
+        {
+          "start": 7,
+          "end": 8.4,
+          "purpose": "教案内容",
+          "maxDesignedHold": 0.15000000000000013,
+          "targets": [
+            [
+              1.12,
+              810,
+              710
+            ]
+          ]
+        },
+        {
+          "start": 15.6,
+          "end": 18.05,
+          "purpose": "课件成员回应",
+          "maxDesignedHold": 0.6750000000000005,
+          "targets": [
+            [
+              1.25,
+              1730,
+              720
+            ]
+          ]
+        },
+        {
+          "start": 20.55,
+          "end": 23.1,
+          "purpose": "四种原生配色",
+          "maxDesignedHold": 0.30000000000000016,
+          "targets": [
+            [
+              1.15,
+              1100,
+              780
+            ],
+            [
+              1.15,
+              1450,
+              780
+            ]
+          ]
+        },
+        {
+          "start": 13.1,
+          "end": 15.55,
+          "purpose": "课件会话的操作落点",
+          "maxDesignedHold": 0.6750000000000005,
+          "targets": [
+            [
+              1.16,
+              1620,
+              730
+            ]
+          ]
+        }
+      ],
+      "playbackRate": 1
+    },
+    "errors": []
+  },
+  {
+    "id": "team",
+    "time": 14.325,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": {
+      "chapter": "team",
+      "windows": [
+        {
+          "start": 1.4,
+          "end": 4,
+          "purpose": "Agent 角色名单",
+          "maxDesignedHold": 0.75,
+          "targets": [
+            [
+              1.2,
+              1170,
+              910
+            ]
+          ]
+        },
+        {
+          "start": 7,
+          "end": 8.4,
+          "purpose": "教案内容",
+          "maxDesignedHold": 0.15000000000000013,
+          "targets": [
+            [
+              1.12,
+              810,
+              710
+            ]
+          ]
+        },
+        {
+          "start": 15.6,
+          "end": 18.05,
+          "purpose": "课件成员回应",
+          "maxDesignedHold": 0.6750000000000005,
+          "targets": [
+            [
+              1.25,
+              1730,
+              720
+            ]
+          ]
+        },
+        {
+          "start": 20.55,
+          "end": 23.1,
+          "purpose": "四种原生配色",
+          "maxDesignedHold": 0.30000000000000016,
+          "targets": [
+            [
+              1.15,
+              1100,
+              780
+            ],
+            [
+              1.15,
+              1450,
+              780
+            ]
+          ]
+        },
+        {
+          "start": 13.1,
+          "end": 15.55,
+          "purpose": "课件会话的操作落点",
+          "maxDesignedHold": 0.6750000000000005,
+          "targets": [
+            [
+              1.16,
+              1620,
+              730
+            ]
+          ]
+        }
+      ],
+      "playbackRate": 1
+    },
+    "errors": []
+  },
+  {
+    "id": "teaching",
+    "time": 2.7,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": {
+      "chapter": "teaching",
+      "windows": [
+        {
+          "start": 1.75,
+          "end": 3.65,
+          "purpose": "课件封面与内容",
+          "maxDesignedHold": 0.3999999999999999,
+          "targets": [
+            [
+              1.16,
+              1080,
+              760
+            ]
+          ]
+        },
+        {
+          "start": 8.9,
+          "end": 10.6,
+          "purpose": "可编辑图表",
+          "maxDesignedHold": 0.2999999999999996,
+          "targets": [
+            [
+              1.18,
+              1330,
+              800
+            ]
+          ]
+        },
+        {
+          "start": 13.8,
+          "end": 19.65,
+          "purpose": "课件、练习、成绩图表依次成为主体",
+          "maxDesignedHold": 0.9124999999999994,
+          "targets": [
+            [
+              1.28,
+              610,
+              790
+            ],
+            [
+              1.27,
+              1260,
+              780
+            ],
+            [
+              1.3,
+              1940,
+              770
+            ]
+          ]
+        }
+      ],
+      "playbackRate": 1
+    },
+    "errors": []
+  },
+  {
+    "id": "teaching",
+    "time": 9.75,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": {
+      "chapter": "teaching",
+      "windows": [
+        {
+          "start": 1.75,
+          "end": 3.65,
+          "purpose": "课件封面与内容",
+          "maxDesignedHold": 0.3999999999999999,
+          "targets": [
+            [
+              1.16,
+              1080,
+              760
+            ]
+          ]
+        },
+        {
+          "start": 8.9,
+          "end": 10.6,
+          "purpose": "可编辑图表",
+          "maxDesignedHold": 0.2999999999999996,
+          "targets": [
+            [
+              1.18,
+              1330,
+              800
+            ]
+          ]
+        },
+        {
+          "start": 13.8,
+          "end": 19.65,
+          "purpose": "课件、练习、成绩图表依次成为主体",
+          "maxDesignedHold": 0.9124999999999994,
+          "targets": [
+            [
+              1.28,
+              610,
+              790
+            ],
+            [
+              1.27,
+              1260,
+              780
+            ],
+            [
+              1.3,
+              1940,
+              770
+            ]
+          ]
+        }
+      ],
+      "playbackRate": 1
+    },
+    "errors": []
+  },
+  {
+    "id": "teaching",
+    "time": 16.725,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": {
+      "chapter": "teaching",
+      "windows": [
+        {
+          "start": 1.75,
+          "end": 3.65,
+          "purpose": "课件封面与内容",
+          "maxDesignedHold": 0.3999999999999999,
+          "targets": [
+            [
+              1.16,
+              1080,
+              760
+            ]
+          ]
+        },
+        {
+          "start": 8.9,
+          "end": 10.6,
+          "purpose": "可编辑图表",
+          "maxDesignedHold": 0.2999999999999996,
+          "targets": [
+            [
+              1.18,
+              1330,
+              800
+            ]
+          ]
+        },
+        {
+          "start": 13.8,
+          "end": 19.65,
+          "purpose": "课件、练习、成绩图表依次成为主体",
+          "maxDesignedHold": 0.9124999999999994,
+          "targets": [
+            [
+              1.28,
+              610,
+              790
+            ],
+            [
+              1.27,
+              1260,
+              780
+            ],
+            [
+              1.3,
+              1940,
+              770
+            ]
+          ]
+        }
+      ],
+      "playbackRate": 1
+    },
+    "errors": []
+  },
+  {
+    "id": "delivery",
+    "time": 3.3499999999999996,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": {
+      "chapter": "delivery",
+      "windows": [
+        {
+          "start": 2.65,
+          "end": 4.05,
+          "purpose": "双方确认",
+          "maxDesignedHold": 0.1499999999999999,
+          "targets": [
+            [
+              1.12,
+              1850,
+              740
+            ]
+          ]
+        },
+        {
+          "start": 7.7,
+          "end": 9.6,
+          "purpose": "教室端送达",
+          "maxDesignedHold": 0.3999999999999997,
+          "targets": [
+            [
+              1.24,
+              1870,
+              680
+            ]
+          ]
+        },
+        {
+          "start": 10.4,
+          "end": 15.2,
+          "purpose": "教师回执到双端关系",
+          "maxDesignedHold": 1.0499999999999996,
+          "targets": [
+            [
+              1.25,
+              630,
+              720
+            ],
+            [
+              1.13,
+              1310,
+              740
+            ]
+          ]
+        }
+      ],
+      "playbackRate": 1
+    },
+    "errors": []
+  },
+  {
+    "id": "delivery",
+    "time": 8.65,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": {
+      "chapter": "delivery",
+      "windows": [
+        {
+          "start": 2.65,
+          "end": 4.05,
+          "purpose": "双方确认",
+          "maxDesignedHold": 0.1499999999999999,
+          "targets": [
+            [
+              1.12,
+              1850,
+              740
+            ]
+          ]
+        },
+        {
+          "start": 7.7,
+          "end": 9.6,
+          "purpose": "教室端送达",
+          "maxDesignedHold": 0.3999999999999997,
+          "targets": [
+            [
+              1.24,
+              1870,
+              680
+            ]
+          ]
+        },
+        {
+          "start": 10.4,
+          "end": 15.2,
+          "purpose": "教师回执到双端关系",
+          "maxDesignedHold": 1.0499999999999996,
+          "targets": [
+            [
+              1.25,
+              630,
+              720
+            ],
+            [
+              1.13,
+              1310,
+              740
+            ]
+          ]
+        }
+      ],
+      "playbackRate": 1
+    },
+    "errors": []
+  },
+  {
+    "id": "delivery",
+    "time": 12.8,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": {
+      "chapter": "delivery",
+      "windows": [
+        {
+          "start": 2.65,
+          "end": 4.05,
+          "purpose": "双方确认",
+          "maxDesignedHold": 0.1499999999999999,
+          "targets": [
+            [
+              1.12,
+              1850,
+              740
+            ]
+          ]
+        },
+        {
+          "start": 7.7,
+          "end": 9.6,
+          "purpose": "教室端送达",
+          "maxDesignedHold": 0.3999999999999997,
+          "targets": [
+            [
+              1.24,
+              1870,
+              680
+            ]
+          ]
+        },
+        {
+          "start": 10.4,
+          "end": 15.2,
+          "purpose": "教师回执到双端关系",
+          "maxDesignedHold": 1.0499999999999996,
+          "targets": [
+            [
+              1.25,
+              630,
+              720
+            ],
+            [
+              1.13,
+              1310,
+              740
+            ]
+          ]
+        }
+      ],
+      "playbackRate": 1
+    },
+    "errors": []
+  },
+  {
+    "id": "model",
+    "time": 5.025,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": {
+      "chapter": "model",
+      "windows": [
+        {
+          "start": 4.25,
+          "end": 5.8,
+          "purpose": "真实请求已发送",
+          "maxDesignedHold": 0.22499999999999987,
+          "targets": [
+            [
+              1.13,
+              1400,
+              770
+            ]
+          ]
+        }
+      ],
+      "playbackRate": 1
+    },
+    "errors": []
+  },
+  {
+    "id": "model",
+    "time": 12.1,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": {
+      "chapter": "model",
+      "windows": [
+        {
+          "start": 4.25,
+          "end": 5.8,
+          "purpose": "真实请求已发送",
+          "maxDesignedHold": 0.22499999999999987,
+          "targets": [
+            [
+              1.13,
+              1400,
+              770
+            ]
+          ]
+        }
+      ],
+      "playbackRate": 1
+    },
+    "errors": []
+  },
+  {
+    "id": "model",
+    "time": 15.7,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": {
+      "chapter": "model",
+      "windows": [
+        {
+          "start": 4.25,
+          "end": 5.8,
+          "purpose": "真实请求已发送",
+          "maxDesignedHold": 0.22499999999999987,
+          "targets": [
+            [
+              1.13,
+              1400,
+              770
+            ]
+          ]
+        }
+      ],
+      "playbackRate": 1
+    },
+    "errors": []
+  },
+  {
+    "id": "model",
+    "time": 18.9,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": {
+      "chapter": "model",
+      "windows": [
+        {
+          "start": 4.25,
+          "end": 5.8,
+          "purpose": "真实请求已发送",
+          "maxDesignedHold": 0.22499999999999987,
+          "targets": [
+            [
+              1.13,
+              1400,
+              770
+            ]
+          ]
+        }
+      ],
+      "playbackRate": 1
+    },
+    "errors": []
+  },
+  {
+    "id": "model",
+    "time": 21.7,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": {
+      "chapter": "model",
+      "windows": [
+        {
+          "start": 4.25,
+          "end": 5.8,
+          "purpose": "真实请求已发送",
+          "maxDesignedHold": 0.22499999999999987,
+          "targets": [
+            [
+              1.13,
+              1400,
+              770
+            ]
+          ]
+        }
+      ],
+      "playbackRate": 1
+    },
+    "errors": []
+  },
+  {
+    "id": "mailbox",
+    "time": 10.95,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": {
+      "chapter": "mailbox",
+      "windows": [
+        {
+          "start": 8.3,
+          "end": 13.6,
+          "purpose": "来信类别到消息状态",
+          "maxDesignedHold": 1.2,
+          "targets": [
+            [
+              1.2,
+              870,
+              750
+            ],
+            [
+              1.22,
+              850,
+              900
+            ]
+          ]
+        },
+        {
+          "start": 15,
+          "end": 16.7,
+          "purpose": "保留来处的信箱",
+          "maxDesignedHold": 0.2999999999999996,
+          "targets": [
+            [
+              1.12,
+              1220,
+              760
+            ]
+          ]
+        }
+      ],
+      "playbackRate": 1
+    },
+    "errors": []
+  },
+  {
+    "id": "mailbox",
+    "time": 15.85,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": {
+      "chapter": "mailbox",
+      "windows": [
+        {
+          "start": 8.3,
+          "end": 13.6,
+          "purpose": "来信类别到消息状态",
+          "maxDesignedHold": 1.2,
+          "targets": [
+            [
+              1.2,
+              870,
+              750
+            ],
+            [
+              1.22,
+              850,
+              900
+            ]
+          ]
+        },
+        {
+          "start": 15,
+          "end": 16.7,
+          "purpose": "保留来处的信箱",
+          "maxDesignedHold": 0.2999999999999996,
+          "targets": [
+            [
+              1.12,
+              1220,
+              760
+            ]
+          ]
+        }
+      ],
+      "playbackRate": 1
+    },
+    "errors": []
+  },
+  {
+    "id": "students",
+    "time": 4.225,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": {
+      "chapter": "students",
+      "windows": [
+        {
+          "start": 1.65,
+          "end": 6.8,
+          "purpose": "预约：谁、何时、带什么",
+          "maxDesignedHold": 1.1666666666666667,
+          "targets": [
+            [
+              1.24,
+              1270,
+              640
+            ],
+            [
+              1.24,
+              1260,
+              875
+            ]
+          ]
+        },
+        {
+          "start": 8.05,
+          "end": 12.8,
+          "purpose": "请求到老师确认",
+          "maxDesignedHold": 1.0333333333333332,
+          "targets": [
+            [
+              1.21,
+              1260,
+              670
+            ],
+            [
+              1.24,
+              1270,
+              920
+            ]
+          ]
+        },
+        {
+          "start": 16.45,
+          "end": 18.8,
+          "purpose": "教室收到回信",
+          "maxDesignedHold": 0.6250000000000007,
+          "targets": [
+            [
+              1.2,
+              1790,
+              820
+            ]
+          ]
+        },
+        {
+          "start": 20.65,
+          "end": 23.8,
+          "purpose": "提问和补做两种状态",
+          "maxDesignedHold": 0.5000000000000007,
+          "targets": [
+            [
+              1.16,
+              710,
+              770
+            ],
+            [
+              1.17,
+              1780,
+              850
+            ]
+          ]
+        },
+        {
+          "start": 25.55,
+          "end": 28.1,
+          "purpose": "叫人：时间、地点、材料",
+          "maxDesignedHold": 0.7250000000000003,
+          "targets": [
+            [
+              1.22,
+              1720,
+              720
+            ]
+          ]
+        },
+        {
+          "start": 33.4,
+          "end": 35.8,
+          "purpose": "已看到状态",
+          "maxDesignedHold": 0.6499999999999992,
+          "targets": [
+            [
+              1.18,
+              1700,
+              725
+            ]
+          ]
+        },
+        {
+          "start": 39.1,
+          "end": 42.8,
+          "purpose": "回执内容与两端关系",
+          "maxDesignedHold": 0.6833333333333318,
+          "targets": [
+            [
+              1.22,
+              1730,
+              760
+            ],
+            [
+              1.12,
+              1140,
+              820
+            ]
+          ]
+        },
+        {
+          "start": 44.6,
+          "end": 48.65,
+          "purpose": "预约到通知，连接同一校园",
+          "maxDesignedHold": 0.7999999999999989,
+          "targets": [
+            [
+              1.17,
+              660,
+              780
+            ],
+            [
+              1.16,
+              1770,
+              800
+            ]
+          ]
+        }
+      ],
+      "playbackRate": 1
+    },
+    "errors": []
+  },
+  {
+    "id": "students",
+    "time": 10.425,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": {
+      "chapter": "students",
+      "windows": [
+        {
+          "start": 1.65,
+          "end": 6.8,
+          "purpose": "预约：谁、何时、带什么",
+          "maxDesignedHold": 1.1666666666666667,
+          "targets": [
+            [
+              1.24,
+              1270,
+              640
+            ],
+            [
+              1.24,
+              1260,
+              875
+            ]
+          ]
+        },
+        {
+          "start": 8.05,
+          "end": 12.8,
+          "purpose": "请求到老师确认",
+          "maxDesignedHold": 1.0333333333333332,
+          "targets": [
+            [
+              1.21,
+              1260,
+              670
+            ],
+            [
+              1.24,
+              1270,
+              920
+            ]
+          ]
+        },
+        {
+          "start": 16.45,
+          "end": 18.8,
+          "purpose": "教室收到回信",
+          "maxDesignedHold": 0.6250000000000007,
+          "targets": [
+            [
+              1.2,
+              1790,
+              820
+            ]
+          ]
+        },
+        {
+          "start": 20.65,
+          "end": 23.8,
+          "purpose": "提问和补做两种状态",
+          "maxDesignedHold": 0.5000000000000007,
+          "targets": [
+            [
+              1.16,
+              710,
+              770
+            ],
+            [
+              1.17,
+              1780,
+              850
+            ]
+          ]
+        },
+        {
+          "start": 25.55,
+          "end": 28.1,
+          "purpose": "叫人：时间、地点、材料",
+          "maxDesignedHold": 0.7250000000000003,
+          "targets": [
+            [
+              1.22,
+              1720,
+              720
+            ]
+          ]
+        },
+        {
+          "start": 33.4,
+          "end": 35.8,
+          "purpose": "已看到状态",
+          "maxDesignedHold": 0.6499999999999992,
+          "targets": [
+            [
+              1.18,
+              1700,
+              725
+            ]
+          ]
+        },
+        {
+          "start": 39.1,
+          "end": 42.8,
+          "purpose": "回执内容与两端关系",
+          "maxDesignedHold": 0.6833333333333318,
+          "targets": [
+            [
+              1.22,
+              1730,
+              760
+            ],
+            [
+              1.12,
+              1140,
+              820
+            ]
+          ]
+        },
+        {
+          "start": 44.6,
+          "end": 48.65,
+          "purpose": "预约到通知，连接同一校园",
+          "maxDesignedHold": 0.7999999999999989,
+          "targets": [
+            [
+              1.17,
+              660,
+              780
+            ],
+            [
+              1.16,
+              1770,
+              800
+            ]
+          ]
+        }
+      ],
+      "playbackRate": 1
+    },
+    "errors": []
+  },
+  {
+    "id": "students",
+    "time": 17.625,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": {
+      "chapter": "students",
+      "windows": [
+        {
+          "start": 1.65,
+          "end": 6.8,
+          "purpose": "预约：谁、何时、带什么",
+          "maxDesignedHold": 1.1666666666666667,
+          "targets": [
+            [
+              1.24,
+              1270,
+              640
+            ],
+            [
+              1.24,
+              1260,
+              875
+            ]
+          ]
+        },
+        {
+          "start": 8.05,
+          "end": 12.8,
+          "purpose": "请求到老师确认",
+          "maxDesignedHold": 1.0333333333333332,
+          "targets": [
+            [
+              1.21,
+              1260,
+              670
+            ],
+            [
+              1.24,
+              1270,
+              920
+            ]
+          ]
+        },
+        {
+          "start": 16.45,
+          "end": 18.8,
+          "purpose": "教室收到回信",
+          "maxDesignedHold": 0.6250000000000007,
+          "targets": [
+            [
+              1.2,
+              1790,
+              820
+            ]
+          ]
+        },
+        {
+          "start": 20.65,
+          "end": 23.8,
+          "purpose": "提问和补做两种状态",
+          "maxDesignedHold": 0.5000000000000007,
+          "targets": [
+            [
+              1.16,
+              710,
+              770
+            ],
+            [
+              1.17,
+              1780,
+              850
+            ]
+          ]
+        },
+        {
+          "start": 25.55,
+          "end": 28.1,
+          "purpose": "叫人：时间、地点、材料",
+          "maxDesignedHold": 0.7250000000000003,
+          "targets": [
+            [
+              1.22,
+              1720,
+              720
+            ]
+          ]
+        },
+        {
+          "start": 33.4,
+          "end": 35.8,
+          "purpose": "已看到状态",
+          "maxDesignedHold": 0.6499999999999992,
+          "targets": [
+            [
+              1.18,
+              1700,
+              725
+            ]
+          ]
+        },
+        {
+          "start": 39.1,
+          "end": 42.8,
+          "purpose": "回执内容与两端关系",
+          "maxDesignedHold": 0.6833333333333318,
+          "targets": [
+            [
+              1.22,
+              1730,
+              760
+            ],
+            [
+              1.12,
+              1140,
+              820
+            ]
+          ]
+        },
+        {
+          "start": 44.6,
+          "end": 48.65,
+          "purpose": "预约到通知，连接同一校园",
+          "maxDesignedHold": 0.7999999999999989,
+          "targets": [
+            [
+              1.17,
+              660,
+              780
+            ],
+            [
+              1.16,
+              1770,
+              800
+            ]
+          ]
+        }
+      ],
+      "playbackRate": 1
+    },
+    "errors": []
+  },
+  {
+    "id": "students",
+    "time": 22.225,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": {
+      "chapter": "students",
+      "windows": [
+        {
+          "start": 1.65,
+          "end": 6.8,
+          "purpose": "预约：谁、何时、带什么",
+          "maxDesignedHold": 1.1666666666666667,
+          "targets": [
+            [
+              1.24,
+              1270,
+              640
+            ],
+            [
+              1.24,
+              1260,
+              875
+            ]
+          ]
+        },
+        {
+          "start": 8.05,
+          "end": 12.8,
+          "purpose": "请求到老师确认",
+          "maxDesignedHold": 1.0333333333333332,
+          "targets": [
+            [
+              1.21,
+              1260,
+              670
+            ],
+            [
+              1.24,
+              1270,
+              920
+            ]
+          ]
+        },
+        {
+          "start": 16.45,
+          "end": 18.8,
+          "purpose": "教室收到回信",
+          "maxDesignedHold": 0.6250000000000007,
+          "targets": [
+            [
+              1.2,
+              1790,
+              820
+            ]
+          ]
+        },
+        {
+          "start": 20.65,
+          "end": 23.8,
+          "purpose": "提问和补做两种状态",
+          "maxDesignedHold": 0.5000000000000007,
+          "targets": [
+            [
+              1.16,
+              710,
+              770
+            ],
+            [
+              1.17,
+              1780,
+              850
+            ]
+          ]
+        },
+        {
+          "start": 25.55,
+          "end": 28.1,
+          "purpose": "叫人：时间、地点、材料",
+          "maxDesignedHold": 0.7250000000000003,
+          "targets": [
+            [
+              1.22,
+              1720,
+              720
+            ]
+          ]
+        },
+        {
+          "start": 33.4,
+          "end": 35.8,
+          "purpose": "已看到状态",
+          "maxDesignedHold": 0.6499999999999992,
+          "targets": [
+            [
+              1.18,
+              1700,
+              725
+            ]
+          ]
+        },
+        {
+          "start": 39.1,
+          "end": 42.8,
+          "purpose": "回执内容与两端关系",
+          "maxDesignedHold": 0.6833333333333318,
+          "targets": [
+            [
+              1.22,
+              1730,
+              760
+            ],
+            [
+              1.12,
+              1140,
+              820
+            ]
+          ]
+        },
+        {
+          "start": 44.6,
+          "end": 48.65,
+          "purpose": "预约到通知，连接同一校园",
+          "maxDesignedHold": 0.7999999999999989,
+          "targets": [
+            [
+              1.17,
+              660,
+              780
+            ],
+            [
+              1.16,
+              1770,
+              800
+            ]
+          ]
+        }
+      ],
+      "playbackRate": 1
+    },
+    "errors": []
+  },
+  {
+    "id": "students",
+    "time": 26.825000000000003,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": {
+      "chapter": "students",
+      "windows": [
+        {
+          "start": 1.65,
+          "end": 6.8,
+          "purpose": "预约：谁、何时、带什么",
+          "maxDesignedHold": 1.1666666666666667,
+          "targets": [
+            [
+              1.24,
+              1270,
+              640
+            ],
+            [
+              1.24,
+              1260,
+              875
+            ]
+          ]
+        },
+        {
+          "start": 8.05,
+          "end": 12.8,
+          "purpose": "请求到老师确认",
+          "maxDesignedHold": 1.0333333333333332,
+          "targets": [
+            [
+              1.21,
+              1260,
+              670
+            ],
+            [
+              1.24,
+              1270,
+              920
+            ]
+          ]
+        },
+        {
+          "start": 16.45,
+          "end": 18.8,
+          "purpose": "教室收到回信",
+          "maxDesignedHold": 0.6250000000000007,
+          "targets": [
+            [
+              1.2,
+              1790,
+              820
+            ]
+          ]
+        },
+        {
+          "start": 20.65,
+          "end": 23.8,
+          "purpose": "提问和补做两种状态",
+          "maxDesignedHold": 0.5000000000000007,
+          "targets": [
+            [
+              1.16,
+              710,
+              770
+            ],
+            [
+              1.17,
+              1780,
+              850
+            ]
+          ]
+        },
+        {
+          "start": 25.55,
+          "end": 28.1,
+          "purpose": "叫人：时间、地点、材料",
+          "maxDesignedHold": 0.7250000000000003,
+          "targets": [
+            [
+              1.22,
+              1720,
+              720
+            ]
+          ]
+        },
+        {
+          "start": 33.4,
+          "end": 35.8,
+          "purpose": "已看到状态",
+          "maxDesignedHold": 0.6499999999999992,
+          "targets": [
+            [
+              1.18,
+              1700,
+              725
+            ]
+          ]
+        },
+        {
+          "start": 39.1,
+          "end": 42.8,
+          "purpose": "回执内容与两端关系",
+          "maxDesignedHold": 0.6833333333333318,
+          "targets": [
+            [
+              1.22,
+              1730,
+              760
+            ],
+            [
+              1.12,
+              1140,
+              820
+            ]
+          ]
+        },
+        {
+          "start": 44.6,
+          "end": 48.65,
+          "purpose": "预约到通知，连接同一校园",
+          "maxDesignedHold": 0.7999999999999989,
+          "targets": [
+            [
+              1.17,
+              660,
+              780
+            ],
+            [
+              1.16,
+              1770,
+              800
+            ]
+          ]
+        }
+      ],
+      "playbackRate": 1
+    },
+    "errors": []
+  },
+  {
+    "id": "students",
+    "time": 34.599999999999994,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": {
+      "chapter": "students",
+      "windows": [
+        {
+          "start": 1.65,
+          "end": 6.8,
+          "purpose": "预约：谁、何时、带什么",
+          "maxDesignedHold": 1.1666666666666667,
+          "targets": [
+            [
+              1.24,
+              1270,
+              640
+            ],
+            [
+              1.24,
+              1260,
+              875
+            ]
+          ]
+        },
+        {
+          "start": 8.05,
+          "end": 12.8,
+          "purpose": "请求到老师确认",
+          "maxDesignedHold": 1.0333333333333332,
+          "targets": [
+            [
+              1.21,
+              1260,
+              670
+            ],
+            [
+              1.24,
+              1270,
+              920
+            ]
+          ]
+        },
+        {
+          "start": 16.45,
+          "end": 18.8,
+          "purpose": "教室收到回信",
+          "maxDesignedHold": 0.6250000000000007,
+          "targets": [
+            [
+              1.2,
+              1790,
+              820
+            ]
+          ]
+        },
+        {
+          "start": 20.65,
+          "end": 23.8,
+          "purpose": "提问和补做两种状态",
+          "maxDesignedHold": 0.5000000000000007,
+          "targets": [
+            [
+              1.16,
+              710,
+              770
+            ],
+            [
+              1.17,
+              1780,
+              850
+            ]
+          ]
+        },
+        {
+          "start": 25.55,
+          "end": 28.1,
+          "purpose": "叫人：时间、地点、材料",
+          "maxDesignedHold": 0.7250000000000003,
+          "targets": [
+            [
+              1.22,
+              1720,
+              720
+            ]
+          ]
+        },
+        {
+          "start": 33.4,
+          "end": 35.8,
+          "purpose": "已看到状态",
+          "maxDesignedHold": 0.6499999999999992,
+          "targets": [
+            [
+              1.18,
+              1700,
+              725
+            ]
+          ]
+        },
+        {
+          "start": 39.1,
+          "end": 42.8,
+          "purpose": "回执内容与两端关系",
+          "maxDesignedHold": 0.6833333333333318,
+          "targets": [
+            [
+              1.22,
+              1730,
+              760
+            ],
+            [
+              1.12,
+              1140,
+              820
+            ]
+          ]
+        },
+        {
+          "start": 44.6,
+          "end": 48.65,
+          "purpose": "预约到通知，连接同一校园",
+          "maxDesignedHold": 0.7999999999999989,
+          "targets": [
+            [
+              1.17,
+              660,
+              780
+            ],
+            [
+              1.16,
+              1770,
+              800
+            ]
+          ]
+        }
+      ],
+      "playbackRate": 1
+    },
+    "errors": []
+  },
+  {
+    "id": "students",
+    "time": 40.95,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": {
+      "chapter": "students",
+      "windows": [
+        {
+          "start": 1.65,
+          "end": 6.8,
+          "purpose": "预约：谁、何时、带什么",
+          "maxDesignedHold": 1.1666666666666667,
+          "targets": [
+            [
+              1.24,
+              1270,
+              640
+            ],
+            [
+              1.24,
+              1260,
+              875
+            ]
+          ]
+        },
+        {
+          "start": 8.05,
+          "end": 12.8,
+          "purpose": "请求到老师确认",
+          "maxDesignedHold": 1.0333333333333332,
+          "targets": [
+            [
+              1.21,
+              1260,
+              670
+            ],
+            [
+              1.24,
+              1270,
+              920
+            ]
+          ]
+        },
+        {
+          "start": 16.45,
+          "end": 18.8,
+          "purpose": "教室收到回信",
+          "maxDesignedHold": 0.6250000000000007,
+          "targets": [
+            [
+              1.2,
+              1790,
+              820
+            ]
+          ]
+        },
+        {
+          "start": 20.65,
+          "end": 23.8,
+          "purpose": "提问和补做两种状态",
+          "maxDesignedHold": 0.5000000000000007,
+          "targets": [
+            [
+              1.16,
+              710,
+              770
+            ],
+            [
+              1.17,
+              1780,
+              850
+            ]
+          ]
+        },
+        {
+          "start": 25.55,
+          "end": 28.1,
+          "purpose": "叫人：时间、地点、材料",
+          "maxDesignedHold": 0.7250000000000003,
+          "targets": [
+            [
+              1.22,
+              1720,
+              720
+            ]
+          ]
+        },
+        {
+          "start": 33.4,
+          "end": 35.8,
+          "purpose": "已看到状态",
+          "maxDesignedHold": 0.6499999999999992,
+          "targets": [
+            [
+              1.18,
+              1700,
+              725
+            ]
+          ]
+        },
+        {
+          "start": 39.1,
+          "end": 42.8,
+          "purpose": "回执内容与两端关系",
+          "maxDesignedHold": 0.6833333333333318,
+          "targets": [
+            [
+              1.22,
+              1730,
+              760
+            ],
+            [
+              1.12,
+              1140,
+              820
+            ]
+          ]
+        },
+        {
+          "start": 44.6,
+          "end": 48.65,
+          "purpose": "预约到通知，连接同一校园",
+          "maxDesignedHold": 0.7999999999999989,
+          "targets": [
+            [
+              1.17,
+              660,
+              780
+            ],
+            [
+              1.16,
+              1770,
+              800
+            ]
+          ]
+        }
+      ],
+      "playbackRate": 1
+    },
+    "errors": []
+  },
+  {
+    "id": "students",
+    "time": 46.625,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": {
+      "chapter": "students",
+      "windows": [
+        {
+          "start": 1.65,
+          "end": 6.8,
+          "purpose": "预约：谁、何时、带什么",
+          "maxDesignedHold": 1.1666666666666667,
+          "targets": [
+            [
+              1.24,
+              1270,
+              640
+            ],
+            [
+              1.24,
+              1260,
+              875
+            ]
+          ]
+        },
+        {
+          "start": 8.05,
+          "end": 12.8,
+          "purpose": "请求到老师确认",
+          "maxDesignedHold": 1.0333333333333332,
+          "targets": [
+            [
+              1.21,
+              1260,
+              670
+            ],
+            [
+              1.24,
+              1270,
+              920
+            ]
+          ]
+        },
+        {
+          "start": 16.45,
+          "end": 18.8,
+          "purpose": "教室收到回信",
+          "maxDesignedHold": 0.6250000000000007,
+          "targets": [
+            [
+              1.2,
+              1790,
+              820
+            ]
+          ]
+        },
+        {
+          "start": 20.65,
+          "end": 23.8,
+          "purpose": "提问和补做两种状态",
+          "maxDesignedHold": 0.5000000000000007,
+          "targets": [
+            [
+              1.16,
+              710,
+              770
+            ],
+            [
+              1.17,
+              1780,
+              850
+            ]
+          ]
+        },
+        {
+          "start": 25.55,
+          "end": 28.1,
+          "purpose": "叫人：时间、地点、材料",
+          "maxDesignedHold": 0.7250000000000003,
+          "targets": [
+            [
+              1.22,
+              1720,
+              720
+            ]
+          ]
+        },
+        {
+          "start": 33.4,
+          "end": 35.8,
+          "purpose": "已看到状态",
+          "maxDesignedHold": 0.6499999999999992,
+          "targets": [
+            [
+              1.18,
+              1700,
+              725
+            ]
+          ]
+        },
+        {
+          "start": 39.1,
+          "end": 42.8,
+          "purpose": "回执内容与两端关系",
+          "maxDesignedHold": 0.6833333333333318,
+          "targets": [
+            [
+              1.22,
+              1730,
+              760
+            ],
+            [
+              1.12,
+              1140,
+              820
+            ]
+          ]
+        },
+        {
+          "start": 44.6,
+          "end": 48.65,
+          "purpose": "预约到通知，连接同一校园",
+          "maxDesignedHold": 0.7999999999999989,
+          "targets": [
+            [
+              1.17,
+              660,
+              780
+            ],
+            [
+              1.16,
+              1770,
+              800
+            ]
+          ]
+        }
+      ],
+      "playbackRate": 1
+    },
+    "errors": []
+  },
+  {
+    "id": "query",
+    "time": 10.175,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": {
+      "chapter": "query",
+      "windows": [
+        {
+          "start": 8.3,
+          "end": 12.05,
+          "purpose": "查找工具与执行进展",
+          "maxDesignedHold": 0.7,
+          "targets": [
+            [
+              1.19,
+              1340,
+              660
+            ],
+            [
+              1.2,
+              1340,
+              845
+            ]
+          ]
+        },
+        {
+          "start": 14.6,
+          "end": 18.9,
+          "purpose": "原对话中的查询结果",
+          "maxDesignedHold": 0.8833333333333329,
+          "targets": [
+            [
+              1.18,
+              1450,
+              620
+            ],
+            [
+              1.2,
+              1450,
+              845
+            ]
+          ]
+        },
+        {
+          "start": 21.4,
+          "end": 29.5,
+          "purpose": "学生、目的地、状态，三处真实字段",
+          "maxDesignedHold": 1.2,
+          "targets": [
+            [
+              1.23,
+              1240,
+              620
+            ],
+            [
+              1.25,
+              1240,
+              830
+            ],
+            [
+              1.16,
+              1270,
+              860
+            ]
+          ]
+        },
+        {
+          "start": 2.55,
+          "end": 5.1,
+          "purpose": "查人输入与发送入口",
+          "maxDesignedHold": 0.7249999999999999,
+          "targets": [
+            [
+              1.17,
+              1400,
+              900
+            ]
+          ]
+        }
+      ],
+      "playbackRate": 1
+    },
+    "errors": []
+  },
+  {
+    "id": "query",
+    "time": 16.75,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": {
+      "chapter": "query",
+      "windows": [
+        {
+          "start": 8.3,
+          "end": 12.05,
+          "purpose": "查找工具与执行进展",
+          "maxDesignedHold": 0.7,
+          "targets": [
+            [
+              1.19,
+              1340,
+              660
+            ],
+            [
+              1.2,
+              1340,
+              845
+            ]
+          ]
+        },
+        {
+          "start": 14.6,
+          "end": 18.9,
+          "purpose": "原对话中的查询结果",
+          "maxDesignedHold": 0.8833333333333329,
+          "targets": [
+            [
+              1.18,
+              1450,
+              620
+            ],
+            [
+              1.2,
+              1450,
+              845
+            ]
+          ]
+        },
+        {
+          "start": 21.4,
+          "end": 29.5,
+          "purpose": "学生、目的地、状态，三处真实字段",
+          "maxDesignedHold": 1.2,
+          "targets": [
+            [
+              1.23,
+              1240,
+              620
+            ],
+            [
+              1.25,
+              1240,
+              830
+            ],
+            [
+              1.16,
+              1270,
+              860
+            ]
+          ]
+        },
+        {
+          "start": 2.55,
+          "end": 5.1,
+          "purpose": "查人输入与发送入口",
+          "maxDesignedHold": 0.7249999999999999,
+          "targets": [
+            [
+              1.17,
+              1400,
+              900
+            ]
+          ]
+        }
+      ],
+      "playbackRate": 1
+    },
+    "errors": []
+  },
+  {
+    "id": "query",
+    "time": 25.45,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": {
+      "chapter": "query",
+      "windows": [
+        {
+          "start": 8.3,
+          "end": 12.05,
+          "purpose": "查找工具与执行进展",
+          "maxDesignedHold": 0.7,
+          "targets": [
+            [
+              1.19,
+              1340,
+              660
+            ],
+            [
+              1.2,
+              1340,
+              845
+            ]
+          ]
+        },
+        {
+          "start": 14.6,
+          "end": 18.9,
+          "purpose": "原对话中的查询结果",
+          "maxDesignedHold": 0.8833333333333329,
+          "targets": [
+            [
+              1.18,
+              1450,
+              620
+            ],
+            [
+              1.2,
+              1450,
+              845
+            ]
+          ]
+        },
+        {
+          "start": 21.4,
+          "end": 29.5,
+          "purpose": "学生、目的地、状态，三处真实字段",
+          "maxDesignedHold": 1.2,
+          "targets": [
+            [
+              1.23,
+              1240,
+              620
+            ],
+            [
+              1.25,
+              1240,
+              830
+            ],
+            [
+              1.16,
+              1270,
+              860
+            ]
+          ]
+        },
+        {
+          "start": 2.55,
+          "end": 5.1,
+          "purpose": "查人输入与发送入口",
+          "maxDesignedHold": 0.7249999999999999,
+          "targets": [
+            [
+              1.17,
+              1400,
+              900
+            ]
+          ]
+        }
+      ],
+      "playbackRate": 1
+    },
+    "errors": []
+  },
+  {
+    "id": "query",
+    "time": 3.8249999999999997,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": {
+      "chapter": "query",
+      "windows": [
+        {
+          "start": 8.3,
+          "end": 12.05,
+          "purpose": "查找工具与执行进展",
+          "maxDesignedHold": 0.7,
+          "targets": [
+            [
+              1.19,
+              1340,
+              660
+            ],
+            [
+              1.2,
+              1340,
+              845
+            ]
+          ]
+        },
+        {
+          "start": 14.6,
+          "end": 18.9,
+          "purpose": "原对话中的查询结果",
+          "maxDesignedHold": 0.8833333333333329,
+          "targets": [
+            [
+              1.18,
+              1450,
+              620
+            ],
+            [
+              1.2,
+              1450,
+              845
+            ]
+          ]
+        },
+        {
+          "start": 21.4,
+          "end": 29.5,
+          "purpose": "学生、目的地、状态，三处真实字段",
+          "maxDesignedHold": 1.2,
+          "targets": [
+            [
+              1.23,
+              1240,
+              620
+            ],
+            [
+              1.25,
+              1240,
+              830
+            ],
+            [
+              1.16,
+              1270,
+              860
+            ]
+          ]
+        },
+        {
+          "start": 2.55,
+          "end": 5.1,
+          "purpose": "查人输入与发送入口",
+          "maxDesignedHold": 0.7249999999999999,
+          "targets": [
+            [
+              1.17,
+              1400,
+              900
+            ]
+          ]
+        }
+      ],
+      "playbackRate": 1
+    },
+    "errors": []
+  },
+  {
+    "id": "collaboration",
+    "time": 2.475,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": {
+      "chapter": "collaboration",
+      "windows": [
+        {
+          "start": 1.55,
+          "end": 3.4,
+          "purpose": "放行前确认",
+          "maxDesignedHold": 0.3749999999999999,
+          "targets": [
+            [
+              1.14,
+              810,
+              700
+            ]
+          ]
+        },
+        {
+          "start": 10.7,
+          "end": 12.6,
+          "purpose": "返班闭环",
+          "maxDesignedHold": 0.40000000000000013,
+          "targets": [
+            [
+              1.2,
+              1830,
+              740
+            ]
+          ]
+        },
+        {
+          "start": 17.3,
+          "end": 19.15,
+          "purpose": "问询回应",
+          "maxDesignedHold": 0.3749999999999989,
+          "targets": [
+            [
+              1.17,
+              1760,
+              745
+            ]
+          ]
+        },
+        {
+          "start": 22.95,
+          "end": 24,
+          "purpose": "委托接办",
+          "maxDesignedHold": 0,
+          "targets": [
+            [
+              1.13,
+              1690,
+              760
+            ]
+          ]
+        },
+        {
+          "start": 27.55,
+          "end": 28.95,
+          "purpose": "寻物回应，继续查找",
+          "maxDesignedHold": 0.14999999999999925,
+          "targets": [
+            [
+              1.13,
+              1700,
+              760
+            ]
+          ]
+        }
+      ],
+      "playbackRate": 1
+    },
+    "errors": []
+  },
+  {
+    "id": "collaboration",
+    "time": 11.649999999999999,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": {
+      "chapter": "collaboration",
+      "windows": [
+        {
+          "start": 1.55,
+          "end": 3.4,
+          "purpose": "放行前确认",
+          "maxDesignedHold": 0.3749999999999999,
+          "targets": [
+            [
+              1.14,
+              810,
+              700
+            ]
+          ]
+        },
+        {
+          "start": 10.7,
+          "end": 12.6,
+          "purpose": "返班闭环",
+          "maxDesignedHold": 0.40000000000000013,
+          "targets": [
+            [
+              1.2,
+              1830,
+              740
+            ]
+          ]
+        },
+        {
+          "start": 17.3,
+          "end": 19.15,
+          "purpose": "问询回应",
+          "maxDesignedHold": 0.3749999999999989,
+          "targets": [
+            [
+              1.17,
+              1760,
+              745
+            ]
+          ]
+        },
+        {
+          "start": 22.95,
+          "end": 24,
+          "purpose": "委托接办",
+          "maxDesignedHold": 0,
+          "targets": [
+            [
+              1.13,
+              1690,
+              760
+            ]
+          ]
+        },
+        {
+          "start": 27.55,
+          "end": 28.95,
+          "purpose": "寻物回应，继续查找",
+          "maxDesignedHold": 0.14999999999999925,
+          "targets": [
+            [
+              1.13,
+              1700,
+              760
+            ]
+          ]
+        }
+      ],
+      "playbackRate": 1
+    },
+    "errors": []
+  },
+  {
+    "id": "collaboration",
+    "time": 18.225,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": {
+      "chapter": "collaboration",
+      "windows": [
+        {
+          "start": 1.55,
+          "end": 3.4,
+          "purpose": "放行前确认",
+          "maxDesignedHold": 0.3749999999999999,
+          "targets": [
+            [
+              1.14,
+              810,
+              700
+            ]
+          ]
+        },
+        {
+          "start": 10.7,
+          "end": 12.6,
+          "purpose": "返班闭环",
+          "maxDesignedHold": 0.40000000000000013,
+          "targets": [
+            [
+              1.2,
+              1830,
+              740
+            ]
+          ]
+        },
+        {
+          "start": 17.3,
+          "end": 19.15,
+          "purpose": "问询回应",
+          "maxDesignedHold": 0.3749999999999989,
+          "targets": [
+            [
+              1.17,
+              1760,
+              745
+            ]
+          ]
+        },
+        {
+          "start": 22.95,
+          "end": 24,
+          "purpose": "委托接办",
+          "maxDesignedHold": 0,
+          "targets": [
+            [
+              1.13,
+              1690,
+              760
+            ]
+          ]
+        },
+        {
+          "start": 27.55,
+          "end": 28.95,
+          "purpose": "寻物回应，继续查找",
+          "maxDesignedHold": 0.14999999999999925,
+          "targets": [
+            [
+              1.13,
+              1700,
+              760
+            ]
+          ]
+        }
+      ],
+      "playbackRate": 1
+    },
+    "errors": []
+  },
+  {
+    "id": "collaboration",
+    "time": 23.475,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": {
+      "chapter": "collaboration",
+      "windows": [
+        {
+          "start": 1.55,
+          "end": 3.4,
+          "purpose": "放行前确认",
+          "maxDesignedHold": 0.3749999999999999,
+          "targets": [
+            [
+              1.14,
+              810,
+              700
+            ]
+          ]
+        },
+        {
+          "start": 10.7,
+          "end": 12.6,
+          "purpose": "返班闭环",
+          "maxDesignedHold": 0.40000000000000013,
+          "targets": [
+            [
+              1.2,
+              1830,
+              740
+            ]
+          ]
+        },
+        {
+          "start": 17.3,
+          "end": 19.15,
+          "purpose": "问询回应",
+          "maxDesignedHold": 0.3749999999999989,
+          "targets": [
+            [
+              1.17,
+              1760,
+              745
+            ]
+          ]
+        },
+        {
+          "start": 22.95,
+          "end": 24,
+          "purpose": "委托接办",
+          "maxDesignedHold": 0,
+          "targets": [
+            [
+              1.13,
+              1690,
+              760
+            ]
+          ]
+        },
+        {
+          "start": 27.55,
+          "end": 28.95,
+          "purpose": "寻物回应，继续查找",
+          "maxDesignedHold": 0.14999999999999925,
+          "targets": [
+            [
+              1.13,
+              1700,
+              760
+            ]
+          ]
+        }
+      ],
+      "playbackRate": 1
+    },
+    "errors": []
+  },
+  {
+    "id": "collaboration",
+    "time": 28.25,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": {
+      "chapter": "collaboration",
+      "windows": [
+        {
+          "start": 1.55,
+          "end": 3.4,
+          "purpose": "放行前确认",
+          "maxDesignedHold": 0.3749999999999999,
+          "targets": [
+            [
+              1.14,
+              810,
+              700
+            ]
+          ]
+        },
+        {
+          "start": 10.7,
+          "end": 12.6,
+          "purpose": "返班闭环",
+          "maxDesignedHold": 0.40000000000000013,
+          "targets": [
+            [
+              1.2,
+              1830,
+              740
+            ]
+          ]
+        },
+        {
+          "start": 17.3,
+          "end": 19.15,
+          "purpose": "问询回应",
+          "maxDesignedHold": 0.3749999999999989,
+          "targets": [
+            [
+              1.17,
+              1760,
+              745
+            ]
+          ]
+        },
+        {
+          "start": 22.95,
+          "end": 24,
+          "purpose": "委托接办",
+          "maxDesignedHold": 0,
+          "targets": [
+            [
+              1.13,
+              1690,
+              760
+            ]
+          ]
+        },
+        {
+          "start": 27.55,
+          "end": 28.95,
+          "purpose": "寻物回应，继续查找",
+          "maxDesignedHold": 0.14999999999999925,
+          "targets": [
+            [
+              1.13,
+              1700,
+              760
+            ]
+          ]
+        }
+      ],
+      "playbackRate": 1
+    },
+    "errors": []
+  },
+  {
+    "id": "daily",
+    "time": 3,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": null,
+    "errors": []
+  },
+  {
+    "id": "daily",
+    "time": 10.5,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": null,
+    "errors": []
+  },
+  {
+    "id": "daily",
+    "time": 17,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": null,
+    "errors": []
+  },
+  {
+    "id": "daily",
+    "time": 25,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": null,
+    "errors": []
+  },
+  {
+    "id": "daily",
+    "time": 31,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": null,
+    "errors": []
+  },
+  {
+    "id": "daily",
+    "time": 39,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": null,
+    "errors": []
+  },
+  {
+    "id": "daily",
+    "time": 45,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": null,
+    "errors": []
+  },
+  {
+    "id": "ending",
+    "time": 1.7,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": null,
+    "errors": []
+  },
+  {
+    "id": "ending",
+    "time": 3.5,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": null,
+    "errors": []
+  },
+  {
+    "id": "ending",
+    "time": 5.5,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": null,
+    "errors": []
+  },
+  {
+    "id": "ending",
+    "time": 7.7,
+    "missingVideo": [],
+    "fonts": "loaded",
+    "evidence": null,
+    "errors": []
+  }
+]

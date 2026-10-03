@@ -8,7 +8,7 @@ const source=timeline.output,references=tracks.filter(t=>t.id!=='own').map(t=>({
 const ff=args=>execFileSync('ffmpeg',['-v','error','-nostdin',...args],{stdio:'inherit'});
 const probe=p=>JSON.parse(execFileSync('ffprobe',['-v','error','-show_streams','-show_format','-of','json',p],{encoding:'utf8'}));
 const outputs=[];
-const editionName=timeline.edition===6?'第六版':'第五版';
+const editionName=timeline.edition===7?'第七版':timeline.edition===6?'第六版':'第五版';
 for(const {id,label} of tracks){
  console.log('Exporting',label);
  const audio=resolve(dir,`assets/scores/${id}/typed-final.wav`);
@@ -25,5 +25,5 @@ for(const {id,label} of tracks){
 if(!outputs.every(o=>o.videoBitstreamHash===outputs[0].videoBitstreamHash))throw Error('Pictures differ');
 const sourceHash=execFileSync('ffmpeg',['-v','error','-i',source,'-map','0:v:0','-c:v','copy','-f','hash','-hash','sha256','-'],{encoding:'utf8'}).trim();
 if(outputs[0].videoBitstreamHash!==sourceHash)throw Error('Picture differs from master');
-writeFileSync(resolve(dir,'music-variants.json'),JSON.stringify({references,edition:timeline.edition===6?6:5,versionCount:3,cover:'output/Mochi_品牌封面_2K.png',pictureIdentical:true,pictureIdenticalToMaster:true,referenceAudio:'Original local reference audio, looped and aligned to measured beats; not an isolated music stem; may include original sound effects.',clicks:'Same original Mochi press/release and typing sounds in all three variants; see choreography-cues.json',typingReport:'typing-cues.json',syncReport:'score-sync.json',duration,outputs},null,2)+'\n');
+writeFileSync(resolve(dir,'music-variants.json'),JSON.stringify({references,edition:timeline.edition,versionCount:tracks.length,cover:'output/Mochi_品牌封面_2K.png',pictureIdentical:true,pictureIdenticalToMaster:true,referenceAudio:'Original local reference audio, looped and aligned to measured beats; not an isolated music stem; may include original sound effects.',clicks:'Same original Mochi press/release and typing sounds in all enabled variants; see choreography-cues.json',typingReport:'typing-cues.json',syncReport:'score-sync.json',duration,outputs},null,2)+'\n');
 console.log(outputs.map(x=>x.path).join('\n'));

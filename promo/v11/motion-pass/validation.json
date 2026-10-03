@@ -1,25 +1,40 @@
 {
-  "status": "edition-6-for-review",
+  "edition": 7,
   "width": 2560,
   "height": 1440,
-  "fps": "120/1",
-  "durationSeconds": 299.95,
-  "frames": 35994,
-  "maxPresentationGapSeconds": 0.00833400000001916,
-  "decodeReport": "music-variants.json",
-  "seamReport": "transition-seams.json",
-  "artisticApproval": false,
-  "fullVariantDecodeErrors": [
-    0,
-    0,
-    0
+  "fps": 120,
+  "duration": 299.34999999999997,
+  "frames": 35922,
+  "minPtsGap": 0.008332999999993262,
+  "maxPtsGap": 0.00833400000001916,
+  "nonMonotonicPts": 0,
+  "pictureIdenticalAcrossVersions": true,
+  "audio": [
+    {
+      "label": "现有配乐版",
+      "encodedPeak": 0.5436965227127075,
+      "finite": true,
+      "decodeErrors": 0
+    },
+    {
+      "label": "K2.5参考音轨版",
+      "encodedPeak": 0.7955347895622253,
+      "finite": true,
+      "decodeErrors": 0
+    }
   ],
-  "transitionReel": {
-    "duration": 30.2,
-    "width": 2560,
-    "height": 1440,
-    "fps": "120/1",
-    "frames": 3624,
-    "decodeErrors": 0
-  }
+  "freezeScan": {
+    "sampleFps": 15,
+    "resolution": [
+      320,
+      180
+    ],
+    "noiseThreshold": 0.0005,
+    "minimumSeconds": 1.5,
+    "intervals": [],
+    "blackIntervals": []
+  },
+  "pacingAudit": "pacing-v7/pacing-audit.json",
+  "artisticApproval": false,
+  "manualListeningVerified": false
 }

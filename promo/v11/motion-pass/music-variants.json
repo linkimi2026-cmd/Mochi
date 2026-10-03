@@ -1,53 +1,39 @@
 {
   "references": [
     {
-      "track": "k3",
-      "path": "/Users/a1379/Desktop/AI模型宣传视频/Kimi_K3_智能的新前沿.mp4"
-    },
-    {
       "track": "k25",
       "path": "/Users/a1379/Desktop/AI模型宣传视频/Kimi_K2.5_全能Agent模型.mp4"
     }
   ],
-  "edition": 6,
-  "versionCount": 3,
+  "edition": 7,
+  "versionCount": 2,
   "cover": "output/Mochi_品牌封面_2K.png",
   "pictureIdentical": true,
   "pictureIdenticalToMaster": true,
   "referenceAudio": "Original local reference audio, looped and aligned to measured beats; not an isolated music stem; may include original sound effects.",
-  "clicks": "Same original Mochi press/release and typing sounds in all three variants; see choreography-cues.json",
+  "clicks": "Same original Mochi press/release and typing sounds in all enabled variants; see choreography-cues.json",
   "typingReport": "typing-cues.json",
   "syncReport": "score-sync.json",
-  "duration": 299.95,
+  "duration": 299.34999999999997,
   "outputs": [
     {
       "coverEmbedded": true,
       "label": "现有配乐版",
-      "path": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/output/Mochi_V11_第六版_现有配乐版_2K120.mp4",
-      "bytes": 542700043,
-      "duration": 299.95,
-      "frames": 35994,
-      "videoBitstreamHash": "SHA256=a362af1d366186337223e6f0c1c3792d7f53f812a2889c294caf69f3ffa94eef",
-      "decodeErrors": 0
-    },
-    {
-      "coverEmbedded": true,
-      "label": "K3参考音轨版",
-      "path": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/output/Mochi_V11_第六版_K3参考音轨版_2K120.mp4",
-      "bytes": 542573593,
-      "duration": 299.95,
-      "frames": 35994,
-      "videoBitstreamHash": "SHA256=a362af1d366186337223e6f0c1c3792d7f53f812a2889c294caf69f3ffa94eef",
+      "path": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/output/Mochi_V11_第七版_现有配乐版_2K120.mp4",
+      "bytes": 720093448,
+      "duration": 299.35,
+      "frames": 35922,
+      "videoBitstreamHash": "SHA256=a3da4ca5c23030ce76178a5aee7360eba09f6344823f9379d0e0f4196f642b4b",
       "decodeErrors": 0
     },
     {
       "coverEmbedded": true,
       "label": "K2.5参考音轨版",
-      "path": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/output/Mochi_V11_第六版_K2.5参考音轨版_2K120.mp4",
-      "bytes": 542727506,
-      "duration": 299.95,
-      "frames": 35994,
-      "videoBitstreamHash": "SHA256=a362af1d366186337223e6f0c1c3792d7f53f812a2889c294caf69f3ffa94eef",
+      "path": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/output/Mochi_V11_第七版_K2.5参考音轨版_2K120.mp4",
+      "bytes": 720119755,
+      "duration": 299.35,
+      "frames": 35922,
+      "videoBitstreamHash": "SHA256=a3da4ca5c23030ce76178a5aee7360eba09f6344823f9379d0e0f4196f642b4b",
       "decodeErrors": 0
     }
   ]

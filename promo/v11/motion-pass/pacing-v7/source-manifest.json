@@ -1,0 +1,50 @@
+{
+  "method": "Original chapter HTML and linked original assets; added film camera/type choreography only",
+  "sources": [
+    {
+      "chapter": "opening",
+      "source": "opening-chapter/index.html",
+      "sha256": "9cf37e06abf6dfe449514c19990723aae3d96b1928d05b2d82819bee089603ea"
+    },
+    {
+      "chapter": "team",
+      "source": "team-dialogue/index.html",
+      "sha256": "0a6af5502393595070527929f7fad42b7641e610ae63c5c4d983f8a22c5cb8ad"
+    },
+    {
+      "chapter": "teaching",
+      "source": "teaching-chapter/index.html",
+      "sha256": "a1945979d31f98cf2edd8d30339539004f57f32d120edb2792deaf1d353ceaa2"
+    },
+    {
+      "chapter": "delivery",
+      "source": "delivery-chapter/index.html",
+      "sha256": "db195cb86a4a199a9493d197b8ae7e249de46bfd2409fa57a93e5ac7e6481517"
+    },
+    {
+      "chapter": "model",
+      "source": "model-chapter/index.html",
+      "sha256": "164caccb88d88827d3a1fdf7dff728f1ef3fcc603ae06a6ee9ff8fc68b1a3cd1"
+    },
+    {
+      "chapter": "mailbox",
+      "source": "mailbox-chapter/index.html",
+      "sha256": "d916e8ace68e05fffcc6fbd148d018a284a132a68a23a1a28804737bd70dcd8f"
+    },
+    {
+      "chapter": "students",
+      "source": "student-chapter/index.html",
+      "sha256": "906c9b46193eef31e0a187cafe2cbca01ea3805563edbd90b43338b7a4e0474b"
+    },
+    {
+      "chapter": "query",
+      "source": "motion-pass/native-query/index.html",
+      "sha256": "6f671557ed545596f3b65c81b95a73d5b4a754c6e37a452497e2f42d3b35605f"
+    },
+    {
+      "chapter": "collaboration",
+      "source": "collaboration-chapter/index.html",
+      "sha256": "590f4d0fd9cbee59195ada50d0077b3a9701311347daeef41a8f029dd38fe489"
+    }
+  ]
+}

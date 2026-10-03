@@ -4,7 +4,7 @@ import {execFileSync} from 'node:child_process';
 import {dirname,resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {createMechanicalAudio} from '../../../client-plugins/jxl-theme/scripts/mechanical-audio.mjs';
-const dir=dirname(fileURLToPath(import.meta.url)),plan=JSON.parse(readFileSync(resolve(dir,'plan.json'))),h=plan.handleSeconds;
+const dir=dirname(fileURLToPath(import.meta.url)),planPath=process.argv.find(x=>x.startsWith('--plan='))?.slice(7)||'plan.json',plan=JSON.parse(readFileSync(resolve(dir,planPath))),h=plan.handleSeconds;
 const choreography=[
  {clicks:[8.75,14.42,20.65],accents:[1.15,4.05,8.75,14.42,20.65]},
  {clicks:[6.4,14.7],accents:[6.4,12.85,19.9]},
@@ -15,6 +15,11 @@ const choreography=[
  {clicks:[2.7],accents:[2.7,7.8,13.95,21.05,30.8,33.5,39.8,44.2,46.2,50,52,54.8,56.8]},
  {clicks:[],accents:[3,15,27,39,51]},
 ];
+if(planPath.includes('pacing-v7')){
+ choreography[2].accents=[1.8,7.2,12.6,14.6,17.6,21,23.5,28.8,31.9];
+ choreography[3].accents=[3.2,10.45,11.55,15.3,17.5,20.3,21.55];
+ choreography[7].accents=[2.65,10.65,16.65,24.65,30.65,38.65,44.65,49.3,50.95,52.6];
+}
 let time=0;const clicks=[],candidates=[];
 for(const [i,ch]of plan.chapters.entries()){
  const skip=i?h:0,length=ch.duration-skip-(i<plan.chapters.length-1?h:0);

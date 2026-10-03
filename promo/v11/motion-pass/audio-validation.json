@@ -1,26 +1,18 @@
 {
-  "edition": 6,
+  "edition": 7,
   "tracks": [
     {
-      "track": "own",
-      "samplePeak": 0.55072021484375,
+      "label": "现有配乐版",
+      "encodedPeak": 0.5436965227127075,
       "finite": true,
-      "duration": 299.95
+      "decodeErrors": 0
     },
     {
-      "track": "k3",
-      "samplePeak": 0.5406494140625,
+      "label": "K2.5参考音轨版",
+      "encodedPeak": 0.7955347895622253,
       "finite": true,
-      "duration": 299.95
-    },
-    {
-      "track": "k25",
-      "samplePeak": 0.7943115234375,
-      "finite": true,
-      "duration": 299.95
+      "decodeErrors": 0
     }
   ],
-  "typingGlyphs": 364,
-  "typingSounds": 140,
   "manualListeningVerified": false
 }

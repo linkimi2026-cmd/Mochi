@@ -1,0 +1,42 @@
+import {readFileSync,writeFileSync,mkdirSync,symlinkSync,existsSync} from 'node:fs';
+import {resolve,dirname,relative} from 'node:path';import{fileURLToPath}from'node:url';
+const root=dirname(fileURLToPath(import.meta.url)),dir=resolve(root,'daily');mkdirSync(dir,{recursive:true});
+if(!existsSync(resolve(dir,'assets')))symlinkSync(relative(dir,resolve(root,'../../master-preview/supplement/assets')),resolve(dir,'assets'));
+const shots=[
+ [6,0,8,'今天的交流，','留下来。','Mochi 日记 · 真实活动记录'],
+ [7,8,6,'记住，','也有依据。','展开来源 · 回到那次交流'],
+ [8,14,8,'慢慢了解，','你的习惯。','偏好与观察 · 记忆内容可查看'],
+ [9,22,6,'决定权，','始终在你。','查看更正表单 · 未提交修改'],
+ [10,28,8,'把经历，','串成历史。','本机日记摘录 · 保留来源'],
+ [11,36,6,'约定好，','按时出现。','自动化任务 · 已有一次性规则'],
+ [12,42,6,'执行之后，','也有记录。','10 月 2 日既有运行历史 · 不是新触发'],
+];
+const body=shots.map(([id,start,duration,a,b,note],i)=>`<section id="s${i}" class="scene"><div class="type"><small>${i<5?'一起积累':'按时行动'}</small><h1><span>${a}</span><strong>${b}</strong></h1><p>${note}</p></div><div class="camera"><video id="shot-${id}" class="clip" src="assets/shot-${id}.mp4" data-start="${start}" data-duration="${duration}" data-track-index="${i+1}" muted></video></div></section>`).join('');
+const html=`<!doctype html><html><head><meta charset="utf-8"><script src="assets/gsap.min.js"></script><style>
+@font-face{font-family:MoSans;src:url('assets/NotoSansCJKsc-Regular.otf')}@font-face{font-family:MoSans;src:url('assets/NotoSansCJKsc-Bold.otf');font-weight:700 900}@font-face{font-family:MoSerif;src:url('assets/NotoSerifCJKsc-SemiBold.otf')}
+*{box-sizing:border-box}body{margin:0}#film{position:relative;width:2560px;height:1440px;overflow:hidden;background:#edf0e2;color:#294538;font-family:MoSans;perspective:2400px}#world{position:absolute;inset:0;perspective:2500px}.paper{position:absolute;width:1400px;height:1800px;box-shadow:35px 45px 0 #fffbef70;transform-origin:center}.scene{position:absolute;inset:0;opacity:0;perspective:2400px}.type{position:absolute;left:150px;top:210px;width:1070px;transform-origin:0 0;z-index:2}.type small{font:25px MoSans;letter-spacing:9px}h1{font:900 128px/1.2 MoSans;margin:40px 0;letter-spacing:-7px}h1 span,h1 strong{display:block;white-space:nowrap}h1 strong{font-family:MoSerif;font-weight:600}.glyph{display:inline-block}.type p{font:30px/1.6 MoSans;color:#5f715b;max-width:850px}.camera{position:absolute;left:0;top:0;width:1440px;height:1140px;display:flex;align-items:center;justify-content:center;transform-origin:0 0}.camera video{display:block;max-width:100%;max-height:100%;box-shadow:0 30px 60px #24432925;border-radius:14px}#folio{position:absolute;left:90px;bottom:40px;font:24px MoSans;color:#6b7964}
+</style></head><body><main id="film" data-composition-id="mochi-daily-v7" data-width="2560" data-height="1440" data-fps="120" data-duration="48"><div id="world"><div class="paper" style="left:-1150px;top:-640px;background:#cddfca"></div><div class="paper" style="left:2240px;top:300px;background:#e7d0a7"></div><div class="paper" style="left:600px;top:1300px;background:#fdfaf0"></div></div>${body}<div id="folio">Mochi · 每一次交流，继续积累</div></main><script>
+const tl=gsap.timeline({paused:true});window.__timelines={'mochi-daily-v7':tl};const shots=${JSON.stringify(shots)};
+shots.forEach(([id,start,duration],i)=>{
+ const el=document.querySelector('#s'+i),camera=el.querySelector('.camera'),type=el.querySelector('.type'),h=el.querySelector('h1');
+ for(const row of h.children){const text=row.textContent;row.innerHTML=Array.from(text).map(c=>'<i class="glyph" style="font-style:normal">'+c+'</i>').join('')}
+ const wide=i>=5,right=!wide&&i%3===2,home={x:right?85:1090,y:160,scale:wide?.92:1};
+ if(right)gsap.set(type,{x:1260});
+ tl.set(el,{opacity:1},start);
+ tl.fromTo(camera,{x:home.x+(i%2?750:-350),y:home.y+(i%2?0:520),scale:.68,rotationY:i%2?-32:20,rotation:i%2?7:-7,opacity:0},{...home,rotationY:0,rotation:0,opacity:1,duration:.85,ease:'power3.out',immediateRender:false},start);
+ tl.fromTo(h.querySelectorAll('.glyph'),{y:165,rotation:9,opacity:0},{y:0,rotation:0,opacity:1,duration:.6,stagger:.028,ease:'power3.out',immediateRender:false},start+.08);
+ tl.fromTo(el.querySelector('p'),{y:35,opacity:0},{y:0,opacity:1,duration:.45,immediateRender:false},start+.5);
+ // Type makes room as the camera enters actual content. No UI is recreated.
+ tl.to(type,{scale:.68,y:-120,x:right?1340:0,duration:.75,ease:'power2.inOut'},start+1.5);
+ tl.to(type,{opacity:0,duration:.3},start+1.85);
+ const targets=wide?[{x:640,y:175,scale:1.2},{x:700,y:20,scale:1.18}]:[{x:right?380:1020,y:80,scale:1.18},{x:right?320:940,y:-150,scale:1.23}];
+ tl.to(camera,{...targets[0],duration:.8,ease:'power2.inOut'},start+1.85);
+ tl.to(camera,{...targets[1],duration:.8,ease:'power2.inOut'},start+3.65);
+ if(duration>6){tl.to(type,{y:390,x:right?1310:20,scale:.82,duration:.8,ease:'power2.inOut'},start+4.9);tl.to(camera,{...home,scale:.9,duration:.85,ease:'power2.inOut'},start+5.4)}
+ tl.to(camera,{x:home.x+(i%2?-1850:1500),y:-180,scale:.62,rotationY:i%2?28:-28,opacity:0,duration:.7,ease:'power3.in'},start+duration-.7);
+ tl.to(type,{y:-350,opacity:0,duration:.55,ease:'power2.in'},start+duration-.55);
+ tl.set(el,{opacity:0},start+duration);
+ tl.to('.paper',{x:(i%2?1:-1)*180,y:(i%3-1)*150,rotation:(i%2?1:-1)*17,rotationY:(i%2?1:-1)*18,stagger:.1,duration:1.1,ease:'power2.inOut'},start);
+});tl.to({}, {duration:.01},47.99);
+</script></body></html>`;
+writeFileSync(resolve(dir,'index.html'),html);writeFileSync(resolve(root,'daily-shots.json'),JSON.stringify(shots,null,2));

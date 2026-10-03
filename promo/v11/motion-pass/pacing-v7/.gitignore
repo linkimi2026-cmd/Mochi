@@ -1,0 +1,4 @@
+# Rebuildable encoded intermediates; final delivery is in ../output/.
+media/
+# Temporary audio scheduling plan, superseded by plan.json.
+audio-plan.json

@@ -4,62 +4,62 @@
     {
       "bridge": 0,
       "endpoint": "out",
-      "normalizedMeanAbsolutePixelError": 0.0009691925381263725
+      "normalizedMeanAbsolutePixelError": 0.0009619076797385728
     },
     {
       "bridge": 0,
       "endpoint": "in",
-      "normalizedMeanAbsolutePixelError": 0.003547623910675371
+      "normalizedMeanAbsolutePixelError": 0.003763208061002168
     },
     {
       "bridge": 1,
       "endpoint": "out",
-      "normalizedMeanAbsolutePixelError": 0.004010927287581687
+      "normalizedMeanAbsolutePixelError": 0.0041309061819172
     },
     {
       "bridge": 1,
       "endpoint": "in",
-      "normalizedMeanAbsolutePixelError": 0.0033527199074074136
+      "normalizedMeanAbsolutePixelError": 0.0033626940359477186
     },
     {
       "bridge": 2,
       "endpoint": "out",
-      "normalizedMeanAbsolutePixelError": 0.0027315495642701525
+      "normalizedMeanAbsolutePixelError": 0.0026184129901960793
     },
     {
       "bridge": 2,
       "endpoint": "in",
-      "normalizedMeanAbsolutePixelError": 0.0035057700163398744
+      "normalizedMeanAbsolutePixelError": 0.0034250748910675463
     },
     {
       "bridge": 4,
       "endpoint": "out",
-      "normalizedMeanAbsolutePixelError": 0.002427457788671026
+      "normalizedMeanAbsolutePixelError": 0.0023930078976034884
     },
     {
       "bridge": 4,
       "endpoint": "in",
-      "normalizedMeanAbsolutePixelError": 0.0024146922657952035
+      "normalizedMeanAbsolutePixelError": 0.002394948257080607
     },
     {
       "bridge": 5,
       "endpoint": "out",
-      "normalizedMeanAbsolutePixelError": 0.0021606924019607846
+      "normalizedMeanAbsolutePixelError": 0.00211870234204793
     },
     {
       "bridge": 5,
       "endpoint": "in",
-      "normalizedMeanAbsolutePixelError": 0.0028500816993464097
+      "normalizedMeanAbsolutePixelError": 0.0027831052559912878
     },
     {
       "bridge": 6,
       "endpoint": "out",
-      "normalizedMeanAbsolutePixelError": 0.002591622412854031
+      "normalizedMeanAbsolutePixelError": 0.002503812636165577
     },
     {
       "bridge": 6,
       "endpoint": "in",
-      "normalizedMeanAbsolutePixelError": 0.0028942504084967283
+      "normalizedMeanAbsolutePixelError": 0.0020408326525054414
     }
   ]
 }
