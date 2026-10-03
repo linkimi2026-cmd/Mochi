@@ -1,0 +1,99 @@
+{
+  "revision": "7.2-k25-music-stem",
+  "sampleRate": 48000,
+  "channels": 2,
+  "samplesPerChannel": 14368800,
+  "finalAudioSha256": "d0bef17597440259d36259b641ed1305f1a94ba1fdcca158a586675aae4c8bbd",
+  "duration": 299.35,
+  "peak": 0.522440493106842,
+  "finite": true,
+  "longSilencesBelowMinus55dB": [],
+  "majorCueChecks": [
+    {
+      "cueSeconds": 1.15,
+      "measuredLowDrumRise": 1.15,
+      "offsetMs": 0.0
+    },
+    {
+      "cueSeconds": 23.6,
+      "measuredLowDrumRise": 23.606,
+      "offsetMs": 6.0
+    },
+    {
+      "cueSeconds": 47.75,
+      "measuredLowDrumRise": 47.79,
+      "offsetMs": 40.0
+    },
+    {
+      "cueSeconds": 86.35,
+      "measuredLowDrumRise": 86.358,
+      "offsetMs": 8.0
+    },
+    {
+      "cueSeconds": 115.45,
+      "measuredLowDrumRise": 115.49,
+      "offsetMs": 40.0
+    },
+    {
+      "cueSeconds": 134.15,
+      "measuredLowDrumRise": 134.152,
+      "offsetMs": 2.0
+    },
+    {
+      "cueSeconds": 184.35,
+      "measuredLowDrumRise": 184.356,
+      "offsetMs": 6.0
+    },
+    {
+      "cueSeconds": 245.15,
+      "measuredLowDrumRise": 245.152,
+      "offsetMs": 2.0
+    },
+    {
+      "cueSeconds": 293.25,
+      "measuredLowDrumRise": 293.254,
+      "offsetMs": 4.0
+    }
+  ],
+  "cueMethod": "Strongest low-drum rising energy near each musical anchor; not proof of musicological downbeats or full listening approval.",
+  "joinContinuity": [
+    {
+      "time": 1.15,
+      "largestSampleStepInCrossfade": 0.12966853380203247
+    },
+    {
+      "time": 23.6,
+      "largestSampleStepInCrossfade": 0.039483726024627686
+    },
+    {
+      "time": 47.75,
+      "largestSampleStepInCrossfade": 0.12516221404075623
+    },
+    {
+      "time": 86.35,
+      "largestSampleStepInCrossfade": 0.17737214267253876
+    },
+    {
+      "time": 115.45,
+      "largestSampleStepInCrossfade": 0.09935072809457779
+    },
+    {
+      "time": 134.15,
+      "largestSampleStepInCrossfade": 0.1256898194551468
+    },
+    {
+      "time": 184.35,
+      "largestSampleStepInCrossfade": 0.06724481284618378
+    },
+    {
+      "time": 245.15,
+      "largestSampleStepInCrossfade": 0.12494713813066483
+    },
+    {
+      "time": 293.25,
+      "largestSampleStepInCrossfade": 0.12669561803340912
+    }
+  ],
+  "wholeTrackLargestSampleStep": 0.2542187571525574,
+  "manualListeningVerified": false
+}

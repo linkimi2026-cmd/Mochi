@@ -1,0 +1,117 @@
+{
+  "pictureBitstreamHash": "SHA256=a3da4ca5c23030ce76178a5aee7360eba09f6344823f9379d0e0f4196f642b4b",
+  "revision": "7.2-k25-music-stem",
+  "duration": 299.35,
+  "source": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/k25-audio-repair/media/stems/music.wav",
+  "sourceSha256": "63d654100653c531d640a6da64900d7ca4c61c47e419d35849af39e7662c51dd",
+  "reference": "/Users/a1379/Desktop/AI模型宣传视频/Kimi_K2.5_全能Agent模型.mp4",
+  "separationReport": "separation-check.json",
+  "referenceEffectsMixed": false,
+  "referenceDialogueMixed": false,
+  "sections": [
+    {
+      "name": "Mo 问候",
+      "target": 1.15,
+      "end": 23.6,
+      "beats": 43,
+      "tempo": 1.0080881491032703,
+      "sourceOffsetBeats": 0,
+      "preBeatCrossfadeSeconds": 0.06
+    },
+    {
+      "name": "Agent 协作",
+      "target": 23.6,
+      "end": 47.75,
+      "beats": 46,
+      "tempo": 1.0025062656641603,
+      "sourceOffsetBeats": 56,
+      "preBeatCrossfadeSeconds": 0.06
+    },
+    {
+      "name": "教学成果",
+      "target": 47.75,
+      "end": 86.35,
+      "beats": 73,
+      "tempo": 0.9953640578129261,
+      "sourceOffsetBeats": 0,
+      "preBeatCrossfadeSeconds": 0.06
+    },
+    {
+      "name": "交互模型",
+      "target": 86.35,
+      "end": 115.45,
+      "beats": 55,
+      "tempo": 0.9947549285585093,
+      "sourceOffsetBeats": 56,
+      "preBeatCrossfadeSeconds": 0.06
+    },
+    {
+      "name": "叮咚接信",
+      "target": 115.45,
+      "end": 134.15,
+      "beats": 36,
+      "tempo": 1.013228257810301,
+      "sourceOffsetBeats": 0,
+      "preBeatCrossfadeSeconds": 0.06
+    },
+    {
+      "name": "校园消息",
+      "target": 134.15,
+      "end": 184.35,
+      "beats": 95,
+      "tempo": 0.9960159362549803,
+      "sourceOffsetBeats": 0,
+      "preBeatCrossfadeSeconds": 0.06
+    },
+    {
+      "name": "查人与教师协作",
+      "target": 184.35,
+      "end": 245.15,
+      "beats": 116,
+      "tempo": 1.0041551246537392,
+      "sourceOffsetBeats": 56,
+      "preBeatCrossfadeSeconds": 0.06
+    },
+    {
+      "name": "记忆与自动化",
+      "target": 245.15,
+      "end": 293.25,
+      "beats": 91,
+      "tempo": 0.9957325746799431,
+      "sourceOffsetBeats": 0,
+      "preBeatCrossfadeSeconds": 0.06
+    },
+    {
+      "name": "Mochi 已至",
+      "target": 293.25,
+      "end": 299.35,
+      "beats": 12,
+      "tempo": 1.0,
+      "sourceOffsetBeats": 0,
+      "preBeatCrossfadeSeconds": 0.06
+    }
+  ],
+  "musicalSectionCount": 9,
+  "maxTempoChange": 0.013228257810300903,
+  "localAttackShifts": 0,
+  "syntheticKickAccents": 0,
+  "musicBed": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/k25-audio-repair/media/music.wav",
+  "finalAudio": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/k25-audio-repair/media/final.wav",
+  "finalAudioSha256": "d0bef17597440259d36259b641ed1305f1a94ba1fdcca158a586675aae4c8bbd",
+  "pictureChanges": false,
+  "dingTime": 115.45,
+  "confirmedLegacyDrift": {
+    "musicBedSeconds": 296.594,
+    "pictureSeconds": 299.35,
+    "missingSeconds": 2.756,
+    "cause": "Source duration passed as output -t truncated slowed slices before concatenation."
+  },
+  "detailChanges": [
+    "60ms pre-beat loop joins",
+    "typing -3.1dB",
+    "clicks -1.9dB",
+    "music duck 3.5dB around ding",
+    "ending release 2.2s"
+  ],
+  "manualListeningVerified": false
+}

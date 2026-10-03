@@ -1,0 +1,50 @@
+{
+  "worker": "https://github.com/wassermanproductions/stem-studio",
+  "workerCommit": "7448d47a942b43ae2fc37ecc8fe0bc731c9e18fc",
+  "model": "JusperLee/TIGER-DnR",
+  "workerSourceSha256": {
+    "engine_tiger.py": "8db7e2d72fc2d71a081952fa98b0161ce94cca2e9314f8273d1356f283be026c",
+    "pipeline.py": "aa4c3e3249872717ba44aa0cd743a780b07a2386400bb3f9a1099c2a333b3484",
+    "vendor/tiger/tiger_dnr.py": "99f359560a949d5640590a5f14ea9dc2c5db2327461b8ad7d26f1871c0de4e7c"
+  },
+  "modelRevision": "b7a59560bbca10febbcd46fb01600f868e587f57",
+  "engine": "tiger",
+  "quality": "fast",
+  "device": "mps",
+  "referenceSha256": "e9ee51f772a3c5981bcca4cf993716dd81b2848ab31a0d6d5731bde886d041e3",
+  "inputSha256": "b85a11c81cd0f5596ecfed1d1e924cbb05d351b8fab488a570f6a2bd17c4da7f",
+  "musicSha256": "63d654100653c531d640a6da64900d7ca4c61c47e419d35849af39e7662c51dd",
+  "stems": {
+    "music": {
+      "sha256": "63d654100653c531d640a6da64900d7ca4c61c47e419d35849af39e7662c51dd",
+      "rms": 0.13947322964668274,
+      "peak": 0.6844015121459961
+    },
+    "effects": {
+      "sha256": "10573c9934a3c2ea392b09ccb67cd2ff452d8a1d2bf2b8124550a1aa0a35579f",
+      "rms": 0.02798480913043022,
+      "peak": 0.8028402328491211
+    },
+    "dialogue": {
+      "sha256": "1aab9e515061fb078d6b2cd64b8fef97e5e6954a61a75b21a356900eb4ff8b1b",
+      "rms": 0.00016587598656769842,
+      "peak": 0.004066720139235258
+    }
+  },
+  "sampleRate": 44100,
+  "samplesPerChannel": 2627655,
+  "duration": 59.58401360544217,
+  "maxMixtureReconstructionError": 7.450580596923828e-08,
+  "finalMixIncludes": [
+    "separated music",
+    "Mochi click",
+    "Mochi typing",
+    "Mochi ding"
+  ],
+  "finalMixExcludes": [
+    "reference effects stem",
+    "reference dialogue stem"
+  ],
+  "limitation": "Separation can leave bleed or alter transients. Reconstruction and RMS checks are not proof of perfect isolation.",
+  "manualListeningVerified": false
+}

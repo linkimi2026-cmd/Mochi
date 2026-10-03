@@ -32,6 +32,10 @@ const accents=[];for(const x of candidates.sort((a,b)=>a.time-b.time))if(!accent
 if(Math.abs(time-plan.duration)>.001)throw Error('Choreography duration mismatch');
 writeFileSync(resolve(dir,'choreography-cues.json'),JSON.stringify({duration:time,accents,clicks,clickSource:'client-plugins/jxl-theme/scripts/mechanical-audio.mjs'},null,2)+'\n');
 const ff=args=>execFileSync('ffmpeg',['-v','error','-nostdin',...args],{stdio:'inherit'});
+const assertSamples=(path,seconds)=>{
+ const p=JSON.parse(execFileSync('ffprobe',['-v','error','-select_streams','a:0','-show_entries','stream=sample_rate,duration_ts,time_base','-of','json',path],{encoding:'utf8'})).streams[0];
+ if(p.sample_rate!=='48000'||p.time_base!=='1/48000'||Number(p.duration_ts)!==Math.round(seconds*48000))throw Error('Audio duration drift: '+path);
+};
 const previous=process.argv.includes('--refine')?JSON.parse(readFileSync(resolve(dir,'score-sync.json'))):null;
 const reports=[];
 for(const label of tracks.map(t=>t.id)){
@@ -56,11 +60,14 @@ for(const label of tracks.map(t=>t.id)){
  const segments=[];
  for(let i=1;i<mapping.length;i++){
   const a=mapping[i-1],b=mapping[i],length=b.target-a.target,tempo=(b.source-a.source)/length,path=resolve(part,`slice-${i}.wav`);
-  ff(['-ss',String(a.source),'-i',resolve(part,'music.wav'),'-t',String(b.source-a.source),'-af',`atempo=${tempo},apad,atrim=duration=${length},afade=t=in:d=0.004,afade=t=out:st=${Math.max(0,length-.004)}:d=0.004`,'-ar','48000','-ac','2','-y',path]);
+  // Source duration is an INPUT option. An output -t here truncates slowed clips.
+  ff(['-ss',String(a.source),'-t',String(b.source-a.source),'-i',resolve(part,'music.wav'),'-af',`atempo=${tempo},apad,atrim=duration=${length},afade=t=in:d=0.004,afade=t=out:st=${Math.max(0,length-.004)}:d=0.004`,'-ar','48000','-ac','2','-y',path]);
+  assertSamples(path,length);
   segments.push(path);
  }
  writeFileSync(resolve(part,'concat.txt'),segments.map(p=>`file '${p}'`).join('\n'));
  ff(['-f','concat','-safe','0','-i',resolve(part,'concat.txt'),'-af',`loudnorm=I=-18:TP=-2:LRA=8,afade=t=in:d=0.5,afade=t=out:st=${time-3}:d=3`,'-ar','48000','-ac','2','-y',resolve(part,'aligned.wav')]);
+ assertSamples(resolve(part,'aligned.wav'),time);
  reports.push({label,openingTrim,mapping,maxTempoChange:Math.max(...mapping.slice(1).map((b,i)=>Math.abs((b.source-mapping[i].source)/(b.target-mapping[i].target)-1))),method:'Original beat landmarks with explicit soft editorial accents for sparse intervals, optional opening trim, bounded pitch-preserving atempo, four-ms edge fades; listening review still required.'});
 }
 // Ask the product's own sound generator for its samples, rather than copying its synthesis code.

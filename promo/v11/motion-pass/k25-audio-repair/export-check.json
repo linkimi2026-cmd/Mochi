@@ -1,0 +1,14 @@
+{
+  "output": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/output/Mochi_V11_第七版_K2.5音轨修订版_2K120.mp4",
+  "audioRevision": "7.2-k25-music-stem",
+  "audioStart": "0.000000",
+  "audioDuration": "299.350000",
+  "decodedSamplesPerChannel": 14368800,
+  "aacTailPaddingSamples": 0,
+  "correlationToValidatedMix": 0.9999645837561275,
+  "decodedPeak": 0.5271283984184265,
+  "sha256": "1137b09c3bf2f476fa300e81d1d6f0ff2291c251f79ef640cc9f7586a23899f6",
+  "pictureUnchanged": true,
+  "decodeErrors": 0,
+  "manualListeningVerified": false
+}

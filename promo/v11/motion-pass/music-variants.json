@@ -10,10 +10,13 @@
   "cover": "output/Mochi_品牌封面_2K.png",
   "pictureIdentical": true,
   "pictureIdenticalToMaster": true,
-  "referenceAudio": "Original local reference audio, looped and aligned to measured beats; not an isolated music stem; may include original sound effects.",
+  "referenceAudio": "K2.5 uses TIGER-DnR separated music only; reference effects/dialogue stems are excluded. Model separation may retain bleed; see k25-audio-repair/separation-check.json.",
   "clicks": "Same original Mochi press/release and typing sounds in all enabled variants; see choreography-cues.json",
   "typingReport": "typing-cues.json",
   "syncReport": "score-sync.json",
+  "audioReportOverrides": {
+    "k25": "k25-audio-repair/edit-report.json"
+  },
   "duration": 299.34999999999997,
   "outputs": [
     {
@@ -29,12 +32,14 @@
     {
       "coverEmbedded": true,
       "label": "K2.5参考音轨版",
-      "path": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/output/Mochi_V11_第七版_K2.5参考音轨版_2K120.mp4",
-      "bytes": 720119755,
+      "path": "/Users/a1379/Documents/Mochi/promo/v11/motion-pass/output/Mochi_V11_第七版_K2.5音轨修订版_2K120.mp4",
+      "bytes": 719501934,
       "duration": 299.35,
       "frames": 35922,
       "videoBitstreamHash": "SHA256=a3da4ca5c23030ce76178a5aee7360eba09f6344823f9379d0e0f4196f642b4b",
-      "decodeErrors": 0
+      "decodeErrors": 0,
+      "audioRevision": "7.2-k25-music-stem",
+      "audioReport": "k25-audio-repair/edit-report.json"
     }
   ]
 }

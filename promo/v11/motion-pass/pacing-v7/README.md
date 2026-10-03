@@ -18,7 +18,7 @@ node promo/v11/motion-pass/pacing-v7/assemble.mjs --final
 node promo/v11/motion-pass/sync-scores.mjs --plan=pacing-v7/plan.json
 ```
 
-随后依次执行 `measure-sync.py`、`finish-score-attacks.py`、`measure-sync.py`、`mail-delivery-audio.mjs`、`typing-cover.mjs`、`music-variants.mjs`。Python 需 numpy，可使用 Codex 提供的依赖环境。不要重复叠加 attack edit；每次从 sync-scores 重建。不要运行旧 build.mjs 覆盖第六版空间转场 HTML。
+现有配乐的后续流程依次执行 `measure-sync.py`、`finish-score-attacks.py`、`measure-sync.py`、`mail-delivery-audio.mjs`、`typing-cover.mjs`。当前 K2.5 另按 [音轨修订入口](../k25-audio-repair/README.md) 分离音乐并重建、检查，再运行 `music-variants.mjs`；不能使用旧全混音覆盖分离音乐版。Python 需 numpy，可使用 Codex 提供的依赖环境。不要重复叠加 attack edit；每次从 sync-scores 重建。不要运行旧 build.mjs 覆盖第六版空间转场 HTML。
 
 ## 连续性与边界
 
