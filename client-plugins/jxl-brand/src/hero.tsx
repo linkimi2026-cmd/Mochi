@@ -1,18 +1,23 @@
-// Mochi 本尊入口：真实 OrbCompanion（球 + 小电脑，Clawd 式状态机）+ ExpressiveOrb 引擎。
-// 共享组件由 build.mjs 解析到 canonical 联动计划/src/components；这里仅复用，不另建副本。
+export { installHolidayGreeting, subscribeHolidayHome } from "./holiday-greeting.mjs";
+export { registerMochiTeam } from "./MochiTeam";
+export { teamPalette } from "./team-palette.mjs";
+// Mochi 本尊入口：OrbCompanion（球 + 小电脑）+ ExpressiveOrb 连续动效。
+// 投产对话界面在本插件内维护一份组件源码。
 // 本文件做：汇总导出 + CSS 注入 + hero mark 适配 + 品牌位组件。
 
-import orbCss from "@jxl-campus-components/ExpressiveOrb.css";
-import companionCss from "@jxl-campus-components/OrbCompanion.css";
+import orbCss from "./ExpressiveOrb.css";
+import companionCss from "./OrbCompanion.css";
+import teamCss from "./MochiTeam.css";
+import { useEffect, useState } from "react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import jsxRuntime from "react/jsx-runtime"; // 确保模块表基线外部依赖在打包期被标记
-import { ExpressiveOrb } from "@jxl-campus-components/ExpressiveOrb";
-import { OrbCompanion, type OrbCompanionState } from "@jxl-campus-components/OrbCompanion";
+import { ExpressiveOrb } from "./ExpressiveOrb";
+import { OrbCompanion, type OrbCompanionState } from "./OrbCompanion";
 
 export { ExpressiveOrb, OrbCompanion };
 
-import loadingCss from "@jxl-campus-components/MochiLoading.css";
-import { MochiLoading } from "@jxl-campus-components/MochiLoading";
+import loadingCss from "./MochiLoading.css";
+import { MochiLoading } from "./MochiLoading";
 import { createRoot } from "react-dom/client";
 /** Mount the compact typing Mochi used for the current running turn only. */
 export function mountLoading(el: HTMLElement, text: string, compact = false) {
@@ -23,7 +28,7 @@ export function mountLoading(el: HTMLElement, text: string, compact = false) {
 }
 
 /** Mount the same real Mochi in a non-computing attention state, for approvals. */
-export function mountCompanion(el: HTMLElement, state: OrbCompanionState, text: string, size = 30) {
+export function mountCompanion(el: HTMLElement, state: OrbCompanionState, text: string, size = 40) {
   injectCompanionStyles();
   const root = createRoot(el);
   root.render(<OrbCompanion state={state} size={size} label={text} />);
@@ -38,7 +43,7 @@ export function mountCompanion(el: HTMLElement, state: OrbCompanionState, text: 
  * 状态文字只写给官方流式中的当前 assistant，模板通过 SessionSnapshot 和
  * AssistantMarkdown[data-streaming] 定位它；OrbCompanion 的表情态由 renderAvatar 重渲染切换。
  */
-export function mountAvatar(el: HTMLElement): void {
+export function mountAvatar(el: HTMLElement): () => void {
   injectCompanionStyles();
   const row = document.createElement("div");
   row.className = "jxl-msg-avatar-row";
@@ -52,11 +57,16 @@ export function mountAvatar(el: HTMLElement): void {
   const root = createRoot(mount);
   renderAvatar(root, "idle");
   (row as unknown as { __jxlAvatarRoot: ReturnType<typeof createRoot> }).__jxlAvatarRoot = root;
+  return () => {
+    root.unmount();
+    if (row.parentNode) row.parentNode.removeChild(row);
+    el.removeAttribute('data-jxl-mochi-avatar');
+  };
 }
 
 /** 头像状态切换：busy 时 typing 态（摇身体敲键盘），空闲回 idle。 */
-export function renderAvatar(root: ReturnType<typeof createRoot>, state: "idle" | "typing"): void {
-  root.render(<OrbCompanion state={state} size={26} label="Mochi" />);
+export function renderAvatar(root: ReturnType<typeof createRoot>, state: OrbCompanionState): void {
+  root.render(<OrbCompanion state={state} size={44} label="Mochi" />);
 }
 
 /** 老师常用技能清单（与 /skills 目录一一对应，中文名 + 一句话简介）。 */
@@ -94,27 +104,139 @@ export function SkillsRow() {
 const AVATAR_CSS = `
 .jxl-msg-avatar-row{display:flex;align-items:flex-end;gap:8px;margin:2px 0 4px;}
 .jxl-msg-avatar-row .orb-companion{flex-shrink:0;}
-.jxl-msg-avatar-status{font-size:12px;letter-spacing:.02em;color:#9aa8a0;opacity:0;transition:opacity .25s ease;padding-bottom:8px;}
+.jxl-msg-avatar-status{font-size:12px;letter-spacing:.02em;color:var(--dsw-alias-label-secondary,#706b60);opacity:0;transition:opacity .25s ease;padding-bottom:8px;}
 .jxl-msg-avatar-row--busy .jxl-msg-avatar-status{opacity:1;}
-.jxl-msg-avatar-row--busy .jxl-msg-avatar-status::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:#e8b34b;margin-right:6px;vertical-align:middle;animation:jxl-pulse 1.2s ease-in-out infinite;}
 @keyframes jxl-pulse{0%,100%{opacity:.4}50%{opacity:1}}
-@media (prefers-reduced-motion: reduce){.jxl-msg-avatar-row--busy .jxl-msg-avatar-status::before{animation:none}}
 .jxl-pending-mochi{display:flex;align-items:center;pointer-events:none;}
-.jxl-pending-mochi--flow{position:relative;z-index:1;align-self:center;flex:none;min-height:34px;margin:0 auto 4px;padding:0 10px;border-radius:999px;background:color-mix(in srgb,var(--dsw-alias-bg-base) 88%,var(--dsw-alias-border-l3));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--dsw-alias-border-l3) 70%,transparent);}
+.jxl-pending-mochi--flow{position:relative;z-index:1;align-self:flex-start;flex:none;min-height:56px;margin:8px 0;padding:0;}
 .jxl-pending-mochi--flow::after{content:"Mochi 正在处理";margin-left:6px;color:var(--dsw-alias-label-secondary,#747c76);font:500 12px/1.2 system-ui,sans-serif;letter-spacing:.01em;white-space:nowrap;}
+/* rc2 RunningStatus owns its clock and live announcement; only replace its decorative icon. */
+[data-chat-running] > span:last-child > span[aria-hidden="true"]{display:none;}
+.jxl-pending-mochi--status{display:inline-flex;align-self:center;order:-1;flex:none;width:28px;height:28px;margin:0;}
 .jxl-pending-mochi--approval{justify-content:flex-end;margin:4px 16px 0;min-height:32px;}
 /* ApprovalPanel exposes data-approval-scroll; its first direct div is the native reason headline. */
 [data-approval-key] [data-approval-scroll] > div:first-child{white-space:pre-line;}
 .jxl-skills-row{display:flex;flex-direction:column;gap:8px;padding:14px 16px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);}
 .jxl-skills-head{display:flex;flex-direction:column;gap:2px;}
 .jxl-skills-title{font-size:13px;font-weight:600;color:inherit;}
-.jxl-skills-sub{font-size:11.5px;color:#9aa8a0;}
+.jxl-skills-sub{font-size:11.5px;color:var(--dsw-alias-label-secondary,#706b60);}
 .jxl-skills-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;}
 .jxl-skills-item{display:flex;flex-direction:column;gap:1px;padding:6px 8px;border-radius:10px;background:rgba(255,255,255,.03);}
 .jxl-skills-name{font-size:12.5px;font-weight:600;color:inherit;}
-.jxl-skills-desc{font-size:11.5px;line-height:1.5;color:#9aa8a0;}
+.jxl-skills-desc{font-size:11.5px;line-height:1.5;color:var(--dsw-alias-label-secondary,#706b60);}
 `;
-const ALL_CSS = orbCss + "\n" + companionCss + "\n" + loadingCss + "\n" + AVATAR_CSS;
+/**
+ * 主视觉 slot 适配：官方 hero mark 传 { size, className }。
+ * Mochi 本尊 = OrbCompanion（球 + 电脑），不是任何手绘静态球。
+ */
+export function HeroMochi({ size, className }: { size?: number; className?: string }) {
+  const s = Math.max(Number(size) || 72, 72);
+  const [sleeping, setSleeping] = useState(false);
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
+    const wake = () => {
+      setSleeping(false);
+      clearTimeout(timer);
+      timer = setTimeout(() => setSleeping(true), 45_000);
+    };
+    wake();
+    window.addEventListener("pointerdown", wake);
+    window.addEventListener("keydown", wake);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("pointerdown", wake);
+      window.removeEventListener("keydown", wake);
+    };
+  }, []);
+  return (
+    <span className={`${className ?? ""} jxl-hero-mark`} style={{ display: "inline-flex", alignItems: "flex-end" }}>
+      <OrbCompanion state={sleeping ? "sleep" : "idle"} size={s} label="Mochi" />
+    </span>
+  );
+}
+
+/** 侧栏使用用户提供的 Mochi 图形；颜色跟随浅/深主题。 */
+export function MochiBrandMark({ size, className }: { size?: number; className?: string }) {
+  return (
+    <span
+      aria-hidden="true"
+      className={`${className ?? ""} mochi-brand-mark`}
+      style={{ width: size ?? 24, height: size ?? 24, flexShrink: 0 }}
+    />
+  );
+}
+
+/** Product wordmark; school identity belongs in the profile. */
+export function JellyfishWordmark() {
+  return <span className="jxl-brand-name">Mochi</span>;
+}
+
+const STARTER_PROMPTS = [
+  { label: "课堂整理", text: "帮我整理这节课的重点，做成简明的复习提纲。" },
+  { label: "师生沟通", text: "帮我写一条自然、礼貌又说清重点的沟通消息。" },
+  { label: "梳理下一步", text: "我遇到一件事……请帮我理清情况，再给出下一步建议。" },
+] as const;
+
+/** Blank-chat examples write into the native DSH composer draft. */
+export function ChatStarterPrompts({
+  session,
+  input,
+  inputActions,
+}: {
+  session: { blank: boolean; promptAttempted: boolean; awaitingFirstTurn: boolean };
+  input: { draft: string; attachmentIds: readonly unknown[]; phase: string };
+  inputActions: { setDraft(text: string): void };
+}) {
+  if (
+    !session.blank ||
+    session.promptAttempted ||
+    session.awaitingFirstTurn ||
+    input.draft !== "" ||
+    input.attachmentIds.length > 0 ||
+    input.phase !== "plain"
+  ) return null;
+
+  return (
+    <details className="jxl-starter" aria-label="Mochi 对话示例">
+      <summary className="jxl-starter__head">
+        <span className="jxl-starter__title">看看示例消息</span>
+        <span className="jxl-starter__hint">选择后可编辑，再发送</span>
+      </summary>
+      <div className="jxl-starter__grid" role="group" aria-label="选择一条示例消息">
+        {STARTER_PROMPTS.map((prompt) => (
+          <button
+            key={prompt.label}
+            className="jxl-starter__button"
+            type="button"
+            aria-label={`填入聊天框：${prompt.text}`}
+            onClick={() => inputActions.setDraft(prompt.text)}
+          >
+            <span className="jxl-starter__label">{prompt.label}</span>
+            <span className="jxl-starter__text">{prompt.text}</span>
+          </button>
+        ))}
+      </div>
+    </details>
+  );
+}
+
+const STARTER_CSS = `
+.jxl-starter{width:100%;max-width:var(--dsh-composer-card-max-width,720px);margin:0 auto;padding:0 4px 8px;box-sizing:border-box;color:var(--dsw-alias-label-secondary);font:13px/1.5 system-ui,sans-serif;}
+.jxl-starter__head{cursor:pointer;padding:6px 0;}
+.jxl-starter__title{font-weight:500;}
+.jxl-starter__hint{display:none;margin-left:14px;font-size:12px;color:var(--dsw-alias-label-tertiary);}
+.jxl-starter[open] .jxl-starter__hint{display:inline;}
+.jxl-starter__grid{display:flex;flex-direction:column;padding:4px 0 8px;}
+.jxl-starter__button{display:grid;grid-template-columns:88px 1fr;gap:12px;padding:10px 8px;border:0;border-bottom:1px solid var(--dsw-alias-border-l1);border-radius:0;background:transparent;color:inherit;text-align:left;cursor:pointer;font:inherit;}
+.jxl-starter__button:hover{background:var(--dsw-alias-interactive-bg-hover);}
+.jxl-starter__button:active{background:var(--dsw-alias-bg-layer-3);}
+.jxl-starter__button:focus-visible,.jxl-starter__head:focus-visible{outline:2px solid var(--dsw-alias-brand-text);outline-offset:2px;}
+.jxl-starter__label{font-weight:500;color:var(--dsw-alias-label-primary);}
+.jxl-starter__text{font-size:12px;}
+@media(max-width:560px){.jxl-starter__hint{display:none!important}.jxl-starter__button{grid-template-columns:1fr;gap:4px;}}
+`;
+
+const ALL_CSS = orbCss + "\n" + companionCss + "\n" + loadingCss + "\n" + AVATAR_CSS + "\n" + STARTER_CSS + "\n" + teamCss;
 
 export function injectCompanionStyles(): void {
   if (document.getElementById("jxl-companion-css")) return;
@@ -124,54 +246,13 @@ export function injectCompanionStyles(): void {
   document.head.appendChild(el);
 }
 
-/**
- * 主视觉 slot 适配：官方 hero mark 传 { size, className }。
- * Mochi 本尊 = OrbCompanion（球 + 电脑），不是任何手绘静态球。
- */
-export function HeroMochi({ size, className }: { size?: number; className?: string }) {
-  const s = Math.max(Number(size) || 34, 48);
-  return (
-    <span className={`${className ?? ""} jxl-hero-mark`} style={{ display: "inline-flex", alignItems: "flex-end" }}>
-      <OrbCompanion state="idle" size={s} label="Mochi" />
-    </span>
-  );
-}
-
-/**
- * 品牌标识 = 水母（嘉行联 logo，jiaxing-jellyfish-v1.png 复制件，经 /jxl-assets 服务）。
- * 注意：水母是 logo，不是 Mochi 本尊。
- */
-export function JellyfishBrandMark({ size, className }: { size?: number; className?: string }) {
-  return (
-    <img
-      src="/jxl-assets/brand/jiaxing-jellyfish-v1.png"
-      alt=""
-      aria-hidden
-      width={size}
-      height={size}
-      className={className}
-      style={{ objectFit: "contain", flexShrink: 0 }}
-    />
-  );
-}
-
-/** 品牌字标：嘉行联 + JXL（与联动计划 Logo.tsx 同构，宋体衬线见主题桥 .jxl-brand-name）。 */
-export function JellyfishWordmark() {
-  return (
-    <span className="jxl-brand-name">
-      <span>
-        {"嘉行联 "}
-        <i className="jxl-brand-en">JXL</i>
-      </span>
-    </span>
-  );
-}
-
 /** 「中文（嘉行联）」语言包：fallback=zh，只覆盖需要换装的键。 */
 export const HERO_DICT = {
   "hero.headline": "你好，我是 Mochi",
   "hero.preview": "校园工作伙伴",
   "hero.chooseWorkspace": "选择工作区",
+  "placeholder.default": "直接告诉 Mochi 你需要什么…",
+  "placeholder.hero": "直接给 Mochi 发条消息…",
 };
 
 /** 官方过程视图在「中文（嘉行联）」语言包中的入口名称。 */
@@ -181,5 +262,18 @@ export const TRAJECTORY_DICT = {
 
 /** 官方运行状态文案：保留状态组件、时钟和 aria-live 语义，只替换品牌文字。 */
 export const CHAT_DICT = {
-  "chat.deepDiving": "mochi探索中",
+  "settings.transcript.normal": "完整",
+  "settings.transcript.compact": "简洁",
+  "chat.deepDiving": "Mochi 探索中",
+  "chat.deepDivingFor": "Mochi 探索中，用时 {duration} ···",
+};
+
+export const SESSION_EXPORT_DICT = {
+  "header.action": "会话记录",
+  "dialog.preparingTitle": "正在导出会话",
+  "dialog.preparingDescription": "正在整理当前会话、子任务和附件。",
+  "dialog.successTitle": "会话记录已开始下载",
+  "dialog.successDescription": "正在下载会话记录压缩包。",
+  "dialog.errorTitle": "会话导出失败",
+  "dialog.commandFailed": "无法启动会话导出。",
 };

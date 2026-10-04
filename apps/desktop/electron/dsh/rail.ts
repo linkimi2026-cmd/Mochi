@@ -1,6 +1,8 @@
+import { isPetPalette, type PetPaletteId } from "./pet-palettes.generated";
 import { BrowserWindow, screen } from "electron";
-import { IPC, type RailAction, type RailAttentionPayload, type RailRow, type RailSnapshot, type RailSurface, type RailTone } from "./protocol";
+import { IPC, type RailAction, type RailAttentionPayload, type RailRow, type RailSnapshot, type RailSurface, type RailSyncHealth, type RailTone } from "./protocol";
 import { popupPageHtml, railPageHtml } from "./rail-pages";
+import { advanceRailSpring, isRailSpringSettled, type RailSpringValue } from "./rail-spring";
 
 /**
  * [Mochi 2026-09-18] 常驻条（悬浮窗）控制器。
@@ -17,12 +19,15 @@ import { popupPageHtml, railPageHtml } from "./rail-pages";
 
 /** 常驻条尺寸。横条形态：宽度固定，高度随内容在上下限之间自适应。 */
 const RAIL_WIDTH = 336;
-const RAIL_MIN_HEIGHT = 88;
+const RAIL_MIN_HEIGHT = 128;
 const RAIL_MAX_HEIGHT = 472;
+const PET_SIZE = 96;
+const PET_MIN_SIZE = 72;
+const PET_MAX_SIZE = 160;
 
 /** 喊人弹窗尺寸。比常驻条大，因为它是瞬态强提醒。 */
-const POPUP_WIDTH = 448;
-const POPUP_HEIGHT = 248;
+const POPUP_WIDTH = 552;
+const POPUP_HEIGHT = 280;
 
 /** 首次启动时的默认边距；之后一律用记住的位置。 */
 const DEFAULT_MARGIN_RIGHT = 24;
@@ -39,6 +44,7 @@ const LIMITS = Object.freeze({
   name: 80,
   meta: 80,
   note: 240,
+  context: 240,
   badge: 24,
   at: 40,
   rows: 50,
@@ -60,6 +66,10 @@ export interface RailPosition {
 export interface RailPositionStore {
   load(surface: RailSurface): RailPosition | null;
   save(surface: RailSurface, position: RailPosition): void;
+  loadPetSize?(surface: RailSurface): number | null;
+  savePetSize?(surface: RailSurface, size: number): void;
+  loadVisible?(surface: RailSurface): boolean | null;
+  saveVisible?(surface: RailSurface, visible: boolean): void;
 }
 
 export interface MochiRailOptions {
@@ -77,10 +87,18 @@ export interface MochiRailHandle {
   surface: RailSurface;
   /** 整份替换当前快照。形状不合法时整份丢弃并保留上一份，绝不半应用。 */
   apply(snapshot: unknown): boolean;
+  /** Report whether the preserved snapshot still reflects a healthy LAN poll. */
+  syncHealth(health: unknown): boolean;
   /** 请求弹一次喊人弹窗。同 id 冷却期内/已在队列中时忽略。 */
   attention(payload: unknown): boolean;
   /** 常驻条窗口里的动作（含内部消化的 sync/acknowledge）。 */
   dispatch(action: unknown): boolean;
+  /** Deliver asynchronous receipt feedback to the current popup. */
+  feedback(id: string, ok: boolean, message?: string): boolean;
+  /** Remove reminders whose original inbox message has a confirmed signed receipt. */
+  dismissReceipted(messageIds: readonly string[]): number;
+  setSoundEnabled(enabled: boolean): void;
+  setPetPalette(palette: string): void;
   setVisible(visible: boolean): void;
   isVisible(): boolean;
   dispose(): void;
@@ -115,13 +133,19 @@ function normalizeRow(value: unknown, index: number): RailRow | null {
   if (!plain(value)) return null;
   const id = clampText(value.id, LIMITS.id);
   if (id === "") return null;
+  const popupDetail = typeof value.popupDetail === "string" ? clampText(value.popupDetail, LIMITS.note) : undefined;
   return {
     id,
     seq: safeInteger(value.seq, 1, 9999) || index + 1,
     name: clampText(value.name, LIMITS.name),
     meta: clampText(value.meta, LIMITS.meta),
     note: clampText(value.note, LIMITS.note),
+    ...(popupDetail === undefined ? {} : { popupDetail }),
+    ...(value.popupComplete === true && value.popupDetail === popupDetail && popupDetail
+      ? { popupComplete: true } : {}),
+    ...(value.context === undefined ? {} : { context: clampText(value.context, LIMITS.context) }),
     badge: clampText(value.badge, LIMITS.badge),
+    ...(typeof value.actionRequired === "boolean" ? { actionRequired: value.actionRequired } : {}),
     tone: isOneOf(value.tone, TONES) ? value.tone : "neutral",
     at: clampText(value.at, LIMITS.at),
   };
@@ -148,6 +172,8 @@ export function normalizeRailSnapshot(value: unknown, expected?: RailSurface): R
   }
   return {
     surface,
+    ...(value.actionRequiredCount === undefined ? {} : { actionRequiredCount: safeInteger(value.actionRequiredCount, 0, 9999) }),
+    ...(value.totalRowCount === undefined ? {} : { totalRowCount: safeInteger(value.totalRowCount, 0, 9999) }),
     heading: clampText(value.heading, LIMITS.heading),
     detail: clampText(value.detail, LIMITS.detail),
     updatedAt: clampText(value.updatedAt, LIMITS.at),
@@ -161,24 +187,61 @@ export function normalizeRailAttention(value: unknown): RailAttentionPayload | n
   if (id === "") return null;
   const kind = value.kind;
   if (!isOneOf(kind, ATTENTION_KINDS)) return null;
+  const receiptMessageId = value.receiptMessageId;
+  const receiptEligible = typeof receiptMessageId === "string"
+    && /^[A-Za-z0-9][A-Za-z0-9._:-]{0,119}$/u.test(receiptMessageId);
   return {
     id,
     kind,
     title: clampText(value.title, LIMITS.heading),
     subject: clampText(value.subject, LIMITS.name),
     detail: clampText(value.detail, LIMITS.note),
+    ...(receiptEligible ? { receiptMessageId } : {}),
     at: clampText(value.at, LIMITS.at),
   };
+}
+
+export function normalizeRailSyncHealth(value: unknown): RailSyncHealth | null {
+  if (!plain(value) || !isOneOf(value.status, ["waiting", "live", "stale"] as const)) return null;
+  const status = value.status as RailSyncHealth["status"];
+  if (value.lastSuccessAt === undefined) return status === "live" ? null : { status };
+  if (typeof value.lastSuccessAt !== "string" || value.lastSuccessAt.length > LIMITS.at
+    || !Number.isFinite(Date.parse(value.lastSuccessAt))) return null;
+  return { status, lastSuccessAt: value.lastSuccessAt };
 }
 
 export function normalizeRailAction(value: unknown): RailAction | null {
   if (!plain(value)) return null;
   const type = value.type;
-  if (type === "hide" || type === "sync") return { type };
-  if (type === "open" || type === "acknowledge") {
+  if (type === "hide" || type === "sync" || type === "drag-end") return { type };
+  if (type === "drag-start" || type === "drag-move") {
+    if (typeof value.x !== "number" || typeof value.y !== "number" || !Number.isFinite(value.x) || !Number.isFinite(value.y)
+      || Math.abs(value.x) >= 100000 || Math.abs(value.y) >= 100000) return null;
+    return { type, x: value.x, y: value.y };
+  }
+  if (type === "resize") {
+    if (typeof value.size !== "number" || !Number.isFinite(value.size)) return null;
+    return { type, size: Math.max(PET_MIN_SIZE, Math.min(PET_MAX_SIZE, Math.round(value.size))) };
+  }
+  if (type === "toggle") {
+    if (value.reducedMotion !== undefined && typeof value.reducedMotion !== "boolean") return null;
+    return { type, ...(value.reducedMotion === undefined ? {} : { reducedMotion: value.reducedMotion }) };
+  }
+  if (type === "open") {
+    if (value.id === undefined) return { type };
+    return { type, id: clampText(value.id, LIMITS.id) };
+  }
+  if (type === "acknowledge") {
     const id = clampText(value.id, LIMITS.id);
     if (id === "") return null;
-    return { type, id };
+    const receiptMessageId = value.receiptMessageId;
+    if (receiptMessageId !== undefined && (typeof receiptMessageId !== "string"
+      || !/^[A-Za-z0-9][A-Za-z0-9._:-]{0,119}$/u.test(receiptMessageId))) return null;
+    return { type, id, ...(typeof receiptMessageId === "string" ? { receiptMessageId } : {}) };
+  }
+  if (type === "dismiss") {
+    const id = clampText(value.id, LIMITS.id);
+    return id === "" ? null : { type, id };
   }
   return null;
 }
@@ -197,14 +260,26 @@ export function defaultRailPosition(surface: RailSurface): RailPosition {
  * 原坐标可能落在所有屏幕之外——那样悬浮条会「消失」，所以每次创建都要夹一次。
  */
 export function clampPositionToDisplays(position: RailPosition, width: number, height: number): RailPosition {
-  const fits = screen.getAllDisplays().some((display) => {
+  const displays = screen.getAllDisplays();
+  const fits = displays.some((display) => {
     const { x, y, width: displayWidth, height: displayHeight } = display.workArea;
-    return position.x + width > x && position.x < x + displayWidth
-      && position.y + height > y && position.y < y + displayHeight;
+    return position.x >= x && position.y >= y
+      && position.x + width <= x + displayWidth
+      && position.y + height <= y + displayHeight;
   });
   if (fits) return position;
 
-  const { workArea } = screen.getPrimaryDisplay();
+  // Keep a partly visible rail fully reachable: choose the display with greatest overlap,
+  // then clamp inside its work area. This also repairs positions after monitor removal.
+  const area = (display: Electron.Display) => {
+    const left = Math.max(position.x, display.workArea.x);
+    const top = Math.max(position.y, display.workArea.y);
+    const right = Math.min(position.x + width, display.workArea.x + display.workArea.width);
+    const bottom = Math.min(position.y + height, display.workArea.y + display.workArea.height);
+    return Math.max(0, right - left) * Math.max(0, bottom - top);
+  };
+  const target = [...displays].sort((left, right) => area(right) - area(left))[0] ?? screen.getPrimaryDisplay();
+  const { workArea } = target;
   const maximumX = Math.max(workArea.x, workArea.x + workArea.width - width);
   const maximumY = Math.max(workArea.y, workArea.y + workArea.height - height);
   return {
@@ -213,45 +288,80 @@ export function clampPositionToDisplays(position: RailPosition, width: number, h
   };
 }
 
-function railHeightFor(rowCount: number): number {
-  return Math.min(RAIL_MAX_HEIGHT, Math.max(RAIL_MIN_HEIGHT, 64 + rowCount * 52));
+function railHeightFor(rowCount: number, board = false): number {
+  // Header, footer, list padding, and the actual card line-height all count. The board
+  // uses larger type and spacing, so it gets a roomier row budget before scrolling.
+  const height = board ? 120 + rowCount * 76 : 148 + rowCount * 112;
+  return Math.min(RAIL_MAX_HEIGHT, Math.max(RAIL_MIN_HEIGHT, height));
 }
 
 export function createMochiRail(options: MochiRailOptions): MochiRailHandle {
   const { surface, preload, store } = options;
   const isBoard = surface === "classroom-board";
+  let petSize = Math.max(PET_MIN_SIZE, Math.min(PET_MAX_SIZE, store.loadPetSize?.(surface) ?? PET_SIZE));
   let railWindow: BrowserWindow | null = null;
   let popupWindow: BrowserWindow | null = null;
+  let soundEnabled = false;
+  let petPalette: PetPaletteId = "caramel";
   let snapshot: RailSnapshot | null = null;
+  let health: RailSyncHealth = { status: "waiting" };
   let queue: RailAttentionPayload[] = [];
   let openPopupId: string | null = null;
   let openPopupAt = 0;
+  let visibleRequested = store.loadVisible?.(surface) ?? true;
+  let popupSuppressed = !visibleRequested;
   let disposed = false;
+  let expanded = isBoard;
+  let petDrag: { pointerX: number; pointerY: number; x: number; y: number } | null = null;
+  let boundsAnimationTimer: ReturnType<typeof setTimeout> | null = null;
+  let boundsAnimationGeneration = 0;
+  let reducedMotionPreference = false;
+  let boundsSpring: {
+    width: RailSpringValue;
+    height: RailSpringValue;
+    targetWidth: number;
+    targetHeight: number;
+    right: number;
+    y: number;
+    lastStepAt: number;
+  } | null = null;
+
+  function rememberVisibility(visible: boolean): void {
+    visibleRequested = visible;
+    popupSuppressed = !visible;
+    if (!visible) petDrag = null;
+    store.saveVisible?.(surface, visible);
+  }
 
   function rememberPosition(window: BrowserWindow): void {
     if (disposed || window.isDestroyed()) return;
     const [x, y] = window.getPosition();
-    store.save(surface, { x, y });
+    // The persisted teacher coordinate represents the expanded panel. A collapsed pet
+    // stays pinned to that panel's right edge, so toggling never drifts across sessions.
+    store.save(surface, { x: isBoard || expanded ? x : x + petSize - RAIL_WIDTH, y });
   }
 
   function createRailWindow(): BrowserWindow {
     const remembered = store.load(surface) ?? defaultRailPosition(surface);
-    const position = clampPositionToDisplays(remembered, RAIL_WIDTH, RAIL_MAX_HEIGHT);
+    const savedPosition = clampPositionToDisplays(remembered, RAIL_WIDTH, RAIL_MAX_HEIGHT);
+    const initialWidth = isBoard || expanded ? RAIL_WIDTH : petSize;
+    const position = { ...savedPosition, x: savedPosition.x + RAIL_WIDTH - initialWidth };
     const window = new BrowserWindow({
       ...position,
-      width: RAIL_WIDTH,
-      height: railHeightFor(snapshot?.rows.length ?? 0),
+      width: initialWidth,
+      height: isBoard || expanded ? railHeightFor(snapshot?.rows.length ?? 0, isBoard) : petSize,
       resizable: false,
       maximizable: false,
       minimizable: false,
       fullscreenable: false,
       frame: false,
+      transparent: !isBoard,
       // 常驻条不是「又一个窗口」：不进任务栏。
       skipTaskbar: true,
       alwaysOnTop: true,
       hasShadow: false,
       // 深绿画布与 calm-tokens 的 --sage-800 一致，避免拖动/重建时白闪。
-      backgroundColor: "#2a3931",
+      backgroundColor: isBoard ? "#f6f3ec" : "#00000000",
       show: false,
       webPreferences: {
         contextIsolation: true,
@@ -265,19 +375,33 @@ export function createMochiRail(options: MochiRailOptions): MochiRailHandle {
     // 教师条用 floating：老师的全屏演示不该被自己那条待办挡住。
     applyTopLevel(window, isBoard);
     window.on("close", (event) => {
-      // 常驻条只能被显式 dispose，或从托盘/快捷键隐藏——不能点一下就没了。
+      // 原生关闭与页面关闭采用同一隐藏语义。
       if (disposed) return;
       event.preventDefault();
+      rememberVisibility(false);
       window.hide();
+      closePopupWindow();
+      options.onAction({ type: "hide" });
     });
-    window.on("moved", () => rememberPosition(window));
+    window.on("moved", () => {
+      if (boundsSpring !== null && process.platform !== "darwin") {
+        const { x, y, width } = window.getBounds();
+        // A drag during expansion moves the spring's anchor with the user's pointer.
+        const wasUserMovement = x + width !== boundsSpring.right || y !== boundsSpring.y;
+        boundsSpring.right = x + width;
+        boundsSpring.y = y;
+        if (wasUserMovement) rememberPosition(window);
+        return;
+      }
+      rememberPosition(window);
+    });
     window.on("closed", () => {
       if (railWindow === window) railWindow = null;
       if (!disposed) options.onClosed?.();
     });
     void window.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(railPageHtml(surface))}`);
     window.once("ready-to-show", () => {
-      if (disposed || window.isDestroyed()) return;
+      if (disposed || window.isDestroyed() || !visibleRequested) return;
       // showInactive：出现但不抢老师正在打字的焦点。
       window.showInactive();
     });
@@ -306,10 +430,125 @@ export function createMochiRail(options: MochiRailOptions): MochiRailHandle {
 
   function pushSnapshot(current: RailSnapshot): void {
     const window = ensureRailWindow();
-    send(window, IPC.railApply, current);
+    // Presentation state is owned by the main process, independently of business
+    // data. A renderer reload may lose its DOM state while the native window stays
+    // expanded, so every snapshot also restores the authoritative state.
+    send(window, IPC.railApply, { ...current, expanded, petSize });
     // 高度无条件跟行数走，不看当前是否可见：隐藏期间来了新内容、随后重新显示时，
     // 若高度只在可见时才更新，老师会看到被裁掉下半截的列表。
-    if (!window.isDestroyed()) window.setBounds({ height: railHeightFor(current.rows.length) });
+    if (!window.isDestroyed() && (isBoard || expanded)) {
+      if (boundsAnimationTimer !== null) animateRailBounds(window, railHeightFor(current.rows.length, isBoard), reducedMotionPreference);
+      else window.setBounds({ height: railHeightFor(current.rows.length, isBoard) });
+    }
+  }
+
+  function pushHealth(): void {
+    send(ensureRailWindow(), IPC.railHealth, health);
+  }
+
+  function syncExpandedState(): void {
+    if (railWindow === null || railWindow.isDestroyed()) return;
+    // There may not be a business snapshot yet. Still restore the page state on its
+    // startup sync so a reload cannot collapse the page while keeping a wide window.
+    send(railWindow, IPC.railApply, { type: "state", expanded, petSize });
+  }
+
+  function animateRailBounds(window: BrowserWindow, height: number, reducedMotion: boolean): void {
+    const from = window.getBounds();
+    const targetWidth = expanded ? RAIL_WIDTH : petSize;
+    const right = from.x + from.width;
+    const to = { x: right - targetWidth, y: from.y, width: targetWidth, height };
+
+    if (!reducedMotion && process.platform !== "darwin" && boundsSpring !== null
+      && boundsSpring.targetWidth === targetWidth && boundsSpring.targetHeight === height) return;
+    if (boundsSpring === null && from.width === targetWidth && from.height === height) return;
+
+    if (boundsAnimationTimer !== null) clearTimeout(boundsAnimationTimer);
+    boundsAnimationTimer = null;
+    const generation = ++boundsAnimationGeneration;
+    if (reducedMotion) {
+      boundsSpring = null;
+      window.setBounds(to);
+      rememberPosition(window);
+      return;
+    }
+    if (process.platform === "darwin") {
+      boundsSpring = null;
+      window.once("resized", () => {
+        if (generation === boundsAnimationGeneration) rememberPosition(window);
+      });
+      window.setBounds(to, true);
+      return;
+    }
+
+    // Electron's native animate option is macOS-only. Windows and Linux use a native
+    // bounds spring that can be retargeted with the current presentation and velocity.
+    const now = performance.now();
+    if (boundsSpring === null) {
+      boundsSpring = {
+        width: { position: from.width, velocity: 0 },
+        height: { position: from.height, velocity: 0 },
+        targetWidth,
+        targetHeight: height,
+        right,
+        y: from.y,
+        lastStepAt: now,
+      };
+    } else {
+      const elapsed = Math.max(0, (now - boundsSpring.lastStepAt) / 1000);
+      boundsSpring.width = advanceRailSpring(boundsSpring.width, boundsSpring.targetWidth, elapsed);
+      boundsSpring.height = advanceRailSpring(boundsSpring.height, boundsSpring.targetHeight, elapsed);
+      boundsSpring.targetWidth = targetWidth;
+      boundsSpring.targetHeight = height;
+      boundsSpring.right = right;
+      boundsSpring.y = from.y;
+      boundsSpring.lastStepAt = now;
+    }
+
+    const frame = (): void => {
+      boundsAnimationTimer = null;
+      if (disposed || window.isDestroyed() || generation !== boundsAnimationGeneration || boundsSpring === null) {
+        boundsSpring = null;
+        return;
+      }
+      const activeSpring = boundsSpring;
+      const frameAt = performance.now();
+      const elapsed = Math.max(0, (frameAt - activeSpring.lastStepAt) / 1000);
+      activeSpring.width = advanceRailSpring(activeSpring.width, activeSpring.targetWidth, elapsed);
+      activeSpring.height = advanceRailSpring(activeSpring.height, activeSpring.targetHeight, elapsed);
+      activeSpring.lastStepAt = frameAt;
+
+      const settled = isRailSpringSettled(activeSpring.width, activeSpring.targetWidth)
+        && isRailSpringSettled(activeSpring.height, activeSpring.targetHeight);
+      if (settled) {
+        activeSpring.width = { position: activeSpring.targetWidth, velocity: 0 };
+        activeSpring.height = { position: activeSpring.targetHeight, velocity: 0 };
+      }
+      const width = Math.round(activeSpring.width.position);
+      const frameHeight = Math.round(activeSpring.height.position);
+      const nextBounds = { x: activeSpring.right - width, y: activeSpring.y, width, height: frameHeight };
+      const current = window.getBounds();
+      if (current.x !== nextBounds.x || current.y !== nextBounds.y
+        || current.width !== nextBounds.width || current.height !== nextBounds.height) {
+        window.setBounds(nextBounds);
+      }
+
+      if (settled) {
+        boundsAnimationTimer = null;
+        boundsSpring = null;
+        rememberPosition(window);
+        return;
+      }
+      boundsAnimationTimer = setTimeout(frame, 16);
+    };
+    frame();
+  }
+
+  function toggleExpanded(reducedMotion: boolean): void {
+    if (isBoard || railWindow === null || railWindow.isDestroyed()) return;
+    expanded = !expanded;
+    reducedMotionPreference = reducedMotion;
+    animateRailBounds(railWindow, expanded ? railHeightFor(snapshot?.rows.length ?? 0) : petSize, reducedMotion);
   }
 
   function createPopupWindow(): BrowserWindow {
@@ -323,8 +562,9 @@ export function createMochiRail(options: MochiRailOptions): MochiRailHandle {
       resizable: false,
       alwaysOnTop: true,
       skipTaskbar: true,
-      hasShadow: true,
-      backgroundColor: "#2a3931",
+      hasShadow: false,
+      transparent: true,
+      backgroundColor: "#00000000",
       show: false,
       webPreferences: {
         contextIsolation: true,
@@ -346,7 +586,7 @@ export function createMochiRail(options: MochiRailOptions): MochiRailHandle {
   }
 
   function syncPopup(): void {
-    if (disposed) return;
+    if (disposed || popupSuppressed) return;
     const next = currentPopup();
     if (next === null) return;
     const window = popupWindow !== null && !popupWindow.isDestroyed() ? popupWindow : createPopupWindow();
@@ -354,6 +594,8 @@ export function createMochiRail(options: MochiRailOptions): MochiRailHandle {
     openPopupId = next.id;
     openPopupAt = Date.now();
     if (window.isDestroyed()) return;
+    send(window, IPC.uiSound, soundEnabled);
+    send(window, IPC.petPalette, petPalette);
     send(window, IPC.railPopup, next);
     if (!window.isVisible()) window.showInactive();
   }
@@ -376,12 +618,34 @@ export function createMochiRail(options: MochiRailOptions): MochiRailHandle {
 
   return {
     surface,
+    setPetPalette(palette: string): void {
+      if (disposed || !isPetPalette(palette)) return;
+      petPalette = palette;
+      send(railWindow, IPC.petPalette, petPalette);
+      send(popupWindow, IPC.petPalette, petPalette);
+    },
+    setSoundEnabled(enabled: boolean): void {
+      if (disposed) return;
+      soundEnabled = enabled === true;
+      send(railWindow, IPC.uiSound, soundEnabled);
+      send(popupWindow, IPC.uiSound, soundEnabled);
+    },
     apply(value: unknown): boolean {
       if (disposed) return false;
       const normalized = normalizeRailSnapshot(value, surface);
       if (normalized === null) return false;
       snapshot = normalized;
       pushSnapshot(normalized);
+      return true;
+    },
+    syncHealth(value: unknown): boolean {
+      if (disposed) return false;
+      const next = normalizeRailSyncHealth(value);
+      if (next === null) return false;
+      const changed = next.status !== health.status
+        || (next.status === "stale" && next.lastSuccessAt !== health.lastSuccessAt);
+      health = next;
+      if (changed) pushHealth();
       return true;
     },
     attention(value: unknown): boolean {
@@ -398,19 +662,63 @@ export function createMochiRail(options: MochiRailOptions): MochiRailHandle {
       if (disposed) return false;
       const normalized = normalizeRailAction(action);
       if (normalized === null) return false;
-      // sync 用页面自己的首帧来拉状态：页面可能在快照之后才加载完成，
-      // 靠「main 主动推」会撞上加载时序，靠「页面主动要」就没有这个竞态。
+      // 页面首帧主动拉取：保留加载时序安全，并恢复没有快照时也必须一致的
+      // 主进程展开态。renderer 只能请求 sync，不能把自己的 expanded 值写回 main。
       if (normalized.type === "sync") {
+        send(railWindow, IPC.petPalette, petPalette);
+        send(popupWindow, IPC.petPalette, petPalette);
+        send(railWindow, IPC.uiSound, soundEnabled);
+        send(popupWindow, IPC.uiSound, soundEnabled);
         if (snapshot !== null) pushSnapshot(snapshot);
+        else syncExpandedState();
+        pushHealth();
         syncPopup();
         return true;
       }
+      if (normalized.type === "resize") {
+        const window = railWindow;
+        if (isBoard || expanded || window === null || window.isDestroyed()) return false;
+        petSize = normalized.size;
+        const [x, y] = window.getPosition();
+        const position = clampPositionToDisplays({ x, y }, petSize, petSize);
+        window.setBounds({ ...position, width: petSize, height: petSize });
+        store.savePetSize?.(surface, petSize);
+        rememberPosition(window);
+        syncExpandedState();
+        return true;
+      }
+      if (normalized.type === "drag-end") { petDrag = null; return true; }
+      if (normalized.type === "drag-start" || normalized.type === "drag-move") {
+        const window = railWindow;
+        if (isBoard || expanded || window === null || window.isDestroyed()) return false;
+        if (normalized.type === "drag-start") {
+          const [x, y] = window.getPosition();
+          petDrag = { pointerX: normalized.x, pointerY: normalized.y, x, y };
+        } else if (petDrag) {
+          const position = clampPositionToDisplays({ x: Math.round(petDrag.x + normalized.x - petDrag.pointerX), y: Math.round(petDrag.y + normalized.y - petDrag.pointerY) }, petSize, petSize);
+          window.setPosition(position.x, position.y);
+          rememberPosition(window);
+        }
+        return true;
+      }
+      if (normalized.type === "toggle") {
+        toggleExpanded(normalized.reducedMotion ?? false);
+        return true;
+      }
       if (normalized.type === "acknowledge") {
-        if (currentPopup()?.id === normalized.id) dismissPopup();
-        options.onAction(normalized);
+        const current = currentPopup();
+        if (current?.id !== normalized.id || !current.receiptMessageId
+          || (normalized.receiptMessageId !== undefined && normalized.receiptMessageId !== current.receiptMessageId)) return false;
+        options.onAction({ type: "acknowledge", id: current.id, receiptMessageId: current.receiptMessageId });
+        return true;
+      }
+      if (normalized.type === "dismiss") {
+        if (currentPopup()?.id !== normalized.id) return false;
+        dismissPopup();
         return true;
       }
       if (normalized.type === "hide") {
+        rememberVisibility(false);
         if (railWindow !== null && !railWindow.isDestroyed()) railWindow.hide();
         closePopupWindow();
         options.onAction(normalized);
@@ -419,16 +727,39 @@ export function createMochiRail(options: MochiRailOptions): MochiRailHandle {
       options.onAction(normalized);
       return true;
     },
+    feedback(id: string, ok: boolean, message = ""): boolean {
+      if (disposed || typeof id !== "string" || openPopupId !== id || currentPopup()?.id !== id) return false;
+      const window = popupWindow;
+      if (window === null || window.isDestroyed()) return false;
+      send(window, IPC.railReceiptFeedback, { id, ok, message: clampText(message, 240) });
+      return true;
+    },
+    dismissReceipted(messageIds: readonly string[]): number {
+      if (disposed || !Array.isArray(messageIds) || messageIds.length === 0 || queue.length === 0) return 0;
+      const confirmed = new Set(messageIds.filter((id) => typeof id === "string" && id.length > 0 && id.length <= 120));
+      const previousId = currentPopup()?.id;
+      const count = queue.length;
+      queue = queue.filter((item) => !item.receiptMessageId || !confirmed.has(item.receiptMessageId));
+      if (previousId !== currentPopup()?.id) {
+        if (currentPopup() === null) closePopupWindow();
+        else syncPopup();
+      }
+      return count - queue.length;
+    },
     setVisible(visible: boolean): void {
       if (disposed) return;
       if (!visible) {
+        rememberVisibility(false);
         if (railWindow !== null && !railWindow.isDestroyed()) railWindow.hide();
         closePopupWindow();
         return;
       }
+      rememberVisibility(true);
       const window = ensureRailWindow();
       if (snapshot !== null) pushSnapshot(snapshot);
+      pushHealth();
       if (!window.isDestroyed()) window.showInactive();
+      syncPopup();
     },
     isVisible(): boolean {
       return railWindow !== null && !railWindow.isDestroyed() && railWindow.isVisible();
@@ -436,6 +767,9 @@ export function createMochiRail(options: MochiRailOptions): MochiRailHandle {
     dispose(): void {
       if (disposed) return;
       disposed = true;
+      if (boundsAnimationTimer !== null) clearTimeout(boundsAnimationTimer);
+      boundsAnimationTimer = null;
+      boundsSpring = null;
       queue = [];
       closePopupWindow();
       const window = railWindow;
@@ -447,6 +781,7 @@ export function createMochiRail(options: MochiRailOptions): MochiRailHandle {
 
 export const RAIL_WINDOW = Object.freeze({
   width: RAIL_WIDTH,
+  petSize: PET_SIZE,
   minHeight: RAIL_MIN_HEIGHT,
   maxHeight: RAIL_MAX_HEIGHT,
   popupWidth: POPUP_WIDTH,

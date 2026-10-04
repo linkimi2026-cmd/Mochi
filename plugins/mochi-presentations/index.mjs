@@ -14,8 +14,11 @@ import {
   sep,
 } from 'node:path';
 import JSZip from 'jszip';
+import { PDFDocument } from 'pdf-lib';
 import pptxgen from 'pptxgenjs';
+import { drawComparisonPdf, drawComparisonPptx, validateComparison } from './comparison-layout.mjs';
 import { drawProcessPptx, processScene, validateProcess } from './process-layout.mjs';
+import { convertToPdf, resolveSoffice } from './render.mjs';
 import {
   color as pdfColor,
   createPdfLayoutDocument,
@@ -33,11 +36,13 @@ import {
 export const DEFAULT_SOFFICE_PATH = '/opt/homebrew/bin/soffice';
 const PPTX_NAME = 'presentation.pptx';
 const PDF_NAME = 'presentation.pdf';
+const PREVIEW_NAME = 'presentation-preview.pdf';
 const MAX_SLIDES = 40;
 const PROJECTION_FONT = 'Noto Sans SC';
 const PDF_SLIDE_WIDTH = 960;
 const PDF_SLIDE_HEIGHT = 540;
 const TABLE_AREA_WIDTH = 11.4;
+const TABLE_ROW_HEIGHT_MAX = 0.82;
 const CONTENT_BOTTOM = 6.9;
 const SLIDE_WIDTH = 13.333;
 const STAGE_LEFT = 0.75;
@@ -194,7 +199,7 @@ export function resolveTheme(raw) {
 // "连续三个版面视觉重量相同必须打破"，没有节奏页就永远做不到。
 // 封面与结束页走深底（三明治结构），章节/金句留在浅底做呼吸。
 // ═══════════════════════════════════════════════════════════════════════════
-const CONTENT_LAYOUTS = ['title-body', 'title-table', 'title-chart', 'title-process'];
+const CONTENT_LAYOUTS = ['title-body', 'title-table', 'title-chart', 'title-process', 'title-compare'];
 const RHYTHM_LAYOUTS = ['cover', 'section', 'statement', 'kpi', 'closing'];
 export const SUPPORTED_LAYOUTS = Object.freeze([...CONTENT_LAYOUTS, ...RHYTHM_LAYOUTS]);
 const DEEP_LAYOUTS = new Set(['cover', 'closing']);
@@ -227,9 +232,91 @@ const singleLineCell = (value, max, label) => {
 };
 
 function validateSource(source) {
-  if (!object(source)) throw failure('INVALID_INPUT', 'every slide requires an explicit source');
-  return { label: singleLineText(source.label, 160, 'source label'), reference: singleLineText(source.reference, 500, 'source reference') };
+  if (source === undefined || source === null) return null;
+  if (!object(source)) throw failure('INVALID_INPUT', 'slide source must be {label, reference?} or null');
+  return {
+    label: singleLineText(source.label, 160, 'source label'),
+    ...(source.reference === undefined ? {} : { reference: singleLineText(source.reference, 500, 'source reference') }),
+  };
 }
+
+function optionalPlanText(value, max, label) {
+  if (value === undefined || value === null) return undefined;
+  if (typeof value !== 'string' || value.length > max || /[\r\n]/u.test(value)) {
+    throw failure('INVALID_INPUT', `${label} must be a single line of at most ${max} characters`);
+  }
+  return value.trim() || undefined;
+}
+
+function validateTeachingPlan(raw, slideIds) {
+  if (raw === undefined || raw === null) return undefined;
+  if (!object(raw)) throw failure('INVALID_INPUT', 'teachingPlan must be an object with objectives and slideMappings');
+  const allowedKeys = new Set(['objectives', 'slideMappings', 'reviewRequiredSlideIds']);
+  for (const key of Object.keys(raw)) {
+    if (!allowedKeys.has(key)) throw failure('INVALID_INPUT', `teachingPlan.${key} is not supported`);
+  }
+  const rawObjectives = raw.objectives ?? [];
+  if (!Array.isArray(rawObjectives) || rawObjectives.length > 8) throw failure('INVALID_INPUT', 'teachingPlan.objectives must contain at most 8 items');
+  const objectiveIds = new Set();
+  const objectives = rawObjectives.map((objective, index) => {
+    if (!object(objective)) throw failure('INVALID_INPUT', `teachingPlan objective ${index + 1} must be an object`);
+    for (const key of Object.keys(objective)) {
+      if (!['id', 'statement'].includes(key)) throw failure('INVALID_INPUT', `teachingPlan objective ${index + 1}.${key} is not supported`);
+    }
+    const id = singleLineText(objective.id, 40, 'teaching objective id');
+    if (objectiveIds.has(id)) throw failure('INVALID_INPUT', 'teaching objective ids must be unique');
+    objectiveIds.add(id);
+    const statement = optionalPlanText(objective.statement, 180, `teaching objective ${id}`);
+    return { id, ...(statement ? { statement } : {}) };
+  });
+
+  const rawMappings = raw.slideMappings ?? [];
+  if (!Array.isArray(rawMappings) || rawMappings.length > slideIds.length) throw failure('INVALID_INPUT', 'teachingPlan.slideMappings cannot exceed the slide count');
+  const knownSlides = new Set(slideIds);
+  const mappedSlides = new Set();
+  const slideMappings = rawMappings.map((mapping, index) => {
+    if (!object(mapping)) throw failure('INVALID_INPUT', `teachingPlan slide mapping ${index + 1} must be an object`);
+    for (const key of Object.keys(mapping)) {
+      if (!['slideId', 'objectiveIds', 'role', 'studentAction', 'understandingCheck'].includes(key)) {
+        throw failure('INVALID_INPUT', `teachingPlan slide mapping ${index + 1}.${key} is not supported`);
+      }
+    }
+    const slideId = singleLineText(mapping.slideId, 80, 'teachingPlan slideId');
+    if (!knownSlides.has(slideId)) throw failure('INVALID_INPUT', `teachingPlan references unknown slide ${slideId}`);
+    if (mappedSlides.has(slideId)) throw failure('INVALID_INPUT', `teachingPlan maps slide ${slideId} more than once`);
+    mappedSlides.add(slideId);
+    const rawObjectiveIds = mapping.objectiveIds ?? [];
+    if (!Array.isArray(rawObjectiveIds) || rawObjectiveIds.length > objectives.length) throw failure('INVALID_INPUT', `teachingPlan ${slideId}.objectiveIds must be an array of declared objective ids`);
+    const linkedObjectiveIds = rawObjectiveIds.map((value) => singleLineText(value, 40, `teachingPlan ${slideId} objective id`));
+    if (new Set(linkedObjectiveIds).size !== linkedObjectiveIds.length) throw failure('INVALID_INPUT', `teachingPlan ${slideId} repeats an objective id`);
+    for (const objectiveId of linkedObjectiveIds) {
+      if (!objectiveIds.has(objectiveId)) throw failure('INVALID_INPUT', `teachingPlan ${slideId} references unknown objective ${objectiveId}`);
+    }
+    const role = optionalPlanText(mapping.role, 60, `teachingPlan ${slideId}.role`);
+    const studentAction = optionalPlanText(mapping.studentAction, 180, `teachingPlan ${slideId}.studentAction`);
+    const understandingCheck = optionalPlanText(mapping.understandingCheck, 180, `teachingPlan ${slideId}.understandingCheck`);
+    return {
+      slideId,
+      objectiveIds: linkedObjectiveIds,
+      ...(role ? { role } : {}),
+      ...(studentAction ? { studentAction } : {}),
+      ...(understandingCheck ? { understandingCheck } : {}),
+    };
+  });
+
+  const reviewRequiredSlideIds = raw.reviewRequiredSlideIds ?? [];
+  if (!Array.isArray(reviewRequiredSlideIds) || reviewRequiredSlideIds.some((slideId) => typeof slideId !== 'string' || !knownSlides.has(slideId))) {
+    throw failure('INVALID_INPUT', 'teachingPlan.reviewRequiredSlideIds must contain known slide ids');
+  }
+  return {
+    objectives,
+    slideMappings,
+    ...(reviewRequiredSlideIds.length ? { reviewRequiredSlideIds: [...new Set(reviewRequiredSlideIds)] } : {}),
+  };
+}
+
+const sourceStatus = (source) => source ? '未核验：仅有来源声明' : '未核验：未提供来源';
+const sourceFooter = (source) => source ? `未核验 · 来源声明：${source.label}` : '未核验 · 未提供来源';
 
 function validateTable(table) {
   if (!object(table) || !Array.isArray(table.headers) || table.headers.length < 2 || table.headers.length > 5) throw failure('INVALID_INPUT', 'table requires 2-5 headers');
@@ -337,6 +424,20 @@ function rhythmPlan(slide) {
 
 function projectionPlan(slide) {
   if (!CONTENT_LAYOUTS.includes(slide.layout)) return rhythmPlan(slide);
+  if (slide.layout === 'title-compare') {
+    const fitted = fitTitle(slide.title, 11.8, [34, 28]);
+    if (!fitted) throw failure('INVALID_INPUT', 'comparison slide title exceeds the bounded two-line projection layout');
+    const bodyLines = slide.body.reduce((total, line) => total + wrappedLines(line, 41), 0);
+    if (bodyLines > 2) throw failure('INVALID_INPUT', 'comparison slide allows at most two short context lines');
+    const titleHeight = fitted.titleLines === 1 ? 0.65 : 0.98;
+    const bodyFontSize = 18;
+    const bodyY = 0.55 + titleHeight + 0.25;
+    const bodyHeight = bodyLines === 0 ? 0 : Math.max(0.42, bodyLines * bodyFontSize * 1.3 / 72);
+    const contentY = bodyY + bodyHeight + (bodyLines === 0 ? 0.12 : 0.18);
+    const contentHeight = CONTENT_BOTTOM - contentY;
+    if (contentHeight < 4.2) throw failure('INVALID_INPUT', 'comparison title and context leave insufficient room for paired columns');
+    return { ...fitted, titleHeight, bodyLines, bodyFontSize, bodyY, bodyHeight, bodyWidth: 11.4, contentY, contentHeight };
+  }
   if (slide.layout === 'title-process') {
     const fitted = fitTitle(slide.title, 11.8, [34, 28]);
     if (!fitted || slide.body.length > 1 || slide.body.some(line => line.length > 40)) throw failure('INVALID_INPUT', '流程图需要简短标题，bullets至多1条且≤40字；说明写入各步骤detail');
@@ -360,9 +461,14 @@ function projectionPlan(slide) {
   return { titleLines, titleFontSize, titleHeight, bodyLines, bodyFontSize, bodyY, bodyHeight, ...(compact ? { contentY, contentHeight } : {}) };
 }
 
+function tableRowHeights(rowCount, availableHeight) {
+  const height = Math.floor(Math.min(TABLE_ROW_HEIGHT_MAX, availableHeight / rowCount) * 1000) / 1000;
+  return Array(rowCount).fill(height);
+}
+
 export function validatePresentation(input) {
   if (!object(input) || input.schema !== 'mochi-lesson-presentation-v1') throw failure('INVALID_INPUT', 'structured presentation schema is required');
-  if (!['upstream-authorized-structured-content', 'demonstration'].includes(input.sourceKind)) throw failure('INVALID_INPUT', 'sourceKind is invalid');
+  if (!['upstream-authorized-structured-content', 'model-authored-classroom-draft', 'demonstration'].includes(input.sourceKind)) throw failure('INVALID_INPUT', 'sourceKind is invalid');
   if (!Number.isSafeInteger(input.version) || input.version < 1) throw failure('INVALID_INPUT', 'deck version must be a positive integer');
   if (!Array.isArray(input.slides) || input.slides.length < 1 || input.slides.length > MAX_SLIDES) throw failure('INVALID_INPUT', `presentation requires 1-${MAX_SLIDES} slides`);
   const theme = resolveTheme(input.theme);
@@ -381,20 +487,37 @@ export function validatePresentation(input) {
       throw failure('INVALID_INPUT', `${slide.layout} slides carry no table or chart; use title-table / title-chart for data`);
     }
     if (slide.process !== undefined && slide.layout !== 'title-process') throw failure('INVALID_INPUT', 'process必须使用title-process版式');
+    if (slide.comparison !== undefined && slide.layout !== 'title-compare') throw failure('INVALID_INPUT', 'comparison必须使用title-compare版式');
+    if (slide.layout === 'title-compare' && (slide.table !== undefined || slide.chart !== undefined || slide.process !== undefined)) throw failure('INVALID_INPUT', 'title-compare不能同时含table/chart/process');
     if (slide.layout === 'title-process' && (slide.table !== undefined || slide.chart !== undefined)) throw failure('INVALID_INPUT', '流程图不能同时含table/chart');
     let process;
     if (slide.layout === 'title-process') {
       try { process = validateProcess(slide.process); } catch (error) { throw failure('INVALID_INPUT', error.message); }
     }
+    let comparison;
+    if (slide.layout === 'title-compare') {
+      try { comparison = validateComparison(slide.comparison); } catch (error) { throw failure('INVALID_INPUT', error.message); }
+    }
     const table = slide.layout === 'title-table' ? validateTable(slide.table) : undefined;
     const chart = slide.layout === 'title-chart' ? validateChart(slide.chart) : undefined;
     if (slide.layout === 'title-body' && body.length < 1) throw failure('INVALID_INPUT', 'title-body slides require body content');
     if ((slide.layout === 'title-table' || slide.layout === 'title-chart') && body.length < 1) throw failure('INVALID_INPUT', 'table/chart slides require body content');
-    const validated = { id, version: slide.version, layout: slide.layout, title: text(slide.title, 100, 'slide title'), body, ...(table ? { table } : {}), ...(chart ? { chart } : {}), ...(process ? { process } : {}), source: validateSource(slide.source) };
+    if (slide.layout === 'title-compare' && body.length > 2) throw failure('INVALID_INPUT', 'title-compare allows at most two short context lines');
+    const validated = { id, version: slide.version, layout: slide.layout, title: text(slide.title, 100, 'slide title'), body, ...(table ? { table } : {}), ...(chart ? { chart } : {}), ...(process ? { process } : {}), ...(comparison ? { comparison } : {}), source: validateSource(slide.source) };
     projectionPlan(validated);
     return validated;
   });
-  return { schema: input.schema, sourceKind: input.sourceKind, deckId: text(input.deckId, 100, 'deck id'), version: input.version, title: text(input.title, 160, 'deck title'), theme, slides };
+  const teachingPlan = validateTeachingPlan(input.teachingPlan, slides.map((slide) => slide.id));
+  return {
+    schema: input.schema,
+    sourceKind: input.sourceKind,
+    deckId: text(input.deckId, 100, 'deck id'),
+    version: input.version,
+    title: text(input.title, 160, 'deck title'),
+    theme,
+    slides,
+    ...(teachingPlan ? { teachingPlan } : {}),
+  };
 }
 
 function semanticHash(slide) { return createHash('sha256').update(JSON.stringify(slide)).digest('hex'); }
@@ -445,7 +568,32 @@ function addNativeChart(slide, chart, plan, pptx, theme) {
   slide.addChart(pptx.ChartType[chart.type], chart.series.map((item) => ({ name: item.name, labels: chart.labels, values: item.values })), options);
 }
 
-function addSlide(pptx, item, index, theme) {
+function teachingPlanNotes(item, teachingPlan) {
+  if (!teachingPlan) return [];
+
+  const mapping = teachingPlan.slideMappings.find((candidate) => candidate.slideId === item.id);
+  const reviewRequired = teachingPlan.reviewRequiredSlideIds?.includes(item.id) ?? false;
+  if (!mapping && !reviewRequired) return [];
+
+  const objectives = new Map(teachingPlan.objectives.map((objective) => [objective.id, objective]));
+  const notes = ['教学计划声明（未经独立核验）'];
+  if (reviewRequired) {
+    notes.push('教学映射待复核：本页可见内容修订后沿用了旧映射。使用前请重新核对目标、页面作用、学生行动和理解检查。');
+  }
+  if (mapping) {
+    const linkedObjectives = mapping.objectiveIds.map((id) => {
+      const objective = objectives.get(id);
+      return objective ? `- ${id}：${objective.statement ?? '未声明目标描述'}` : `- ${id}`;
+    });
+    notes.push(`学习目标：\n${linkedObjectives.length ? linkedObjectives.join('\n') : '未关联学习目标'}`);
+    notes.push(`页面作用：${mapping.role ?? '未声明'}`);
+    notes.push(`学生行动：${mapping.studentAction ?? '未声明'}`);
+    notes.push(`理解检查：${mapping.understandingCheck ?? '未声明'}`);
+  }
+  return notes;
+}
+
+function addSlide(pptx, item, index, theme, teachingPlan) {
   const plan = projectionPlan(item);
   const slide = pptx.addSlide();
   const rhythm = !CONTENT_LAYOUTS.includes(item.layout);
@@ -483,14 +631,18 @@ function addSlide(pptx, item, index, theme) {
     slide.addText(item.title, { x: STAGE_LEFT, y: 0.55, w: 11.8, h: plan.titleHeight, fontFace: PROJECTION_FONT, fontSize: plan.titleFontSize, bold: true, color: theme.primary, margin: 0, breakLine: false, lang: 'zh-CN', valign: 'mid' });
     if (item.body.length) slide.addText(item.body.map((line) => ({ text: line, options: { bullet: { indent: 18 }, breakLine: true, lang: 'zh-CN' } })), { x: 0.9, y: plan.bodyY, w: TABLE_AREA_WIDTH, h: plan.bodyHeight, fontFace: PROJECTION_FONT, fontSize: plan.bodyFontSize, color: theme.text, breakLine: true, valign: 'top', margin: 0.08, lang: 'zh-CN', lineSpacing: Math.round(plan.bodyFontSize * 1.4), paraSpaceAfterPt: 6 });
     if (item.table) {
-      slide.addTable([item.table.headers, ...item.table.rows], { x: 0.9, y: plan.contentY, w: TABLE_AREA_WIDTH, h: plan.contentHeight, colW: Array(item.table.headers.length).fill(TABLE_AREA_WIDTH / item.table.headers.length), border: { type: 'solid', color: theme.rule, pt: 1 }, fill: theme.surface, color: theme.text, fontFace: PROJECTION_FONT, fontSize: 15, margin: 0.06, bold: false, rowH: 0.38, autoFit: false, lang: 'zh-CN' });
+      const rows = [item.table.headers, ...item.table.rows];
+      slide.addTable(rows, { x: 0.9, y: plan.contentY, w: TABLE_AREA_WIDTH, h: plan.contentHeight, colW: Array(item.table.headers.length).fill(TABLE_AREA_WIDTH / item.table.headers.length), border: { type: 'solid', color: theme.rule, pt: 1 }, fill: theme.surface, color: theme.text, fontFace: PROJECTION_FONT, fontSize: 15, margin: [0.06, 0.12, 0.06, 0.12], bold: false, valign: 'middle', rowH: tableRowHeights(rows.length, plan.contentHeight), autoFit: false, lang: 'zh-CN' });
     }
     if (item.chart) addNativeChart(slide, item.chart, plan, pptx, theme);
     if (item.process) drawProcessPptx(slide, item.process, theme, PROJECTION_FONT);
+    if (item.comparison) drawComparisonPptx(slide, item.comparison, plan, theme, PROJECTION_FONT);
   }
 
-  slide.addText(`${index + 1}  ${item.source.label}`, { x: STAGE_LEFT, y: FOOTER_Y, w: 11.8, h: FOOTER_HEIGHT, fontFace: PROJECTION_FONT, fontSize: 11, color: footerColor, margin: 0, lang: 'zh-CN' });
-  slide.addNotes(`Source: ${item.source.label}\nReference: ${item.source.reference}\nSlide ID: ${item.id}\nSlide version: ${item.version}`);
+  slide.addText(`${index + 1}  ${sourceFooter(item.source)}`, { x: STAGE_LEFT, y: FOOTER_Y, w: 11.8, h: FOOTER_HEIGHT, fontFace: PROJECTION_FONT, fontSize: 11, color: footerColor, margin: 0, lang: 'zh-CN' });
+  const notes = [`Source status: ${sourceStatus(item.source)}\nSource: ${item.source?.label ?? '未提供'}\nReference: ${item.source?.reference ?? '未提供'}\nSlide ID: ${item.id}\nSlide version: ${item.version}`];
+  notes.push(...teachingPlanNotes(item, teachingPlan));
+  slide.addNotes(notes.join('\n\n'));
 }
 
 async function createPptx(input, path) {
@@ -498,7 +650,7 @@ async function createPptx(input, path) {
   pptx.layout = 'LAYOUT_WIDE'; pptx.author = 'Mochi Presentations'; pptx.subject = input.sourceKind; pptx.title = input.title; pptx.lang = 'zh-CN';
   pptx.theme = { headFontFace: PROJECTION_FONT, bodyFontFace: PROJECTION_FONT, lang: 'zh-CN' };
   input.slides.forEach((slide, index) => {
-    addSlide(pptx, slide, index, input.theme);
+    addSlide(pptx, slide, index, input.theme, input.teachingPlan);
   });
   await pptx.writeFile({ fileName: path, compression: true });
 }
@@ -508,10 +660,11 @@ function aborted(signal) { if (signal?.aborted) throw failure('ABORTED', 'presen
 function slidePdfText(input) {
   const fragments = [];
   for (const slide of input.slides) {
-    fragments.push(slide.title, ...slide.body, slide.source.label);
+    fragments.push(slide.title, ...slide.body, '未核验', slide.source ? '来源声明' : '未提供来源', slide.source?.label);
     if (slide.table) fragments.push(...slide.table.headers, ...slide.table.rows.flat());
     if (slide.chart) fragments.push(...chartSummary(slide.chart));
     if (slide.process) fragments.push(...slide.process.steps.flatMap(step => [step.label, step.detail]), slide.process.loopLabel);
+    if (slide.comparison) fragments.push(slide.comparison.leftTitle, slide.comparison.rightTitle, ...slide.comparison.rows.flatMap(row => [row.left, row.right]));
   }
   return fragments.filter(Boolean);
 }
@@ -583,6 +736,14 @@ async function renderPresentationPdf(input, signal) {
         }
       }
       if (item.process.loopLabel) drawAlignedLines({ page, lines: [item.process.loopLabel], x: 0.8 * PDF_IN, centerX: PDF_SLIDE_WIDTH / 2, top: fromTop(5.65), font, size: 18, lineHeight: 22.5, fill: titleFill });
+    } else if (item.comparison) {
+      const title = fittedText([item.title], font, { width: 840, maximumHeight: (plan.titleHeight + 0.16) * PDF_IN, preferredSize: plan.titleFontSize, minimumSize: Math.max(18, plan.titleFontSize - 8), lineHeightFactor: 1.18 });
+      drawTextBlock({ page, text: title.wrapped.join('\n'), x: 54, top: fromTop(0.55), width: 840, font, size: title.size, lineHeight: title.lineHeight, fill: titleFill });
+      if (item.body.length) {
+        const body = fittedText(item.body.map((line) => '• ' + line), font, { width: 820, maximumHeight: plan.bodyHeight * PDF_IN, preferredSize: plan.bodyFontSize, minimumSize: 10, lineHeightFactor: 1.3 });
+        drawTextBlock({ page, text: body.wrapped.join('\n'), x: 66, top: fromTop(plan.bodyY), width: 820, font, size: body.size, lineHeight: body.lineHeight, fill: bodyFill });
+      }
+      drawComparisonPdf({ page, comparison: item.comparison, plan, theme, font, pdfColor, fromTop, drawAlignedLines, fittedText, pdfIn: PDF_IN });
     } else if (rhythm) {
       // 节奏页：与 PPTX 同一套几何（英寸 → pt，顶部原点换算成 pdf-lib 的底部原点）。
       const centerX = plan.centered ? PDF_SLIDE_WIDTH / 2 : undefined;
@@ -697,7 +858,7 @@ async function renderPresentationPdf(input, signal) {
     }
     drawTextBlock({
       page,
-      text: String(index + 1) + '  ' + item.source.label,
+      text: `${index + 1}  ${sourceFooter(item.source)}`,
       x: STAGE_LEFT * PDF_IN,
       top: fromTop(FOOTER_Y),
       width: 840,
@@ -728,7 +889,29 @@ async function assertNewDirectory(path) {
 async function metadata(path, editable = false) { const bytes = await readFile(path); return { bytes: bytes.length, sha256: createHash('sha256').update(bytes).digest('hex'), ...(editable ? { editable: true } : {}) }; }
 async function writeJson(path, value) { await writeFile(path, `${JSON.stringify(value, null, 2)}\n`, { flag: 'wx', mode: 0o600 }); }
 
-export async function generatePresentationBundle({ presentation, outputDirectory, signal } = {}) {
+async function renderPptxPreview({ pptxPath, stage, sourceHash, pageCount, sofficePath, signal }) {
+  const base = { kind: 'pptx-rendered-pdf', renderer: 'LibreOffice', previewOfPptxSha256: sourceHash };
+  const soffice = resolveSoffice(sofficePath);
+  if (!soffice) return { ...base, status: 'unavailable', reason: 'SOFFICE_UNAVAILABLE' };
+  const workDir = await mkdtemp(join(stage, '.preview-'));
+  try {
+    const converted = await convertToPdf(pptxPath, workDir, soffice, signal);
+    aborted(signal);
+    const bytes = await readFile(converted, { signal });
+    if (bytes.subarray(0, 5).toString('latin1') !== '%PDF-') throw new Error('preview is not a PDF');
+    const pdf = await PDFDocument.load(bytes, { updateMetadata: false });
+    if (pdf.getPageCount() !== pageCount) throw new Error('preview page count differs from PPTX');
+    await rename(converted, join(stage, PREVIEW_NAME));
+    return { ...base, status: 'available', pageCount };
+  } catch (error) {
+    if (signal?.aborted || error?.name === 'AbortError') throw failure('ABORTED', 'PPTX 预览转换已取消');
+    return { ...base, status: 'unavailable', reason: 'CONVERSION_FAILED' };
+  } finally {
+    await rm(workDir, { recursive: true, force: true });
+  }
+}
+
+export async function generatePresentationBundle({ presentation, outputDirectory, signal, converter } = {}) {
   const input = validatePresentation(presentation); aborted(signal); const target = await assertNewDirectory(outputDirectory);
   const stage = await mkdtemp(join(target, '.staging-')); let published = false;
   try {
@@ -736,12 +919,30 @@ export async function generatePresentationBundle({ presentation, outputDirectory
     const generatedPdf = await renderPresentationPdf(input, signal);
     const pdfPath = join(stage, PDF_NAME); await writeFile(pdfPath, generatedPdf.bytes, { flag: 'wx', mode: 0o600 });
     const renderedPageCount = generatedPdf.inspection.pageCount;
-    const slideLedger = input.slides.map((slide) => ({ id: slide.id, version: slide.version, layout: slide.layout, projection: projectionPlan(slide), source: slide.source, semanticHash: semanticHash(slide) }));
+    const slideLedger = input.slides.map((slide) => ({ id: slide.id, version: slide.version, layout: slide.layout, projection: projectionPlan(slide), source: slide.source, sourceStatus: sourceStatus(slide.source), semanticHash: semanticHash(slide) }));
     await writeJson(join(stage, 'source.json'), input);
-    const manifest = { schema: 'mochi-presentation-manifest-v1', status: 'completed', deckId: input.deckId, version: input.version, sourceKind: input.sourceKind, sourceSlideCount: input.slides.length, renderedPageCount, slides: slideLedger, files: { pptx: await metadata(pptxPath, true), pdf: await metadata(pdfPath) } };
-    for (const filename of [PPTX_NAME, PDF_NAME, 'source.json']) await rename(join(stage, filename), join(target, filename));
+    const pptxMeta = await metadata(pptxPath, true);
+    const pptxBytes = await readFile(pptxPath, { signal });
+    const structuralInspection = await inspectPptxBuffer(pptxBytes, {
+      sourceName: PPTX_NAME,
+      fileMeta: { sha256: pptxMeta.sha256 },
+      signal,
+    });
+    const quality = createQualityReport({ input, inspection: structuralInspection, pptxSha256: pptxMeta.sha256 });
+    if (quality.hardErrors.length) {
+      throw new MochiPresentationsError('PRESENTATION_QUALITY_BLOCKED', `presentation failed objective quality checks: ${quality.hardErrors.join('; ')}`, { quality });
+    }
+    const preview = await renderPptxPreview({ pptxPath, stage, sourceHash: pptxMeta.sha256, pageCount: input.slides.length, sofficePath: converter?.sofficePath, signal });
+    quality.previewStatus = preview.status;
+    const manifest = {
+      schema: 'mochi-presentation-manifest-v1', status: 'completed', deckId: input.deckId, version: input.version,
+      sourceKind: input.sourceKind, sourceSlideCount: input.slides.length, renderedPageCount, slides: slideLedger,
+      preview, quality,
+      files: { pptx: pptxMeta, pdf: await metadata(pdfPath), ...(preview.status === 'available' ? { previewPdf: await metadata(join(stage, PREVIEW_NAME)) } : {}) },
+    };
+    for (const filename of [PPTX_NAME, PDF_NAME, 'source.json', ...(preview.status === 'available' ? [PREVIEW_NAME] : [])]) await rename(join(stage, filename), join(target, filename));
     await writeJson(join(target, 'manifest.json'), manifest); await rm(stage, { recursive: true, force: true }); published = true;
-    return { outputDirectory: target, pptxPath: join(target, PPTX_NAME), pdfPath: join(target, PDF_NAME), sourcePath: join(target, 'source.json'), manifestPath: join(target, 'manifest.json'), manifest };
+    return { outputDirectory: target, pptxPath: join(target, PPTX_NAME), pdfPath: join(target, PDF_NAME), previewPdfPath: preview.status === 'available' ? join(target, PREVIEW_NAME) : null, sourcePath: join(target, 'source.json'), manifestPath: join(target, 'manifest.json'), manifest };
   } catch (error) {
     if (error instanceof MochiPresentationsError) throw error;
     // 曾经这里只抛一句 "failed before publication"，把真实原因整个吞掉：
@@ -753,17 +954,138 @@ export async function generatePresentationBundle({ presentation, outputDirectory
   finally { if (!published) await rm(target, { recursive: true, force: true }); }
 }
 
-export async function revisePresentationBundle({ previousSourcePath, revision, outputDirectory, signal } = {}) {
+export function createQualityReport({ input, inspection, pptxSha256 }) {
+  const hardErrors = [];
+  const hints = [];
+  if (inspection.文件?.sha256 !== pptxSha256) hardErrors.push('结构检查所读字节与 manifest PPTX SHA-256 不一致');
+  if (inspection.页数 !== input.slides.length || inspection.检查页数 !== input.slides.length) {
+    hardErrors.push(`真实 OOXML 页数 ${inspection.页数} / 检查页数 ${inspection.检查页数} 与 source 页数 ${input.slides.length} 不一致`);
+  }
+  for (const slide of inspection.幻灯片 ?? []) {
+    for (const shape of slide.文字 ?? []) {
+      const minimum = shape.角色 === '标题' ? 28 : shape.角色 === '正文' ? 14 : shape.角色 === '页脚或来源' ? 11 : null;
+      const knownMinimum = shape.已知最小可见字号;
+      if (minimum !== null && knownMinimum !== null && knownMinimum !== undefined && knownMinimum < minimum) {
+        hardErrors.push(`第 ${slide.序号} 页${shape.角色}文本形状含 ${knownMinimum}pt 可见文字，低于 ${minimum}pt 底线`);
+      }
+    }
+  }
+  for (let index = 0; index < input.slides.length - 2; index += 1) {
+    if (input.slides.slice(index, index + 3).every((slide) => slide.layout === 'title-body')) {
+      hints.push(`第 ${index + 1}-${index + 3} 页连续使用 title-body 版式，可考虑调整版式节奏`);
+    }
+  }
+  const teachingCoverage = createTeachingCoverage(input);
+  return {
+    schema: 'mochi-presentation-quality-v1',
+    status: hardErrors.length ? 'blocked' : 'needs-visual-review',
+    structuralStatus: hardErrors.length ? 'failed' : 'passed',
+    pptxSha256,
+    deckVersion: input.version,
+    sourceSlideCount: input.slides.length,
+    actualOoxmlSlideCount: inspection.页数,
+    checkedSlideCount: inspection.检查页数,
+    hardErrors,
+    hints,
+    teachingCoverage,
+    fontCheckBasis: '角色推定仍使用 OOXML 文本形状最大字号；质量门槛使用有字号依据的可见文字 run 最小有效字号。有效字号按 run rPr、段落 defRPr、对应列表级 defRPr 依次解析；末尾 endParaRPr 不作为可见文字。若至少一个可见 run 缺少可解析字号，最小字号标为未知；已知的偏小可见 run 仍会触发底线。主题/母版继承未解析时不猜测。标题/正文/页脚角色沿用结构检查结果；无占位符时角色可能按位置和字号推定。',
+    visualReview: { status: 'not-performed', note: '结构检查不包含视觉复核；预览可用不代表美学或学科正确性已验收。' },
+    previewStatus: 'not-generated',
+  };
+}
+
+function createTeachingCoverage(input) {
+  const plan = input.teachingPlan;
+  const slideIds = input.slides.map((slide) => slide.id);
+  const scope = '仅核对目标声明、页码引用、已映射页面角色、至少一项学生行动及每个目标的理解检查声明；不判断目标质量、教学设计是否有效或学科内容是否正确。';
+  if (!plan) {
+    return {
+      status: 'not-declared',
+      objectiveCount: 0,
+      mappedSlideCount: 0,
+      totalSlideCount: slideIds.length,
+      unmappedSlideIds: slideIds,
+      uncoveredObjectiveIds: [],
+      objectivesWithoutCheckIds: [],
+      incompleteSlideIds: [],
+      hasStudentAction: null,
+      reviewRequiredSlideIds: [],
+      hints: ['未声明 teachingPlan；没有评估课堂目标覆盖。'],
+      scope,
+    };
+  }
+
+  const mappingBySlide = new Map(plan.slideMappings.map((mapping) => [mapping.slideId, mapping]));
+  const mappedObjectiveIds = new Set(plan.slideMappings.flatMap((mapping) => mapping.objectiveIds));
+  const unmappedSlideIds = slideIds.filter((slideId) => !mappingBySlide.has(slideId));
+  const uncoveredObjectiveIds = plan.objectives.filter((objective) => !mappedObjectiveIds.has(objective.id)).map((objective) => objective.id);
+  const missingStatements = plan.objectives.filter((objective) => !objective.statement).map((objective) => objective.id);
+  const objectivesWithoutCheckIds = plan.objectives.filter((objective) => !plan.slideMappings.some((mapping) => (
+    mapping.objectiveIds.includes(objective.id) && mapping.understandingCheck
+  ))).map((objective) => objective.id);
+  const incompleteSlideIds = plan.slideMappings.filter((mapping) => !mapping.role).map((mapping) => mapping.slideId);
+  const hasStudentAction = plan.slideMappings.some((mapping) => Boolean(mapping.studentAction));
+  const reviewRequiredSlideIds = (plan.reviewRequiredSlideIds ?? []).filter((slideId) => slideIds.includes(slideId));
+  const hints = [];
+  if (plan.objectives.length === 0) hints.push('计划未声明学习目标。');
+  if (missingStatements.length) hints.push(`目标 ${missingStatements.join('、')} 缺少简短描述。`);
+  if (unmappedSlideIds.length) hints.push(`未声明教学映射的幻灯片：${unmappedSlideIds.join('、')}；封面或章节页可不映射，此项仅供参考，不影响覆盖状态。`);
+  if (uncoveredObjectiveIds.length) hints.push(`没有幻灯片引用目标：${uncoveredObjectiveIds.join('、')}。`);
+  if (objectivesWithoutCheckIds.length) hints.push(`目标 ${objectivesWithoutCheckIds.join('、')} 尚无关联页面声明理解检查。`);
+  if (incompleteSlideIds.length) hints.push(`已映射页面 ${incompleteSlideIds.join('、')} 缺少页面角色。`);
+  if (!hasStudentAction) hints.push('计划没有声明学生行动。');
+  if (reviewRequiredSlideIds.length) hints.push(`幻灯片 ${reviewRequiredSlideIds.join('、')} 的可见内容修订后沿用了旧映射，需重新核对目标、角色、学生行动与理解检查。`);
+  const incomplete = plan.objectives.length === 0
+    || missingStatements.length > 0
+    || uncoveredObjectiveIds.length > 0
+    || objectivesWithoutCheckIds.length > 0
+    || incompleteSlideIds.length > 0
+    || !hasStudentAction
+    || reviewRequiredSlideIds.length > 0;
+  if (!incomplete) hints.push('每个目标都关联到页面并有理解检查，计划至少声明一项学生行动，且已映射页面均有角色；这只核对声明完整度，不代表教学质量验收。');
+  return {
+    status: incomplete ? 'incomplete' : 'mapped',
+    objectiveCount: plan.objectives.length,
+    mappedSlideCount: mappingBySlide.size,
+    totalSlideCount: slideIds.length,
+    unmappedSlideIds,
+    uncoveredObjectiveIds,
+    objectivesWithoutCheckIds,
+    incompleteSlideIds,
+    hasStudentAction,
+    reviewRequiredSlideIds,
+    hints,
+    scope,
+  };
+}
+
+export async function revisePresentationBundle({ previousSourcePath, revision, outputDirectory, signal, converter } = {}) {
   if (typeof previousSourcePath !== 'string' || !isAbsolute(previousSourcePath) || !object(revision)) throw failure('INVALID_REVISION', 'revision requires an absolute source path and structured patch');
   let prior; try { prior = validatePresentation(JSON.parse(await readFile(previousSourcePath, 'utf8'))); } catch (error) { if (error instanceof MochiPresentationsError) throw error; throw failure('INVALID_REVISION', 'previous source is unavailable or invalid'); }
   const slideIndex = prior.slides.findIndex((slide) => slide.id === revision.slideId); if (slideIndex < 0) throw failure('INVALID_REVISION', 'target slide does not exist');
   const current = prior.slides[slideIndex];
-  const updated = { ...current, ...(revision.title !== undefined ? { title: revision.title } : {}), ...(revision.body !== undefined ? { body: revision.body } : {}), ...(revision.layout !== undefined ? { layout: revision.layout } : {}), ...(revision.table !== undefined ? { table: revision.table } : {}), ...(revision.chart !== undefined ? { chart: revision.chart } : {}), ...(revision.process !== undefined ? { process: revision.process } : {}), ...(revision.source !== undefined ? { source: revision.source } : {}), version: current.version + 1 };
+  const updated = { ...current, ...(revision.title !== undefined ? { title: revision.title } : {}), ...(revision.body !== undefined ? { body: revision.body } : {}), ...(revision.layout !== undefined ? { layout: revision.layout } : {}), ...(revision.table !== undefined ? { table: revision.table } : {}), ...(revision.chart !== undefined ? { chart: revision.chart } : {}), ...(revision.process !== undefined ? { process: revision.process } : {}), ...(revision.comparison !== undefined ? { comparison: revision.comparison } : {}), ...(revision.source !== undefined ? { source: revision.source } : {}), version: current.version + 1 };
   if (updated.layout !== 'title-table') delete updated.table;
   if (updated.layout !== 'title-chart') delete updated.chart;
   if (updated.layout !== 'title-process') delete updated.process;
-  const next = validatePresentation({ ...prior, version: prior.version + 1, slides: prior.slides.map((slide, index) => index === slideIndex ? updated : slide) });
-  return generatePresentationBundle({ presentation: next, outputDirectory, signal });
+  if (updated.layout !== 'title-compare') delete updated.comparison;
+  const changedVisibleContent = ['title', 'body', 'layout', 'table', 'chart', 'process', 'comparison', 'source']
+    .some((key) => Object.hasOwn(revision, key) && JSON.stringify(updated[key] ?? null) !== JSON.stringify(current[key] ?? null));
+  let teachingPlan = revision.teachingPlan ?? prior.teachingPlan;
+  const hasRetainedMapping = teachingPlan?.slideMappings?.some((mapping) => mapping.slideId === current.id);
+  if (teachingPlan && hasRetainedMapping && revision.teachingPlan === undefined && changedVisibleContent) {
+    teachingPlan = {
+      ...teachingPlan,
+      reviewRequiredSlideIds: [...new Set([...(teachingPlan.reviewRequiredSlideIds ?? []), current.id])],
+    };
+  }
+  const next = validatePresentation({
+    ...prior,
+    ...(teachingPlan ? { teachingPlan } : {}),
+    version: prior.version + 1,
+    slides: prior.slides.map((slide, index) => index === slideIndex ? updated : slide),
+  });
+  return generatePresentationBundle({ presentation: next, outputDirectory, signal, converter });
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
@@ -912,27 +1234,60 @@ const runFontSize = (emphasized) => {
   return Number.isFinite(value) && value > 0 ? value / 100 : null;
 };
 
-/** 一个 txBody 的段落文字 + 最大字号 + 是否加粗。 */
+function effectiveRunFontSize(run, pPr, listStyle) {
+  const direct = run ? firstElement(run, 'rPr') : null;
+  const paragraphDefault = pPr ? firstElement(pPr, 'defRPr') : null;
+  // DrawingML levels are one-based; an omitted pPr@lvl means level 1.
+  const rawLevelValue = pPr ? attrByName(pPr, 'lvl') : undefined;
+  const rawLevel = rawLevelValue === undefined ? 0 : Number(rawLevelValue);
+  const level = Number.isInteger(rawLevel) && rawLevel >= 0 && rawLevel <= 8 ? rawLevel + 1 : null;
+  const levelPr = listStyle && level !== null ? firstElement(listStyle, `lvl${level}pPr`) : null;
+  const listDefault = levelPr ? firstElement(levelPr, 'defRPr') : null;
+  for (const properties of [direct, paragraphDefault, listDefault]) {
+    const size = runFontSize(properties);
+    if (size !== null) return size;
+  }
+  return null;
+}
+
+/** 一个 txBody 的段落文字 + 最大字号 + 可见文字最小有效字号 + 是否加粗。 */
 function textBodySummary(txBody) {
   const paragraphs = elements(txBody, 'p').map(paragraphText).map((line) => line.replace(/\r/gu, ''));
   let fontPt = null;
+  let minimumVisibleFontPt = null;
+  let visibleRunsWithoutFont = 0;
   let bold = false;
+  const listStyle = firstElement(txBody, 'lstStyle');
   for (const paragraph of elements(txBody, 'p')) {
     const pPr = firstElement(paragraph, 'pPr');
-    const endPara = firstElement(paragraph, 'endParaRPr');
+    const visibleRuns = [...elements(paragraph, 'r'), ...elements(paragraph, 'fld')]
+      .filter((run) => elements(run, 't').some((text) => text.text.length > 0));
     const candidates = [
       pPr ? firstElement(pPr, 'defRPr') : null,
       ...elements(paragraph, 'r').map((run) => firstElement(run, 'rPr')),
       ...elements(paragraph, 'fld').map((field) => firstElement(field, 'rPr')),
-      endPara,
+      firstElement(paragraph, 'endParaRPr'),
     ].filter(Boolean);
     for (const candidate of candidates) {
       const size = runFontSize(candidate);
       if (size !== null && (fontPt === null || size > fontPt)) fontPt = size;
       if (attrByName(candidate, 'b') === '1') bold = true;
     }
+    for (const run of visibleRuns) {
+      const size = effectiveRunFontSize(run, pPr, listStyle);
+      if (size === null) visibleRunsWithoutFont += 1;
+      else if (minimumVisibleFontPt === null || size < minimumVisibleFontPt) minimumVisibleFontPt = size;
+    }
   }
-  return { paragraphs, text: paragraphs.join('\n').trim(), fontPt, bold };
+  return {
+    paragraphs,
+    text: paragraphs.join('\n').trim(),
+    fontPt,
+    minimumVisibleFontPt: visibleRunsWithoutFont === 0 ? minimumVisibleFontPt : null,
+    knownMinimumVisibleFontPt: minimumVisibleFontPt,
+    visibleRunsWithoutFont,
+    bold,
+  };
 }
 
 /** 形状的几何（EMU）。graphicFrame 用 p:xfrm，其余用 p:spPr/a:xfrm。 */
@@ -1306,6 +1661,9 @@ async function inspectSlide(archive, { order, partName, slideSize, rels, relsBas
         text: summary.text,
         paragraphs: summary.paragraphs,
         fontPt: summary.fontPt,
+        minimumVisibleFontPt: summary.minimumVisibleFontPt,
+        knownMinimumVisibleFontPt: summary.knownMinimumVisibleFontPt,
+        visibleRunsWithoutFont: summary.visibleRunsWithoutFont,
         bold: summary.bold,
         frame: shapeFrame(shape),
       });
@@ -1400,6 +1758,9 @@ async function inspectSlide(archive, { order, partName, slideSize, rels, relsBas
       角色: shape.role,
       角色判定: shape.roleBasis,
       字号: shape.fontPt,
+      最小可见字号: shape.minimumVisibleFontPt,
+      已知最小可见字号: shape.knownMinimumVisibleFontPt,
+      可见文字未解析字号run数: shape.visibleRunsWithoutFont,
       加粗: shape.bold,
       段落: shape.paragraphs,
       文字: shape.text,
@@ -1798,7 +2159,13 @@ export function createInspectPathGuard(entries) {
       if (raw.includes('\0')) throw failure('BAD_PATH', `${field}包含非法字符（NUL）。`);
       const primary = entries[0];
       const candidate = isAbsolute(raw) ? resolve(raw) : resolve(primary.logical, raw);
-      const entry = matchEntry(candidate);
+      let entry = matchEntry(candidate);
+      if (!entry) {
+        // macOS may spell one existing file as /var/... or /private/var/....
+        // Accept the alias only when its real target is inside an allowed root.
+        const realCandidate = await realpathOrNull(candidate);
+        if (realCandidate) entry = entries.find((root) => isDescendantPath(root.real, realCandidate)) ?? null;
+      }
       if (!entry) throw failure('PATH_ESCAPE', `${field}“${raw}”越出允许的根目录（${roots.join('、')}），已拒绝。`, { attempted: candidate });
       let ancestor = candidate;
       let realAncestor = null;

@@ -4,93 +4,17 @@ window.__ModuleLoader__.load({
     var module = { exports: {} };
     var react = require("react");
 
-    // 与宿主 plugins/mochi-modes/modes.mjs 共享的契约常量（一个字都不能差）。
-    var PROJECTION_KEY = "mochiModes";
-    var WORK_COMMAND_LINE = "/mochi-work";
-    var CHAT_COMMAND_LINE = "/mochi-chat";
-    var HEADER_SLOT = "conversation.session.header.actions";
-
-    // 「对话 / 工作」是同一聊天界面（官方 chat 视图）上的两个**界面**：
-    //   * 对话界面：真的只拿来聊天、讨论、提问，宿主只留对话必需工具
-    //     （restrict 收窄，省 token），工作台也不显示。
-    //   * 工作界面：就是老师现在用的这个对话界面，只是解除限制、全量工具、
-    //     工作台可用，AI 在这里出文件，老师在这里改产物。
-    // 本组件只做两件事：读宿主 mochiModes 投影显示真实模式并给一句人话说明；
-    // 点按钮经官方 command.execute 直接切换（老师主动点工作 = 一上来就干活，不弹窗）。
-    // 投影缺席时整块不渲染 —— 不拿客户端乐观状态假冒“当前模式”。
-    function modeFromProjection(view) {
-      if (!view || typeof view !== "object") return null;
-      if (view.mode === "work") return "work";
-      if (view.mode === "chat") return "chat";
-      return null;
-    }
-
-    // 模式旁边的一行小字，让老师一眼看懂当前这个界面能干什么。
-    var MODE_HINTS = Object.freeze({
-      chat: "只聊天，不干活",
-      work: "全量工具，正在干活",
-    });
-
-    function commandLineFor(target) {
-      if (target === "work") return WORK_COMMAND_LINE;
-      if (target === "chat") return CHAT_COMMAND_LINE;
-      return null;
-    }
-
-    /**
-     * 把「切换到 target」翻译成一次官方命令调用。返回 { ok, message? }。
-     * 任何缺失的通道都如实返回失败，绝不假装切换成功。
-     */
-    function createModeSwitcher(remote) {
-      return function switchMode(sessionId, target) {
-        var line = commandLineFor(target);
-        if (!line) return Promise.resolve({ ok: false, message: "未知模式：" + String(target) });
-        if (typeof sessionId !== "string" || !sessionId) {
-          return Promise.resolve({ ok: false, message: "当前没有会话，无法切换模式。" });
-        }
-        var commands = remote && remote.commands;
-        if (!commands || typeof commands.execute !== "function") {
-          return Promise.resolve({ ok: false, message: "当前客户端没有可用的命令通道，无法切换模式。" });
-        }
-        var pending;
-        try {
-          pending = commands.execute(sessionId, line, []);
-        } catch (error) {
-          return Promise.resolve({ ok: false, message: error instanceof Error ? error.message : String(error) });
-        }
-        return Promise.resolve(pending).then(
-          function (result) {
-            if (!result || result.ok !== true) {
-              var details = result && result.error ? result.error : null;
-              return { ok: false, message: (details && details.message) || "命令被宿主拒绝" };
-            }
-            if (result.value === undefined) return { ok: false, message: "宿主不认识命令 " + line };
-            return { ok: true, line: line };
-          },
-          function (reason) {
-            return { ok: false, message: reason instanceof Error ? reason.message : String(reason) };
-          },
-        );
-      };
-    }
-
     function installStyles() {
       if (typeof document === "undefined") return function () {};
-      var styleId = "mochi-modes-style";
+      var styleId = "mochi-scenes-style";
       if (document.getElementById(styleId)) return function () {};
       var style = document.createElement("style");
       style.id = styleId;
       style.textContent = [
-        ".mochi-modes-toggle{display:inline-flex;align-items:center;gap:2px;min-height:34px;box-sizing:border-box;padding:3px;border:1px solid color-mix(in srgb,var(--dsw-alias-border-l2,#d8dfda) 88%,transparent);border-radius:999px;background:color-mix(in srgb,var(--dsw-alias-bg-base,#f7f4ec) 85%,transparent);box-shadow:inset 0 1px 0 rgba(255,255,255,.66)}",
-        ".mochi-modes-toggle__option{appearance:none;min-height:26px;padding:0 12px;border:0;border-radius:999px;background:transparent;color:var(--dsw-alias-label-secondary,#65736a);font:650 12px/1 system-ui,sans-serif;cursor:pointer;transition:background-color 140ms ease,color 140ms ease}",
-        ".mochi-modes-toggle__option:hover:not(:disabled){background:color-mix(in srgb,var(--dsw-alias-interactive-bg-hover,rgba(70,90,78,.1)) 84%,transparent);color:var(--dsw-alias-label-primary,#243029)}",
-        ".mochi-modes-toggle__option:disabled{cursor:progress;opacity:.6}",
-        '.mochi-modes-toggle__option[aria-pressed="true"]{background:var(--dsw-alias-brand-primary,#315f50);color:var(--dsw-alias-bg-layer-1,#fff)}',
-        '.mochi-modes-toggle[data-pending="true"]{box-shadow:inset 0 1px 0 rgba(255,255,255,.66),0 0 0 2px color-mix(in srgb,#d9873e 26%,transparent)}',
-        ".mochi-modes-toggle__hint{max-width:200px;color:var(--dsw-alias-label-secondary,#65736a);font:500 11px/1.3 system-ui,sans-serif;white-space:nowrap}",
-        '.mochi-modes-toggle[data-mode="work"] .mochi-modes-toggle__hint{color:var(--dsw-alias-brand-primary,#315f50)}',
-        ".mochi-modes-toggle__error{max-width:230px;color:var(--dsw-alias-state-error-primary,#bf6048);font:600 11px/1.3 system-ui,sans-serif}",
-        ".mochi-modes-toggle :is(button):focus-visible{outline:2px solid color-mix(in srgb,#d9873e 74%,transparent);outline-offset:2px}",
+        ".mochi-scene-header{font:500 12px/1.4 system-ui;color:var(--dsw-alias-label-secondary,#65736a);padding:2px 6px}",
+        ".mochi-empty-reply{margin:4px 0;padding:8px 12px;border-left:2px solid var(--dsw-alias-border-l2,#d8dfda);color:var(--dsw-alias-label-secondary,#65736a);font:400 13px/1.6 system-ui}",
+        ".mochi-scene-settings{max-width:720px;color:var(--dsw-alias-label-primary,#403b32)}.mochi-scene-settings h2{font:600 18px/1.4 system-ui}.mochi-scene-settings p{font:400 13px/1.6 system-ui;color:var(--dsw-alias-label-secondary,#65736a)}.mochi-scene-settings [role=alert]{color:var(--dsw-alias-state-error-primary,#bf6048)}",
+        ".mochi-scene-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:12px}.mochi-scene-card{appearance:none;display:flex;flex-direction:column;gap:8px;text-align:left;padding:16px;border:1px solid var(--dsw-alias-border-l2,#d8dfda);border-radius:12px;background:var(--dsw-alias-bg-base,#f7f4ec);color:inherit;font:400 13px/1.6 system-ui;cursor:pointer}.mochi-scene-card strong{font-weight:600;font-size:15px}.mochi-scene-card span,.mochi-scene-card small{color:var(--dsw-alias-label-secondary,#65736a)}.mochi-scene-card[aria-pressed=true]{border-color:var(--dsw-alias-brand-primary,#315f50);background:var(--jxl-paper,#fffefa)}.mochi-scene-card:hover:not(:disabled){background:var(--dsw-alias-interactive-bg-hover,#eee9dd)}.mochi-scene-card:active:not(:disabled){opacity:.8}.mochi-scene-card:disabled{cursor:default;opacity:.6}.mochi-scene-card:focus-visible{outline:2px solid var(--dsw-alias-brand-primary,#315f50);outline-offset:3px}",
       ].join("");
       document.head.appendChild(style);
       return function () {
@@ -98,106 +22,277 @@ window.__ModuleLoader__.load({
       };
     }
 
-    function ModeToggle(props) {
-      var sessionId = typeof props.sessionId === "string" && props.sessionId ? props.sessionId : null;
-      var useProjection = typeof props.useProjection === "function" ? props.useProjection : null;
-      // Hook 必须在任何提前 return 之前调用，保持顺序稳定。
-      var view = useProjection ? useProjection(PROJECTION_KEY) : undefined;
-      var busyState = react.useState(null);
-      var busy = busyState[0];
-      var setBusy = busyState[1];
-      var errorState = react.useState(null);
-      var error = errorState[0];
-      var setError = errorState[1];
-      var mode = modeFromProjection(view);
-      if (!sessionId || mode === null) return null;
-      var pending = view.pending === true;
+    var SCENES = [
+      { id: "standard", name: "通用", description: "日常与校园工作的通用入口，按任务使用全部可用工具与协作能力。" },
+      { id: "lesson-planning", name: "备课与教学设计" },
+      { id: "materials-assessment", name: "资料与练习测评" },
+      { id: "grade-analysis", name: "成绩分析" },
+      { id: "classroom-coordination", name: "班级协作" },
+    ];
 
-      function choose(target) {
-        if (target === mode || busy !== null) return;
-        var switchMode = typeof props.switchMode === "function" ? props.switchMode : null;
-        if (!switchMode) {
-          setError("当前客户端没有可用的命令通道，无法切换模式。");
-          return;
-        }
-        setBusy(target);
-        setError(null);
-        Promise.resolve(switchMode(target)).then(
-          function (outcome) {
-            setBusy(null);
-            if (outcome && outcome.ok === false) setError(outcome.message || "切换模式失败。");
-          },
-          function (reason) {
-            setBusy(null);
-            setError(reason instanceof Error ? reason.message : String(reason));
-          },
-        );
-      }
-
-      function option(target, label) {
-        return react.createElement(
-          "button",
-          {
-            type: "button",
-            className: "mochi-modes-toggle__option",
-            "data-mode": target,
-            "aria-pressed": mode === target,
-            disabled: busy !== null,
-            onClick: function () { choose(target); },
-          },
-          label,
-        );
-      }
-
-      return react.createElement(
-        "div",
-        {
-          className: "mochi-modes-toggle",
-          role: "group",
-          "aria-label": "会话模式",
-          "data-mode": mode,
-          "data-pending": pending ? "true" : "false",
-        },
-        option("chat", "对话"),
-        option("work", "工作"),
-        busy !== null
-          ? react.createElement("span", { className: "mochi-modes-toggle__error", role: "status" }, "正在切换…")
-          : (error !== null ? react.createElement("span", { className: "mochi-modes-toggle__error", role: "status" }, error) : null),
-        // 当前界面说明放最后：保留“状态位”的既有子元素次序，也保证出错时
-        // 老师先看到错误、再看到说明。
-        react.createElement("span", { className: "mochi-modes-toggle__hint", "data-mode": mode }, MODE_HINTS[mode]),
-      );
-    }
-
-    function apply(ctx) {
-      var switchMode = createModeSwitcher(ctx.remote);
-      ctx.effect(function () { return installStyles(); }, "mochi-modes: styles");
-      ctx.slots.inject(HEADER_SLOT, function* () {
-        yield ctx.slots.register({
-          name: HEADER_SLOT,
-          id: "mochi-modes-toggle",
-          order: 20,
-          inject: function (sessionId) {
-            return {
-              switchMode: function (target) { return switchMode(sessionId, target); },
-            };
-          },
-        }, ModeToggle);
+    function teacherRoster(presets) {
+      return SCENES.every(function (scene) {
+        return presets.some(function (row) { return row.id === scene.id; });
       });
     }
 
+    function sceneRows(presets) {
+      return SCENES.map(function (scene) {
+        var row = presets.find(function (entry) { return entry.id === scene.id; });
+        return row && Object.assign({}, row, { name: scene.name, description: scene.description || row.description });
+      }).filter(Boolean);
+    }
+
+    function SceneHeader(props) {
+      var preset = props.useSessions(function (state) {
+        var value = state.byId[props.sessionId];
+        return value && value.projectionValues && value.projectionValues.agentPreset;
+      });
+      if (typeof preset !== "string") return null;
+      var scene = SCENES.find(function (entry) { return entry.id === preset; });
+      var label = scene ? scene.name : "历史场景 · " + preset;
+      return react.createElement("span", { className: "mochi-scene-header", title: "本会话开始时选择的场景" }, label);
+    }
+
+    function SceneSettings(props) {
+      var state = props.useAgentPresetSection(function (value) { return value; });
+      react.useEffect(function () { props.load(); }, [props.load]);
+      return react.createElement("section", { className: "mochi-scene-settings" },
+        react.createElement("h2", null, "场景"),
+        react.createElement("p", null, "通用适合日常与校园工作，也可以选择更专注的场景。默认场景用于新会话。"),
+        state.error ? react.createElement("p", { role: "alert" }, state.error) : null,
+        react.createElement("div", { className: "mochi-scene-cards", role: "group", "aria-label": "新会话默认场景" },
+          state.rows.map(function (row) {
+            return react.createElement("button", {
+              key: row.id, type: "button", className: "mochi-scene-card", "aria-pressed": row.isDefault,
+              disabled: state.saving || row.broken !== undefined,
+              onClick: function () { props.makeDefault(row.id); },
+            }, react.createElement("strong", null, row.name),
+              react.createElement("span", null, row.description || "专注处理这类校园任务。"),
+              row.broken !== undefined ? react.createElement("small", null, "场景加载失败") :
+                (row.isDefault ? react.createElement("small", null, "新会话默认") : null));
+          })));
+    }
+
+    // Keep the official staging, settings synchronization and session lock intact.
+    // Only this private facade filters presentation; the host roster stays complete.
+    function createSceneFacade(ctx, disposers) {
+      var alwaysEnabled = { getSnapshot: function () { return true; }, subscribe: function () { return function () {}; } };
+      function adapt(scope) {
+        var slots = new Proxy(scope.slots, { get: function (target, key) {
+          if (key !== "register") return typeof target[key] === "function" ? target[key].bind(target) : target[key];
+          return function (options, Component) {
+            var mapped = Object.assign({}, options, { priority: -20, locale: "mochi.scenes" });
+            if (options.name === "settings.section") {
+              mapped.label = function () { return "场景"; };
+              Component = SceneSettings;
+            } else if (options.name === "conversation.session.header.actions") Component = SceneHeader;
+            return target.register(mapped, Component);
+          };
+        } });
+        var presets = new Proxy(scope.remote.agentPresets, { get: function (target, key) {
+          if (key === "list") return async function () {
+            var result = await target.list();
+            return result.ok ? Object.assign({}, result, { value: Object.assign({}, result.value, { presets: sceneRows(result.value.presets) }) }) : result;
+          };
+          return typeof target[key] === "function" ? target[key].bind(target) : target[key];
+        } });
+        var remote = new Proxy(scope.remote, { get: function (target, key) {
+          if (key === "agentPresets") return presets;
+          return typeof target[key] === "function" ? target[key].bind(target) : target[key];
+        } });
+        var locale = new Proxy(scope.locale, { get: function (target, key) {
+          if (key === "register") return function (ns, dictionaries) {
+            var zh = Object.assign({}, dictionaries.zh, {
+              nav: "场景", seatHint: "选择新会话的场景", headerHint: "本会话开始时选择的场景",
+              presetStandardName: "通用", presetStandardDescription: SCENES[0].description,
+            });
+            return target.register("mochi.scenes", Object.assign({}, dictionaries, { zh: zh }));
+          };
+          if (key === "bind") return function () { return target.bind("mochi.scenes"); };
+          return typeof target[key] === "function" ? target[key].bind(target) : target[key];
+        } });
+        var configForms = new Proxy(scope.configForms, { get: function (target, key) {
+          if (key === "developerTools") return { enabled: alwaysEnabled };
+          return target[key];
+        } });
+        return new Proxy(scope, { get: function (target, key) {
+          if (key === "slots") return slots;
+          if (key === "remote") return remote;
+          if (key === "locale") return locale;
+          if (key === "configForms") return configForms;
+          if (key === "effect") return function (callback, label) {
+            var dispose = target.effect(callback, label);
+            disposers.push(dispose);
+            return dispose;
+          };
+          if (key === "inject") return function (services, callback) {
+            var fiber = target.inject(services, function (child) { return callback(adapt(child)); });
+            disposers.push(function () { return fiber.dispose(); });
+            return fiber;
+          };
+          var value = Reflect.get(target, key, target);
+          return typeof value === "function" ? value.bind(target) : value;
+        } });
+      }
+      return adapt(ctx);
+    }
+
+    function isLegacyScene(id) {
+      return id === "minimal" || id === "ptc" || id === "cordis";
+    }
+
+    async function migrateTeacherDefault(scope, roster, current) {
+      var chosen = roster.presets.find(function (row) { return row.isDefault; });
+      if (!chosen || !isLegacyScene(chosen.id)) return;
+      var described = await scope.remote.settings.describe();
+      if (!current()) return;
+      if (!described.ok) throw new Error(described.error.message);
+      var namespace = described.value.namespaces.find(function (row) { return row.ns === "agent-preset-registry"; });
+      if (!namespace || !Number.isInteger(namespace.revision)) throw new Error("无法读取默认场景的设置版本。");
+      if (isLegacyScene(namespace.value && namespace.value.selectedDefault)) {
+        if (!described.value.writable) throw new Error("当前设置只读，无法将历史默认场景迁移为通用。");
+        var saved = await scope.remote.settings.update("agent-preset-registry", { selectedDefault: "standard" }, namespace.revision);
+        if (!current()) return;
+        if (!saved.ok) throw new Error(saved.error.message);
+      }
+      var verified = await scope.remote.agentPresets.list();
+      if (!current()) return;
+      if (!verified.ok) throw new Error(verified.error.message);
+      var effective = verified.value.presets.find(function (row) { return row.isDefault; });
+      if (!effective || !SCENES.some(function (scene) { return scene.id === effective.id; })) {
+        throw new Error("默认场景尚未迁移成功，请重试。");
+      }
+    }
+
+    function installScenePicker(ctx) {
+      var official = require("@deepseek-ai/dsh-client-ui-agent-preset");
+      ctx.inject(official.inject, function (scope) {
+        scope.effect(function () {
+          var active = true;
+          var installed = false;
+          var generation = 0;
+          var disposers = [];
+          var failures = [];
+          function clearFailure() {
+            failures.splice(0).reverse().forEach(function (dispose) { dispose(); });
+          }
+          function showFailure(error) {
+            clearFailure();
+            var message = "默认场景更新失败：" + (error instanceof Error ? error.message : String(error));
+            function Notice() {
+              return react.createElement("div", { className: "mochi-scene-settings", role: "alert" },
+                react.createElement("p", null, message),
+                react.createElement("button", { type: "button", onClick: discover }, "重试"));
+            }
+            failures.push(scope.slots.register({ name: "conversation.hero.agentPreset", priority: -20 }, Notice));
+            failures.push(scope.slots.register({ name: "settings.section", id: "agent-presets", priority: -20, order: 20, label: function () { return "场景"; } }, Notice));
+            failures.push(scope.slots.register({ name: "conversation.session.header.actions", id: "agent-preset", priority: -20, order: -10 }, SceneHeader));
+          }
+          function discover() {
+            if (!active || installed) return;
+            var request = ++generation;
+            var teacher = false;
+            function current() { return active && request === generation && !installed; }
+            Promise.resolve().then(function () { return scope.remote.agentPresets.list(); }).then(async function (result) {
+              // Classroom rosters retain the dedicated classroom UI and capabilities.
+              if (!current() || !result.ok || !teacherRoster(result.value.presets)) return;
+              teacher = true;
+              await migrateTeacherDefault(scope, result.value, current);
+              if (!current()) return;
+              clearFailure();
+              official.apply(createSceneFacade(scope, disposers));
+              installed = true;
+            }).catch(function (error) {
+              if (!current()) return;
+              if (teacher) showFailure(error);
+              else scope.logger?.warn?.("场景列表读取失败", error);
+            });
+          }
+          var stopReset = scope.on("connection/reset", discover);
+          discover();
+          return function () {
+            active = false;
+            stopReset();
+            clearFailure();
+            return disposers.reverse().reduce(function (pending, dispose) {
+              return pending.then(function () { return dispose(); });
+            }, Promise.resolve());
+          };
+        }, "mochi-modes: teacher scene picker");
+      });
+    }
+
+    // These keys specialize only folded command lifecycle cards. User messages
+    // and immutable Session events never pass through this rendering slot.
+    function RetiredModeCommand() { return null; }
+
+    function installRetiredCommandViews(ctx) {
+      ["mochi-work", "mochi-chat"].forEach(function (command) {
+        ctx.slots.inject("conversation.chat.commandview", function* () {
+          yield ctx.slots.register({
+            name: "conversation.chat.commandview", key: command, priority: -20,
+          }, RetiredModeCommand);
+        });
+      });
+    }
+
+    // Read official immutable presentation facts; never synthesize an answer.
+    function hasEmptyCompletedReply(turn, tail, process) {
+      if (!turn || !turn.start || turn.status !== "closed" || turn.end?.data.reason.kind !== "completed") return false;
+      if (!tail || tail.closing !== null || !process || process.messageCount !== 0 ||
+          process.toolCallCount !== 0 || process.subagentCount !== 0) return false;
+      return turn.steps.length > 0 && turn.steps.every(function (step) {
+        var assistant = step.data.get("assistant-step");
+        return step.status === "closed" && assistant?.status === "settled" && assistant.finalNode &&
+          !assistant.finalNode.interrupted && assistant.blocks.every(function (block) {
+            return block.kind === "reasoning" || (block.kind === "text" && block.text.trim() === "");
+          });
+      });
+    }
+
+    function EmptyReplyNotice(props) {
+      var tailSource = props.turn.data.source("turn-tail");
+      var processSource = props.turn.data.source("turn-process");
+      var tail = react.useSyncExternalStore(tailSource.subscribe, tailSource.getSnapshot);
+      var process = react.useSyncExternalStore(processSource.subscribe, processSource.getSnapshot);
+      if (!hasEmptyCompletedReply(props.turn, tail, process)) return null;
+      return react.createElement("div", {
+        className: "mochi-empty-reply", role: "note", "data-mochi-empty-reply": props.turn.turn,
+      }, "本轮未返回正文，请重试。");
+    }
+
+    function installEmptyReplyNotice(ctx) {
+      ctx.slots.inject("conversation.chat.turnTail", function* () {
+        yield ctx.slots.register({
+          name: "conversation.chat.turnTail", id: "mochi-empty-reply", order: 90,
+        }, EmptyReplyNotice);
+      });
+    }
+
+    function apply(ctx) {
+      installScenePicker(ctx);
+      installRetiredCommandViews(ctx);
+      installEmptyReplyNotice(ctx);
+      ctx.effect(function () { return installStyles(); }, "mochi-scenes: styles");
+    }
+
     module.exports.apply = apply;
-    module.exports.inject = ["slots", "remote", "remote.commands"];
+    module.exports.inject = ["slots", "remote"];
     module.exports.__test = {
-      PROJECTION_KEY: PROJECTION_KEY,
-      WORK_COMMAND_LINE: WORK_COMMAND_LINE,
-      CHAT_COMMAND_LINE: CHAT_COMMAND_LINE,
-      HEADER_SLOT: HEADER_SLOT,
-      MODE_HINTS: MODE_HINTS,
-      ModeToggle: ModeToggle,
-      commandLineFor: commandLineFor,
-      createModeSwitcher: createModeSwitcher,
-      modeFromProjection: modeFromProjection,
+      SCENES: SCENES,
+      installRetiredCommandViews: installRetiredCommandViews,
+      RetiredModeCommand: RetiredModeCommand,
+      hasEmptyCompletedReply: hasEmptyCompletedReply,
+      EmptyReplyNotice: EmptyReplyNotice,
+      installEmptyReplyNotice: installEmptyReplyNotice,
+      teacherRoster: teacherRoster,
+      sceneRows: sceneRows,
+      createSceneFacade: createSceneFacade,
+      installScenePicker: installScenePicker,
+      migrateTeacherDefault: migrateTeacherDefault,
+      SceneHeader: SceneHeader,
+      SceneSettings: SceneSettings,
     };
     return module.exports;
   },

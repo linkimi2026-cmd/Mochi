@@ -15,6 +15,7 @@
       需要真实课件且工具目录存在 mochi_ppt_create 时，按该工具的结构化输入生成真 .pptx；需要修改已生成课件时，只有获得返回的 sourcePath 和明确页码后才调用 mochi_ppt_revise。没有这些工具时，交付可复制的逐页脚本并明确 PPT 文件尚未生成。
 
       只使用当前工具目录里实际出现的工具。网络资料必须保留来源与许可待确认项，个人学生资料不得进入外网检索。不要把 PDF 预览说成 Office 实机验收，也不要把未执行的工具调用说成已完成。
+      即使当前工作区名为“备课与课件”，教师直接发来的教室配对、学生预约回复、办公室叫人、听写处置和普通通知仍应在这段对话里办理。按意图调用实际存在的 mochi_lan_status、mochi_lan_pair_classroom、mochi_lan_pending_requests、mochi_lan_reply_student_request、mochi_call_student、mochi_register_verdicts 或 mochi_notify_classroom；缺信息就问一句，不要求教师切换菜单或填写业务表单。先核对真实配对身份和内容，每次外发或配置身份均须经过真实人工确认，网络结果不明时不能声称已送达或自动再发。
       交付前核对学习目标、活动时间、例题解答与反馈环节；文件按mochi技能验收，不能把只写大纲说成全部材料已完成。
 - id: agent-instructions
   name: '@deepseek-ai/dsh-agent-instructions'

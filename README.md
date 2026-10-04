@@ -1,7 +1,7 @@
 # Mochi
 
 > **status**: active
-> **last_verified**: 2026-09-14
+> **last_verified**: 2026-10-04
 > **verified_by**: Codex（源码、配置、磁盘交付物与本次会话中的用户确认）
 
 Mochi 是面向教师办公和校园协作的 AI Agent 桌面应用。它把对话、文件处理、课件与文档生成、数据整理、可视化、建模、知识库、联网搜索、校园查询和经授权的校园操作放在同一个工作区中。
@@ -10,15 +10,17 @@ Mochi 是面向教师办公和校园协作的 AI Agent 桌面应用。它把对�
 
 **👉 https://github.com/linkimi2026-cmd/Mochi/releases/latest**
 
+本次更新见 [0.2.0 更新说明](docs/release-0.2.0.md)。历史安装包保留在各自的 Release 中。
+
 选对应平台：
 
 | 平台 | 文件 |
 |---|---|
-| macOS（Apple 芯片 / M 系列） | `Mochi-0.1.0-mac-arm64.dmg` |
+| macOS（Apple 芯片 / M 系列） | `Mochi-0.2.0-mac-arm64.dmg` |
 | macOS（Intel） | 需要时另行提供 |
-| Windows 10 / 11（64 位） | `Mochi-Setup-0.1.0-win-x64.exe` |
+| Windows 10 / 11（64 位） | `Mochi-Setup-0.2.0-win-x64.exe` |
 
-安装包**不进 Git 仓库**——单个 dmg/exe 在 440 MB 到 1.2 GB，远超 GitHub 单文件 100 MB 硬限，
+安装包**不进 Git 仓库**——单个 dmg/exe 为数百 MB，远超 GitHub 单文件 100 MB 硬限，
 `git push` 会被直接拒绝。所以它们以 **Release 资产**发布，下载入口就是上面的链接。
 每个文件旁有同名 `.sha256` 可自行校验。安装步骤见该 Release 页面。
 

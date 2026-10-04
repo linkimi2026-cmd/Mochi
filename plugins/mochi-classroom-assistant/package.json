@@ -1,0 +1,1 @@
+{"name":"mochi-classroom-assistant","version":"0.1.0","private":true,"type":"module","main":"index.mjs","scripts":{"test":"node --test test/*.test.mjs"},"peerDependencies":{"@deepseek-ai/dsh-experimental-speech-to-text":"0.2.0-rc.2"}}

@@ -15,6 +15,7 @@
 
 const {
   cpSync,
+  copyFileSync,
   existsSync,
   lstatSync,
   mkdirSync,
@@ -34,6 +35,8 @@ const { basename, dirname, isAbsolute, join, relative, resolve, sep } = require(
 const desktopRoot = resolve(__dirname, "..");
 const workspaceRoot = resolve(desktopRoot, "..", "..");
 const { resolveCampusStaticRoot } = require(join(workspaceRoot, "scripts", "campus-paths.cjs"));
+const { renderSettingsDefaults } = require("./seed-packaging-keys.cjs");
+const { inspectModernRuntime, copyModernRuntime, assertModernPluginPeers } = require("./modern-runtime-resources.cjs");
 const STAGING_DIRECTORY_NAME = ".mochi-package-resources-v1.nosync";
 const STAGING_MARKER_NAME = ".mochi-package-resource-marker";
 const STAGING_MARKER_CONTENT = "mochi-package-resources-v1\n";
@@ -119,11 +122,11 @@ const PLUGINS = Object.freeze([
   { id: "jxl-theme", source: "client-plugins/jxl-theme", files: ["index.mjs", "client.js", "package.json"], directories: ["assets"] },
   { id: "jxl-brand", source: "client-plugins/jxl-brand", files: ["index.mjs", "client.js", "package.json"] },
   { id: "jxl-campus", source: "client-plugins/jxl-campus", files: ["index.mjs", "client.js", "static-root.mjs", "package.json"] },
-  { id: "mochi-model-presets", source: "client-plugins/mochi-model-presets", files: ["index.mjs", "client.js", "package.json"] },
+  { id: "mochi-model-presets", source: "client-plugins/mochi-model-presets", files: ["index.mjs", "client.js", "package.json", "reasoning.mjs"] },
   {
     id: "mochi-lan",
     source: "plugins/mochi-lan",
-    files: ["index.mjs", "host-bridge.mjs", "lan-service.mjs", "package.json"],
+    files: ["index.mjs", "chat-tools.mjs", "host-bridge.mjs", "lan-service.mjs", "wps.mjs", "package.json"],
   },
   {
     id: "mochi-lan-client",
@@ -131,8 +134,8 @@ const PLUGINS = Object.freeze([
     files: ["index.mjs", "client.js", "package.json"],
   },
   { id: "mochi-web-search", source: "plugins/mochi-web-search", files: ["index.mjs", "package.json"] },
-  { id: "mochi-knowledge", source: "plugins/mochi-knowledge", files: ["index.mjs", "knowledge-store.mjs", "knowledge-host-bridge.mjs", "knowledge-page-image.mjs", "package.json"] },
-  { id: "mochi-llm-mimo", source: "plugins/mochi-llm-mimo", files: ["index.mjs", "package.json"] },
+  { id: "mochi-knowledge", source: "plugins/mochi-knowledge", files: ["index.mjs", "knowledge-store.mjs", "knowledge-host-bridge.mjs", "knowledge-page-image.mjs", "scripts/build-textbook-skills.mjs", "package.json"], directories: ["vendor/book-to-skill"] },
+  { id: "mochi-llm-mimo", source: "plugins/mochi-llm-mimo", files: ["index.mjs", "openai-adapter.mjs", "empty-reply-guard.mjs", "package.json"] },
   // Teacher productivity plugins registered in runtime-profile.json on
   // 2026-09-07. `plugin.mjs` is the package `main` for the two dsh-tools
   // plugins rewritten as dispatch plugins; `index.mjs` is still imported by
@@ -145,7 +148,7 @@ const PLUGINS = Object.freeze([
   {
     id: "mochi-presentations",
     source: "plugins/mochi-presentations",
-    files: ["index.mjs", "plugin.mjs", "render.mjs", "process-layout.mjs", "package.json"],
+    files: ["index.mjs", "plugin.mjs", "client.js", "render.mjs", "process-layout.mjs", "comparison-layout.mjs", "package.json"],
     // 设计规范：模型在生成课件前必须读到，缺了它就只能凭"感觉"排版。
     directories: ["references"],
   },
@@ -192,7 +195,7 @@ const PLUGINS = Object.freeze([
       "package.json",
     ],
   },
-  // 对话界面 / 工作界面：默认收窄工具面省 token，老师确认后解禁。
+  // 对话界面 / 工作界面：通用预设全工具，显式聊天模式收窄工作工具。
   {
     id: "mochi-modes",
     source: "plugins/mochi-modes",
@@ -214,7 +217,57 @@ const PLUGINS = Object.freeze([
   {
     id: "mochi-memory",
     source: "plugins/mochi-memory",
-    files: ["index.mjs", "active-context.mjs", "world-state.mjs", "mem-store.mjs", "package.json"],
+    files: ["index.mjs", "active-context.mjs", "world-state.mjs", "mem-store.mjs", "management.mjs", "proactive.mjs", "role-policy.mjs", "companion.mjs", "journal-store.mjs", "journal-management.mjs", "journal-activity.mjs", "journal-writer.mjs", "journal-context.mjs", "journal-scheduler.mjs", "package.json"],
+  },
+  {
+    id: "mochi-memory-client",
+    source: "client-plugins/mochi-memory",
+    files: ["index.mjs", "client.js", "package.json"],
+  },
+  {
+    id: "mochi-user-profile",
+    source: "plugins/mochi-user-profile",
+    files: ["index.mjs", "store.mjs", "holiday-greeting.mjs", "greeting-policy.mjs", "vendor/lunar/lunar.cjs", "vendor/lunar/LICENSE", "vendor/lunar/SOURCE.json", "package.json"],
+  },
+  {
+    id: "mochi-onboarding",
+    source: "client-plugins/mochi-onboarding",
+    files: ["index.mjs", "steps.mjs", "client.js", "package.json"],
+  },
+  {
+    id: "mochi-camera",
+    source: "plugins/mochi-camera",
+    files: ["index.mjs", "projection.mjs", "package.json"],
+  },
+  {
+    id: "mochi-camera-client",
+    source: "client-plugins/mochi-camera",
+    files: ["index.mjs", "client.js", "package.json"],
+  },
+  {
+    id: "mochi-voice-chat",
+    source: "client-plugins/mochi-voice-chat",
+    files: ["index.mjs", "client.js", "NOTICE", "package.json"],
+  },
+  {
+    id: "mochi-classroom-assistant",
+    source: "plugins/mochi-classroom-assistant",
+    files: ["index.mjs", "host-bridge.mjs", "homework-store.mjs", "lesson-notes.mjs", "listening.mjs", "intents.mjs", "package.json"],
+  },
+  {
+    id: "mochi-classroom-assistant-client",
+    source: "client-plugins/mochi-classroom-assistant",
+    files: ["index.mjs", "client.js", "NOTICE", "package.json"],
+  },
+  {
+    id: "mochi-classroom-planner",
+    source: "plugins/mochi-classroom-planner",
+    files: ["index.mjs", "planner.mjs", "timetable.mjs", "import-file.mjs", "package.json"],
+  },
+  {
+    id: "mochi-classroom-planner-client",
+    source: "client-plugins/mochi-classroom-planner",
+    files: ["index.mjs", "client.js", "package.json"],
   },
   // 定时任务：本机 SQLite 持久化 + 进程内定时器。全部源码文件必须在 files
   // 里逐个列出——白名单之外的源文件不会被暂存，安装包里就是缺文件的插件。
@@ -497,8 +550,11 @@ function playwrightCoreMetadata() {
 }
 
 function readPlaywrightBrowserResource(env) {
-  const sourceRoot = playwrightBrowserResourceRoot(env);
   playwrightCoreMetadata();
+  if (env.MOCHI_BROWSER_MODE !== "bundled") {
+    return { sourceRoot: null, metadata: { schemaVersion: 1, mode: "on-demand", playwrightVersion: PLAYWRIGHT_VERSION, chromiumRevision: PLAYWRIGHT_CHROMIUM_REVISION, chromiumVersion: PLAYWRIGHT_CHROMIUM_VERSION } };
+  }
+  const sourceRoot = playwrightBrowserResourceRoot(env);
   const metadataPath = requiredRegularFile(join(sourceRoot, "metadata.json"), "Playwright 浏览器元数据");
   const metadata = JSON.parse(readFileSync(metadataPath, "utf8"));
   if (
@@ -672,7 +728,7 @@ function assertPathHasNoSymlinksBelow(rawAnchor, rawPath, label) {
 }
 
 function outputAnchor(rawOutput) {
-  if (rawOutput === DEFAULT_OUTPUT_ROOT) {
+  if (rawOutput === DEFAULT_OUTPUT_ROOT || rawOutput === join(desktopRoot, ".mochi-dev-resources-v1.nosync")) {
     return { rawAnchor: desktopRoot, realAnchor: realpathSync(desktopRoot) };
   }
 
@@ -691,7 +747,7 @@ function outputAnchor(rawOutput) {
   throw new Error(`拒绝非专用的 Mochi 打包目录：${rawOutput}`);
 }
 
-function sourceRoots(env = process.env) {
+function sourceRoots(env = process.env, modern = null) {
   const { root: staticRoot } = resolveCampusStaticRoot({ workspaceRoot, env });
   return [
     join(desktopRoot, "resources", "mochi-web"),
@@ -699,14 +755,14 @@ function sourceRoots(env = process.env) {
     staticRoot,
     TEACHER_PRESET_SOURCE_ROOT,
     KNOWLEDGE_IMPORTER_SOURCE,
-    playwrightBrowserResourceRoot(env),
+    ...(env.MOCHI_BROWSER_MODE === "bundled" ? [playwrightBrowserResourceRoot(env)] : []),
     ...PLUGINS.map((plugin) => join(workspaceRoot, plugin.source)),
-    ...PLUGIN_RUNTIME_MODULES.map(runtimeModuleRoot),
-    ...collectAdditionalRuntimeModules().map(({ sourceRoot }) => sourceRoot),
+    ...(modern ? [modern.root] : PLUGIN_RUNTIME_MODULES.map(runtimeModuleRoot)),
+    ...(modern ? [] : collectAdditionalRuntimeModules().map(({ sourceRoot }) => sourceRoot)),
   ].map((path) => canonicalPath(path));
 }
 
-function assertSafeOutputRoot(outputRoot, env = process.env) {
+function assertSafeOutputRoot(outputRoot, env = process.env, modern = null) {
   const rawOutput = resolve(outputRoot);
   const { rawAnchor, realAnchor } = outputAnchor(rawOutput);
   assertPathHasNoSymlinksBelow(rawAnchor, rawOutput, "Mochi 打包目录");
@@ -716,7 +772,7 @@ function assertSafeOutputRoot(outputRoot, env = process.env) {
   if (output !== expectedCanonicalOutput) {
     throw new Error(`Mochi 打包目录不能通过符号链接改变位置：${rawOutput}`);
   }
-  for (const input of sourceRoots(env)) {
+  for (const input of sourceRoots(env,modern)) {
     if (isWithin(output, input) || isWithin(input, output)) {
       throw new Error(`Mochi 打包目录不能覆盖输入资源：${output}`);
     }
@@ -750,17 +806,19 @@ function createWorkingRoot(output) {
   return root;
 }
 
-function stageMochiResources({ outputRoot = DEFAULT_OUTPUT_ROOT, env = process.env } = {}) {
+function stageMochiResources({ outputRoot = DEFAULT_OUTPUT_ROOT, env = process.env, profileSourceRoot, modernRuntimeRoot = env.MOCHI_MODERN_RUNTIME_ROOT } = {}) {
   const rawOutput = resolve(outputRoot);
-  const output = assertSafeOutputRoot(rawOutput, env);
-  const profileSource = join(desktopRoot, "resources", "mochi-web");
+  const modern = modernRuntimeRoot ? inspectModernRuntime(modernRuntimeRoot) : null;
+  const output = assertSafeOutputRoot(rawOutput, env,modern);
+  if (modern && (isWithin(output,modern.root) || isWithin(modern.root,output))) throw new Error("新版运行资源目标不能覆盖安装源。");
+  const profileSource = profileSourceRoot ? resolve(profileSourceRoot) : join(desktopRoot, "resources", "mochi-web");
   const skillsSource = join(workspaceRoot, "skills");
   // Packaging only needs the already-built static client. Resolving it directly
   // lets a native CI runner consume a reviewed release artifact without also
   // cloning the canonical Worker/source repository or its local state.
   const campusStatic = resolveCampusStaticRoot({ workspaceRoot, env });
   const campusClientSource = campusStatic.root;
-  const additionalRuntimeModules = collectAdditionalRuntimeModules();
+  const additionalRuntimeModules = modern ? [] : collectAdditionalRuntimeModules();
   const playwrightBrowserResource = readPlaywrightBrowserResource(env);
   assertRuntimeModuleTargetCompatibility(additionalRuntimeModules);
 
@@ -768,13 +826,29 @@ function stageMochiResources({ outputRoot = DEFAULT_OUTPUT_ROOT, env = process.e
   requiredCampusBuildPath(join(campusClientSource, "assets", "style.css"), "校园嵌入样式", campusClientSource);
   requiredCampusBuildPath(join(campusClientSource, "assets", "jxl-campus-watercolor-v1.webp"), "校园水彩插画", campusClientSource);
   assertNoForbiddenCampusArtifacts(campusClientSource);
-  assertRuntimeModuleVersions();
+  if (!modern) assertRuntimeModuleVersions();
 
   const working = createWorkingRoot(output);
   try {
-    copyDirectory(profileSource, join(working, "profile"));
+    const omitKeySeeds = env.MOCHI_WITHOUT_KEY_SEEDS === "1";
+    copyDirectory(profileSource, join(working, "profile"), omitKeySeeds
+      ? (source) => relative(profileSource, String(source)).split(sep)[0] !== "seeds"
+      : undefined);
+    if (omitKeySeeds) {
+      // Rebuild this non-secret teacher preference from the reviewed provider
+      // table. Never copy arbitrary old files from the source seeds directory.
+      const safeSeeds = join(working, "profile", "seeds");
+      mkdirSync(safeSeeds, { recursive: true });
+      writeFileSync(join(safeSeeds, "settings-defaults.json"), `${JSON.stringify(renderSettingsDefaults(), null, 2)}\n`);
+    }
     copyDirectory(skillsSource, join(working, "skills"));
-    copyDirectory(playwrightBrowserResource.sourceRoot, join(working, "playwright"));
+    if (playwrightBrowserResource.sourceRoot) copyDirectory(playwrightBrowserResource.sourceRoot, join(working, "playwright"));
+    else {
+      mkdirSync(join(working, "playwright"), { recursive: true });
+      writeFileSync(join(working, "playwright", "metadata.json"), JSON.stringify(playwrightBrowserResource.metadata, null, 2) + "\n");
+      copyFileSync(join(desktopRoot, "node_modules", "playwright-core", "LICENSE"), join(working, "playwright", "LICENSE"));
+      copyFileSync(join(desktopRoot, "node_modules", "playwright-core", "ThirdPartyNotices.txt"), join(working, "playwright", "credits.txt"));
+    }
     copyDirectory(campusClientSource, join(working, "campus.nosync", "dist", "client"));
     for (const presetId of TEACHER_PRESET_IDS) {
       const presetRoot = join(TEACHER_PRESET_SOURCE_ROOT, presetId);
@@ -787,38 +861,44 @@ function stageMochiResources({ outputRoot = DEFAULT_OUTPUT_ROOT, env = process.e
     for (const plugin of PLUGINS) {
       const sourceRoot = join(workspaceRoot, plugin.source);
       const targetRoot = join(working, "plugins", plugin.id);
+      if (modern && plugin.id === "dsh-better-sidebar") {
+        copyDirectory(join(modern.modules,"dsh-better-sidebar"),targetRoot,packagedRuntimePayloadFilter());
+        continue;
+      }
       for (const file of plugin.files) copyFile(join(sourceRoot, file), join(targetRoot, file));
       for (const directory of plugin.directories ?? []) {
         copyDirectory(join(sourceRoot, directory), join(targetRoot, directory), packagedRuntimePayloadFilter());
       }
     }
 
-    for (const packageName of PLUGIN_RUNTIME_MODULES) {
+    if (modern) copyModernRuntime(modern.root,join(working,"node_modules"));
+    for (const packageName of modern ? [] : PLUGIN_RUNTIME_MODULES) {
       copyDirectory(
         runtimeModuleRoot(packageName),
         join(working, "node_modules", ...packageName.split("/")),
         packagedRuntimePayloadFilter(),
       );
     }
-    for (const { sourceRoot, targetRelative } of additionalRuntimeModules) {
+    for (const { sourceRoot, targetRelative } of modern ? [] : additionalRuntimeModules) {
       copyDirectory(sourceRoot, join(working, "node_modules", targetRelative), packagedRuntimePayloadFilter());
     }
+    if (modern) assertModernPluginPeers(working);
     // 整棵树回读，不只是 node_modules：插件的整目录拷贝也必须被同一条规则覆盖。
     assertNoExcludedRuntimePayloadFiles(working);
 
     assertNoSymlinks(working);
     writeFileSync(
       join(working, "package-integrity.json"),
-      `${JSON.stringify({ schemaVersion: 1, plugins: PLUGINS.map(({ id }) => id), teacherPresetIds: TEACHER_PRESET_IDS, knowledgeImporter: { relativePath: "knowledge-import/install-textbook-snapshot.mjs", sha256: sha256File(KNOWLEDGE_IMPORTER_SOURCE) }, runtimeModules: PLUGIN_RUNTIME_MODULES, runtimeModuleVersions: PLUGIN_RUNTIME_VERSIONS, additionalRuntimeModules: additionalRuntimeModules.map(({ packageName, targetRelative, version }) => ({ packageName, targetRelative, version })), playwrightBrowser: playwrightBrowserResource.metadata }, null, 2)}\n`,
+      `${JSON.stringify({ schemaVersion: 1, plugins: PLUGINS.map(({ id }) => id), teacherPresetIds: TEACHER_PRESET_IDS, knowledgeImporter: { relativePath: "knowledge-import/install-textbook-snapshot.mjs", sha256: sha256File(KNOWLEDGE_IMPORTER_SOURCE) }, runtimeModules: modern ? modern.installed.map(row=>row.name) : PLUGIN_RUNTIME_MODULES, runtimeModuleVersions: modern ? Object.fromEntries(modern.installed.map(row=>[row.path,row.version])) : PLUGIN_RUNTIME_VERSIONS, modernRuntime: modern ? {coreVersion:modern.coreVersion,lockSha256:modern.lockSha256} : null, additionalRuntimeModules: modern ? [] : additionalRuntimeModules.map(({ packageName, targetRelative, version }) => ({ packageName, targetRelative, version })), playwrightBrowser: playwrightBrowserResource.metadata }, null, 2)}\n`,
     );
 
     // The old tree is only removed after every input has been validated and a
     // complete replacement exists. Recheck the marker immediately before the
     // destructive step so a path swap cannot target an arbitrary directory.
-    assertSafeOutputRoot(rawOutput, env);
+    assertSafeOutputRoot(rawOutput, env,modern);
     if (existsSync(output)) rmSync(output, { recursive: true, force: true });
     renameSync(working, output);
-    return { outputRoot: output, plugins: PLUGINS.map(({ id }) => id), runtimeModules: [...PLUGIN_RUNTIME_MODULES] };
+    return { outputRoot: output, plugins: PLUGINS.map(({ id }) => id), runtimeModules: modern ? modern.installed.map(row=>row.name) : [...PLUGIN_RUNTIME_MODULES] };
   } catch (error) {
     rmSync(working, { recursive: true, force: true });
     throw error;

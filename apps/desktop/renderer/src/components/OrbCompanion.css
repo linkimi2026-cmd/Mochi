@@ -1,5 +1,4 @@
-/* 表情球工作台模组：球 + 小电脑。动作模组借自开源桌宠 Clawd（MIT），
-   本体为项目自绘焦糖色系。全部动画为 CSS keyframes，无脚本循环。 */
+/* Mochi 自绘的表情球与小电脑；动作参考桌宠交互。动画使用 CSS keyframes。 */
 
 .orb-companion {
   position: relative;
@@ -131,19 +130,15 @@
 }
 
 /* ---------- 减弱动态 ---------- */
-.orb-companion--still .orb-companion__orb,
-.orb-companion--still .orb-companion__laptop,
-.orb-companion--still .companion-glyph,
-.orb-companion--still .companion-float--think circle,
-.orb-companion--still .companion-float--zzz {
+.orb-companion--still,
+.orb-companion--still * {
   animation: none !important;
+  transition: none !important;
 }
 @media (prefers-reduced-motion: reduce) {
-  .orb-companion .orb-companion__orb,
-  .orb-companion .orb-companion__laptop,
-  .orb-companion .companion-glyph,
-  .orb-companion .companion-float--think circle,
-  .orb-companion .companion-float--zzz {
+  .orb-companion,
+  .orb-companion * {
     animation: none !important;
+    transition: none !important;
   }
 }

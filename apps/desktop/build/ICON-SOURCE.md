@@ -1,7 +1,7 @@
 # Mochi application icon source
 
-The packaged icon is a single 560×560 crop (top=80, left=70) from the user-provided Mochi brand sheet at the repository root.
-It intentionally excludes the rest of the sheet, labels, Dock/taskbar mockups, and startup-screen artwork.
+User supplied `/Users/a1379/Downloads/E8C1AAF9-419D-44A8-8884-BB1BF0152D90.PNG` on 2026-09-26 (1254×1254 RGB; SHA-256 `a3bf3baae04b91573fdd2756ed7381468cea258e750baa7aa6fd18a09c771f4c`). The attached PNG contained a white preview background, so its black squircle and white mark were traced into `icon-source.svg`; the vector keeps a transparent exterior and an opaque white mark. No third-party artwork is bundled.
 
-Source SHA-256: 48c8c0d323354cbfb27f13d1a83e2c5e08e1ef2d3e0313d1bfd3451f06ce01bd
-Outputs: icon.png (1024×1024), icon.icns, icon.ico (16/24/32/48/64/128/256 PNG entries).
+Packaged outputs: `icon.png` (1024×1024), `icon.icns` (16–1024 px), `icon.ico` (16/20/24/32/40/48/64/128/256 px PNG entries). They are rendered from `icon-source.svg`. The 2026-09-26 conversion used Potrace 2.1.8 as a local development tool and Sharp to render sizes; neither was added as a runtime dependency. If the original designer SVG becomes available, replace this traced source and regenerate the three outputs.
+
+The macOS menu bar uses `MochiTemplate.png` (16 px) and `MochiTemplate@2x.png` (32 px), rendered with one pixel of logical padding from `client-plugins/jxl-theme/assets/icons/icon.svg` (the user supplied open smile mark). They are monochrome and transparent so macOS can adapt their contrast. Both are included in `apps/desktop/package.json` `build.files` and loaded as one native image with 1×/2× representations. The Dock and Windows taskbar continue to use the supplied square mark via ICNS/ICO; the Windows notification area uses the packaged executable's ICO.

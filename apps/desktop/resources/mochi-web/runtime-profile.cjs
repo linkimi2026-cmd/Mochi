@@ -7,12 +7,20 @@ const {
   readdirSync,
   readFileSync,
   realpathSync,
+  renameSync,
   statSync,
   symlinkSync,
   unlinkSync,
   writeFileSync,
 } = require("node:fs");
 const { dirname, isAbsolute, join, relative, resolve, sep } = require("node:path");
+const { createRequire } = require("node:module");
+
+const { usesDeclarativePresets, renderDeclarativePresets } = require("./modern-presets.cjs");
+
+const { migrateMimoPatch, consolidatePiAiPatch } = require("./modern-models.cjs");
+const { resolveModernSidebar, renderModernSidebarDefaults } = require("./modern-sidebar.cjs");
+const { planLegacySettings, disableLegacyDeepSeek } = require("./modern-settings.cjs");
 
 const MANIFEST_FILENAME = "runtime-profile.json";
 const SKILLS_TOKEN = "__MOCHI_SKILLS_DIR_JSON__";
@@ -23,18 +31,10 @@ const ROLE_MARKER_FILENAME = ".mochi-runtime-role.json";
 const SERVICE_DEFAULT_KEYS = new Set(["campusApiUrl", "searxngEndpoint"]);
 const RUNTIME_ROLES = new Set(["teacher", "classroom"]);
 /**
- * [Mochi patch 2026-09-12] 教师端预设选择器只保留“创造模式”。
- *
- * 上游 agent-presets 的 roots 只接受 { path, trust }，没有逐条排除能力（见
- * @deepseek-ai/dsh-agent-presets README.zh.md），而底座包自带 standard / ptc /
- * minimal / cordis 四个编程向预设。生成器因此把底座预设目录过滤成一个只含
- * 白名单的可见根，落在 profile home 下，再把它作为 system root 交给
- * agent-presets；被排除的预设既不落盘也不出现在教师的选择器里。
- *
- * 幂等：逐文件按字节比较，重复生成不重写、不报错，且保留 cordis 的全部文件
- * （preset.yml / agent.cordis.yml / skills/**）。
+ * 将已安装预设复制到受控根，保留历史会话需要的 standard/minimal/ptc/cordis。
+ * 逐文件比较保证幂等，完整保留预设与其附属 skills。
  */
-const VISIBLE_INSTALLED_PRESETS = Object.freeze(["cordis"]);
+const VISIBLE_INSTALLED_PRESETS = Object.freeze(["standard", "minimal", "ptc", "cordis"]);
 const PRESETS_VISIBLE_DIRNAME = "presets-visible";
 const PRESET_NAME_PATTERN = /^[A-Za-z0-9_-]+$/;
 
@@ -300,6 +300,16 @@ function collectPluginIds(...parts) {
   return ids;
 }
 
+function collectInsertedPluginIds(...parts) {
+  const ids = new Set();
+  // Public settings writes append top-level patch references; they do not mount
+  // plugins. Keep generating the mount those references update on restart.
+  for (const part of parts) for (const match of part.matchAll(/^[ \t]{4,}-\s+id:\s*(?:(["'])([A-Za-z0-9_-]+)\1|([A-Za-z0-9_-]+))\s*(?:#.*)?$/gm)) {
+    ids.add(match[2] ?? match[3]);
+  }
+  return ids;
+}
+
 function normalizeEmptyPatchDocument(content) {
   // A bare `[]` is a complete YAML document, so appending list rows after it
   // would be invalid. Only remove an otherwise empty sequence; comments stay.
@@ -350,6 +360,42 @@ function composeManagedPatch(existing, managedPatch) {
   parts.push(`${MANAGED_PATCH_BEGIN}\n${managedPatch.trimEnd()}\n${MANAGED_PATCH_END}`);
   if (after.trim()) parts.push(after.trimStart());
   return `${parts.join("\n\n")}\n`;
+}
+
+/** Keep role-local book skills beside deployment and explicit user roots. */
+function mergeBookSkillRoots(text, homeDir, skillsDir, nodeModules) {
+  const yaml = createRequire(join(nodeModules, "@deepseek-ai/dsh/package.json"))("yaml");
+  const doc = yaml.parseDocument(text, { logLevel: "silent" });
+  if (doc.errors.length) throw new Error("技能目录配置无法解析；原文件未修改");
+  const rows = [];
+  function visit(sequence) {
+    if (!yaml.isSeq(sequence)) return;
+    for (const row of sequence.items) {
+      if (!yaml.isMap(row)) continue;
+      visit(row.get("insert", true));
+      if (row.get("id") === "skill-filesystem" && row.has("config")) rows.push(row);
+    }
+  }
+  visit(doc.contents);
+  if (!rows.length) throw new Error("受管 profile 缺少 skill-filesystem 配置");
+  const merged = doc.createNode({});
+  const roots = new Set([skillsDir]);
+  for (const row of rows) {
+    const config = row.get("config", true);
+    if (!yaml.isMap(config)) throw new Error("技能配置无法无损合并；原文件未修改");
+    for (const pair of config.items) merged.set(pair.key.clone(), pair.value?.clone() ?? null);
+    const custom = config.get("customSkillDirs", true);
+    if (custom !== undefined) {
+      if (!yaml.isSeq(custom) || custom.items.some(item => !yaml.isScalar(item) || typeof item.value !== "string")) {
+        throw new Error("自定义技能目录必须是字符串列表；原文件未修改");
+      }
+      for (const item of custom.items) roots.add(item.value);
+    }
+  }
+  roots.add(join(homeDir, "knowledge", "book-skills"));
+  merged.set("customSkillDirs", doc.createNode([...roots]));
+  rows.at(-1).set("config", merged);
+  return String(doc);
 }
 
 function sameTarget(link, target) {
@@ -618,37 +664,77 @@ function provisionMochiProfiles(options) {
   const roleConfig = readRoleProfiles(manifest)[role];
   // 过滤后的可见预设根：路径在规划阶段确定，落盘放在全部校验通过之后，
   // 避免任何半成品写入（与 profile 写入同样的原子性要求）。
-  const installedPresetRoot = roleConfig.includeInstalledPresetRoot ? resolveInstalledPresetRoot(options) : undefined;
+  const declarativePresets = usesDeclarativePresets(runtimeNodeModulesRoot);
+  const installedPresetRoot = !declarativePresets && roleConfig.includeInstalledPresetRoot ? resolveInstalledPresetRoot(options) : undefined;
   const visiblePresetRoot = installedPresetRoot === undefined ? undefined : join(homeDir, PRESETS_VISIBLE_DIRNAME);
 
   const plans = [];
   for (const [name, configuredProfile] of Object.entries(manifest.profiles)) {
     if (!isRecord(configuredProfile) || !Array.isArray(configuredProfile.bundles)) throw new Error(`Mochi profile ${name} 格式无效`);
     const profile = profileForRole(manifest, name, configuredProfile, role);
+    if (declarativePresets && role === "teacher") {
+      profile.bundles = [...profile.bundles, "@deepseek-ai/dsh-experimental-agent-team-profile"];
+    }
+    if (declarativePresets && name === "mochi-web") {
+      profile.bundles = [...profile.bundles, "@deepseek-ai/dsh-experimental-voice-input-bundle", "@deepseek-ai/dsh-experimental-schedule-bundle"];
+      profile.plugins = [...new Set([...profile.plugins, "mochi-camera", "mochi-camera-client", "mochi-voice-chat", "mochi-user-profile", "mochi-onboarding", "mochi-memory", "mochi-memory-client",
+        ...(role === "classroom" ? ["mochi-classroom-assistant", "mochi-classroom-assistant-client", "mochi-classroom-planner", "mochi-classroom-planner-client"] : [])])];
+      if (profile.plugins.includes("dsh-better-sidebar")) profile.bundles.push("dsh-better-sidebar");
+    }
     const profileDir = join(homeDir, "profiles", name);
     const pluginTargets = {};
     for (const pluginName of profile.plugins ?? []) {
       if (typeof pluginName !== "string") throw new Error(`Mochi profile ${name} 含有无效插件名`);
-      pluginTargets[pluginName] = resolvePluginTarget(pluginName, manifest.plugins[pluginName], { workspaceRoot, pluginRoot });
+      pluginTargets[pluginName] = declarativePresets && pluginName === "dsh-better-sidebar"
+        ? resolveModernSidebar(runtimeNodeModulesRoot)
+        : resolvePluginTarget(pluginName, manifest.plugins[pluginName], { workspaceRoot, pluginRoot });
     }
 
     const patchPath = join(profileDir, "cordis.patch.yml");
     const existingPatch = splitManagedPatch(patchPath);
     const initialConfigs = name === "mochi-web" && profile.plugins.includes("mochi-lan")
-      ? { "mochi-lan": { dataRoot: join(homeDir, "mochi-lan"), lockedRole: role } }
+      ? { "mochi-lan": { dataRoot: join(homeDir, "mochi-lan"), lockedRole: role },
+        ...(declarativePresets ? {"mochi-user-profile": {role,dataRoot:join(homeDir,"mochi-user-profile")}, "mochi-memory": {role}} : {}),
+        ...(declarativePresets && role === "classroom" ? { "mochi-classroom-assistant": {
+          role, dataRoot: join(homeDir, "mochi-classroom-assistant"),
+        }, "mochi-classroom-planner": {
+          role, dataRoot: join(homeDir, "mochi-classroom-planner"),
+        } } : {}) }
       : {};
-    const seededPatch = seedInitialConfigEntries(existingPatch, profile, manifest.plugins, initialConfigs);
-    const managedPatch = renderPatch(
+    let seededPatch = seedInitialConfigEntries(existingPatch, profile, manifest.plugins, initialConfigs);
+    const existingPluginIds = declarativePresets
+      ? collectInsertedPluginIds(seededPatch.before, seededPatch.after)
+      : collectPluginIds(seededPatch.before, seededPatch.after);
+    const modernSidebar = declarativePresets && profile.plugins.includes("dsh-better-sidebar");
+    // The official sidebar bundle owns its single mount on the new runtime.
+    if (modernSidebar) existingPluginIds.add("dsh-better-sidebar");
+    let managedPatch = renderPatch(
       resourceRoot,
       profile,
       skillsDir,
-      collectPluginIds(seededPatch.before, seededPatch.after),
+      existingPluginIds,
       name === "mochi-web"
-        ? agentPresetsConfig(manifest, role, { resourceRoot, workspaceRoot, pluginRoot, runtimeNodeModulesRoot, visiblePresetRoot })
+        ? declarativePresets ? {} : agentPresetsConfig(manifest, role, { resourceRoot, workspaceRoot, pluginRoot, runtimeNodeModulesRoot, visiblePresetRoot })
         : undefined,
       name,
     );
-    const patch = composeManagedPatch(seededPatch, managedPatch);
+    if (declarativePresets && name === "mochi-web") {
+      managedPatch = managedPatch.replace(/^- id: agent-presets\n  config: \{\}\n/m, "");
+      managedPatch += "\n- id: ui-settings-models\n  config:\n    credentialOnboarding: false\n";
+      managedPatch += "\n" + renderDeclarativePresets({
+        nodeModules: runtimeNodeModulesRoot,
+        root: resolveRolePresetRoot(roleConfig, { resourceRoot, workspaceRoot, pluginRoot }),
+        defaultPreset: role === "teacher" ? "standard" : roleConfig.defaultPreset, role, homeDir,
+      });
+    }
+    if (modernSidebar) managedPatch += renderModernSidebarDefaults(seededPatch, homeDir, runtimeNodeModulesRoot);
+    if (declarativePresets && profile.plugins.includes("mochi-llm-mimo")) {
+      managedPatch += "\n- insert:\n    - id: mochi-mimo-empty-reply-guard\n      name: 'mochi-llm-mimo/empty-reply-guard'\n";
+    }
+    let patch = composeManagedPatch(seededPatch, managedPatch);
+    if (declarativePresets && profile.plugins.includes("mochi-llm-mimo")) {
+      patch = migrateMimoPatch(patch, runtimeNodeModulesRoot);
+    }
 
     const manifestPath = join(profileDir, "package.json");
     const profileManifest = renderProfileManifest(readExistingManifest(manifestPath), name, profile, pluginTargets, manifest.schemaVersion);
@@ -658,7 +744,25 @@ function provisionMochiProfiles(options) {
     plans.push({ name, patchPath, patch, manifestPath, profileManifest, pluginTargets, profileDir });
   }
 
+  const legacySettings = declarativePresets ? planLegacySettings({
+    homeDir, nodeModules: runtimeNodeModulesRoot, manifest, role,
+    themeRoot: resolvePluginTarget("jxl-theme", manifest.plugins["jxl-theme"], { workspaceRoot, pluginRoot }),
+  }) : undefined;
+  if (legacySettings?.disableDeepSeek) {
+    for (const plan of plans) plan.patch = disableLegacyDeepSeek(plan.patch, runtimeNodeModulesRoot, legacySettings.defaultModel, legacySettings.gatewayRoute);
+  }
+  if (declarativePresets) for (const plan of plans) {
+    plan.patch = consolidatePiAiPatch(plan.patch, runtimeNodeModulesRoot);
+    plan.patch = mergeBookSkillRoots(plan.patch, homeDir, skillsDir, runtimeNodeModulesRoot);
+  }
   const updated = [];
+  if (legacySettings) {
+    if (!existsSync(legacySettings.backupPath)) writeFileSync(legacySettings.backupPath, legacySettings.source, { mode: 0o600, flag: "wx" });
+    const temporary = `${legacySettings.path}.${process.pid}.tmp`;
+    writeFileSync(temporary, legacySettings.content, { mode: 0o600 });
+    renameSync(temporary, legacySettings.path);
+    updated.push(".mochi-settings-legacy.yaml", "settings.yaml");
+  }
   if (installedPresetRoot !== undefined) {
     for (const relativePath of materializeVisiblePresetRoot(installedPresetRoot, visiblePresetRoot)) {
       updated.push(relativePath);
@@ -724,6 +828,7 @@ module.exports = {
   MANAGED_PATCH_END,
   collectPluginIds,
   composeManagedPatch,
+  mergeBookSkillRoots,
   normalizeEmptyPatchDocument,
   parseCli,
   provisionMochiProfiles,

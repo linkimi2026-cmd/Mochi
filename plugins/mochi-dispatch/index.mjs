@@ -6,7 +6,7 @@
 // 未知投递结果绝不重发；已确认未写入的失败只能经 retryTaskId 和第二次人工确认后建立新 attempt。
 import { defineTool } from '@deepseek-ai/dsh-tools';
 import { CampusRequestError, campusConnection as connection } from '../mochi-campus/connection.mjs';
-import { lanTaskMessageId, listLanClassrooms, localLanOwnerKey, sendLanDirective, sendLanFile, sendLanNotification } from './lan-transport.mjs';
+import { lanTaskMessageId, listLanClassrooms, localLanOwnerKey, sendLanDirective, sendLanFile, sendLanNotification, sendLanStudentCall } from './lan-transport.mjs';
 import { TERMINAL_STATES, relayStatusToTask, deriveCardState, expiryFor, idempotencyKeyFor } from './state-machine.mjs';
 import { createStore } from './store.mjs';
 
@@ -109,9 +109,10 @@ export function apply(ctx, connectionArg = connection, storeArg = null) {
       retryTaskId: { type: 'integer', description: '仅重试已明确未投递的同内容通知；结果不明通知不能重发。' },
       newTask: { type: 'boolean', description: '主人明确要把同一内容作为独立通知发送；结果不明通知不能绕过。' },
     }, async (args, exec) => sendLanNotification({ lan, approval: requireApproval(), args, exec, store }));
-    register('mochi_send_classroom_file', '向已人工配对、同校指定班级的教室端发送已生成的 PPTX、DOCX、XLSX、PDF 或图片。必须给出受管导出目录内的绝对 sourcePath；先展示精确学校、班级、设备指纹、文件路径和正文，主人确认后才分块签名传输。接收端校验文件哈希后才收到引用该 fileId 的通知，不能自动执行文件。', {
+    register('mochi_send_classroom_file', '向已人工配对、同校指定班级的教室端发送老师上传或已生成的 PPTX、DOCX、XLSX、PDF 或图片。必须给出受管附件或导出目录内的绝对 sourcePath；先展示精确学校、班级、设备指纹、文件路径和正文，主人确认后才分块签名传输。接收端校验文件哈希后才收到引用该 fileId 的通知。老师明确要求在教室用 WPS 打开时，对 PPTX 设置 openWith=wps，确认卡会列出打开动作；仅发送时不要设置。fileOpen.LAUNCH_REQUESTED 仅表示交给 WPS，不能声称幻灯片已加载；FAILED/UNKNOWN 必须如实说明。', {
       classroomEndpointId: { type: 'string', required: true, description: '教室端 endpointId，必须来自已配对教室列表。' },
-      sourcePath: { type: 'string', required: true, description: '已生成课件的绝对路径；仅受管导出目录内的白名单文件可发送。' },
+      sourcePath: { type: 'string', required: true, description: '老师上传或生成课件的真实绝对路径；仅受管附件或导出目录内的白名单文件可发送，不能猜路径。' },
+      openWith: { type: 'string', enum: ['wps'], description: '仅老师明确要求接收后在教室用 WPS 打开 PPTX 时填写 wps；省略则只传输。' },
       message: { type: 'string', required: true, description: '教室端显示的纯文本说明。' },
       retryTaskId: { type: 'integer', description: '仅重试已明确未投递的同一文件任务；结果不明任务不能重发。' },
       newTask: { type: 'boolean', description: '主人明确要把同一文件作为独立任务再次发送；结果不明任务不能绕过。' },
@@ -141,6 +142,15 @@ export function apply(ctx, connectionArg = connection, storeArg = null) {
       retryTaskId: { type: 'integer', description: '仅重试已明确未投递的同一份名册；结果不明任务不能重发。' },
       newTask: { type: 'boolean', description: '主人明确要把同一份名册作为独立登记再次下发；结果不明任务不能绕过。' },
     }, async (args, exec) => sendLanDirective({ lan, approval: requireApproval(), args, exec, store }));
+    register('mochi_call_student', '老师要单独叫一位学生到办公室或其他地点时使用。先从已配对教室名册选精确设备，再给出学生、地点和时间；逐字展示学校、班级、设备指纹与叫号内容，主人确认后才签名发送到教室屏。听写不过关及多人名单请使用 mochi_register_verdicts，并逐人附个性化交代。', {
+      classroomEndpointId: { type: 'string', required: true, description: '已配对教室的 endpointId，必须来自 mochi_list_classrooms。' },
+      student: { type: 'string', required: true, description: '要叫的学生姓名。' },
+      location: { type: 'string', required: true, description: '学生应去的地点，例如教师办公室。' },
+      when: { type: 'string', description: '到达时间，例如本节课下课后；省略时不指定时间。' },
+      instruction: { type: 'string', description: '可选的补充交代，会显示在教室屏上；避免填写仅供老师查看的私密信息。' },
+      retryTaskId: { type: 'integer', description: '仅重试已明确未投递的同内容叫号。' },
+      newTask: { type: 'boolean', description: '主人明确要把同一内容作为一件新的独立叫号。' },
+    }, async (args, exec) => sendLanStudentCall({ lan, approval: requireApproval(), args, exec, store }));
   });
 
   // ── 与 Relay 的同步：出站任务按 relay 状态迁移；入站 relay 镜像为本地任务 ──

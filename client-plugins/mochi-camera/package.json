@@ -1,0 +1,20 @@
+{
+  "name": "mochi-camera-client",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "index.mjs",
+  "description": "Mochi 摄像头 / 展台预览及官方草稿附件入口",
+  "dsh": {
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-renderer",
+        "@deepseek-ai/dsh-client-ui-conversation"
+      ]
+    }
+  },
+  "exports": { ".": "./index.mjs", "./client": "./client.js" },
+  "files": ["index.mjs", "client.js", "package.json"],
+  "scripts": { "test": "node --test test/*.test.mjs" }
+}

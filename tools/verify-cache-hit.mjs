@@ -19,13 +19,12 @@
  *   node tools/verify-cache-hit.mjs --session <id>        # 指定会话
  *   node tools/verify-cache-hit.mjs --threshold 0.99      # 低于阈值以退出码 1 阻断
  *
- * 退出码：0 = 达标；1 = 低于阈值；2 = 找不到会话 / 读不出用量。
+ * 退出码：0 = 达标；1 = 低于阈值；2 = 找不到会话 / 读不出用量 / 稳态无可用计数 / 缺少 zstd CLI。
  */
 
-import { readFileSync, readdirSync, existsSync, statSync } from 'node:fs'
+import { readdirSync, existsSync, statSync } from 'node:fs'
 import { execFileSync } from 'node:child_process'
 import { join, resolve } from 'node:path'
-import { zstdDecompressSync } from 'node:zlib'
 import { fileURLToPath } from 'node:url'
 import { dirname } from 'node:path'
 
@@ -70,25 +69,18 @@ if (!target) { console.error(`找不到匹配的会话：${sessionFilter}`); pro
 
 // ── 解压 ──────────────────────────────────────────────────────────────────
 // 会话日志是**多帧 zstd**：进程每落一批就往同一个文件追加一个独立帧。
-// 实测同一份 46,362 字节的日志：
-//   `zstd -dc`            → 94,515 字符 / 31 行（全量）
-//   `zstdDecompressSync`  →    183 字符 /  1 行（只有第一帧）
-// 后者会让这个脚本"看不到任何用量记录"，然后报一个**看起来合理但完全错误**
-// 的结论。宁可报错也不报错数：命令行走不通时只接受完整解码的结果。
+// Node 的 zstdDecompressSync 只读第一帧；第一帧恰好以换行结尾时，无法用文本
+// 完整性启发式发现截断，甚至会得到看似可信的高命中率。因此只接受 zstd CLI
+// 的完整流解码；缺少 CLI 时拒绝计算。
 function decompress(path) {
   try {
     return { text: execFileSync('zstd', ['-dc', path], { maxBuffer: 512 * 1024 * 1024 }).toString('utf8'), via: 'zstd -dc' }
   } catch (error) {
     if (error.code !== 'ENOENT') throw error
   }
-  const viaNode = zstdDecompressSync(readFileSync(path)).toString('utf8')
-  // 完整日志的最后一行一定有换行符；只有第一帧时输出会在中途截断。
-  if (!viaNode.endsWith('\n')) {
-    console.error('本机没有 zstd 命令，且 Node 自带解压只读到了第一帧（日志是多帧的）。')
-    console.error('拒绝用不完整的数据算命中率 —— 请先安装 zstd（brew install zstd），或用 `zstd -dc <日志>` 手工核对。')
-    process.exit(2)
-  }
-  return { text: viaNode, via: 'zlib.zstdDecompressSync' }
+  console.error('本机没有 zstd 命令。Node 自带解压不能保证读取会话日志的全部 zstd 帧。')
+  console.error('拒绝用可能不完整的数据算命中率 —— 请先安装 zstd（brew install zstd），再重试。')
+  process.exit(2)
 }
 
 const { text, via } = decompress(target.path)
@@ -108,43 +100,64 @@ if (usages.length === 0) { console.error('这个会话没有任何 assistant/mes
 
 const rows = usages.map((event, index) => {
   const usage = event.data.usage
-  const input = usage.inputTokens ?? 0
-  const cacheRead = usage.cacheReadTokens ?? 0
-  const prompt = input + cacheRead
+  const hasInput = Number.isSafeInteger(usage.inputTokens) && usage.inputTokens >= 0
+  const input = hasInput ? usage.inputTokens : null
+  const hasCacheRead = Number.isSafeInteger(usage.cacheReadTokens) && usage.cacheReadTokens >= 0
+  const cacheRead = hasCacheRead ? usage.cacheReadTokens : null
+  const hasCounts = hasInput && hasCacheRead && Number.isSafeInteger(input + cacheRead)
+  const prompt = hasCounts ? input + cacheRead : null
   return {
     index: index + 1,
     input,
     cacheRead,
     prompt,
     output: usage.outputTokens ?? 0,
-    hitRate: prompt === 0 ? null : cacheRead / prompt,
-    reported: usage.cacheReadTokens === undefined,
+    hitRate: !hasCounts || prompt === 0 ? null : cacheRead / prompt,
+    hasCounts,
   }
 })
 
 console.log('轮次    prompt     命中      未命中    命中率')
 for (const row of rows) {
   const rate = row.hitRate === null ? '   n/a' : `${(row.hitRate * 100).toFixed(2)}%`.padStart(7)
-  const note = row.cacheRead === 0 && row.index === 1 ? '   ← 首轮，缓存未建立，0% 是正常的' : ''
+  const prompt = row.prompt === null ? 'n/a' : String(row.prompt).padStart(9)
+  const cacheRead = row.cacheRead === null ? 'n/a' : String(row.cacheRead).padStart(8)
+  const input = row.hasCounts ? String(row.input).padStart(8) : '     n/a'
+  const note = row.hitRate === 0 && row.index === 1 ? '   ← 首轮，缓存未建立，0% 是正常的' : ''
   console.log(
-    `${String(row.index).padStart(3)}  ${String(row.prompt).padStart(9)}  ${String(row.cacheRead).padStart(8)}`
-    + `  ${String(row.input).padStart(8)}  ${rate}${note}`,
+    `${String(row.index).padStart(3)}  ${prompt}  ${cacheRead}`
+    + `  ${input}  ${rate}${note}`,
   )
 }
 
 const sum = (list, key) => list.reduce((n, row) => n + row[key], 0)
-const steady = rows.slice(1)
+const counted = rows.filter((row) => row.hasCounts)
+const steadyRows = rows.filter((row) => row.index > 1)
+const steadyMissing = steadyRows.some((row) => !row.hasCounts)
+const steady = steadyRows.filter((row) => row.hasCounts)
 const steadyPrompt = sum(steady, 'prompt')
 const steadyHit = sum(steady, 'cacheRead')
 const steadyRate = steadyPrompt === 0 ? null : steadyHit / steadyPrompt
 
 console.log('')
-if (steady.length === 0) {
-  console.log('只有一轮请求 —— 命中率无从判断。多跑几步工具（每步都是一次模型请求）再看。')
+const allPrompt = sum(counted, 'prompt')
+const allHit = sum(counted, 'cacheRead')
+if (allPrompt > 0) {
+  console.log(`全程累计（已计数轮次）：命中 ${allHit} / prompt ${allPrompt} = ${((allHit / allPrompt) * 100).toFixed(2)}%`)
+}
+
+if (steadyMissing) {
+  if (steadyRate !== null) {
+    console.log(`稳态已计数子集：命中 ${steadyHit} / prompt ${steadyPrompt} = ${(steadyRate * 100).toFixed(2)}%`)
+  }
+  console.log('稳态验收：n/a（第 2 轮起存在缺失或无效的 inputTokens / cacheReadTokens，无法判定）')
+  process.exit(2)
+}
+if (steadyRate === null) {
+  console.log('稳态没有完整有效的 inputTokens / cacheReadTokens 计数 —— 命中率无从判断（n/a）。')
   process.exit(2)
 }
 console.log(`稳态（第 2 轮起）：命中 ${steadyHit} / prompt ${steadyPrompt} = ${(steadyRate * 100).toFixed(2)}%`)
-console.log(`全程累计：      命中 ${sum(rows, 'cacheRead')} / prompt ${sum(rows, 'prompt')} = ${((sum(rows, 'cacheRead') / sum(rows, 'prompt')) * 100).toFixed(2)}%`)
 
 if (threshold > 0) {
   if (steadyRate >= threshold) {

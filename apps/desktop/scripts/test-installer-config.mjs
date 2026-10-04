@@ -5,6 +5,7 @@
  */
 
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
@@ -15,6 +16,7 @@ const scriptDir = dirname(fileURLToPath(import.meta.url));
 const desktopRoot = dirname(scriptDir);
 const requireFromHere = createRequire(import.meta.url);
 const desktopPackage = requireFromHere(join(desktopRoot, "package.json"));
+const desktopLock = JSON.parse(readFileSync(join(desktopRoot, "package-lock.json"), "utf8"));
 const packager = requireFromHere(join(scriptDir, "package-desktop.cjs"));
 const prepareMochiResources = requireFromHere(join(scriptDir, "prepare-mochi-resources.cjs"));
 const { getFileMatchers, getMainFileMatchers } = requireFromHere("app-builder-lib/out/fileMatcher");
@@ -24,7 +26,27 @@ assert.equal(build.appId, "cn.jiaxinglian.mochi", "appId must remain stable for 
 assert.equal(build.directories.output, "release", "installer output must not collide with renderer dist input");
 assert.equal(build.directories.buildResources, "build", "installer icon resources must have a stable project-local root");
 assert.equal(build.beforePack, "./scripts/prepare-mochi-resources.cjs");
-assert.deepEqual(build.extraResources, [{ from: ".mochi-package-resources-v1.nosync", to: "mochi" }]);
+assert.deepEqual(build.extraResources, [
+  { from: ".mochi-package-resources-v1.nosync", to: "mochi" },
+  { from: "build", to: "icons", filter: ["MochiTemplate.png", "MochiTemplate@2x.png", "icon.ico", "icon.png"] },
+  { from: "resources/browser-on-demand.cjs", to: "browser-on-demand.cjs" },
+]);
+assert.equal(desktopPackage.devDependencies["7zip-bin"], "5.2.0", "the source fallback and installer copy must use the reviewed exact 7-Zip package version");
+assert.equal(desktopPackage.dependencies["7zip-bin"], undefined, "only the selected x64 utility is copied to packaged resources");
+assert.equal(desktopLock.packages[""].devDependencies["7zip-bin"], "5.2.0", "the direct 7-Zip pin must stay in the lockfile");
+assert.equal(desktopLock.packages["node_modules/7zip-bin"].version, "5.2.0");
+assert.deepEqual(build.win.extraResources, [
+  { from: "node_modules/7zip-bin/win/x64/7za.exe", to: "tools/7za.exe" },
+  { from: "resources/voice-tools/LICENSE-7zip.txt", to: "tools/LICENSE-7zip.txt" },
+], "Windows should package only the x64 7za executable and its official license");
+assert.equal(build.mac.extraResources, undefined, "the Windows extraction helper must stay out of macOS installers");
+const sevenZipPath = join(desktopRoot, "node_modules/7zip-bin/win/x64/7za.exe");
+const sevenZipHash = createHash("sha256").update(readFileSync(sevenZipPath)).digest("hex");
+assert.equal(statSync(sevenZipPath).size, 1_231_360, "the pinned Windows x64 utility should remain the reviewed 1.2 MB binary");
+assert.equal(sevenZipHash, "b0cfdeaf429f5cc53f85123dd8f5a5feb92c19d31aa34df257edf9a26be05f95", "the selected 7za binary must match the reviewed executable hash");
+const sevenZipLicense = readFileSync(join(desktopRoot, "resources/voice-tools/LICENSE-7zip.txt"), "utf8");
+assert.match(sevenZipLicense, /All other files: the "GNU LGPL"/u);
+assert.match(sevenZipLicense, /Redistributions in binary form must reproduce related license information from this file\./u);
 assert.equal(build.dmg.artifactName, "${productName}-${version}-mac-${arch}.${ext}");
 assert.equal(build.nsis.artifactName, "${productName}-Setup-${version}-win-${arch}.${ext}");
 assert.equal(build.nsis.oneClick, false, "Windows installer must remain assisted");
@@ -66,7 +88,7 @@ const NODE_MODULES_FILE_EXCLUSIONS = [
 ];
 assert.deepEqual(
   build.files,
-  ["dist-electron/**/*", "package.json", ...NODE_MODULES_FILE_EXCLUSIONS],
+  ["dist-electron/**/*", "build/MochiTemplate.png", "build/MochiTemplate@2x.png", "package.json", ...NODE_MODULES_FILE_EXCLUSIONS],
   "安装包的 node_modules 排除规则被改动或删掉了；这会直接让装机的文件数涨回 4 万",
 );
 for (const glob of NODE_MODULES_FILE_EXCLUSIONS) {
@@ -102,7 +124,7 @@ assert.equal(windowsIcon.readUInt16LE(0), 0, "Windows ICO reserved header must b
 assert.equal(windowsIcon.readUInt16LE(2), 1, "Windows icon must declare ICO type");
 assert.deepEqual(
   [...Array(windowsIcon.readUInt16LE(4)).keys()].map((index) => windowsIcon[6 + index * 16] || 256),
-  [16, 24, 32, 48, 64, 128, 256],
+  [16, 20, 24, 32, 40, 48, 64, 128, 256],
   "Windows icon must contain the supported desktop size set",
 );
 for (let index = 0; index < windowsIcon.readUInt16LE(4); index += 1) {
@@ -110,6 +132,13 @@ for (let index = 0; index < windowsIcon.readUInt16LE(4); index += 1) {
   const dataOffset = windowsIcon.readUInt32LE(entryOffset + 12);
   const dataLength = windowsIcon.readUInt32LE(entryOffset + 8);
   assert.ok(dataOffset >= 6 + windowsIcon.readUInt16LE(4) * 16 && dataOffset + dataLength <= windowsIcon.length, "Windows ICO entry must stay inside the file");
+}
+for (const [name, size] of [["MochiTemplate.png", 16], ["MochiTemplate@2x.png", 32]]) {
+  const template = readFileSync(join(iconRoot, name));
+  assert.deepEqual(template.subarray(0, 8), Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), `${name} must be a PNG`);
+  assert.equal(template.readUInt32BE(16), size, `${name} must have the expected width`);
+  assert.equal(template.readUInt32BE(20), size, `${name} must have the expected height`);
+  assert.ok(build.files.includes(`build/${name}`), `${name} must be present in the packaged app`);
 }
 assert.equal(existsSync(join(iconRoot, "ICON-SOURCE.md")), true, "single-icon crop provenance must remain reviewable");
 
@@ -265,14 +294,19 @@ try {
 
 assert.deepEqual(
   packager.parseArguments(["--target", "mac", "--arch", "arm64", "--dir"]),
-  { target: "mac", arch: "arm64", releaseInputRoot: undefined, campusStaticRoot: undefined, directoryOnly: true },
+  { target: "mac", arch: "arm64", releaseInputRoot: undefined, campusStaticRoot: undefined, directoryOnly: true, withoutKeySeeds: false, modernRuntimeRoot:"runtime-modern" },
 );
+assert.equal(packager.parseArguments(["--without-key-seeds"]).withoutKeySeeds, true, "explicit key-seed opt-out must parse");
+assert.equal(packager.parseArguments(["--modern-runtime-root","runtime-modern"]).modernRuntimeRoot,"runtime-modern");
+assert.equal(packager.parseArguments([]).modernRuntimeRoot,"runtime-modern");
+assert.equal(packager.parseArguments(["--legacy-runtime"]).modernRuntimeRoot,undefined);
+assert.throws(()=>packager.parseArguments(["--legacy-runtime","--modern-runtime-root","runtime-modern"]),/不能同时使用/);
 assert.throws(() => packager.parseArguments(["--target", "win", "--release-input-root", "input", "--campus-static-root", "client"]), /不能同时使用/);
 assert.throws(() => packager.parseArguments(["--unsupported"]), /不支持的桌面打包参数/);
 assert.deepEqual(packager.createElectronBuilderArgs("mac", "arm64", false).slice(1), ["--mac", "dmg", "--arm64", "--publish=never"]);
 assert.deepEqual(packager.createElectronBuilderArgs("win", "x64", true).slice(1), ["--win", "dir", "--x64", "--publish=never"]);
-assert.match(packager.expectedInstallerPath("mac", "arm64"), /release[\\/]Mochi-0\.1\.0-mac-arm64\.dmg$/);
-assert.match(packager.expectedInstallerPath("win", "x64"), /release[\\/]Mochi-Setup-0\.1\.0-win-x64\.exe$/);
+assert.equal(packager.expectedInstallerPath("mac", "arm64"), join(desktopRoot, "release", `Mochi-${desktopPackage.version}-mac-arm64.dmg`));
+assert.equal(packager.expectedInstallerPath("win", "x64"), join(desktopRoot, "release", `Mochi-Setup-${desktopPackage.version}-win-x64.exe`));
 
 if (process.platform === "darwin" && process.arch === "arm64") {
   assert.doesNotThrow(() => packager.assertNativeTarget("mac", "arm64"));

@@ -96,6 +96,11 @@ try {
       response.end(JSON.stringify({ ok: true }));
       return;
     }
+    if (path === "/credentials-status/402" || path === "/credentials-status/403") {
+      response.statusCode = Number(path.slice(-3));
+      response.end();
+      return;
+    }
     if (path === "/credentials-redirect") {
       response.statusCode = 302;
       response.setHeader("content-type", "application/json");
@@ -164,7 +169,7 @@ try {
       { url: `${serviceRoot}/search-good` },
     ],
     proxy: { proxyUrl: proxyRoot, targetUrl: "http://proxy-target.invalid/health" },
-    diagnosticEvents: [{ stage: "web-host", code: "WEB_HOST_TIMEOUT" }],
+    diagnosticEvents: [{ stage: "web-host", code: "WEB_HOST_TIMEOUT" }, { stage: "web-host", code: "WEB_HOST_PROFILE_PREPARATION_FAILED" }],
   });
 
   const successful = await runDoctor(baseConfig());
@@ -180,6 +185,7 @@ try {
   const parsedReport = JSON.parse(report);
   assert.deepEqual(Object.keys(parsedReport).sort(), ["checks", "format", "overallStatus", "recentDiagnostics", "totalDurationMs"]);
   assert.equal(parsedReport.recentDiagnostics[0].code, "WEB_HOST_TIMEOUT");
+  assert.equal(parsedReport.recentDiagnostics[1].code, "WEB_HOST_PROFILE_PREPARATION_FAILED");
   for (const secret of [syntheticKey, queryOnlySecret, root, serviceRoot, proxyRoot]) {
     assert.equal(report.includes(secret), false, "redacted report must exclude fixture secrets, paths, and endpoints");
   }
@@ -192,7 +198,22 @@ try {
     credentials: { url: `${serviceRoot}/credentials`, apiKey: "wrong-test-key", model: "fixture-model" },
   });
   assert.equal(resultFor(invalidCredentials, "credentials").status, "fail", "an explicit rejected credential must fail");
+  assert.match(resultFor(invalidCredentials, "credentials").message, /HTTP 401/);
   assert.equal(createRedactedDoctorReport(invalidCredentials).includes("wrong-test-key"), false);
+
+  for (const [statusCode, status, message] of [
+    [402, "fail", /额度或付款状态.*HTTP 402/],
+    [403, "warn", /HTTP 403.*原因尚未确认/],
+  ]) {
+    const checked = await runDoctor({
+      ...baseConfig(),
+      credentials: { url: `${serviceRoot}/credentials-status/${statusCode}`, apiKey: syntheticKey, model: "fixture-model" },
+    });
+    const result = resultFor(checked, "credentials");
+    assert.equal(result.status, status);
+    assert.match(result.message, message);
+    assert.equal(createRedactedDoctorReport(checked).includes(syntheticKey), false);
+  }
 
   const unrecognizedChatResponse = await runDoctor({
     ...baseConfig(),

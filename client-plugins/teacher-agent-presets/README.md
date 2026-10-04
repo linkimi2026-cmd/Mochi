@@ -12,7 +12,7 @@
 | lesson-planning | 备课与课件 | 结构化教案；本机教材库已导入且宿主装配时先用 mochi_knowledge_search / mochi_knowledge_page 引用真实教材页，再调用 mochi_ppt_create / mochi_ppt_revise 生成或定页修订可编辑 PPTX。 |
 | materials-assessment | 资料与试卷 | 读取本地资料、调用已配置的网页检索；本机教材库已导入且宿主装配时用 mochi_knowledge_search / mochi_knowledge_page 核对教材依据，整理带来源与许可边界的材料或试卷草案。 |
 | grade-analysis | 成绩分析 | 宿主已装配时调用 mochi_grade_analyze，以教师明确的阈值产生可复核 XLSX。 |
-| classroom-coordination | 班级与教室 | 读取 jxl_campus_status / jxl_relay_list；先用 mochi_list_classrooms 核对已配对教室，再在宿主装配且人工确认后用 mochi_notify_classroom、mochi_ask、mochi_request、mochi_find、mochi_tasks。 |
+| classroom-coordination | 班级与教室 | 对话中查询 LAN、配对、处理学生请求和预约；核对已配对教室并人工确认后通知、叫人或下发听写处置；也可使用 mochi_ask、mochi_request、mochi_find、mochi_tasks。 |
 
 这些工具由 Mochi 的宿主 profile 注册，不能在每个 preset 内再次注册：重复挂载会造成全局工具服务冲突。每份 persona 都只在工具目录实际出现相应工具时使用它；缺失、无权限或 LAN 未就绪时明确报告不可用，绝不宣称已发送或已生成。
 

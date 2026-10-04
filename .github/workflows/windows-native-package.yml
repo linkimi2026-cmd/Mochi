@@ -12,7 +12,8 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  # A draft release is the private fallback when Actions artifact storage is full.
+  contents: write
 
 jobs:
   package-win-x64:
@@ -38,42 +39,23 @@ jobs:
             throw "This workflow requires a private repository for campus-static artifacts."
           }
 
-      - name: Check out private campus source
+      - name: Preserve reviewed snapshot bytes
+        shell: pwsh
+        run: git config --global core.autocrlf false
+
+      - name: Check out private campus source and approved snapshot
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           path: campus-source
           fetch-depth: 1
           persist-credentials: false
 
-      - name: Move approved Mochi snapshot beside campus-source
-        shell: pwsh
-        run: |
-          $ErrorActionPreference = "Stop"
-          $PSNativeCommandUseErrorActionPreference = $true
-          # Release staging writes under `mochi-source/apps/desktop`. While that
-          # tree sits inside campus-source, the output directory is nested in a
-          # declared input root and the release-output guard rejects it by
-          # design. Move it out so the two inputs stay siblings, exactly like
-          # the development checkout does.
-          $nested = Join-Path $env:GITHUB_WORKSPACE "campus-source/mochi-source"
-          $sibling = Join-Path $env:GITHUB_WORKSPACE "mochi-source"
-          if (-not (Test-Path -LiteralPath $nested -PathType Container)) {
-            throw "Private build branch has no mochi-source snapshot."
-          }
-          if (Test-Path -LiteralPath $sibling) {
-            throw "mochi-source already exists at the workspace root."
-          }
-          Move-Item -LiteralPath $nested -Destination $sibling
-          if (Test-Path -LiteralPath $nested) {
-            throw "mochi-source is still present inside campus-source."
-          }
-
       - name: Verify approved Mochi source snapshot
         shell: pwsh
         run: |
           $ErrorActionPreference = "Stop"
           $PSNativeCommandUseErrorActionPreference = $true
-          $sourceRoot = Join-Path $env:GITHUB_WORKSPACE "mochi-source"
+          $sourceRoot = Join-Path (Join-Path $env:GITHUB_WORKSPACE "campus-source") "mochi-source"
           if (-not (Test-Path -LiteralPath $sourceRoot -PathType Container)) {
             throw "Private build branch has no mochi-source snapshot."
           }
@@ -157,223 +139,327 @@ jobs:
             throw "Expected fixed npm 11.6.0 after installation."
           }
 
-      - name: Build reviewed campus static client
+      - name: Verify shared campus release input
         shell: pwsh
-        working-directory: campus-source
+        working-directory: campus-source/mochi-source/apps/desktop
         run: |
           $ErrorActionPreference = "Stop"
           $PSNativeCommandUseErrorActionPreference = $true
-          corepack enable
-          corepack prepare pnpm@11.22.0 --activate
-          if ((pnpm --version).Trim() -ne "11.22.0") {
-            throw "Expected fixed pnpm 11.22.0."
-          }
-          pnpm install --frozen-lockfile
-          pnpm run build:mochi
-          pnpm run verify:runtime-assets
-          if (-not (Test-Path "mochi-dist/client/assets/embed.js" -PathType Leaf)) {
-            throw "Campus build did not produce mochi-dist/client/assets/embed.js."
-          }
+          node -e "const fs=require('node:fs'),path=require('node:path');const spec=require('../../.github/windows-native-package-inputs.json').externalBuildInputs.find(x=>x.name==='campus-static-client');if(!/^[a-f0-9]{64}$/.test(spec.expectedManifestSha256))throw Error('Missing reviewed campus digest');const root=path.join(process.env.GITHUB_WORKSPACE,'campus-source','mochi-campus-release-input');const r=require('./scripts/prepare-release-input.cjs').verifyReleaseInput({inputRoot:root,expectedManifestSha256:spec.expectedManifestSha256});fs.appendFileSync(process.env.GITHUB_ENV,'MOCHI_RELEASE_INPUT_ROOT='+r.inputRoot+'\nMOCHI_CAMPUS_STATIC_ROOT='+r.staticRoot+'\n');console.log('Verified shared campus input:',r.manifestSha256,r.manifest.static.fileCount);"
+          if ($LASTEXITCODE -ne 0) { throw "Shared campus release verification failed." }
 
       - name: Install and verify desktop runtime closure
         shell: pwsh
-        working-directory: mochi-source/apps/desktop
+        working-directory: campus-source/mochi-source/apps/desktop
         env:
           MOCHI_CAMPUS_SOURCE_ROOT: ${{ github.workspace }}/campus-source
-          MOCHI_CAMPUS_STATIC_ROOT: ${{ github.workspace }}/campus-source/mochi-dist/client
         run: |
           $ErrorActionPreference = "Stop"
           $PSNativeCommandUseErrorActionPreference = $true
           # Native postinstall must run before Node-based checks: fs-ext,
           # node-pty, and koffi must load under this runner's Node ABI.
+          # NOTE: node-gyp 9.x requires distutils, removed in Python 3.12;
+          # setuptools provides the compatibility shim (copy-only fix).
+          python -m pip install setuptools
           npm ci --no-audit --no-fund
+          # NOTE: copy-only addition. Local development resolves plugin
+          # dependencies through relative symlinks into the desktop
+          # node_modules; the byte-exact snapshot cannot carry reparse
+          # points, so recreate the same links as directory junctions.
+          $workspaceRoot = (Resolve-Path (Join-Path (Get-Location) "..\..")).Path
+          $desktopModules = Join-Path (Get-Location) "node_modules"
+          $pluginLinks = @(
+            @("plugins/mochi-hello/node_modules/@deepseek-ai/dsh-llm", "@deepseek-ai/dsh-llm"),
+            @("client-plugins/jxl-theme/node_modules/@deepseek-ai/dsh-tools", "@deepseek-ai/dsh-tools"),
+            @("client-plugins/jxl-theme/node_modules/schemastery", "schemastery"),
+            @("plugins/mochi-dispatch/node_modules/@deepseek-ai/dsh-tools", "@deepseek-ai/dsh-tools"),
+            @("plugins/mochi-lan/node_modules/@deepseek-ai/dsh-tools", "@deepseek-ai/dsh-tools"),
+            @("plugins/mochi-campus/node_modules/@deepseek-ai/dsh-tools", "@deepseek-ai/dsh-tools"),
+            @("client-plugins/jxl-brand/node_modules/esbuild", "esbuild"),
+            @("plugins/mochi-knowledge/node_modules/@deepseek-ai/dsh-tools", "@deepseek-ai/dsh-tools"),
+            @("plugins/mochi-llm-mimo/node_modules/@deepseek-ai/dsh-anonymous-user-id", "@deepseek-ai/dsh-anonymous-user-id"),
+            @("plugins/mochi-llm-mimo/node_modules/@deepseek-ai/dsh-llm", "@deepseek-ai/dsh-llm"),
+            @("plugins/mochi-llm-mimo/node_modules/@deepseek-ai/dsh-llm-deepseek", "@deepseek-ai/dsh-llm-deepseek"),
+            @("plugins/mochi-grades/node_modules/@deepseek-ai/dsh-tools", "@deepseek-ai/dsh-tools"),
+            @("plugins/mochi-grades/node_modules/exceljs", "exceljs"),
+            @("plugins/mochi-presentations/node_modules/@deepseek-ai/dsh-tools", "@deepseek-ai/dsh-tools"),
+            @("plugins/mochi-presentations/node_modules/@mochi/pdf-layout", "@mochi/pdf-layout"),
+            @("plugins/mochi-presentations/node_modules/@napi-rs/canvas", "@napi-rs/canvas"),
+            @("plugins/mochi-presentations/node_modules/@pdf-lib/fontkit", "@pdf-lib/fontkit"),
+            @("plugins/mochi-presentations/node_modules/@pdf-lib/standard-fonts", "@pdf-lib/standard-fonts"),
+            @("plugins/mochi-presentations/node_modules/@pdf-lib/upng", "@pdf-lib/upng"),
+            @("plugins/mochi-presentations/node_modules/@types/node", "@types/node"),
+            @("plugins/mochi-presentations/node_modules/core-util-is", "core-util-is"),
+            @("plugins/mochi-presentations/node_modules/https", "https"),
+            @("plugins/mochi-presentations/node_modules/image-size", "image-size"),
+            @("plugins/mochi-presentations/node_modules/immediate", "immediate"),
+            @("plugins/mochi-presentations/node_modules/inherits", "inherits"),
+            @("plugins/mochi-presentations/node_modules/isarray", "isarray"),
+            @("plugins/mochi-presentations/node_modules/jszip", "jszip"),
+            @("plugins/mochi-presentations/node_modules/lie", "lie"),
+            @("plugins/mochi-presentations/node_modules/pako", "pako"),
+            @("plugins/mochi-presentations/node_modules/pdf-lib", "pdf-lib"),
+            @("plugins/mochi-presentations/node_modules/pdfjs-dist", "pdfjs-dist"),
+            @("plugins/mochi-presentations/node_modules/pptxgenjs", "pptxgenjs"),
+            @("plugins/mochi-presentations/node_modules/process-nextick-args", "process-nextick-args"),
+            @("plugins/mochi-presentations/node_modules/queue", "queue"),
+            @("plugins/mochi-presentations/node_modules/readable-stream", "readable-stream"),
+            @("plugins/mochi-presentations/node_modules/safe-buffer", "safe-buffer"),
+            @("plugins/mochi-presentations/node_modules/setimmediate", "setimmediate"),
+            @("plugins/mochi-presentations/node_modules/string_decoder", "string_decoder"),
+            @("plugins/mochi-presentations/node_modules/tslib", "tslib"),
+            @("plugins/mochi-presentations/node_modules/undici-types", "undici-types"),
+            @("plugins/mochi-presentations/node_modules/util-deprecate", "util-deprecate"),
+            @("plugins/mochi-documents/node_modules/@deepseek-ai/dsh-tools", "@deepseek-ai/dsh-tools"),
+            @("plugins/mochi-documents/node_modules/@mochi/pdf-layout", "@mochi/pdf-layout"),
+            @("plugins/mochi-documents/node_modules/docx", "docx"),
+            @("plugins/mochi-documents/node_modules/pdf-lib", "pdf-lib"),
+            @("plugins/mochi-files/node_modules/@deepseek-ai/dsh-tools", "@deepseek-ai/dsh-tools"),
+            @("plugins/mochi-sheets/node_modules/@deepseek-ai/dsh-tools", "@deepseek-ai/dsh-tools"),
+            @("plugins/mochi-sheets/node_modules/exceljs", "exceljs"),
+            @("plugins/mochi-visuals/node_modules/@deepseek-ai/dsh-tools", "@deepseek-ai/dsh-tools"),
+            @("plugins/mochi-visuals/node_modules/@napi-rs/canvas", "@napi-rs/canvas"),
+            @("plugins/mochi-modes/node_modules/@deepseek-ai/dsh-tools", "@deepseek-ai/dsh-tools"),
+            @("plugins/mochi-modeling/node_modules/@deepseek-ai/dsh-tools", "@deepseek-ai/dsh-tools"),
+            @("plugins/mochi-memory/node_modules/@deepseek-ai/dsh-tools", "@deepseek-ai/dsh-tools"),
+            @("plugins/mochi-task-scheduler/node_modules/@deepseek-ai/dsh-llm", "@deepseek-ai/dsh-llm"),
+            @("plugins/mochi-task-scheduler/node_modules/@deepseek-ai/dsh-tools", "@deepseek-ai/dsh-tools"),
+            @("plugins/dsh-better-sidebar/node_modules/@codemirror/commands", "@codemirror/commands"),
+            @("plugins/dsh-better-sidebar/node_modules/@codemirror/lang-cpp", "@codemirror/lang-cpp"),
+            @("plugins/dsh-better-sidebar/node_modules/@codemirror/lang-css", "@codemirror/lang-css"),
+            @("plugins/dsh-better-sidebar/node_modules/@codemirror/lang-go", "@codemirror/lang-go"),
+            @("plugins/dsh-better-sidebar/node_modules/@codemirror/lang-html", "@codemirror/lang-html"),
+            @("plugins/dsh-better-sidebar/node_modules/@codemirror/lang-java", "@codemirror/lang-java"),
+            @("plugins/dsh-better-sidebar/node_modules/@codemirror/lang-javascript", "@codemirror/lang-javascript"),
+            @("plugins/dsh-better-sidebar/node_modules/@codemirror/lang-json", "@codemirror/lang-json"),
+            @("plugins/dsh-better-sidebar/node_modules/@codemirror/lang-markdown", "@codemirror/lang-markdown"),
+            @("plugins/dsh-better-sidebar/node_modules/@codemirror/lang-php", "@codemirror/lang-php"),
+            @("plugins/dsh-better-sidebar/node_modules/@codemirror/lang-python", "@codemirror/lang-python"),
+            @("plugins/dsh-better-sidebar/node_modules/@codemirror/lang-rust", "@codemirror/lang-rust"),
+            @("plugins/dsh-better-sidebar/node_modules/@codemirror/lang-sql", "@codemirror/lang-sql"),
+            @("plugins/dsh-better-sidebar/node_modules/@codemirror/lang-vue", "@codemirror/lang-vue"),
+            @("plugins/dsh-better-sidebar/node_modules/@codemirror/lang-xml", "@codemirror/lang-xml"),
+            @("plugins/dsh-better-sidebar/node_modules/@codemirror/lang-yaml", "@codemirror/lang-yaml"),
+            @("plugins/dsh-better-sidebar/node_modules/@codemirror/language", "@codemirror/language"),
+            @("plugins/dsh-better-sidebar/node_modules/@codemirror/legacy-modes", "@codemirror/legacy-modes"),
+            @("plugins/dsh-better-sidebar/node_modules/@codemirror/search", "@codemirror/search"),
+            @("plugins/dsh-better-sidebar/node_modules/@codemirror/state", "@codemirror/state"),
+            @("plugins/dsh-better-sidebar/node_modules/@codemirror/view", "@codemirror/view"),
+            @("plugins/dsh-better-sidebar/node_modules/@deepseek-ai/cordis", "@deepseek-ai/cordis"),
+            @("plugins/dsh-better-sidebar/node_modules/@deepseek-ai/dsh-agent", "@deepseek-ai/dsh-agent"),
+            @("plugins/dsh-better-sidebar/node_modules/@deepseek-ai/dsh-attachment", "@deepseek-ai/dsh-attachment"),
+            @("plugins/dsh-better-sidebar/node_modules/@deepseek-ai/dsh-client-locale", "@deepseek-ai/dsh-client-locale"),
+            @("plugins/dsh-better-sidebar/node_modules/@deepseek-ai/dsh-client-ui-conversation", "@deepseek-ai/dsh-client-ui-conversation"),
+            @("plugins/dsh-better-sidebar/node_modules/@deepseek-ai/dsh-client-ui-primitives", "@deepseek-ai/dsh-client-ui-primitives"),
+            @("plugins/dsh-better-sidebar/node_modules/@deepseek-ai/dsh-client-ui-settings", "@deepseek-ai/dsh-client-ui-settings"),
+            @("plugins/dsh-better-sidebar/node_modules/@deepseek-ai/dsh-client-ui-slots", "@deepseek-ai/dsh-client-ui-slots"),
+            @("plugins/dsh-better-sidebar/node_modules/@deepseek-ai/dsh-code-runtime", "@deepseek-ai/dsh-code-runtime"),
+            @("plugins/dsh-better-sidebar/node_modules/@deepseek-ai/dsh-host-webserver", "@deepseek-ai/dsh-host-webserver"),
+            @("plugins/dsh-better-sidebar/node_modules/@deepseek-ai/dsh-invariants", "@deepseek-ai/dsh-invariants"),
+            @("plugins/dsh-better-sidebar/node_modules/@deepseek-ai/dsh-llm", "@deepseek-ai/dsh-llm"),
+            @("plugins/dsh-better-sidebar/node_modules/@deepseek-ai/dsh-scope", "@deepseek-ai/dsh-scope"),
+            @("plugins/dsh-better-sidebar/node_modules/@deepseek-ai/dsh-session", "@deepseek-ai/dsh-session"),
+            @("plugins/dsh-better-sidebar/node_modules/@deepseek-ai/dsh-session-projection", "@deepseek-ai/dsh-session-projection"),
+            @("plugins/dsh-better-sidebar/node_modules/@deepseek-ai/dsh-settings", "@deepseek-ai/dsh-settings"),
+            @("plugins/dsh-better-sidebar/node_modules/@deepseek-ai/dsh-subagent", "@deepseek-ai/dsh-subagent"),
+            @("plugins/dsh-better-sidebar/node_modules/@deepseek-ai/dsh-system-prompt", "@deepseek-ai/dsh-system-prompt"),
+            @("plugins/dsh-better-sidebar/node_modules/@deepseek-ai/dsh-tools", "@deepseek-ai/dsh-tools"),
+            @("plugins/dsh-better-sidebar/node_modules/@deepseek-ai/dsh-user-approval", "@deepseek-ai/dsh-user-approval"),
+            @("plugins/dsh-better-sidebar/node_modules/@deepseek-ai/dsh-util-time", "@deepseek-ai/dsh-util-time"),
+            @("plugins/dsh-better-sidebar/node_modules/@lezer/highlight", "@lezer/highlight"),
+            @("plugins/dsh-better-sidebar/node_modules/@types/node", "@types/node"),
+            @("plugins/dsh-better-sidebar/node_modules/@types/react", "@types/react"),
+            @("plugins/dsh-better-sidebar/node_modules/@types/react-dom", "@types/react-dom"),
+            @("plugins/dsh-better-sidebar/node_modules/clsx", "clsx"),
+            @("plugins/dsh-better-sidebar/node_modules/dompurify", "dompurify"),
+            @("plugins/dsh-better-sidebar/node_modules/mermaid", "mermaid"),
+            @("plugins/dsh-better-sidebar/node_modules/node-pty", "node-pty"),
+            @("plugins/dsh-better-sidebar/node_modules/react", "react"),
+            @("plugins/dsh-better-sidebar/node_modules/react-dom", "react-dom"),
+            @("plugins/dsh-better-sidebar/node_modules/react-icons", "react-icons"),
+            @("plugins/dsh-better-sidebar/node_modules/rxjs", "rxjs"),
+            @("plugins/dsh-better-sidebar/node_modules/schemastery", "schemastery"),
+            @("plugins/dsh-better-sidebar/node_modules/typescript", "typescript"),
+            @("plugins/dsh-better-sidebar/node_modules/ws", "ws")
+          )
+          # 清单由开发机的真实解析面反解得到（每个被暂存插件在 node_modules/ 下真实
+          # 存在的依赖），并已剔除平台专属二进制（@napi-rs/canvas-darwin-arm64、
+          # @esbuild/darwin-arm64 之类）—— 那些由目标包自身的 realpath 去解析，
+          # 不需要插件级链接；列出了反而会在 Windows 上因目标不存在而误杀构建。
+          $requiredLinks = @(
+            "plugins/mochi-lan/node_modules/@deepseek-ai/dsh-tools",
+            "plugins/mochi-grades/node_modules/@deepseek-ai/dsh-tools",
+            "plugins/mochi-grades/node_modules/exceljs",
+            "plugins/mochi-knowledge/node_modules/@deepseek-ai/dsh-tools",
+            "plugins/mochi-presentations/node_modules/@deepseek-ai/dsh-tools",
+            "plugins/mochi-llm-mimo/node_modules/@deepseek-ai/dsh-llm-deepseek",
+            "plugins/mochi-llm-mimo/node_modules/@deepseek-ai/dsh-llm",
+            "plugins/mochi-llm-mimo/node_modules/@deepseek-ai/dsh-anonymous-user-id",
+            "plugins/mochi-documents/node_modules/@deepseek-ai/dsh-tools",
+            "plugins/mochi-documents/node_modules/@mochi/pdf-layout",
+            "plugins/mochi-documents/node_modules/docx",
+            "plugins/mochi-documents/node_modules/pdf-lib"
+          )
+          $created = 0
+          $existing = 0
+          $skipped = @()
+          foreach ($pair in $pluginLinks) {
+            $link = Join-Path $workspaceRoot $pair[0]
+            $target = Join-Path $desktopModules $pair[1]
+            if (-not (Test-Path -LiteralPath $target)) {
+              # 目标不在本 runner 的安装树里（多为平台专属可选依赖）：跳过并留痕。
+              # 这里**不能**直接 throw —— 一个可选的平台包就能把整轮出包误杀。
+              $skipped += $pair[0]
+              continue
+            }
+            if (Test-Path -LiteralPath $link) { $existing++; continue }
+            New-Item -ItemType Directory -Force -Path (Split-Path $link -Parent) | Out-Null
+            New-Item -ItemType Junction -Path $link -Target $target | Out-Null
+            $created++
+          }
+          # 这 11 条是 2026-09-10 那轮真实跑通的必需集，缺任何一条都必须失败。
+          $missingRequired = @($requiredLinks | Where-Object { -not (Test-Path -LiteralPath (Join-Path $workspaceRoot $_)) })
+          if ($missingRequired.Count -gt 0) {
+            throw "required plugin dependency link was not created: $($missingRequired -join ', ')"
+          }
+          Write-Host "plugin dependency links: created $created, pre-existing $existing, skipped $($skipped.Count)"
+          foreach ($s in $skipped) { Write-Host "  skipped (target absent on this runner): $s" }
+          "### plugin dependency links" | Add-Content "$env:GITHUB_STEP_SUMMARY"
+          ("created {0}; pre-existing {1}; skipped {2}" -f $created, $existing, $skipped.Count) | Add-Content "$env:GITHUB_STEP_SUMMARY"
+          foreach ($s in $skipped) { ("- skipped: {0}" -f $s) | Add-Content "$env:GITHUB_STEP_SUMMARY" }
           node -e "const fsExt=require('fs-ext'); if (typeof fsExt.flock !== 'function') throw new Error('fs-ext flock is unavailable')"
           node -e "const pty=require('node-pty'); if (typeof pty.spawn !== 'function') throw new Error('node-pty spawn is unavailable')"
           node -e "const koffi=require('koffi'); if (typeof koffi.load !== 'function') throw new Error('koffi load is unavailable')"
           npm ls dsh-better-sidebar --omit=dev
           npm run test:installer-config
           npm run test:dsh-host-peers
+          node scripts/test-first-run-seeds.mjs
           npm run test:runtime-profile
           npm run test:release-input
+          npm run test:voice-call
+          npm run test:voice-pack
+          node ../../plugins/mochi-lan/test-chat-tools.mjs
+          node ../../plugins/mochi-lan/test-files.mjs
 
-      - name: Prepare and probe fixed Playwright Chromium
+      - name: Verify native Windows rail rendering and capture fixture screens
         shell: pwsh
-        working-directory: mochi-source/apps/desktop
+        working-directory: campus-source/mochi-source/apps/desktop
+        env:
+          MOCHI_RAIL_SCREENSHOT_ROOT: ${{ runner.temp }}/mochi-rail-screenshots
         run: |
           $ErrorActionPreference = "Stop"
           $PSNativeCommandUseErrorActionPreference = $true
-          node -e "const p=require('playwright/package.json'); if (p.version !== '1.55.0') throw new Error('Expected Playwright 1.55.0')"
-          $resourceRoot = Join-Path $env:RUNNER_TEMP "mochi-playwright-1.55.0"
-          $browserRoot = Join-Path $resourceRoot "browsers"
-          New-Item -ItemType Directory -Force -Path $browserRoot | Out-Null
-          $env:PLAYWRIGHT_BROWSERS_PATH = $browserRoot
-          node node_modules/playwright/cli.js install chromium
-          $chrome = Join-Path $browserRoot "chromium-1187/chrome-win/chrome.exe"
-          foreach ($required in @(
-            $chrome,
-            (Join-Path $browserRoot "chromium-1187/INSTALLATION_COMPLETE"),
-            (Join-Path $browserRoot "chromium_headless_shell-1187/INSTALLATION_COMPLETE"),
-            (Join-Path $browserRoot "ffmpeg-1011/INSTALLATION_COMPLETE")
-          )) {
-            if (-not (Test-Path -LiteralPath $required -PathType Leaf)) {
-              throw "Playwright Chromium 1187 resource is incomplete."
+          npm run build
+          if ($LASTEXITCODE -ne 0) { throw "Desktop build failed before rail rendering check." }
+          node scripts/test-rail-runtime.mjs
+          if ($LASTEXITCODE -ne 0) { throw "Native Windows rail renderer/window check failed." }
+
+          $expectedNames = @(
+            "teacher-pet.png",
+            "teacher-todo.png",
+            "teacher-todo-dark.png",
+            "notification.png",
+            "classroom-board-top.png",
+            "classroom-board-overflow.png"
+          ) | Sort-Object
+          $screenshotRoot = $env:MOCHI_RAIL_SCREENSHOT_ROOT
+          $actualNames = @(Get-ChildItem -LiteralPath $screenshotRoot -File | ForEach-Object Name | Sort-Object)
+          if (($actualNames -join "`n") -cne ($expectedNames -join "`n")) {
+            throw "Rail screenshot names differ from the expected fixture set: $($actualNames -join ', ')"
+          }
+          foreach ($name in $expectedNames) {
+            $path = Join-Path $screenshotRoot $name
+            if ((Get-Item -LiteralPath $path).Length -le 8) {
+              throw "Rail screenshot is empty: $name"
             }
           }
-          $licenseSource = Join-Path $env:GITHUB_WORKSPACE "mochi-source/.github/windows-native-package-assets/chromium-140.0.7339.16-LICENSE"
-          Copy-Item -LiteralPath $licenseSource -Destination (Join-Path $resourceRoot "LICENSE") -Force
-          $profile = Join-Path $env:RUNNER_TEMP "mochi-chromium-credits-profile"
-          $stderr = Join-Path $env:RUNNER_TEMP "mochi-chromium-credits.stderr"
-          # ── credits（Chromium 第三方许可清单）的来源 ────────────────────────────
-          # 沿革：模板最初用管道捕获 `--dump-dom` 的输出，在 windows-2022 上是空的
-          # （exit 0、无内容）→ 改成写进文件 + 失败退到 headless_shell；
-          # 2026-09-12 run #29 又发现 `Get-Content -Raw` 读空文件返回 $null，
-          # 而 `[regex]::Matches($null, ...)` 会直接抛 "Value cannot be null"
-          # （`-match` 反而会静默把 $null 当空串 —— 两者行为不一致，最容易在这翻车）。
-          #
-          # 2026-09-12 run #30 实测定案：`--dump-dom chrome://credits` 在这个环境里
-          # **系统性**地只回来 41 字节的空骨架（`<html><head></head><body></body></html>`）——
-          # chrome 与 headless_shell 各 3 轮、带虚拟时间预算，6 次全部如此，**不是竞态**。
-          # 而 run #28 之所以"绿"，是因为旧断言只有 `-notmatch "<html"`，**空骨架同样含 `<html`**
-          # ⇒ 安装包里放的其实是空文件。断言加严后立刻暴露（DELIVERY-LEDGER §九）。
-          #
-          # 正解：Playwright 自己就分发 Chromium 的第三方许可清单 —— 它就在磁盘上、
-          # 与 chromium 构建版本严格对应、不需要启动浏览器：
-          #   node_modules/playwright-core/ThirdPartyNotices.txt
-          # 优先用它；`chrome://credits` 保留为备选，将来环境能给出真页面时自动升级。
-          $creditsHtml = ""
-          $creditsText = ""
-          $creditsSource = ""
-          $noticesSource = Join-Path (Get-Location) "node_modules/playwright-core/ThirdPartyNotices.txt"
-          if (Test-Path -LiteralPath $noticesSource -PathType Leaf) {
-            $noticesText = [string](Get-Content -LiteralPath $noticesSource -Raw)
-            if ($noticesText.Length -ge 50000) {
-              $creditsText = $noticesText
-              $creditsSource = "playwright-core/ThirdPartyNotices.txt"
-              $creditsHtml = "<!doctype html>`n<html><head><meta charset=""utf-8""><title>Playwright third-party notices</title></head><body><pre>" + [System.Net.WebUtility]::HtmlEncode($creditsText) + "</pre></body></html>`n"
-            }
+          "## Windows rail content screenshots" | Add-Content "$env:GITHUB_STEP_SUMMARY"
+          foreach ($name in $expectedNames) { ("- {0}" -f $name) | Add-Content "$env:GITHUB_STEP_SUMMARY" }
+          "These fixture-only webContents captures do not show Windows DWM desktop transparency." | Add-Content "$env:GITHUB_STEP_SUMMARY"
+
+      - name: Verify LAN pairing-code discovery and configured UDP port on Windows
+        shell: pwsh
+        working-directory: campus-source/mochi-source/apps/desktop
+        run: |
+          $ErrorActionPreference = "Stop"
+          $PSNativeCommandUseErrorActionPreference = $true
+          node ../../plugins/mochi-lan/test/test-pair-code-search.mjs
+          node ../../plugins/mochi-lan/test/test-plugin-apply.mjs
+
+      - name: Synthesize and validate classroom Chinese voice on Windows
+        shell: pwsh
+        working-directory: campus-source/mochi-source/apps/desktop
+        run: |
+          $ErrorActionPreference = "Stop"
+          $PSNativeCommandUseErrorActionPreference = $true
+          Write-Host "PATH tar.exe candidates:"
+          Get-Command tar.exe -All | Select-Object -ExpandProperty Source
+          $nativeTar = Join-Path $env:SystemRoot "System32\tar.exe"
+          if (-not (Test-Path -LiteralPath $nativeTar -PathType Leaf)) {
+            throw "Windows System32 tar.exe is required for the pinned voice pack."
           }
-          if ($creditsText.Length -lt 50000) {
-            # 备选：现取 chrome://credits（环境允许时能得到完整的 HTML 页面）
-            $profile = Join-Path $env:RUNNER_TEMP "mochi-chromium-credits-profile"
-            $stderr = Join-Path $env:RUNNER_TEMP "mochi-chromium-credits.stderr"
-            $creditsOut = Join-Path $env:RUNNER_TEMP "mochi-chromium-credits.dom"
-            $shell = Get-ChildItem -LiteralPath $browserRoot -Recurse -Filter "headless_shell.exe" -File | Select-Object -First 1
-            $bins = @($chrome)
-            if ($null -ne $shell) { $bins += @($shell.FullName) }
-            $creditsDump = ""
-            $creditsExit = 0
-            $creditsAttempts = 0
-            foreach ($bin in $bins) {
-              for ($round = 1; $round -le 3; $round++) {
-                $creditsAttempts++
-                if ($bin -eq $chrome) {
-                  & $bin --headless=new --disable-gpu --no-first-run "--user-data-dir=$profile" --dump-dom chrome://credits > $creditsOut 2> $stderr
-                } else {
-                  & $bin --disable-gpu --no-first-run "--user-data-dir=$profile" --dump-dom chrome://credits > $creditsOut 2> $stderr
-                }
-                $creditsExit = $LASTEXITCODE
-                $creditsDump = ""
-                if (Test-Path -LiteralPath $creditsOut) { $creditsDump = [string](Get-Content -LiteralPath $creditsOut -Raw) }
-                if ($creditsDump.Length -ge 100000) { break }
-                Start-Sleep -Seconds 3
-              }
-              if ($creditsDump.Length -ge 100000) { break }
-            }
-            if ($creditsDump.Length -ge 100000) {
-              $creditsHtml = $creditsDump
-              $creditsText = $creditsDump -replace "(?is)<(script|style)[^>]*>.*?</(script|style)>", ""
-              $creditsText = $creditsText -replace "(?s)<[^>]+>", " "
-              $creditsText = [System.Net.WebUtility]::HtmlDecode($creditsText)
-              $creditsSource = "chrome://credits (--dump-dom)"
-            } else {
-              Write-Host "credits fallback gave no page: attempts $creditsAttempts, last exit $creditsExit, $($creditsDump.Length) chars"
-            }
-          }
-          # 双判据（两个来源通用）：
-          #   体量 ≥50000 —— 空骨架(41 B)与新标签页(约 26 KB)都不达标；
-          #   Copyright 命中 ≥10 —— 挡住任何不是许可清单的东西。
-          $copyrightHits = ([regex]::Matches($creditsText, "Copyright")).Count
-          if ($creditsText.Length -lt 50000 -or $copyrightHits -lt 10) {
-            throw "Chromium third-party credits are missing or unusable (source='$creditsSource', $($creditsText.Length) chars, $copyrightHits Copyright hits)."
-          }
-          Write-Host "credits source: $creditsSource ($($creditsText.Length) chars, $copyrightHits Copyright hits)"
-          $creditsHtmlPath = Join-Path $resourceRoot "credits.html"
-          $creditsTextPath = Join-Path $resourceRoot "credits.txt"
-          Set-Content -LiteralPath $creditsHtmlPath -Value $creditsHtml -Encoding utf8 -NoNewline
-          Set-Content -LiteralPath $creditsTextPath -Value $creditsText -Encoding utf8 -NoNewline
-          function Get-Sha256([string]$Path) {
-            return (Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash.ToLowerInvariant()
-          }
-          $metadata = [ordered]@{
-            schemaVersion = 1
-            playwrightVersion = "1.55.0"
-            chromiumRevision = "1187"
-            chromiumVersion = "140.0.7339.16"
-            browserExecutable = "chromium-1187/chrome-win/chrome.exe"
-            browserExecutableSha256 = Get-Sha256 $chrome
-            licenseSha256 = Get-Sha256 (Join-Path $resourceRoot "LICENSE")
-            creditsHtmlSha256 = Get-Sha256 $creditsHtmlPath
-            creditsTextSha256 = Get-Sha256 $creditsTextPath
-            creditsProvenance = $creditsSource
-          }
-          $metadata | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $resourceRoot "metadata.json") -Encoding utf8 -NoNewline
-          $probe = Join-Path $env:RUNNER_TEMP "mochi-playwright-probe.cjs"
-          # NOTE: the upstream template used a pwsh here-string at column 0,
-          # which breaks the YAML block scalar; emit the same probe via a line
-          # array instead (identical file content, valid YAML).
-          $probeLines = @(
-            'const { chromium } = require(process.env.MOCHI_PROBE_PLAYWRIGHT);',
-            'const { statSync } = require("node:fs");',
-            'const { join } = require("node:path");',
-            '(async () => {',
-            '  const browser = await chromium.launch({ headless: true });',
-            '  try {',
-            '    const page = await browser.newPage();',
-            '    await page.setContent("<main id=ready>managed Chromium</main>");',
-            '    if (await page.textContent("#ready") !== "managed Chromium") throw new Error("Playwright DOM check failed");',
-            '    const output = join(process.env.RUNNER_TEMP, "mochi-playwright-probe.png");',
-            '    await page.screenshot({ path: output });',
-            '    if (statSync(output).size < 1) throw new Error("Playwright screenshot is empty");',
-            '  } finally {',
-            '    await browser.close();',
-            '  }',
-            '})().catch((error) => {',
-            '  console.error(error);',
-            '  process.exitCode = 1;',
-            '});'
-          )
-          Set-Content -LiteralPath $probe -Value ($probeLines -join "`n") -Encoding utf8 -NoNewline
-          # NOTE: copy-only fix. The probe lives in RUNNER_TEMP, so a bare
-          # require("playwright") cannot resolve; point it at the desktop
-          # install explicitly.
-          $env:MOCHI_PROBE_PLAYWRIGHT = Join-Path (Get-Location) "node_modules\playwright"
-          node $probe
-          "MOCHI_PLAYWRIGHT_BROWSER_RESOURCE_ROOT=$resourceRoot" | Add-Content -LiteralPath $env:GITHUB_ENV -Encoding utf8
+          Write-Host "Mochi native tar.exe: $nativeTar"
+          & $nativeTar --version
+          Write-Host "PATH bzip2.exe candidates (diagnostic only):"
+          $bzipCandidates = @(Get-Command bzip2.exe -All -ErrorAction SilentlyContinue)
+          if ($bzipCandidates.Count -eq 0) { Write-Host "none" }
+          $bzipCandidates | Select-Object -ExpandProperty Source
+          npm run test:voice-native-win
+
+      - name: Verify pinned on-demand browser runtime
+        shell: pwsh
+        working-directory: campus-source/mochi-source/apps/desktop
+        run: |
+          $ErrorActionPreference = "Stop"
+          $PSNativeCommandUseErrorActionPreference = $true
+          node -e "const p=require('playwright/package.json'); if(p.version!=='1.55.0') throw new Error('Unexpected Playwright version')"
+          "MOCHI_BROWSER_MODE=on-demand" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
 
       - name: Validate staged desktop resources
         shell: pwsh
-        working-directory: mochi-source/apps/desktop
+        working-directory: campus-source/mochi-source/apps/desktop
         env:
           MOCHI_CAMPUS_SOURCE_ROOT: ${{ github.workspace }}/campus-source
-          MOCHI_CAMPUS_STATIC_ROOT: ${{ github.workspace }}/campus-source/mochi-dist/client
         run: |
           $ErrorActionPreference = "Stop"
           $PSNativeCommandUseErrorActionPreference = $true
           npm run test:package-resources
 
-      - name: Build native Windows installer
+      - name: Install locked modern Host runtime
         shell: pwsh
-        working-directory: mochi-source/apps/desktop
-        env:
-          MOCHI_CAMPUS_SOURCE_ROOT: ${{ github.workspace }}/campus-source
-          MOCHI_CAMPUS_STATIC_ROOT: ${{ github.workspace }}/campus-source/mochi-dist/client
+        working-directory: campus-source/mochi-source/apps/desktop/runtime-modern
         run: |
           $ErrorActionPreference = "Stop"
           $PSNativeCommandUseErrorActionPreference = $true
-          npm run dist:win:x64
+          npm ci --ignore-scripts --no-audit --no-fund
+          if ($LASTEXITCODE -ne 0) { throw "Modern runtime installation failed." }
+          node -e "require('../scripts/modern-runtime-resources.cjs').inspectModernRuntime(process.cwd()); console.log('Modern runtime lock and installed versions verified');"
+          if ($LASTEXITCODE -ne 0) { throw "Modern runtime closure verification failed." }
+
+      # Both installers consume the same reviewed static bytes. Rebuilding the
+      # campus checkout here would lose local changes used by the Mac release.
+      - name: Build native Windows installer
+        shell: pwsh
+        working-directory: campus-source/mochi-source/apps/desktop
+        env:
+          MOCHI_CAMPUS_SOURCE_ROOT: ${{ github.workspace }}/campus-source
+        run: |
+          $ErrorActionPreference = "Stop"
+          $PSNativeCommandUseErrorActionPreference = $true
+          if (-not $env:MOCHI_RELEASE_INPUT_ROOT) { throw "MOCHI_RELEASE_INPUT_ROOT is not set." }
+          npm run dist:win:x64 -- --release-input-root "$env:MOCHI_RELEASE_INPUT_ROOT" --modern-runtime-root runtime-modern --without-key-seeds
           $installer = Get-ChildItem -Path release -Filter "Mochi-Setup-*-win-x64.exe" -File | Sort-Object LastWriteTimeUtc -Descending | Select-Object -First 1
           if ($null -eq $installer) {
             throw "Native package command completed without a Windows installer."
+          }
+          $voiceTool = Join-Path (Get-Location) "release/win-unpacked/resources/tools/7za.exe"
+          $voiceLicense = Join-Path (Get-Location) "release/win-unpacked/resources/tools/LICENSE-7zip.txt"
+          if (-not (Test-Path -LiteralPath $voiceTool -PathType Leaf) -or -not (Test-Path -LiteralPath $voiceLicense -PathType Leaf)) {
+            throw "Packaged Windows app is missing its pinned BZip2 helper or license."
+          }
+          $voiceToolHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $voiceTool).Hash.ToLowerInvariant()
+          if ($voiceToolHash -ne "b0cfdeaf429f5cc53f85123dd8f5a5feb92c19d31aa34df257edf9a26be05f95") {
+            throw "Packaged Windows BZip2 helper hash differs from the reviewed binary."
           }
           $hash = (Get-FileHash -Algorithm SHA256 -Path $installer.FullName).Hash.ToLowerInvariant()
           "$hash  $($installer.Name)" | Set-Content -Encoding ascii -NoNewline "$env:RUNNER_TEMP/Mochi-Setup-win-x64.sha256"
@@ -381,14 +467,131 @@ jobs:
           ("SHA-256: {0}" -f $hash) | Add-Content "$env:GITHUB_STEP_SUMMARY"
           ("Installer: {0}" -f $installer.Name) | Add-Content "$env:GITHUB_STEP_SUMMARY"
 
+      - name: Smoke packaged Windows teacher and classroom roles
+        shell: pwsh
+        working-directory: campus-source/mochi-source/apps/desktop
+        run: |
+          $ErrorActionPreference = "Stop"
+          $PSNativeCommandUseErrorActionPreference = $true
+          $exe = Join-Path (Get-Location) "release/win-unpacked/Mochi.exe"
+          if (-not (Test-Path -LiteralPath $exe -PathType Leaf)) {
+            throw "Packaged Windows app is missing Mochi.exe."
+          }
+          $seedRoot = Join-Path (Get-Location) "release/win-unpacked/resources/mochi/profile/seeds"
+          $seedNames = @(Get-ChildItem -LiteralPath $seedRoot -Force -File | ForEach-Object Name)
+          if ($seedNames.Count -ne 1 -or $seedNames -notcontains "settings-defaults.json") {
+            throw "Packaged Windows profile must contain only the non-secret settings seed."
+          }
+          $packagedSeed = Join-Path $seedRoot "settings-defaults.json"
+          node -e 'const fs=require("node:fs");const expected=require("./scripts/seed-packaging-keys.cjs").renderSettingsDefaults();const actual=JSON.parse(fs.readFileSync(process.argv[1],"utf8"));if(JSON.stringify(actual)!==JSON.stringify(expected))process.exit(1)' $packagedSeed
+          if ($LASTEXITCODE -ne 0) { throw "Packaged Windows settings seed differs from reviewed defaults." }
+          node -e 'const assert=require("node:assert/strict"),h=require("./scripts/prepare-release-input.cjs");const spec=require("../../.github/windows-native-package-inputs.json").externalBuildInputs.find(x=>x.name==="campus-static-client");const r=h.verifyReleaseInput({inputRoot:process.env.MOCHI_RELEASE_INPUT_ROOT,expectedManifestSha256:spec.expectedManifestSha256});assert.deepEqual(h.staticInventory(process.argv[1]),r.manifest.static.files);console.log("Campus resource parity passed:",r.manifest.static.fileCount)' (Join-Path (Split-Path $exe) "resources/mochi/campus.nosync/dist/client")
+          if ($LASTEXITCODE -ne 0) { throw "Windows campus resources differ from the reviewed Mac release." }
+          node scripts/check-packaged-browser.mjs (Join-Path (Split-Path $exe) "resources/mochi/playwright")
+          if ($LASTEXITCODE -ne 0) { throw "Packaged Chromium runtime check failed." }
+          node scripts/smoke-packaged.cjs $exe --role=teacher
+          if ($LASTEXITCODE -ne 0) { throw "Packaged Windows teacher startup failed." }
+          node scripts/smoke-packaged.cjs $exe --role=classroom
+          if ($LASTEXITCODE -ne 0) { throw "Packaged Windows classroom startup failed." }
+
+      - name: Install NSIS package and smoke installed roles
+        shell: pwsh
+        working-directory: campus-source/mochi-source/apps/desktop
+        run: |
+          $ErrorActionPreference = "Stop"
+          $PSNativeCommandUseErrorActionPreference = $true
+          $installer = Get-ChildItem -Path release -Filter "Mochi-Setup-*-win-x64.exe" -File | Sort-Object LastWriteTimeUtc -Descending | Select-Object -First 1
+          if ($null -eq $installer) { throw "Windows installer is missing." }
+          $installRoot = Join-Path $env:RUNNER_TEMP "MochiInstallerSmoke"
+          if ($installRoot -match '\s' -or (Test-Path -LiteralPath $installRoot)) {
+            throw "Installer smoke needs a fresh path without whitespace."
+          }
+          $install = Start-Process -FilePath $installer.FullName -ArgumentList @("/S", "/currentuser", "/D=$installRoot") -Wait -PassThru
+          if ($install.ExitCode -ne 0) { throw "NSIS installation failed with exit code $($install.ExitCode)." }
+          $exe = Join-Path $installRoot "Mochi.exe"
+          if (-not (Test-Path -LiteralPath $exe -PathType Leaf)) { throw "Installed Mochi.exe is missing." }
+          $seedRoot = Join-Path $installRoot "resources/mochi/profile/seeds"
+          $seedNames = @(Get-ChildItem -LiteralPath $seedRoot -Force -File | ForEach-Object Name)
+          if ($seedNames.Count -ne 1 -or $seedNames -notcontains "settings-defaults.json") {
+            throw "Installed Windows profile must contain only the non-secret settings seed."
+          }
+          node -e 'const fs=require("node:fs");const expected=require("./scripts/seed-packaging-keys.cjs").renderSettingsDefaults();const actual=JSON.parse(fs.readFileSync(process.argv[1],"utf8"));if(JSON.stringify(actual)!==JSON.stringify(expected))process.exit(1)' (Join-Path $seedRoot "settings-defaults.json")
+          if ($LASTEXITCODE -ne 0) { throw "Installed Windows settings seed differs from reviewed defaults." }
+          node -e 'const assert=require("node:assert/strict"),h=require("./scripts/prepare-release-input.cjs");const spec=require("../../.github/windows-native-package-inputs.json").externalBuildInputs.find(x=>x.name==="campus-static-client");const r=h.verifyReleaseInput({inputRoot:process.env.MOCHI_RELEASE_INPUT_ROOT,expectedManifestSha256:spec.expectedManifestSha256});assert.deepEqual(h.staticInventory(process.argv[1]),r.manifest.static.files);console.log("Campus resource parity passed:",r.manifest.static.fileCount)' (Join-Path (Split-Path $exe) "resources/mochi/campus.nosync/dist/client")
+          if ($LASTEXITCODE -ne 0) { throw "Windows campus resources differ from the reviewed Mac release." }
+          node scripts/check-packaged-browser.mjs (Join-Path (Split-Path $exe) "resources/mochi/playwright")
+          if ($LASTEXITCODE -ne 0) { throw "Packaged Chromium runtime check failed." }
+          node scripts/smoke-packaged.cjs $exe --role=teacher
+          if ($LASTEXITCODE -ne 0) { throw "Installed Windows teacher startup failed." }
+          node scripts/smoke-packaged.cjs $exe --role=classroom
+          if ($LASTEXITCODE -ne 0) { throw "Installed Windows classroom startup failed." }
+
       # Artifacts remain in the private campus repository and are never
       # uploaded from public Mochi or published through a public release.
       - name: Retain private Windows installer
+        id: private_artifact
+        continue-on-error: true
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: mochi-windows-x64-${{ github.run_id }}
           path: |
-            mochi-source/apps/desktop/release/Mochi-Setup-*-win-x64.exe
+            campus-source/mochi-source/apps/desktop/release/Mochi-Setup-*-win-x64.exe
             ${{ runner.temp }}/Mochi-Setup-win-x64.sha256
+            ${{ runner.temp }}/mochi-rail-screenshots/teacher-pet.png
+            ${{ runner.temp }}/mochi-rail-screenshots/teacher-todo.png
+            ${{ runner.temp }}/mochi-rail-screenshots/teacher-todo-dark.png
+            ${{ runner.temp }}/mochi-rail-screenshots/notification.png
+            ${{ runner.temp }}/mochi-rail-screenshots/classroom-board-top.png
+            ${{ runner.temp }}/mochi-rail-screenshots/classroom-board-overflow.png
           if-no-files-found: error
           retention-days: 14
+
+      - name: Retain private draft release if artifact upload fails
+        if: ${{ success() && steps.private_artifact.outcome == 'failure' }}
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference = "Stop"
+          $PSNativeCommandUseErrorActionPreference = $true
+          $installer = Get-ChildItem -Path "campus-source/mochi-source/apps/desktop/release" -Filter "Mochi-Setup-*-win-x64.exe" -File | Sort-Object LastWriteTimeUtc -Descending | Select-Object -First 1
+          $checksum = Join-Path $env:RUNNER_TEMP "Mochi-Setup-win-x64.sha256"
+          if ($null -eq $installer -or -not (Test-Path -LiteralPath $checksum -PathType Leaf)) {
+            throw "Windows installer or checksum is missing after packaging."
+          }
+          $screenshotRoot = Join-Path $env:RUNNER_TEMP "mochi-rail-screenshots"
+          $railScreenshots = @(
+            (Join-Path $screenshotRoot "teacher-pet.png"),
+            (Join-Path $screenshotRoot "teacher-todo.png"),
+            (Join-Path $screenshotRoot "teacher-todo-dark.png"),
+            (Join-Path $screenshotRoot "notification.png"),
+            (Join-Path $screenshotRoot "classroom-board-top.png"),
+            (Join-Path $screenshotRoot "classroom-board-overflow.png")
+          )
+          foreach ($screenshot in $railScreenshots) {
+            if (-not (Test-Path -LiteralPath $screenshot -PathType Leaf) -or (Get-Item -LiteralPath $screenshot).Length -le 8) {
+              throw "A verified rail fixture screenshot is missing: $([IO.Path]::GetFileName($screenshot))"
+            }
+          }
+          $tag = "mochi-windows-ci-$env:GITHUB_RUN_ID-$env:GITHUB_RUN_ATTEMPT"
+          $title = "Mochi Windows CI $env:GITHUB_RUN_ID.$env:GITHUB_RUN_ATTEMPT"
+          $notes = "Private draft for a verified Windows build at $env:GITHUB_SHA. The installer is unsigned and contains factory model credentials for this private distribution; verify its attached SHA-256 before use. Rail PNGs are synthetic fixture-only webContents captures; they do not prove Windows DWM desktop transparency."
+          $releaseAssets = @($installer.FullName, $checksum) + $railScreenshots
+          gh release create $tag @releaseAssets --draft --target $env:GITHUB_SHA --title $title --notes $notes --repo $env:GITHUB_REPOSITORY
+          if ($LASTEXITCODE -ne 0) { throw "Private draft release upload failed." }
+          $assetNames = @(gh release view $tag --json assets --jq '.assets[].name' --repo $env:GITHUB_REPOSITORY)
+          $expectedAssetNames = @(
+            $installer.Name,
+            "Mochi-Setup-win-x64.sha256",
+            "teacher-pet.png",
+            "teacher-todo.png",
+            "teacher-todo-dark.png",
+            "notification.png",
+            "classroom-board-top.png",
+            "classroom-board-overflow.png"
+          )
+          $missingAssets = @($expectedAssetNames | Where-Object { $assetNames -notcontains $_ })
+          if ($LASTEXITCODE -ne 0 -or $missingAssets.Count -gt 0) {
+            throw "Private draft release is missing an expected asset."
+          }
+          ("Private draft release: {0}" -f $tag) | Add-Content "$env:GITHUB_STEP_SUMMARY"

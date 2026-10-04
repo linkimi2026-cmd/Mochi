@@ -1,18 +1,11 @@
-/* Mochi 主界面
- *
- * 视觉红线自检：
- *   1. 无塑料感 —— 深绿画布 + 纸面浮层，阴影用 calm-tokens 的 --shadow-float，不用硬边高饱和
- *   2. 无横向滚动条 —— 所有容器 max-width: 100%，flex 不溢出，横向统一 hidden
- *   3. 有字的地方都有圆角矩形 —— .mochi-status / .mochi-inputbar / .chat-bubble / .mochi-meta 全部有底色 + radius
- *   4. 颜色跨度小 —— 整屏只有深绿画布 + 奶油纸面 + 焦糖点缀三档
- */
+/* 纸白工作台：与生产主题使用相同的明暗语义层。 */
 
 .mochi-shell {
   display: flex;
   flex-direction: column;
   height: 100%;
   min-height: 0;
-  background: var(--sage-800); /* 用户确认保留的深绿画布 */
+  background: var(--canvas);
   overflow: hidden;
 }
 
@@ -37,8 +30,8 @@
   padding: 16px;
   margin-top: 4px;
   border-radius: var(--radius-xl);
-  background: rgba(255, 253, 248, 0.06);
-  box-shadow: var(--shadow-float);
+  background: transparent;
+  box-shadow: none;
   flex: none;
 }
 
@@ -72,7 +65,7 @@
   justify-content: space-between;
   gap: 12px;
   padding: 12px 22px;
-  border-top: 1px solid rgba(255, 253, 248, 0.1);
+  border-top: 1px solid var(--line);
   max-width: 100%;
   flex: none;
 }
@@ -81,14 +74,14 @@
   font-family: var(--font-title);
   font-size: 14px;
   letter-spacing: 0.06em;
-  color: rgba(255, 253, 248, 0.66);
+  color: var(--muted);
 }
 
 .mochi-meta {
   padding: 4px 12px;
   border-radius: var(--radius-pill);
-  background: rgba(255, 253, 248, 0.08);
-  color: rgba(255, 253, 248, 0.52);
+  background: var(--surface-soft);
+  color: var(--muted);
   font-size: 11px;
   letter-spacing: 0.02em;
 }

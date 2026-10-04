@@ -1,13 +1,12 @@
 import { installLanHostBridge } from './host-bridge.mjs';
 import { MochiLanService } from './lan-service.mjs';
+import { registerLanChatTools } from './chat-tools.mjs';
 
 export const name = 'mochi-lan';
 
 /**
- * The LAN service deliberately starts without a model turn. Its settings and
- * inbox are reached through Connection's authenticated local routes, while
- * teacher-originated notifications are registered by mochi-dispatch and still
- * pass through the official approval waterfall.
+ * The LAN service starts independently of model turns. Browser routes retain
+ * local state access; model tools use the same service and approval waterfall.
  */
 export function apply(ctx, config = {}) {
   // [Mochi 2026-09-09] WO-6 广播开关：宿主显式配置优先；缺省时允许部署用
@@ -20,12 +19,13 @@ export function apply(ctx, config = {}) {
     ...(config.bindHost === undefined ? {} : { bindHost: config.bindHost }),
     ...(config.port === undefined ? {} : { port: config.port }),
     ...(discoveryEnabled === undefined ? {} : { discoveryEnabled }),
-    ...(config.discoveryPort === undefined ? {} : { discoveryPort }),
+    ...(config.discoveryPort === undefined ? {} : { discoveryPort: config.discoveryPort }),
     ...(config.lockedRole === undefined && config.role === undefined ? {} : { lockedRole: config.lockedRole ?? config.role }),
     ...(config.identity === undefined ? {} : { identity: config.identity }),
   });
   ctx.provide('mochiLan', lan);
   ctx.inject(['connection'], (hostCtx) => installLanHostBridge(hostCtx, lan));
+  ctx.inject(['tools'], (hostCtx) => registerLanChatTools(hostCtx, lan));
   // Cordis treats a returned promise as an effect whose resolved value must be
   // a disposer. Returning the raw snapshot from lan.start() would therefore
   // mark the plugin active before startup completed. Bind startup and cleanup

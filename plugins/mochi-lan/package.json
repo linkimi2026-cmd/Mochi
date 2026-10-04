@@ -6,6 +6,9 @@
   "main": "index.mjs",
   "description": "Mochi 教师—教室端签名局域网消息、人工配对与已看到回执",
   "scripts": {
-    "test": "node test-host-bridge.mjs && node test-durable.mjs && node test.mjs && node test-files.mjs && node test-autodiscovery.mjs"
+    "test": "node test-chat-tools.mjs && node test/test-pair-code-search.mjs && node test-host-bridge.mjs && node test-durable.mjs && node test-probe-diagnostics.mjs && node test/test-plugin-apply.mjs && node test.mjs && node test-files.mjs && node test-autodiscovery.mjs"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh-tools": "0.1.3-alpha.1 || 0.2.0-rc.2"
   }
 }

@@ -16,6 +16,8 @@ const {
   prepareReleaseInput,
   verifyReleaseInput,
 } = require("./prepare-release-input.cjs");
+const { inspectModernRuntime } = require("./modern-runtime-resources.cjs");
+const { prepareModernApp } = require("./prepare-modern-app.cjs");
 
 const desktopRoot = resolve(__dirname, "..");
 const electronBuilderCli = require.resolve("electron-builder/out/cli/cli.js", { paths: [desktopRoot] });
@@ -35,7 +37,7 @@ function readValue(argv, name) {
 }
 
 function parseArguments(argv = process.argv.slice(2)) {
-  const known = new Set(["--target", "--arch", "--dir", "--release-input-root", "--campus-static-root"]);
+  const known = new Set(["--target", "--arch", "--dir", "--release-input-root", "--campus-static-root", "--without-key-seeds", "--modern-runtime-root", "--legacy-runtime"]);
   for (const argument of argv) {
     if (argument.startsWith("--") && !known.has(argument)) throw new Error(`不支持的桌面打包参数：${argument}`);
   }
@@ -44,10 +46,13 @@ function parseArguments(argv = process.argv.slice(2)) {
   const releaseInputRoot = readValue(argv, "--release-input-root");
   const campusStaticRoot = readValue(argv, "--campus-static-root");
   const directoryOnly = argv.includes("--dir");
+  const modernRoot = readValue(argv, "--modern-runtime-root");
+  const legacy = argv.includes("--legacy-runtime");
+  if (legacy && modernRoot) throw new Error("--legacy-runtime 与 --modern-runtime-root 不能同时使用。");
   if (!SUPPORTED_ARCHITECTURES.has(arch)) throw new Error(`不支持的桌面架构：${arch}`);
   if (target !== "current" && target !== "mac" && target !== "win") throw new Error(`不支持的桌面目标：${target}`);
   if (releaseInputRoot && campusStaticRoot) throw new Error("--release-input-root 与 --campus-static-root 不能同时使用。");
-  return { target, arch, releaseInputRoot, campusStaticRoot, directoryOnly };
+  return { target, arch, releaseInputRoot, campusStaticRoot, directoryOnly, withoutKeySeeds: argv.includes("--without-key-seeds"), modernRuntimeRoot:legacy ? undefined : modernRoot ?? "runtime-modern" };
 }
 
 function resolvedTarget(target) {
@@ -128,10 +133,11 @@ function expectedInstallerPath(target, arch) {
   return join(desktopRoot, metadata.build.directories.output, filename);
 }
 
-function runPackagingSeed(env) {
+function runPackagingSeed(env, { withoutKeySeeds = false } = {}) {
+  if (withoutKeySeeds) return;
   // WO-3：打包前把首启凭据/模型链种子渲染进 resources/mochi-web/seeds/。
-  // 无密钥源时脚本自身 warning 并 0 退出（安装包降级为设置页引导），不让构建崩。
-  const result = spawnSync(process.execPath, [join(__dirname, "seed-packaging-keys.cjs")], { encoding: "utf8", env });
+  // 正式安装包要求两个凭据都存在；测试包可显式使用 --without-key-seeds。
+  const result = spawnSync(process.execPath, [join(__dirname, "seed-packaging-keys.cjs"), "--require-complete"], { encoding: "utf8", env });
   if (result.error) throw result.error;
   if (result.status !== 0) throw new Error(`打包种子脚本失败：${(result.stderr || result.stdout || "").trim()}`);
   if (result.stdout) process.stdout.write(result.stdout);
@@ -142,16 +148,39 @@ function packageDesktop(argv = process.argv.slice(2)) {
   const options = parseArguments(argv);
   const target = resolvedTarget(options.target);
   assertNativeTarget(target, options.arch);
-  run(process.execPath, [join(__dirname, "check-dsh-host-peers.cjs")], process.env);
-  runPackagingSeed(process.env);
+  if (!options.modernRuntimeRoot) run(process.execPath, [join(__dirname, "check-dsh-host-peers.cjs")], process.env);
+  const env = {
+    ...process.env,
+    MOCHI_WITHOUT_KEY_SEEDS: options.withoutKeySeeds ? "1" : "0",
+  };
+  delete env.MOCHI_MODERN_RUNTIME_ROOT;
+  if (options.modernRuntimeRoot) {
+    const modern=inspectModernRuntime(resolve(desktopRoot,options.modernRuntimeRoot));
+    env.MOCHI_MODERN_RUNTIME_ROOT=modern.root;
+  }
+  runPackagingSeed(env, options);
   const releaseInput = selectReleaseInput(options);
-  const env = { ...process.env, MOCHI_CAMPUS_STATIC_ROOT: releaseInput.staticRoot };
+  env.MOCHI_CAMPUS_STATIC_ROOT = releaseInput.staticRoot;
   runNpm(["run", "build"], env);
   // 原生 ABI 守卫：.forge-meta 声称已重建的模块，其二进制必须真能被 Electron ABI
   // 加载（2026-09-19 fs-ext 事故的守门人：陈旧 meta 会让 electron-builder 跳过重建）。
-  run(process.execPath, [join(__dirname, "check-native-abi.cjs"), `--arch=${options.arch}`], env);
+  if (!env.MOCHI_MODERN_RUNTIME_ROOT) run(process.execPath, [join(__dirname, "check-native-abi.cjs"), `--arch=${options.arch}`], env);
   const startedAt = Date.now();
-  run(process.execPath, createElectronBuilderArgs(target, options.arch, options.directoryOnly), env);
+  const builderArgs=createElectronBuilderArgs(target,options.arch,options.directoryOnly);
+  // rc.2's internal loader explicitly supports Electron 44; Electron 39 can
+  // print the CLI version but cannot boot the full Host.
+  if (env.MOCHI_MODERN_RUNTIME_ROOT) builderArgs.push("--config.electronVersion=44.0.0",`--config.directories.app=${prepareModernApp(desktopRoot)}`);
+  run(process.execPath,builderArgs,env);
+  if (env.MOCHI_MODERN_RUNTIME_ROOT) {
+    const metadata=packageMetadata(),name=metadata.build.productName;
+    const folder=target==="mac"?(options.arch==="arm64"?"mac-arm64":"mac"):(options.arch==="arm64"?"win-arm64-unpacked":"win-unpacked");
+    const output=join(desktopRoot,metadata.build.directories.output,folder);
+    const resources=target==="mac"?join(output,`${name}.app`,"Contents","Resources"):join(output,"resources");
+    const binary=target==="mac"?join(output,`${name}.app`,"Contents","MacOS",name):join(output,`${name}.exe`);
+    run(process.execPath,[join(__dirname,"test-modern-native-runtime.mjs"),join(resources,"mochi","node_modules"),join(output,"modern-native-runtime.json"),binary],env);
+    const app=target==="mac"?join(output,`${name}.app`):binary;
+    for (const role of ["teacher","classroom"]) run(process.execPath,[join(__dirname,"smoke-packaged.cjs"),app,`--role=${role}`],env);
+  }
   const installer = options.directoryOnly ? null : expectedInstallerPath(target, options.arch);
   if (installer) {
     if (!existsSync(installer) || !statSync(installer).isFile()) throw new Error(`打包完成但未找到预期安装器：${installer}`);

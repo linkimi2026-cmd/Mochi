@@ -5,14 +5,15 @@
  * never accepts configuration, does not use a browser token, and only accepts
  * signed pairing/message envelopes from a manually paired peer.
  */
-import { createHash, createPrivateKey, createPublicKey, generateKeyPairSync, randomUUID, sign, timingSafeEqual, verify } from 'node:crypto';
+import { createHash, createHmac, createPrivateKey, createPublicKey, generateKeyPairSync, randomBytes, randomInt, randomUUID, sign, timingSafeEqual, verify } from 'node:crypto';
 import dgram from 'node:dgram';
+import { openPresentationInWps } from './wps.mjs';
 import { EventEmitter } from 'node:events';
 import { createServer } from 'node:http';
 import { mkdir, open, readFile, readdir, realpath, rename, rm, stat, writeFile } from 'node:fs/promises';
 import { basename, extname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 import { isIP } from 'node:net';
-import { hostname as osHostname } from 'node:os';
+import { hostname as osHostname, networkInterfaces } from 'node:os';
 
 export const LAN_PROTOCOL_VERSION = 1;
 export const DEFAULT_LAN_PORT = 47_832;
@@ -25,7 +26,9 @@ export const LAN_IDENTITY_SEED_ENV = 'MOCHI_LAN_IDENTITY';
 export const LAN_HTTP_PATHS = Object.freeze({
   health: '/health',
   identity: '/v1/identity',
+  identityProof: '/v1/identity/proof',
   pairRequest: '/v1/pair/request',
+  pairCodeProbe: '/v1/pair/code/probe',
   pairAccept: '/v1/pair/accept',
   message: '/v1/messages',
   receipt: '/v1/receipts',
@@ -39,6 +42,16 @@ const MAX_EVENTS = 128;
 const MAX_DISCOVERED = 128;
 const MAX_PAIRINGS = 64;
 const MAX_PENDING_PAIRINGS = 64;
+const PAIRING_CODE_TTL_MS = 2 * 60 * 1000;
+const PAIRING_CODE_WINDOW_MS = 10 * 60 * 1000;
+const PAIRING_CODE_MAX_FAILURES = 5;
+const PAIRING_CODE_SEARCH_MAX_FAILURES = 20;
+const PAIRING_CODE_SEARCH_DEADLINE_MS = 12_000;
+const PAIRING_CODE_SEARCH_CONCURRENCY = 8;
+const PAIRING_CODE_SEARCH_MAX_WAIT_MS = 120_000;
+const PAIRING_CODE_SEARCH_RETRY_COOLDOWN_MS = 5_000;
+const PAIRING_CODE_SEARCH_MAX_CANDIDATE_ATTEMPTS = 3;
+const PAIRING_CODE_SEARCH_REJECTION_CACHE_LIMIT = 4_096;
 const MAX_MESSAGES = 1_000;
 const MAX_FILES = 256;
 const MAX_FILE_NAME_LENGTH = 160;
@@ -49,7 +62,42 @@ const FILE_TRANSFER_TTL_MS = 60 * 60 * 1000;
 const BEACON_INTERVAL_MS = 5_000;
 const BEACON_TTL_MS = 15_000;
 const PORT_ATTEMPTS = 16;
+const MAX_LOCAL_ADDRESSES = 16;
 const INTERNAL_AUTHORIZATIONS = new WeakMap();
+
+function localIpv4Interfaces(interfaces) {
+  const rows = [];
+  for (const [name, entries] of Object.entries(interfaces ?? {})) {
+    for (const entry of entries ?? []) {
+      if (!entry || entry.internal || (entry.family !== 'IPv4' && entry.family !== 4)) continue;
+      if (isIP(entry.address) !== 4) continue;
+      rows.push({ name, address: entry.address, netmask: entry.netmask });
+    }
+  }
+  return rows.sort((left, right) => left.name.localeCompare(right.name) || left.address.localeCompare(right.address));
+}
+
+/** Keep the source address: two adapters can share a broadcast destination. */
+export function lanBroadcastRoutes(interfaces = networkInterfaces()) {
+  const routes = [];
+  for (const entry of localIpv4Interfaces(interfaces)) {
+    const ip = entry.address.split('.').map(Number);
+    const mask = typeof entry.netmask === 'string' ? entry.netmask.split('.').map(Number) : null;
+    if (!mask || mask.length !== 4
+      || [...ip, ...mask].some((part) => !Number.isInteger(part) || part < 0 || part > 255)) continue;
+    const maskBits = mask.map((part) => part.toString(2).padStart(8, '0')).join('');
+    if (!/^1*0*$/u.test(maskBits)) continue;
+    const prefix = maskBits.replace(/0/g, '').length;
+    if (prefix < 1 || prefix > 30) continue;
+    routes.push({ name: entry.name, address: entry.address, broadcast: ip.map((part, index) => (part & mask[index]) | (~mask[index] & 255)).join('.') });
+  }
+  return routes;
+}
+
+/** IPv4 directed-broadcast destinations for each live LAN interface. */
+export function lanBroadcastAddresses(interfaces = networkInterfaces()) {
+  return [...new Set(lanBroadcastRoutes(interfaces).map((route) => route.broadcast))];
+}
 const FILE_TYPES = Object.freeze({
   '.pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
   '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
@@ -169,12 +217,15 @@ function requestDescriptor(input) {
     fail('INVALID_REQUEST', '学生预约描述含未知字段。');
   }
   const student = printable(input.student, '学生姓名', MAX_REQUEST_FIELD_LENGTH);
-  const kind = input.kind === undefined ? 'other' : input.kind;
+  // Older clients omitted kind for time-based requests. Preserve their existing
+  // meaning while keeping explicit `other` requests in the non-appointment path.
+  const kind = input.kind === undefined ? (input.slot === undefined ? 'other' : 'appointment') : input.kind;
   if (!REQUEST_KINDS.includes(kind)) fail('INVALID_REQUEST', '预约类型无效。');
   const material = printable(input.material, '作业材料', MAX_REQUEST_FIELD_LENGTH, { required: false });
   const position = printable(input.position, '题目位置', MAX_REQUEST_FIELD_LENGTH, { required: false });
   const topic = printable(input.topic, '预约主题', MAX_REQUEST_FIELD_LENGTH, { required: false });
   const slot = printable(input.slot, '预约时间', MAX_REQUEST_FIELD_LENGTH, { required: false });
+  if (kind === 'appointment' && !slot) fail('INVALID_REQUEST', '预约类型必须填写希望时间。');
   let seat;
   if (input.seat !== undefined) {
     seat = Number(input.seat);
@@ -189,6 +240,35 @@ function requestDescriptor(input) {
     ...(topic === undefined ? {} : { topic }),
     ...(slot === undefined ? {} : { slot }),
   };
+}
+
+function responseDescriptor(input) {
+  if (!plain(input) || Object.keys(input).some((key) => !['replyToMessageId', 'decision', 'slot'].includes(key))) fail('INVALID_RESPONSE', '教师回复格式无效。');
+  if (!['confirmed', 'rescheduled', 'replied'].includes(input.decision)) fail('INVALID_RESPONSE', '教师回复决定无效。');
+  if (input.decision === 'replied') {
+    if (Object.hasOwn(input, 'slot')) fail('INVALID_RESPONSE', '文字回复不能包含时间。');
+    return { replyToMessageId: messageId(input.replyToMessageId), decision: 'replied' };
+  }
+  return { replyToMessageId: messageId(input.replyToMessageId), decision: input.decision, slot: printable(input.slot, '回复时间', MAX_REQUEST_FIELD_LENGTH) };
+}
+
+function assertResponseMatchesRequest(response, request) {
+  if (!request || (request.kind === 'appointment' && !['confirmed', 'rescheduled'].includes(response.decision))
+    || (request.kind !== 'appointment' && response.decision !== 'replied')) {
+    fail('INVALID_RESPONSE', request?.kind === 'appointment'
+      ? '预约只能确认时间或建议改期。'
+      : '非预约请求只能使用文字回复。');
+  }
+  if (response.decision === 'rescheduled' && normalizeSlot(response.slot) === normalizeSlot(request.slot)) {
+    fail('INVALID_RESPONSE', '改期建议必须与学生原希望时间不同。');
+  }
+  if (response.decision === 'confirmed' && normalizeSlot(response.slot) !== normalizeSlot(request.slot)) {
+    fail('INVALID_RESPONSE', '确认预约必须使用学生原希望时间。');
+  }
+}
+
+function normalizeSlot(value) {
+  return String(value ?? '').trim().replace(/\s+/gu, ' ');
 }
 
 export class MochiLanError extends Error {
@@ -252,6 +332,20 @@ function sha256(value, label = 'sha256') {
   return normalized;
 }
 
+function validatePairingCode(value) {
+  if (typeof value !== 'string' || !/^[0-9]{6}$/u.test(value)) fail('INVALID_INPUT', '配对码必须是 6 位数字。');
+  return value;
+}
+
+function pairingCandidateKey(row) {
+  return `${row.endpointId}\0${row.fingerprint}`;
+}
+
+function sameAddress(left, right) {
+  return left?.host === right?.host && left?.port === right?.port;
+}
+
+
 function safeHashEqual(left, right) {
   const expected = Buffer.from(sha256(left, 'sha256'), 'hex');
   const actual = Buffer.from(sha256(right, 'sha256'), 'hex');
@@ -294,14 +388,15 @@ function fileMetadataEqual(left, right) {
 }
 
 function messageAttachment(input) {
-  if (!plain(input) || Object.keys(input).some((key) => !['fileId', 'filename', 'contentType', 'byteLength', 'sha256'].includes(key))) {
+  if (!plain(input) || Object.keys(input).some((key) => !['fileId', 'filename', 'contentType', 'byteLength', 'sha256', 'openWith'].includes(key))) {
     fail('INVALID_FILE_REFERENCE', '消息文件引用无效。');
   }
   const { filename, contentType } = fileTypeForName(input.filename);
   if (input.contentType !== contentType) fail('FILE_TYPE_MISMATCH', '消息文件引用类型不一致。', 415);
   const byteLength = Number(input.byteLength);
   if (!Number.isSafeInteger(byteLength) || byteLength <= 0 || byteLength > DEFAULT_MAX_FILE_BYTES) fail('INVALID_FILE_REFERENCE', '消息文件引用大小无效。');
-  return { fileId: fileId(input.fileId), filename, contentType, byteLength, sha256: sha256(input.sha256) };
+  if (input.openWith !== undefined && (input.openWith !== 'wps' || !filename.toLowerCase().endsWith('.pptx'))) fail('INVALID_FILE_ACTION', 'WPS 打开仅支持 PPTX 课件。');
+  return { fileId: fileId(input.fileId), filename, contentType, byteLength, sha256: sha256(input.sha256), ...(input.openWith ? { openWith: input.openWith } : {}) };
 }
 
 function attachmentMatchesFile(attachment, row) {
@@ -554,6 +649,28 @@ function trimMap(map, maximum) {
   return Object.fromEntries(rows.map((row) => [row.id || row.requestId || row.messageId || row.fileId || row.endpointId, row]));
 }
 
+function reserveOutboxCapacity(state, maximum) {
+  const responseTargets = new Set(Object.values(state.outbox)
+    .map((row) => row.response?.replyToMessageId)
+    .filter((id) => typeof id === 'string'));
+  while (Object.keys(state.outbox).length >= maximum) {
+    const oldestSafe = Object.values(state.outbox)
+      .filter((row) => row.delivery === 'ACKNOWLEDGED'
+        && state.receipts[row.messageId]?.seenAt
+        && row.contentType === 'NOTIFY'
+        && row.request === undefined
+        && row.response === undefined
+        && row.directive === undefined
+        && row.attachment === undefined
+        && !responseTargets.has(row.messageId))
+      .sort((left, right) => String(left.createdAt).localeCompare(String(right.createdAt))
+        || left.messageId.localeCompare(right.messageId))[0];
+    if (!oldestSafe) fail('MESSAGE_LIMIT', `发件箱已达上限（${maximum}），且没有已送达、已确认看到的普通通知可回收。`, 429);
+    delete state.outbox[oldestSafe.messageId];
+    delete state.receipts[oldestSafe.messageId];
+  }
+}
+
 function envelope(identity, payload) {
   const privateKey = createPrivateKey({ key: identity.privateKey, format: 'jwk' });
   return {
@@ -637,12 +754,20 @@ async function getJson(address, pathname, signal) {
   let response;
   try {
     response = await fetch(endpointUrl(address, pathname), { method: 'GET', signal: combined });
-  } catch {
-    throw new MochiLanError('DISCOVERY_UNAVAILABLE', '局域网候选未响应。', 503);
+  } catch (error) {
+    if (signal?.aborted) throw new MochiLanError('PROBE_CANCELLED', '探测已由本机取消。', 499);
+    if (combined.reason?.name === 'TimeoutError') throw new MochiLanError('PROBE_TIMEOUT', '连接探测超过 5 秒。', 504);
+    const causeCode = error?.cause?.code ?? error?.cause?.cause?.code;
+    if (causeCode === 'ECONNREFUSED') throw new MochiLanError('PROBE_REFUSED', '目标 TCP 端口拒绝连接。', 503);
+    throw new MochiLanError('PROBE_FAILED', '连接探测失败。', 503);
   }
   let payload = null;
   try { payload = await response.json(); } catch { /* invalid payload handled below */ }
-  if (!response.ok || !plain(payload)) throw new MochiLanError('DISCOVERY_INVALID', '局域网候选响应无效。', 502);
+  if (!response.ok) {
+    const code = typeof payload?.code === 'string' ? payload.code : 'REMOTE_REJECTED';
+    throw new MochiLanError(code, '远端拒绝该局域网请求。', response.status);
+  }
+  if (!plain(payload)) throw new MochiLanError('DISCOVERY_INVALID', '局域网候选响应无效。', 502);
   return payload;
 }
 
@@ -698,6 +823,9 @@ export class MochiLanService extends EventEmitter {
     // host. It is never accepted from the authenticated browser route.
     this.lockedRole = configuredRole ?? null;
     this._dropDeliveryAckOnce = options.dropDeliveryAckOnce === true;
+    this._dropPairAckOnce = options.dropPairAckOnce === true;
+    this._dropPairAcceptAckOnce = options.dropPairAcceptAckOnce === true;
+    this._pairRequestTail = Promise.resolve();
     // 收件箱上限：生产固定 1000；测试可注入更小的值来验证「满仓回收」路径。
     this._maxMessages = options.testMaxMessages ?? MAX_MESSAGES;
     if (!Number.isSafeInteger(this._maxMessages) || this._maxMessages < 1) {
@@ -705,6 +833,7 @@ export class MochiLanService extends EventEmitter {
     }
     // Test-only injection keeps the persistence failure path verifiable without
     // weakening the production atomic write primitive.
+    this._openPresentation = options.openPresentationImpl ?? openPresentationInWps;
     this._writeFile = options.writeFileImpl ?? writeFile;
     this._rename = options.renameImpl ?? rename;
     // These two knobs are deliberately test-only. Production callers use the
@@ -716,6 +845,8 @@ export class MochiLanService extends EventEmitter {
     this._beaconPort = options.testBeaconPort ?? this.discoveryPort;
     this._multicastPort = options.testMulticastPort ?? this.discoveryPort;
     this._multicastInterface = options.testMulticastInterface;
+    this._networkInterfaces = options.testNetworkInterfaces ?? networkInterfaces;
+    if (typeof this._networkInterfaces !== 'function') throw new TypeError('testNetworkInterfaces must be a function.');
     if (!Number.isSafeInteger(this._beaconIntervalMs) || this._beaconIntervalMs < 25
       || !Number.isSafeInteger(this._beaconTtlMs) || this._beaconTtlMs < this._beaconIntervalMs
       || !Number.isSafeInteger(this._fileTransferTtlMs) || this._fileTransferTtlMs < 25
@@ -726,19 +857,36 @@ export class MochiLanService extends EventEmitter {
       throw new TypeError('test LAN timings must be positive integers with beacon ttl >= interval.');
     }
     this._state = blankState();
-    this._events = [];
+    this._eventLog = [];
     this._cursor = 0;
     this._mutationTail = Promise.resolve();
     this._fileTail = Promise.resolve();
     this._server = null;
     this._udp = null;
+    this._sendSockets = new Map();
+    this._multicastMemberships = new Set();
+    this._beaconInFlight = null;
     this._broadcastAvailable = false;
     this._multicastAvailable = false;
     this._beaconTimer = null;
+    this._discoveryRetryTimer = null;
     this._fileCleanupTimer = null;
     this._started = false;
     this._http = null;
     this._discovered = new Map();
+    this._pairingCode = null;
+    this._pairingCodeExpiresAt = 0;
+    this._pairingCodeFailures = new Map();
+    this._pairingCodeSearchHmacKey = randomBytes(32);
+    this._pairingCodeSearchRejected = new Map();
+    this._pairingCodeSearchInFlight = new Set();
+    this._pairingCodeSearchDeadlineMs = options.testPairingCodeSearchDeadlineMs ?? PAIRING_CODE_SEARCH_DEADLINE_MS;
+    if (!Number.isSafeInteger(this._pairingCodeSearchDeadlineMs) || this._pairingCodeSearchDeadlineMs < 1) {
+      throw new TypeError('testPairingCodeSearchDeadlineMs must be a positive integer.');
+    }
+    this._pairingCodeSearchCursor = 0;
+    this._pairingCodeTtlMs = options.testPairingCodeTtlMs ?? PAIRING_CODE_TTL_MS;
+    if (!Number.isSafeInteger(this._pairingCodeTtlMs) || this._pairingCodeTtlMs < 25) throw new TypeError('testPairingCodeTtlMs must be at least 25ms.');
     this._discovery = {
       enabled: this.discoveryEnabled,
       status: this.discoveryEnabled ? 'STARTING' : 'DISABLED',
@@ -780,6 +928,7 @@ export class MochiLanService extends EventEmitter {
       }
     }
     this._started = true;
+    if (this._discovery.status === 'DEGRADED') this.#scheduleDiscoveryRetry();
     this._fileCleanupTimer = setInterval(() => { void this.#cleanupExpiredFiles(); }, Math.min(Math.max(Math.floor(this._fileTransferTtlMs / 2), 25), 60_000));
     this._fileCleanupTimer.unref?.();
     this.#event('state');
@@ -788,17 +937,22 @@ export class MochiLanService extends EventEmitter {
 
   async stop() {
     if (!this._started && !this._server) return;
+    this._started = false;
     if (this._fileCleanupTimer) clearInterval(this._fileCleanupTimer);
     this._fileCleanupTimer = null;
     if (this._beaconTimer) clearInterval(this._beaconTimer);
     this._beaconTimer = null;
+    if (this._discoveryRetryTimer) clearTimeout(this._discoveryRetryTimer);
+    this._discoveryRetryTimer = null;
     const udp = this._udp;
     this._udp = null;
+    this._beaconInFlight = null;
+    this.#closeSendSockets();
+    this._multicastMemberships.clear();
     if (udp) await new Promise((resolveClose) => udp.close(resolveClose));
     const server = this._server;
     this._server = null;
     if (server) await new Promise((resolveClose) => server.close(resolveClose));
-    this._started = false;
     this._http = null;
     this._discovery = {
       enabled: this.discoveryEnabled,
@@ -809,6 +963,7 @@ export class MochiLanService extends EventEmitter {
   }
 
   snapshot() {
+    if (this._started && this._state.identity) this.#ensurePairingCode();
     const identity = identityProjection(this._state.identity);
     const activeDiscovered = new Map(this.#currentDiscovered().map((row) => [row.endpointId, row]));
     const peers = Object.values(this._state.pairings).map((row) => ({
@@ -836,7 +991,11 @@ export class MochiLanService extends EventEmitter {
       configured: identity !== null,
       started: this._started,
       http: this._http ? { ...this._http } : null,
+      localAddresses: this._started && this._http ? this.#localAddresses() : [],
       discovery: { ...this._discovery },
+      pairingCode: this._started && this._state.identity
+        ? { code: this._pairingCode, expiresAt: this._pairingCodeExpiresAt }
+        : { code: '', expiresAt: 0 },
       identity,
       lockedRole: this.lockedRole,
       peers,
@@ -865,6 +1024,224 @@ export class MochiLanService extends EventEmitter {
     }).sort((left, right) => right.seenAt.localeCompare(left.seenAt));
   }
 
+  async findByPairingCode(value, options = {}) {
+    const result = await this.waitForPairingCode(value, options);
+    if (result.matches.length === 0 && result.diagnostics.rateLimitedCount > 0) {
+      fail('PAIRING_CODE_RATE_LIMITED', '配对码搜索次数过多，请稍后重试。', 429);
+    }
+    return result.matches;
+  }
+
+  async waitForPairingCode(value, { signal, waitMs = 0 } = {}) {
+    const code = validatePairingCode(value);
+    if (!Number.isSafeInteger(waitMs) || waitMs < 0 || waitMs > PAIRING_CODE_SEARCH_MAX_WAIT_MS) {
+      fail('INVALID_INPUT', `配对码等待时间必须是 0 到 ${PAIRING_CODE_SEARCH_MAX_WAIT_MS} 毫秒。`);
+    }
+    const local = this.#identity();
+    if (local.role !== 'teacher') fail('ROLE_FORBIDDEN', '只有教师端能按配对码搜索教室。', 403);
+    if (signal?.aborted) fail('PROBE_CANCELLED', '配对码搜索已由本机取消。', 499);
+
+    const codeTag = createHmac('sha256', this._pairingCodeSearchHmacKey).update(code).digest('hex');
+    if (this._pairingCodeSearchInFlight.has(codeTag)) {
+      fail('PAIRING_CODE_SEARCH_IN_PROGRESS', '相同配对码正在搜索，请等待本次搜索完成。', 409);
+    }
+    this._pairingCodeSearchInFlight.add(codeTag);
+    const matches = [];
+    const candidatesSeen = new Set();
+    const codeRejected = new Set();
+    const unreachable = new Set();
+    const rateLimited = new Set();
+    const invalidCandidates = new Set();
+    const attempted = new Map();
+    const codeFailureKey = (row) => `${codeTag}\0${pairingCandidateKey(row)}`;
+    const deadlineAt = performance.now() + waitMs;
+    let eventRevision = 0;
+    let wakeForDiscovery = null;
+    const onEvent = (event) => {
+      if (!['discovery', 'discovery-expired', 'discovery-recovered'].includes(event?.type)) return;
+      eventRevision += 1;
+      wakeForDiscovery?.();
+    };
+    this.on('event', onEvent);
+
+    const cancelError = () => new MochiLanError('PROBE_CANCELLED', '配对码搜索已由本机取消。', 499);
+    const waitForChange = (revision, timeoutMs) => new Promise((resolveWait, rejectWait) => {
+      if (eventRevision !== revision) { resolveWait(); return; }
+      let timer;
+      const finish = (error) => {
+        if (wakeForDiscovery === onDiscovery) wakeForDiscovery = null;
+        if (timer) clearTimeout(timer);
+        signal?.removeEventListener('abort', onAbort);
+        if (error) rejectWait(error);
+        else resolveWait();
+      };
+      const onDiscovery = () => finish();
+      const onAbort = () => finish(cancelError());
+      wakeForDiscovery = onDiscovery;
+      timer = setTimeout(() => finish(), timeoutMs);
+      signal?.addEventListener('abort', onAbort, { once: true });
+      if (signal?.aborted) onAbort();
+      else if (eventRevision !== revision) finish();
+    });
+
+    const forgetExpiredFailures = () => {
+      const timestamp = Date.now();
+      for (const [key, expiresAt] of this._pairingCodeSearchRejected) {
+        if (expiresAt <= timestamp) this._pairingCodeSearchRejected.delete(key);
+      }
+    };
+    const rememberCodeFailure = (row) => {
+      const key = codeFailureKey(row);
+      this._pairingCodeSearchRejected.delete(key);
+      this._pairingCodeSearchRejected.set(key, Date.now() + PAIRING_CODE_TTL_MS);
+      while (this._pairingCodeSearchRejected.size > PAIRING_CODE_SEARCH_REJECTION_CACHE_LIMIT) {
+        this._pairingCodeSearchRejected.delete(this._pairingCodeSearchRejected.keys().next().value);
+      }
+    };
+
+    try {
+      while (true) {
+        if (signal?.aborted) throw cancelError();
+        if (waitMs > 0 && performance.now() >= deadlineAt) break;
+        forgetExpiredFailures();
+        const rows = this.listDiscovered()
+          .filter((row) => row.role === 'classroom' && row.schoolId === local.schoolId && row.classId)
+          .slice(0, MAX_DISCOVERED);
+        const timestamp = performance.now();
+        const eligible = [];
+        for (const row of rows) {
+          const identityKey = pairingCandidateKey(row);
+          candidatesSeen.add(identityKey);
+          if (this._pairingCodeSearchRejected.has(codeFailureKey(row))) {
+            codeRejected.add(identityKey);
+            continue;
+          }
+          const previous = attempted.get(identityKey);
+          if (!previous) { eligible.push(row); continue; }
+          if (previous.kind === 'code-invalid' || previous.kind === 'rate-limited' || previous.kind === 'invalid-candidate') continue;
+          if (previous.kind === 'matched') continue;
+          const addressChanged = !sameAddress(previous.address, row.address);
+          const newBeacon = previous.seenAt !== row.seenAt;
+          if (previous.attempts < PAIRING_CODE_SEARCH_MAX_CANDIDATE_ATTEMPTS
+            && (addressChanged || newBeacon)
+            && timestamp - previous.lastAttemptAt >= PAIRING_CODE_SEARCH_RETRY_COOLDOWN_MS) {
+            eligible.push(row);
+          }
+        }
+
+        if (eligible.length > 0) {
+          const start = this._pairingCodeSearchCursor % eligible.length;
+          const ordered = eligible.slice(start).concat(eligible.slice(0, start));
+          const remainingMs = waitMs === 0 ? this._pairingCodeSearchDeadlineMs : Math.max(1, deadlineAt - performance.now());
+          const deadline = AbortSignal.timeout(Math.max(1, Math.ceil(Math.min(this._pairingCodeSearchDeadlineMs, remainingMs))));
+          const searchSignal = signal ? AbortSignal.any([signal, deadline]) : deadline;
+          let next = 0;
+          let attemptedThisPass = 0;
+          const worker = async () => {
+            while (!searchSignal.aborted) {
+              const index = next++;
+              if (index >= ordered.length) return;
+              const row = ordered[index];
+              const identityKey = pairingCandidateKey(row);
+              const previous = attempted.get(identityKey);
+              attemptedThisPass += 1;
+              attempted.set(identityKey, {
+                kind: 'in-flight',
+                address: { ...row.address },
+                seenAt: row.seenAt,
+                attempts: (previous?.attempts ?? 0) + 1,
+                lastAttemptAt: performance.now(),
+              });
+              try {
+                const candidate = await this.probeCandidate({ address: row.address, expectedFingerprint: row.fingerprint, signal: searchSignal });
+                if (!identityEqual(candidate.candidate, row) || candidate.candidate.role !== 'classroom'
+                  || candidate.candidate.schoolId !== local.schoolId || !candidate.candidate.classId) {
+                  fail('DISCOVERY_INVALID', '发现候选身份与地址响应不一致。', 409);
+                }
+                const nonce = randomUUID();
+                const reply = await postJson(row.address, LAN_HTTP_PATHS.pairCodeProbe, { code, nonce }, searchSignal);
+                const payload = verifyEnvelope(candidate.candidate.publicKey, reply.envelope);
+                if (payload.nonce !== nonce || !identityEqual(payload.identity, candidate.candidate)
+                  || canonical(payload.publicKey) !== canonical(candidate.candidate.publicKey)) {
+                  fail('DISCOVERY_INVALID', '配对码候选响应无效。', 502);
+                }
+                if (payload.type === 'pairing-code-rejected' && payload.code === 'PAIRING_CODE_INVALID') {
+                  throw Object.assign(new MochiLanError('PAIRING_CODE_INVALID', '配对码无效或已过期。', 403), { verifiedPairingCodeResult: true });
+                }
+                if (payload.type === 'pairing-code-rate-limited' && payload.code === 'PAIRING_CODE_RATE_LIMITED') {
+                  throw Object.assign(new MochiLanError('PAIRING_CODE_RATE_LIMITED', '配对码搜索次数过多，请稍后重试。', 429), { verifiedPairingCodeResult: true });
+                }
+                if (payload.type !== 'pairing-code-match') fail('DISCOVERY_INVALID', '配对码候选响应无效。', 502);
+                attempted.set(identityKey, {
+                  kind: 'matched', address: { ...row.address }, seenAt: row.seenAt,
+                  attempts: (previous?.attempts ?? 0) + 1, lastAttemptAt: performance.now(),
+                });
+                matches.push({ ...candidate.candidate, address: candidate.address, seenAt: row.seenAt, expiresAt: row.expiresAt, paired: row.paired, blocked: row.blocked });
+              } catch (error) {
+                if (signal?.aborted) return;
+                if (error?.code === 'PAIRING_CODE_INVALID' && error?.verifiedPairingCodeResult === true) {
+                  codeRejected.add(identityKey);
+                  rememberCodeFailure(row);
+                  attempted.set(identityKey, { kind: 'code-invalid', address: { ...row.address }, seenAt: row.seenAt, attempts: (previous?.attempts ?? 0) + 1, lastAttemptAt: performance.now() });
+                } else if (error?.code === 'PAIRING_CODE_RATE_LIMITED' && error?.verifiedPairingCodeResult === true) {
+                  rateLimited.add(identityKey);
+                  attempted.set(identityKey, { kind: 'rate-limited', address: { ...row.address }, seenAt: row.seenAt, attempts: (previous?.attempts ?? 0) + 1, lastAttemptAt: performance.now() });
+                } else if (['PROBE_CANCELLED', 'PROBE_FAILED', 'PROBE_REFUSED', 'PROBE_TIMEOUT', 'DELIVERY_UNKNOWN'].includes(error?.code)) {
+                  unreachable.add(identityKey);
+                  attempted.set(identityKey, { kind: 'unreachable', address: { ...row.address }, seenAt: row.seenAt, attempts: (previous?.attempts ?? 0) + 1, lastAttemptAt: performance.now() });
+                } else {
+                  invalidCandidates.add(identityKey);
+                  attempted.set(identityKey, { kind: 'invalid-candidate', address: { ...row.address }, seenAt: row.seenAt, attempts: (previous?.attempts ?? 0) + 1, lastAttemptAt: performance.now() });
+                }
+              }
+            }
+          };
+          await Promise.all(Array.from({ length: Math.min(PAIRING_CODE_SEARCH_CONCURRENCY, ordered.length) }, worker));
+          this._pairingCodeSearchCursor = (start + Math.max(1, attemptedThisPass)) % eligible.length;
+          if (signal?.aborted) throw cancelError();
+          if (waitMs === 0) break;
+          continue;
+        }
+
+        const checked = rows.every((row) => {
+          const key = pairingCandidateKey(row);
+          const previous = attempted.get(key);
+          return this._pairingCodeSearchRejected.has(codeFailureKey(row))
+            || ['matched', 'code-invalid', 'invalid-candidate'].includes(previous?.kind);
+        });
+        if (waitMs === 0 || performance.now() >= deadlineAt || !this.discoveryEnabled || this._discovery.status === 'DISABLED'
+          || (matches.length > 0 && rows.length > 0 && checked)) break;
+        const revision = eventRevision;
+        await waitForChange(revision, Math.max(1, deadlineAt - performance.now()));
+      }
+    } finally {
+      this.off('event', onEvent);
+      wakeForDiscovery = null;
+      this._pairingCodeSearchInFlight.delete(codeTag);
+    }
+
+    if (signal?.aborted) throw cancelError();
+    const currentCandidates = this.listDiscovered()
+      .filter((row) => row.role === 'classroom' && row.schoolId === local.schoolId && row.classId);
+    const unverifiedCandidateCount = currentCandidates.filter((row) => {
+      const key = pairingCandidateKey(row);
+      const previous = attempted.get(key);
+      return !this._pairingCodeSearchRejected.has(codeFailureKey(row))
+        && !['matched', 'code-invalid', 'invalid-candidate'].includes(previous?.kind);
+    }).length;
+    return {
+      matches,
+      diagnostics: {
+        discoveredCount: candidatesSeen.size,
+        unverifiedCandidateCount,
+        unreachableCount: unreachable.size,
+        codeRejectedCount: codeRejected.size,
+        rateLimitedCount: rateLimited.size,
+        invalidCandidateCount: invalidCandidates.size,
+      },
+    };
+  }
+
   pairingCandidate() {
     const identity = this.#identity();
     return { ...identityProjection(identity), publicKey: clone(identity.publicKey) };
@@ -872,19 +1249,35 @@ export class MochiLanService extends EventEmitter {
 
   async probeCandidate({ address, expectedFingerprint, signal } = {}) {
     const destination = validateAddress(address);
-    const result = await getJson(destination, LAN_HTTP_PATHS.identity, signal);
-    const publicKey = validateJwk(result.publicKey, 'candidate.publicKey');
-    const candidate = validateRemoteIdentity(result.identity, publicKey);
-    if (expectedFingerprint !== undefined && printable(expectedFingerprint, 'expectedFingerprint', 96) !== candidate.fingerprint) {
-      fail('FINGERPRINT_MISMATCH', '候选公钥指纹与发现结果不一致。', 409);
+    try {
+      const result = await getJson(destination, LAN_HTTP_PATHS.identity, signal);
+      const publicKey = validateJwk(result.publicKey, 'candidate.publicKey');
+      const candidate = validateRemoteIdentity(result.identity, publicKey);
+      if (expectedFingerprint !== undefined && printable(expectedFingerprint, 'expectedFingerprint', 96) !== candidate.fingerprint) {
+        fail('FINGERPRINT_MISMATCH', '候选公钥指纹与发现结果不一致。', 409);
+      }
+      return { candidate: { ...candidate, publicKey }, address: destination };
+    } catch (error) {
+      if (['PROBE_CANCELLED', 'PROBE_TIMEOUT', 'PROBE_REFUSED', 'PROBE_FAILED'].includes(error?.code)) throw error;
+      // These are valid protocol outcomes, not malformed identity payloads.
+      // Preserve the established contract used by pairing checks and UI.
+      if (error?.code === 'FINGERPRINT_MISMATCH' || error?.code === 'IDENTITY_REQUIRED') throw error;
+      throw new MochiLanError('PROBE_INVALID', '目标返回了无效响应或身份。', 502);
     }
-    return { candidate: { ...candidate, publicKey }, address: destination };
+  }
+
+  async recoverPairedAddress({ endpointId: targetEndpointId, address, authorization, signal } = {}) {
+    ensureAuthorization(authorization, 'recover-peer-address', '恢复已配对设备地址');
+    const id = endpointId(targetEndpointId);
+    const paired = this._state.pairings[id];
+    if (!paired) fail('PAIRING_REQUIRED', '目标设备未配对。', 403);
+    return this.#verifyPairedAddress(id, paired.peer.fingerprint, validateAddress(address), signal);
   }
 
   // [Mochi 2026-09-09] WO-6 一键信任：把「按指纹复核候选」与「发起相识」合并为
   // 本机一次受控授权。目标只取自动发现表中的地址，全程无需手填 IP；角色、学校、
   // 指纹与签名校验全部复用既有链路，未削弱任何一道检查。
-  async trustDiscovered({ endpointId: targetEndpointId, authorization, signal } = {}) {
+  async trustDiscovered({ endpointId: targetEndpointId, pairingCode, authorization, signal } = {}) {
     ensureAuthorization(authorization, 'trust-discovered', '一键信任附近设备');
     const id = endpointId(targetEndpointId);
     this.#pruneDiscovered();
@@ -899,14 +1292,14 @@ export class MochiLanService extends EventEmitter {
     const probed = await this.probeCandidate({ address: row.address, expectedFingerprint: row.fingerprint, signal });
     // 内部派生授权只覆盖本次配对请求；浏览器的一次点击只消耗上面那一个令牌。
     const derived = this.authorize('request-pairing', 'connection-approved');
-    const result = await this.requestPairing({ candidate: probed.candidate, address: probed.address, authorization: derived, signal });
+    const result = await this.requestPairing({ candidate: probed.candidate, address: probed.address, ...(pairingCode === undefined ? {} : { pairingCode }), authorization: derived, signal });
     return { ...result, trustedFrom: row.seenAt };
   }
 
   eventsAfter(cursor = 0) {
     const numeric = Number(cursor);
     const after = Number.isSafeInteger(numeric) && numeric >= 0 ? numeric : 0;
-    return { cursor: this._cursor, events: this._events.filter((event) => event.cursor > after).map(clone) };
+    return { cursor: this._cursor, events: this._eventLog.filter((event) => event.cursor > after).map(clone) };
   }
 
   subscribe(listener) {
@@ -941,7 +1334,7 @@ export class MochiLanService extends EventEmitter {
     return this.snapshot();
   }
 
-  async requestPairing({ candidate, address, authorization, signal } = {}) {
+  async requestPairing({ candidate, address, pairingCode, authorization, signal } = {}) {
     ensureAuthorization(authorization, 'request-pairing', '发起配对');
     const targetPublicKey = validateJwk(candidate?.publicKey, 'candidate.publicKey');
     const target = validateRemoteIdentity(candidate, targetPublicKey);
@@ -963,13 +1356,23 @@ export class MochiLanService extends EventEmitter {
         senderPublicKey: local.publicKey,
         senderHttpPort: this._http?.port,
         recipient: { endpointId: target.endpointId, schoolId: target.schoolId, classId: target.classId },
+        ...(pairingCode === undefined ? {} : { pairingCode: validatePairingCode(pairingCode) }),
       };
       state.pendingOutgoing[requestId] = { requestId, peer: target, publicKey: targetPublicKey, address: destination, createdAt: payload.createdAt, updatedAt: payload.createdAt };
       state.pendingOutgoing = trimMap(state.pendingOutgoing, MAX_PENDING_PAIRINGS);
       return { requestId, signed: envelope(local, payload) };
     });
     try {
-      const result = await postJson(destination, LAN_HTTP_PATHS.pairRequest, prepared.signed, signal);
+      let result;
+      try {
+        result = await postJson(destination, LAN_HTTP_PATHS.pairRequest, prepared.signed, signal);
+      } catch (error) {
+        // Pair requests are safely idempotent by signed requestId + identity.
+        // Retry once only when the HTTP outcome is unknown; a known rejection
+        // never gets retried and the code is not consumed twice.
+        if (error?.code !== 'DELIVERY_UNKNOWN') throw error;
+        result = await postJson(destination, LAN_HTTP_PATHS.pairRequest, prepared.signed, signal);
+      }
       if (result.status !== 'pending') fail('REMOTE_INVALID', '远端配对响应无效。', 502);
       this.#event('pairing-request');
       return { requestId: prepared.requestId, status: 'pending', peer: target };
@@ -1042,6 +1445,18 @@ export class MochiLanService extends EventEmitter {
     return { status: 'blocked', endpointId: id };
   }
 
+  async unblockPeer({ endpointId: targetEndpointId, authorization } = {}) {
+    ensureAuthorization(authorization, 'unblock-peer', '解除拉黑');
+    const id = endpointId(targetEndpointId);
+    const result = await this.#commit((state) => {
+      if (!state.blocked[id]) return { status: 'absent', endpointId: id };
+      delete state.blocked[id];
+      return { status: 'unblocked', endpointId: id };
+    });
+    if (result.status === 'unblocked') this.#event('pairing-updated');
+    return result;
+  }
+
   async unpairPeer({ endpointId: targetEndpointId, authorization } = {}) {
     ensureAuthorization(authorization, 'unpair-peer', '解除配对');
     const id = endpointId(targetEndpointId);
@@ -1075,6 +1490,11 @@ export class MochiLanService extends EventEmitter {
     return this.#sendMessageInternal({ targetEndpointId, body, requestedMessageId, request, expectedSender, expectedPeer, signal });
   }
 
+  async sendResponse({ targetEndpointId, response, body, messageId: requestedMessageId, expectedSender = undefined, expectedPeer = undefined, authorization, signal } = {}) {
+    ensureAuthorization(authorization, 'send-response', '回复学生预约');
+    return this.#sendMessageInternal({ targetEndpointId, body, requestedMessageId, response, expectedSender, expectedPeer, signal });
+  }
+
   /**
    * [Mochi 2026-09-18] 教师端 → 教室端的处置登记（喊人 / 过关 / 不过关）。
    *
@@ -1097,12 +1517,13 @@ export class MochiLanService extends EventEmitter {
    * that references it. The receiver only accepts that message after the same
    * fileId has been durably verified in its controlled inbox.
    */
-  async sendFile({ targetEndpointId, sourcePath, body, messageId: requestedMessageId, fileId: requestedFileId, expectedSender = undefined, expectedPeer = undefined, authorization, signal } = {}) {
+  async sendFile({ targetEndpointId, sourcePath, body, openWith = undefined, messageId: requestedMessageId, fileId: requestedFileId, expectedSender = undefined, expectedPeer = undefined, authorization, signal } = {}) {
     ensureAuthorization(authorization, 'send-file', '发送教室文件');
     let targetId;
     let text;
     let prepared;
     try {
+      if (openWith !== undefined && (openWith !== 'wps' || extname(String(sourcePath)).toLowerCase() !== '.pptx')) fail('INVALID_FILE_ACTION', 'WPS 打开仅支持 PPTX 课件。');
       targetId = endpointId(targetEndpointId);
       text = printable(body, '文件通知正文', MAX_MESSAGE_BYTES);
       if (Buffer.byteLength(text, 'utf8') > MAX_MESSAGE_BYTES) fail('PAYLOAD_TOO_LARGE', '文件通知正文超过 64KiB。');
@@ -1115,12 +1536,64 @@ export class MochiLanService extends EventEmitter {
       targetEndpointId: targetId,
       body: text,
       requestedMessageId,
-      attachment: { fileId: transferred.fileId },
+      attachment: { fileId: transferred.fileId, ...(openWith ? { openWith } : {}) },
       expectedSender,
       expectedPeer,
       signal,
     });
     return { file: transferred, message };
+  }
+
+  receivedPresentations() {
+    if (this.#identity().role !== 'classroom') fail('ROLE_FORBIDDEN', '仅教室端可查看已接收课件。', 403);
+    return Object.values(this._state.inbox).flatMap((row) => {
+      const peer = this._state.pairings[row.from?.endpointId];
+      if (!peer || this._state.blocked[row.from.endpointId] || !identityEqual(peer.peer, row.from)
+        || !identityEqual(row.recipient, this.#identity()) || !row.attachment?.filename?.toLowerCase().endsWith('.pptx')) return [];
+      return [{ messageId: row.messageId, filename: row.attachment.filename, teacher: row.from.displayName, receivedAt: row.receivedAt, ...(row.fileOpen ? { fileOpen: row.fileOpen } : {}) }];
+    });
+  }
+
+  async openReceivedPresentation({ messageId: id, authorization } = {}) {
+    ensureAuthorization(authorization, 'open-presentation', '用 WPS 打开课件');
+    return this.#openReceivedPresentation(messageId(id), true);
+  }
+
+  async #openReceivedPresentation(id, explicitlyReopen = false) {
+    return this.#withFileLock(async () => {
+      const row = this._state.inbox[id];
+      const local = this.#identity();
+      const peer = this._state.pairings[row?.from?.endpointId];
+      if (local.role !== 'classroom' || !row || row.from.role !== 'teacher' || !peer
+        || this._state.blocked[row.from.endpointId] || !identityEqual(peer.peer, row.from)
+        || !identityEqual(row.recipient, local)) fail('ROLE_FORBIDDEN', '课件不属于当前教室的有效教师配对。', 403);
+      const file = this._state.incomingFiles[row.attachment?.fileId];
+      if (!file || !attachmentMatchesFile(row.attachment, file) || !identityEqual(file.from, row.from)
+        || file.metadata.extension !== '.pptx') fail('FILE_REFERENCE_UNVERIFIED', '课件尚未完整接收或不是 PPTX。', 409);
+      if (row.fileOpen && !explicitlyReopen) return row.fileOpen.status === 'OPENING'
+        ? { status: 'UNKNOWN', detail: '上次打开结果尚未确认，不会自动重复打开。' } : row.fileOpen;
+      await this.#commit((state) => { state.inbox[id].fileOpen = { status: 'OPENING', detail: '正在交给 WPS 打开。' }; });
+      let result;
+      try {
+        const path = this.#completedFilePath(file.fileId, file.metadata);
+        const actual = await realpath(path);
+        const root = await realpath(this.inboxRoot);
+        if (!pathInside(root, actual)) throw new Error('接收文件路径已变化。');
+        const bytes = await readFile(actual);
+        if (bytes.length !== file.metadata.byteLength || !safeHashEqual(createHash('sha256').update(bytes).digest('hex'), file.metadata.sha256)) throw new Error('接收课件校验失败，文件可能已被修改。');
+        // Recheck the binding after I/O and before the external application starts.
+        const current = this._state.pairings[row.from.endpointId];
+        if (!current || this._state.blocked[row.from.endpointId] || !identityEqual(current.peer, row.from) || !identityEqual(this.#identity(), local)) throw new Error('打开前教室身份或教师配对已变化。');
+        result = await this._openPresentation(actual);
+        if (result?.status !== 'LAUNCH_REQUESTED') throw new Error('WPS 未返回有效的启动结果。');
+        result = { status: 'LAUNCH_REQUESTED', detail: '已交给 WPS 打开；尚未确认幻灯片窗口完成加载。' };
+      } catch (error) {
+        result = { status: 'FAILED', detail: String(error?.message || 'WPS 打开失败。').slice(0, 200) };
+      }
+      await this.#commit((state) => { state.inbox[id].fileOpen = result; });
+      this.#event('file-open-result');
+      return result;
+    });
   }
 
   /** Explicit human-approved continuation; it never creates a new file ID. */
@@ -1258,7 +1731,7 @@ export class MochiLanService extends EventEmitter {
     }
   }
 
-  async #sendMessageInternal({ targetEndpointId, body, requestedMessageId, attachment = undefined, request = undefined, directive = undefined, expectedSender = undefined, expectedPeer = undefined, signal }) {
+  async #sendMessageInternal({ targetEndpointId, body, requestedMessageId, attachment = undefined, request = undefined, directive = undefined, response = undefined, expectedSender = undefined, expectedPeer = undefined, signal }) {
     let chosenMessageId;
     try {
       const targetId = endpointId(targetEndpointId);
@@ -1289,6 +1762,10 @@ export class MochiLanService extends EventEmitter {
         }
         const verifiedRequest = request === undefined ? undefined : requestDescriptor(request);
         const verifiedDirective = directive === undefined ? undefined : directiveDescriptor(directive);
+        const verifiedResponse = response === undefined ? undefined : responseDescriptor(response);
+        if (verifiedResponse && (verifiedRequest !== undefined || verifiedDirective !== undefined || attachment !== undefined)) {
+          fail('INVALID_RESPONSE', '教师回复不能同时携带预约、处置名册或文件。');
+        }
         const peer = state.pairings[targetId];
         if (!peer || state.blocked[targetId]) fail('PAIRING_REQUIRED', '目标不是可用的已配对设备。', 403);
         if (peer.peer.role !== direction.peerRole) {
@@ -1297,18 +1774,35 @@ export class MochiLanService extends EventEmitter {
             : '教室端只能向教师端发送学生预约。', 403);
         }
         this.#assertExpectedBinding(local, peer.peer, expectedSender, expectedPeer);
+        if (verifiedResponse) {
+          if (local.role !== 'teacher' || peer.peer.role !== 'classroom') fail('ROLE_FORBIDDEN', '只有教师端能回复教室预约。', 403);
+          const original = state.inbox[verifiedResponse.replyToMessageId];
+          if (!original || original.contentType !== 'REQUEST' || !original.from
+            || !identityEqual(original.from, peer.peer)
+            || !original.recipient || !identityEqual(local, original.recipient)) {
+            fail('RESPONSE_REQUEST_MISMATCH', '原预约不属于当前教师身份或配对教室。', 409);
+          }
+          const acceptedRetry = state.outbox[chosenMessageId]?.targetEndpointId === targetId
+            && canonical(state.outbox[chosenMessageId]?.response ?? null) === canonical(verifiedResponse);
+          if (!acceptedRetry) assertResponseMatchesRequest(verifiedResponse, original.request);
+          if (Object.values(state.outbox).some((item) => item.messageId !== chosenMessageId && item.response?.replyToMessageId === verifiedResponse.replyToMessageId)) {
+            fail('RESPONSE_ALREADY_SENT', '这条预约已经回复。', 409);
+          }
+        }
         const verifiedAttachment = this.#outgoingAttachment(state, attachment, targetId);
         const outgoing = state.outbox[chosenMessageId];
         if (outgoing) {
           if (outgoing.targetEndpointId !== targetId || outgoing.body !== text
             || canonical(outgoing.attachment ?? null) !== canonical(verifiedAttachment ?? null)
             || canonical(outgoing.request ?? null) !== canonical(verifiedRequest ?? null)
-            || canonical(outgoing.directive ?? null) !== canonical(verifiedDirective ?? null)) {
+            || canonical(outgoing.directive ?? null) !== canonical(verifiedDirective ?? null)
+            || canonical(outgoing.response ?? null) !== canonical(verifiedResponse ?? null)) {
             fail('MESSAGE_ID_CONFLICT', 'messageId 已绑定不同的目标、正文、文件、预约或处置名册。', 409);
           }
           this.#assertStoredBinding(local, peer.peer, outgoing);
           return;
         }
+        reserveOutboxCapacity(state, this._maxMessages);
         const payload = {
           v: LAN_PROTOCOL_VERSION,
           type: 'message',
@@ -1320,6 +1814,7 @@ export class MochiLanService extends EventEmitter {
           body: text,
           ...(verifiedRequest === undefined ? {} : { request: verifiedRequest }),
           ...(verifiedDirective === undefined ? {} : { directive: verifiedDirective }),
+          ...(verifiedResponse === undefined ? {} : { response: verifiedResponse }),
           ...(verifiedAttachment === undefined ? {} : { attachment: verifiedAttachment }),
         };
         state.outbox[chosenMessageId] = {
@@ -1332,13 +1827,13 @@ export class MochiLanService extends EventEmitter {
           body: text,
           ...(verifiedRequest === undefined ? {} : { request: verifiedRequest }),
           ...(verifiedDirective === undefined ? {} : { directive: verifiedDirective }),
+          ...(verifiedResponse === undefined ? {} : { response: clone(verifiedResponse) }),
           ...(verifiedAttachment === undefined ? {} : { attachment: verifiedAttachment }),
           envelope: envelope(local, payload),
           delivery: 'PENDING',
           createdAt: payload.createdAt,
           updatedAt: payload.createdAt,
         };
-        state.outbox = trimMap(state.outbox, MAX_MESSAGES);
       });
     } catch (error) {
       throw markPreSendFailure(error);
@@ -1348,10 +1843,10 @@ export class MochiLanService extends EventEmitter {
 
   #assertExpectedBinding(local, peer, expectedSender, expectedPeer) {
     if (expectedSender !== undefined && !identityEqual(local, expectedSender)) {
-      fail('LAN_APPROVAL_STALE', '审批期间本机身份已变化；请重新核对并确认。', 409);
+      fail('LAN_APPROVAL_STALE', '确认期间本机身份已变化；请重新核对并确认。', 409);
     }
     if (expectedPeer !== undefined && !identityEqual(peer, expectedPeer)) {
-      fail('LAN_APPROVAL_STALE', '审批期间教室配对身份已变化；请重新核对并确认。', 409);
+      fail('LAN_APPROVAL_STALE', '确认期间目标配对身份已变化；请重新核对并确认。', 409);
     }
   }
 
@@ -1363,7 +1858,7 @@ export class MochiLanService extends EventEmitter {
 
   #outgoingAttachment(state, attachment, targetId) {
     if (attachment === undefined) return undefined;
-    if (!plain(attachment) || Object.keys(attachment).some((key) => key !== 'fileId')) fail('INVALID_FILE_REFERENCE', '文件引用必须是已验证 fileId。');
+    if (!plain(attachment) || Object.keys(attachment).some((key) => !['fileId', 'openWith'].includes(key))) fail('INVALID_FILE_REFERENCE', '文件引用必须是已验证 fileId。');
     const id = fileId(attachment.fileId);
     const outgoing = state.outgoingFiles[id];
     if (!outgoing || outgoing.targetEndpointId !== targetId || outgoing.status !== 'AVAILABLE') {
@@ -1374,7 +1869,7 @@ export class MochiLanService extends EventEmitter {
     if (!peer || state.blocked[targetId]) fail('PAIRING_REQUIRED', '目标配对已不可用。', 403);
     this.#assertStoredBinding(local, peer.peer, outgoing);
     const metadata = outgoing.metadata;
-    return { fileId: id, filename: metadata.filename, contentType: metadata.contentType, byteLength: metadata.byteLength, sha256: metadata.sha256 };
+    return messageAttachment({ fileId: id, filename: metadata.filename, contentType: metadata.contentType, byteLength: metadata.byteLength, sha256: metadata.sha256, ...(attachment.openWith === undefined ? {} : { openWith: attachment.openWith }) });
   }
 
   async #deliverOutgoing(messageId, signal) {
@@ -1415,7 +1910,9 @@ export class MochiLanService extends EventEmitter {
       || payload.schoolId !== this.#identity().schoolId || payload.classId !== peer.peer.classId) {
       fail('ACK_INVALID', '远端投递回执不匹配。', 502);
     }
-    return { receivedAt: printable(payload.receivedAt, 'receivedAt', 80), duplicate: payload.duplicate === true };
+    const fileOpen = payload.fileOpen;
+    if (fileOpen !== undefined && (!outgoing.attachment || !plain(fileOpen) || !['LAUNCH_REQUESTED', 'FAILED', 'UNKNOWN'].includes(fileOpen.status) || typeof fileOpen.detail !== 'string' || fileOpen.detail.length > 200)) fail('ACK_INVALID', '课件打开回执无效。', 502);
+    return { receivedAt: printable(payload.receivedAt, 'receivedAt', 80), duplicate: payload.duplicate === true, ...(fileOpen ? { fileOpen: { status: fileOpen.status, detail: fileOpen.detail } } : {}) };
   }
 
   async #prepareOutgoingFile({ targetId, sourcePath, requestedFileId, expectedSender = undefined, expectedPeer = undefined }) {
@@ -2058,6 +2555,18 @@ export class MochiLanService extends EventEmitter {
       if (!plain(parsed) || parsed.schema !== 'mochi-lan-state/v1') fail('STATE_INVALID', 'LAN 本地状态格式不受支持。');
       const state = blankState();
       for (const key of Object.keys(state)) if (parsed[key] !== undefined) state[key] = parsed[key];
+      // A process may exit after persisting intent but before recording the
+      // network result. Surface those operations as uncertain so the UI can
+      // retry the same signed message or receipt idempotently after restart.
+      for (const outgoing of Object.values(state.outbox)) {
+        if (outgoing?.delivery === 'PENDING') {
+          outgoing.delivery = 'UNKNOWN';
+          outgoing.failureCode = outgoing.failureCode ?? 'DELIVERY_INTERRUPTED';
+        }
+      }
+      for (const incoming of Object.values(state.inbox)) {
+        if (incoming?.seenAt && incoming.seenReceipt !== 'ACKNOWLEDGED') incoming.seenReceipt = 'UNKNOWN';
+      }
       if (state.identity !== null) {
         state.identity = validateIdentity(state.identity, state.identity);
         if (this.lockedRole && state.identity.role !== this.lockedRole) fail('STATE_INVALID', 'LAN 状态角色与本机启动角色不一致。');
@@ -2118,11 +2627,82 @@ export class MochiLanService extends EventEmitter {
     throw new Error('LAN HTTP port allocation exhausted.');
   }
 
-  async #startDiscovery() {
+  #localAddresses() {
+    let interfaces;
+    try { interfaces = localIpv4Interfaces(this._networkInterfaces()); } catch { return []; }
+    const names = new Set();
+    return interfaces
+      .filter(({ address }) => this.bindHost === '0.0.0.0' || this.bindHost === address)
+      .filter(({ name, address }) => {
+        const key = `${name}\0${address}`;
+        if (names.has(key)) return false;
+        names.add(key);
+        return true;
+      })
+      .slice(0, MAX_LOCAL_ADDRESSES)
+      .map(({ name, address }) => ({ name: name.replace(/[\u0000-\u001f\u007f]/gu, '').slice(0, 64), address, port: this._http.port }));
+  }
+
+  #closeSendSockets() {
+    for (const socket of this._sendSockets.values()) {
+      try { socket.close(); } catch { /* already closed after an adapter error */ }
+    }
+    this._sendSockets.clear();
+  }
+
+  async #sourceSocket(address, receiver) {
+    const existing = this._sendSockets.get(address);
+    if (existing) return existing;
     const socket = dgram.createSocket('udp4');
+    socket.on('error', () => {
+      if (this._sendSockets.get(address) === socket) this._sendSockets.delete(address);
+      try { socket.close(); } catch { /* socket has already closed */ }
+    });
+    try {
+      await new Promise((resolveBind, rejectBind) => {
+        const onError = (error) => { socket.off('listening', onListening); rejectBind(error); };
+        const onListening = () => { socket.off('error', onError); resolveBind(); };
+        socket.once('error', onError);
+        socket.once('listening', onListening);
+        socket.bind(0, address);
+      });
+      if (this._udp !== receiver) throw new Error('LAN discovery stopped while binding an interface.');
+      this._sendSockets.set(address, socket);
+      return socket;
+    } catch (error) {
+      try { socket.close(); } catch { /* bind failed before closeable state */ }
+      throw error;
+    }
+  }
+
+  #syncMulticastMemberships(socket, addresses) {
+    const wanted = new Set(addresses);
+    for (const address of this._multicastMemberships) {
+      if (wanted.has(address)) continue;
+      try { socket.dropMembership(LAN_MULTICAST_HOST, address); } catch { /* removed interface */ }
+      this._multicastMemberships.delete(address);
+    }
+    let error;
+    for (const address of wanted) {
+      if (this._multicastMemberships.has(address)) continue;
+      try {
+        socket.addMembership(LAN_MULTICAST_HOST, address);
+        this._multicastMemberships.add(address);
+      } catch (failure) {
+        error ??= failure;
+      }
+    }
+    return error;
+  }
+
+  async #startDiscovery() {
+    // Discovery is multicast/broadcast, so independent local profiles share its
+    // fixed receive port. The signed HTTP listener remains exclusive.
+    const socket = dgram.createSocket({ type: 'udp4', reuseAddr: true });
     this._udp = socket;
     this._broadcastAvailable = false;
     this._multicastAvailable = false;
+    this._multicastMemberships.clear();
     socket.on('message', (message, remote) => { this.#handleBeacon(message, remote); });
     try {
       await new Promise((resolveBind, rejectBind) => {
@@ -2138,26 +2718,6 @@ export class MochiLanService extends EventEmitter {
       throw error;
     }
 
-    let unavailable;
-    try {
-      if (this._beaconHost === '255.255.255.255') socket.setBroadcast(true);
-      socket.setTTL(1);
-      this._broadcastAvailable = true;
-    } catch (error) {
-      unavailable = error;
-    }
-    try {
-      if (this._multicastInterface !== undefined) socket.setMulticastInterface(this._multicastInterface);
-      if (this._multicastInterface === undefined) socket.addMembership(LAN_MULTICAST_HOST);
-      else socket.addMembership(LAN_MULTICAST_HOST, this._multicastInterface);
-      socket.setMulticastTTL(1);
-      socket.setMulticastLoopback(true);
-      this._multicastAvailable = true;
-    } catch (error) {
-      unavailable ??= error;
-    }
-    if (!this.#hasDiscoveryPath()) throw unavailable ?? new Error('LAN discovery has no usable UDP path.');
-
     socket.on('error', (error) => this.#degradeDiscovery(error));
     await this.#broadcastBeacon();
     if (this._udp !== socket || !this.#hasDiscoveryPath()) throw new Error('LAN discovery has no usable UDP path.');
@@ -2170,9 +2730,43 @@ export class MochiLanService extends EventEmitter {
   }
 
   async #broadcastBeacon() {
+    if (this._beaconInFlight) return this._beaconInFlight;
+    const run = this.#emitBeacon();
+    const flight = run.finally(() => { if (this._beaconInFlight === flight) this._beaconInFlight = null; });
+    this._beaconInFlight = flight;
+    return this._beaconInFlight;
+  }
+
+  async #emitBeacon() {
     const identity = this._state.identity;
     const socket = this._udp;
-    if (!identity || !socket || !this._http) return;
+    if (!socket || !this._http) return;
+    let interfaces;
+    try { interfaces = this._networkInterfaces(); } catch (error) {
+      this.#degradeDiscovery(error);
+      return;
+    }
+    const local = localIpv4Interfaces(interfaces);
+    const routes = lanBroadcastRoutes(interfaces);
+    const addresses = [...new Set(local.map(({ address }) => address))];
+    const multicastAddresses = this._multicastInterface === undefined ? addresses : [this._multicastInterface];
+    const wantedSockets = new Set([
+      ...(this._beaconHost === '255.255.255.255' ? routes.map(({ address }) => address) : []),
+      ...multicastAddresses,
+    ]);
+    for (const [address, sender] of this._sendSockets) {
+      if (wantedSockets.has(address)) continue;
+      this._sendSockets.delete(address);
+      try { sender.close(); } catch { /* removed interface */ }
+    }
+    let unavailable = this.#syncMulticastMemberships(socket, multicastAddresses);
+    if (!identity) {
+      this._broadcastAvailable = this._beaconHost !== '255.255.255.255' || routes.length > 0;
+      this._multicastAvailable = this._multicastMemberships.size > 0;
+      if (!this.#hasDiscoveryPath()) this.#degradeDiscovery(unavailable ?? new Error('LAN discovery has no usable interface.'));
+      return;
+    }
+    this.#ensurePairingCode();
     const payload = Buffer.from(JSON.stringify({
       v: LAN_PROTOCOL_VERSION,
       type: 'beacon',
@@ -2186,24 +2780,40 @@ export class MochiLanService extends EventEmitter {
       expiresAt: Date.now() + this._beaconTtlMs,
     }));
     const paths = [];
-    if (this._broadcastAvailable) paths.push({ name: 'broadcast', host: this._beaconHost, port: this._beaconPort });
-    if (this._multicastAvailable) paths.push({ name: 'multicast', host: LAN_MULTICAST_HOST, port: this._multicastPort });
-    const outcomes = await Promise.allSettled(paths.map((path) => new Promise((resolveSend, rejectSend) => {
-      socket.send(payload, path.port, path.host, (error) => error ? rejectSend(error) : resolveSend());
-    })));
-    for (const [index, outcome] of outcomes.entries()) {
-      if (outcome.status === 'rejected') this.#disableDiscoveryPath(paths[index].name, outcome.reason);
+    if (this._beaconHost !== '255.255.255.255') {
+      paths.push({ name: 'broadcast', sender: socket, host: this._beaconHost, port: this._beaconPort });
+    } else {
+      for (const route of routes) paths.push({ name: 'broadcast', source: route.address, host: route.broadcast, port: this._beaconPort });
     }
+    for (const address of multicastAddresses) {
+      if (this._multicastMemberships.has(address)) paths.push({ name: 'multicast', source: address, host: LAN_MULTICAST_HOST, port: this._multicastPort });
+    }
+    for (const path of paths) {
+      if (!path.source) continue;
+      try { path.sender = await this.#sourceSocket(path.source, socket); } catch (error) { path.error = error; unavailable ??= error; }
+    }
+    const outcomes = await Promise.allSettled(paths.map((path) => path.error ? Promise.reject(path.error) : new Promise((resolveSend, rejectSend) => {
+      try {
+        if (path.name === 'broadcast') {
+          path.sender.setBroadcast(true);
+          path.sender.setTTL(1);
+        } else {
+          path.sender.setMulticastTTL(1);
+          path.sender.setMulticastLoopback(true);
+          path.sender.setMulticastInterface(path.source);
+        }
+        path.sender.send(payload, path.port, path.host, (error) => error ? rejectSend(error) : resolveSend());
+      } catch (error) { rejectSend(error); }
+    })));
+    if (this._udp !== socket) return;
+    this._broadcastAvailable = paths.some((path, index) => path.name === 'broadcast' && outcomes[index].status === 'fulfilled');
+    this._multicastAvailable = paths.some((path, index) => path.name === 'multicast' && outcomes[index].status === 'fulfilled');
+    unavailable ??= outcomes.find((outcome) => outcome.status === 'rejected')?.reason;
+    if (!this.#hasDiscoveryPath()) this.#degradeDiscovery(unavailable ?? new Error('LAN discovery has no usable UDP path.'));
   }
 
   #hasDiscoveryPath() {
     return this._broadcastAvailable || this._multicastAvailable;
-  }
-
-  #disableDiscoveryPath(path, error) {
-    if (path === 'broadcast') this._broadcastAvailable = false;
-    else if (path === 'multicast') this._multicastAvailable = false;
-    if (!this.#hasDiscoveryPath()) this.#degradeDiscovery(error);
   }
 
   #handleBeacon(buffer, remote) {
@@ -2262,40 +2872,86 @@ export class MochiLanService extends EventEmitter {
   }
 
   #degradeDiscovery(error, emit = true) {
-    if (this._discovery.status === 'DEGRADED' && this._udp === null) return;
+    if (this._discovery.status === 'DEGRADED' && this._udp === null) {
+      this.#scheduleDiscoveryRetry();
+      return;
+    }
     if (this._beaconTimer) clearInterval(this._beaconTimer);
     this._beaconTimer = null;
     const socket = this._udp;
     this._udp = null;
+    this._beaconInFlight = null;
+    this.#closeSendSockets();
+    this._multicastMemberships.clear();
     if (socket) {
       try { socket.close(); } catch { /* an errored UDP socket may already be closed */ }
     }
     this._discovery = { enabled: true, status: 'DEGRADED', errorCode: discoveryErrorCode(error) };
     if (emit && this._started) this.#event('discovery-degraded');
+    this.#scheduleDiscoveryRetry();
+  }
+
+  #scheduleDiscoveryRetry() {
+    if (!this._started || !this.discoveryEnabled || this._discoveryRetryTimer) return;
+    this._discoveryRetryTimer = setTimeout(() => {
+      this._discoveryRetryTimer = null;
+      void this.#retryDiscovery();
+    }, this._beaconIntervalMs);
+    this._discoveryRetryTimer.unref?.();
+  }
+
+  async #retryDiscovery() {
+    if (!this._started || this._discovery.status !== 'DEGRADED') return;
+    try {
+      await this.#startDiscovery();
+      if (!this._started || !this._udp) return;
+      this._discovery = { enabled: true, status: 'ACTIVE', errorCode: null };
+      this.#event('discovery-recovered');
+    } catch (error) {
+      if (this._started) this.#degradeDiscovery(error);
+    }
   }
 
   async #refreshPairedAddress(targetEndpointId, expectedFingerprint, address) {
     const current = this._state.pairings[targetEndpointId];
     if (!current || current.peer.fingerprint !== expectedFingerprint
       || (current.address.host === address.host && current.address.port === address.port)) return;
-    let probed;
+    try { await this.#verifyPairedAddress(targetEndpointId, expectedFingerprint, address); } catch { /* an untrusted beacon cannot change a pairing */ }
+  }
+
+  async #verifyPairedAddress(targetEndpointId, expectedFingerprint, address, signal) {
+    const current = this._state.pairings[targetEndpointId];
+    if (!current) fail('PAIRING_REQUIRED', '目标设备未配对。', 403);
+    if (this._state.blocked[targetEndpointId]) fail('PEER_BLOCKED', '目标设备已被拉黑。', 403);
+    if (current.peer.fingerprint !== expectedFingerprint) fail('FINGERPRINT_MISMATCH', '设备指纹已变化。', 409);
+    const nonce = randomUUID();
+    let reply;
     try {
-      probed = await this.probeCandidate({ address, expectedFingerprint });
-    } catch {
-      return;
+      reply = await postJson(address, LAN_HTTP_PATHS.identityProof, { nonce }, signal);
+    } catch (error) {
+      if (error?.code === 'DELIVERY_UNKNOWN') fail('DISCOVERY_UNAVAILABLE', '新地址上的设备未响应。', 503);
+      if (error?.code === 'NOT_FOUND') fail('PEER_VERSION_UNSUPPORTED', '对端未提供地址恢复验证。', 409);
+      throw error;
     }
-    if (!identityEqual(probed.candidate, current.peer) || canonical(probed.candidate.publicKey) !== canonical(current.publicKey)) return;
+    const proof = verifyEnvelope(current.publicKey, reply.envelope);
+    if (proof.v !== LAN_PROTOCOL_VERSION || proof.type !== 'identity-proof' || proof.nonce !== nonce
+      || !identityEqual(proof.identity, current.peer) || canonical(proof.publicKey) !== canonical(current.publicKey)) {
+      fail('DISCOVERY_INVALID', '设备未通过原配对身份验证。', 409);
+    }
     let changed = false;
     await this.#commit((state) => {
       const pairing = state.pairings[targetEndpointId];
-      if (!pairing || pairing.peer.fingerprint !== expectedFingerprint
-        || !identityEqual(probed.candidate, pairing.peer) || canonical(probed.candidate.publicKey) !== canonical(pairing.publicKey)) return;
+      if (!pairing || state.blocked[targetEndpointId] || pairing.peer.fingerprint !== expectedFingerprint
+        || !identityEqual(pairing.peer, current.peer) || canonical(pairing.publicKey) !== canonical(current.publicKey)) {
+        fail('PAIRING_CHANGED', '核验期间设备配对已变化。', 409);
+      }
       if (pairing.address.host === address.host && pairing.address.port === address.port) return;
       pairing.address = { ...address };
       pairing.updatedAt = now();
       changed = true;
     });
     if (changed) this.#event('peer-address-updated');
+    return { status: changed ? 'updated' : 'unchanged', endpointId: targetEndpointId, address: { ...address } };
   }
 
   async #handleHttp(request, response) {
@@ -2312,8 +2968,64 @@ export class MochiLanService extends EventEmitter {
       }
       if (request.method !== 'POST') { respond(response, 404, { code: 'NOT_FOUND' }); return; }
       const input = await readJson(request);
-      if (url.pathname === LAN_HTTP_PATHS.pairRequest) { respond(response, 200, await this.#receivePairRequest(input, request)); return; }
-      if (url.pathname === LAN_HTTP_PATHS.pairAccept) { respond(response, 200, await this.#receivePairAccept(input)); return; }
+      if (url.pathname === LAN_HTTP_PATHS.identityProof) {
+        if (!plain(input) || Object.keys(input).length !== 1 || typeof input.nonce !== 'string'
+          || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/iu.test(input.nonce)) {
+          fail('INVALID_REQUEST', '身份挑战请求无效。');
+        }
+        const identity = this.#identity();
+        respond(response, 200, { envelope: envelope(identity, {
+          v: LAN_PROTOCOL_VERSION,
+          type: 'identity-proof',
+          nonce: input.nonce,
+          identity: identityProjection(identity),
+          publicKey: identity.publicKey,
+        }) });
+        return;
+      }
+      if (url.pathname === LAN_HTTP_PATHS.pairCodeProbe) {
+        if (!plain(input) || Object.keys(input).some((key) => !['code', 'nonce'].includes(key))
+          || typeof input.code !== 'string' || typeof input.nonce !== 'string') fail('INVALID_REQUEST', '配对码搜索请求无效。');
+        const nonce = printable(input.nonce, 'nonce', 120);
+        const remoteAddress = request.socket.remoteAddress?.replace(/^::ffff:/u, '') || 'unknown';
+        const identity = this.#identity();
+        if (identity.role !== 'classroom' || !identity.classId) fail('ROLE_FORBIDDEN', '只有已配置班级的教室端能响应配对码搜索。', 403);
+        try {
+          this.#validatePairingCode(input.code, remoteAddress, 'search');
+        } catch (error) {
+          const type = error?.code === 'PAIRING_CODE_INVALID' ? 'pairing-code-rejected'
+            : error?.code === 'PAIRING_CODE_RATE_LIMITED' ? 'pairing-code-rate-limited' : null;
+          if (!type) throw error;
+          respond(response, 200, { envelope: envelope(identity, {
+            v: LAN_PROTOCOL_VERSION,
+            type,
+            code: error.code,
+            nonce,
+            identity: identityProjection(identity),
+            publicKey: identity.publicKey,
+          }) });
+          return;
+        }
+        respond(response, 200, { envelope: envelope(identity, {
+          v: LAN_PROTOCOL_VERSION,
+          type: 'pairing-code-match',
+          nonce,
+          identity: identityProjection(identity),
+          publicKey: identity.publicKey,
+        }) });
+        return;
+      }
+      if (url.pathname === LAN_HTTP_PATHS.pairRequest) {
+        const result = await this.#receivePairRequest(input, request);
+        if (this._dropPairAckOnce) { this._dropPairAckOnce = false; request.socket.destroy(); return; }
+        respond(response, 200, result);
+        return;
+      }
+      if (url.pathname === LAN_HTTP_PATHS.pairAccept) {
+        const result = await this.#receivePairAccept(input);
+        if (this._dropPairAcceptAckOnce) { this._dropPairAcceptAckOnce = false; request.socket.destroy(); return; }
+        respond(response, 200, result); return;
+      }
       if (url.pathname === LAN_HTTP_PATHS.message) {
         const result = await this.#receiveMessage(input);
         if (this._dropDeliveryAckOnce) {
@@ -2336,12 +3048,33 @@ export class MochiLanService extends EventEmitter {
   }
 
   async #receivePairRequest(input, request) {
+    const current = this._pairRequestTail;
+    let release;
+    this._pairRequestTail = new Promise((resolve) => { release = resolve; });
+    await current;
+    try { return await this.#receivePairRequestUnlocked(input, request); }
+    finally { release(); }
+  }
+
+  async #receivePairRequestUnlocked(input, request) {
     const payload = input?.payload;
     if (!plain(payload) || payload.type !== 'pair-request' || payload.v !== LAN_PROTOCOL_VERSION) fail('INVALID_ENVELOPE', '配对请求无效。', 403);
     const publicKey = validateJwk(payload.senderPublicKey, 'senderPublicKey');
     const sender = validateRemoteIdentity(payload.sender, publicKey);
     verifyEnvelope(publicKey, input);
     const requestId = printable(payload.requestId, 'requestId', 120);
+    const alreadyPending = this._state.pendingIncoming[requestId];
+    if (alreadyPending && identityEqual(alreadyPending.peer, sender)
+      && canonical(alreadyPending.publicKey) === canonical(publicKey)) {
+      // A retry after a lost HTTP ACK is safe only for the exact pending id
+      // and the same already-verified signing identity. It cannot create a
+      // first pending request without a valid code.
+      return { status: 'pending', duplicate: true };
+    }
+    if (payload.pairingCode !== undefined) {
+      const source = request.socket.remoteAddress?.replace(/^::ffff:/u, '') || 'unknown';
+      this.#validatePairingCode(payload.pairingCode, source);
+    }
     // The HTTP source port is ephemeral. The signed request therefore carries
     // its own listener port; the source IP is only the IP half of that address.
     const learnedAddress = validateAddress({
@@ -2363,7 +3096,40 @@ export class MochiLanService extends EventEmitter {
       return { duplicate: false };
     });
     if (!result.duplicate) this.#event('pairing-request');
+    if (!result.duplicate && payload.pairingCode !== undefined) this.#rotatePairingCode();
     return { status: 'pending', ...(result.duplicate ? { duplicate: true } : {}) };
+  }
+
+  #ensurePairingCode() {
+    if (!this._pairingCode || this._pairingCodeExpiresAt <= Date.now()) this.#rotatePairingCode();
+  }
+
+  #rotatePairingCode() {
+    this._pairingCode = String(randomInt(0, 1_000_000)).padStart(6, '0');
+    this._pairingCodeExpiresAt = Date.now() + this._pairingCodeTtlMs;
+  }
+
+  #validatePairingCode(value, source, scope = 'pair') {
+    const timestamp = Date.now();
+    const key = `${scope}:${source}`;
+    const failures = (this._pairingCodeFailures.get(key) ?? []).filter((at) => at > timestamp - PAIRING_CODE_WINDOW_MS);
+    const maximum = scope === 'search' ? PAIRING_CODE_SEARCH_MAX_FAILURES : PAIRING_CODE_MAX_FAILURES;
+    if (failures.length >= maximum) fail('PAIRING_CODE_RATE_LIMITED', '配对码尝试次数过多，请稍后重试。', 429);
+    this.#ensurePairingCode();
+    if (!/^[0-9]{6}$/u.test(String(value)) || String(value) !== this._pairingCode) {
+      failures.push(timestamp);
+      for (const [entryKey, entryTimes] of this._pairingCodeFailures) {
+        const fresh = entryTimes.filter((at) => at > timestamp - PAIRING_CODE_WINDOW_MS);
+        if (fresh.length) this._pairingCodeFailures.set(entryKey, fresh);
+        else this._pairingCodeFailures.delete(entryKey);
+      }
+      if (this._pairingCodeFailures.size >= 256 && !this._pairingCodeFailures.has(key)) {
+        this._pairingCodeFailures.delete(this._pairingCodeFailures.keys().next().value);
+      }
+      this._pairingCodeFailures.set(key, failures);
+      fail('PAIRING_CODE_INVALID', '配对码无效或已过期。', 403);
+    }
+    this._pairingCodeFailures.delete(key);
   }
 
   async #receivePairAccept(input) {
@@ -2373,20 +3139,28 @@ export class MochiLanService extends EventEmitter {
     const sender = validateRemoteIdentity(payload.sender, publicKey);
     verifyEnvelope(publicKey, input);
     const requestId = printable(payload.requestId, 'requestId', 120);
-    await this.#commit((state) => {
+    const result = await this.#commit((state) => {
       const local = this.#identity(state);
       const pending = state.pendingOutgoing[requestId];
-      if (!pending) fail('PAIR_REQUEST_NOT_FOUND', '未找到本机发起的配对请求。', 404);
-      if (!identityEqual(sender, pending.peer) || canonical(publicKey) !== canonical(pending.publicKey)) {
-        fail('PAIRING_IDENTITY_MISMATCH', '接受者身份与请求目标不一致。', 403);
-      }
       if (local.role !== 'teacher' || sender.role !== 'classroom' || sender.schoolId !== local.schoolId || payload.recipient?.endpointId !== local.endpointId || payload.recipient?.schoolId !== local.schoolId || payload.recipient?.classId !== sender.classId) {
         fail('RECIPIENT_MISMATCH', '配对接受目标不匹配。', 403);
       }
+      if (state.blocked[sender.endpointId]) fail('PEER_BLOCKED', '该设备已被拉黑。', 403);
+      if (!pending) {
+        const paired = state.pairings[sender.endpointId];
+        if (paired?.acceptedPairRequestId === requestId && identityEqual(paired.peer, sender)
+          && canonical(paired.publicKey) === canonical(publicKey)) return { duplicate: true };
+        fail('PAIR_REQUEST_NOT_FOUND', '未找到本机发起的配对请求。', 404);
+      }
+      if (!identityEqual(sender, pending.peer) || canonical(publicKey) !== canonical(pending.publicKey)) {
+        fail('PAIRING_IDENTITY_MISMATCH', '接受者身份与请求目标不一致。', 403);
+      }
       this.#storePairing(state, sender, publicKey, pending.address);
+      state.pairings[sender.endpointId].acceptedPairRequestId = requestId;
       delete state.pendingOutgoing[requestId];
+      return { duplicate: false };
     });
-    this.#event('pairing-updated');
+    if (!result.duplicate) this.#event('pairing-updated');
     return { status: 'paired' };
   }
 
@@ -2408,6 +3182,7 @@ export class MochiLanService extends EventEmitter {
     // 与 request 同理：这里只做形状校验，方向合法性放到验签之后的 #commit 里用
     // **本机**角色判定。教室端因此不能靠自称是教师来塞一份判决名册进来。
     const directive = payload.directive === undefined ? undefined : directiveDescriptor(payload.directive);
+    const response = payload.response === undefined ? undefined : responseDescriptor(payload.response);
     const canonicalPayload = canonical(payload);
     const recorded = await this.#commit((state) => {
       const local = this.#identity(state);
@@ -2429,6 +3204,20 @@ export class MochiLanService extends EventEmitter {
       // 处置名册只允许教师端下发。教师端收到一份带 directive 的收件，说明对面在
       // 冒充教师下发判决——退回去，而不是把它当普通通知记下来。
       if (direction.receives === 'REQUEST' && directive !== undefined) fail('INVALID_ENVELOPE', '学生预约不应带教师处置名册。', 403);
+      if (response !== undefined) {
+        if (request !== undefined || directive !== undefined || attachment !== undefined) fail('INVALID_ENVELOPE', '教师回复不能同时携带其他消息类型。', 403);
+        const original = state.outbox[response.replyToMessageId];
+        if (local.role !== 'classroom' || sender.role !== 'teacher' || !original || original.contentType !== 'REQUEST'
+          || original.targetEndpointId !== senderId || original.peer?.fingerprint !== sender.fingerprint) {
+          fail('RESPONSE_REQUEST_MISMATCH', '教师回复与本教室的原预约不匹配。', 403);
+        }
+        const existing = state.inbox[id];
+        const acceptedRetry = existing?.payload === canonicalPayload;
+        if (!acceptedRetry) assertResponseMatchesRequest(response, original.request);
+        if (Object.values(state.inbox).some((item) => item.messageId !== id && item.response?.replyToMessageId === response.replyToMessageId)) {
+          fail('RESPONSE_ALREADY_SENT', '这条预约已有另一条教师回复。', 409);
+        }
+      }
       if (payload.recipient?.endpointId !== local.endpointId || payload.recipient?.schoolId !== local.schoolId || payload.recipient?.classId !== local.classId) fail('RECIPIENT_MISMATCH', '消息目标班级或设备不匹配。', 403);
       if (attachment) {
         const receivedFile = state.incomingFiles[attachment.fileId];
@@ -2440,16 +3229,22 @@ export class MochiLanService extends EventEmitter {
       if (existing && existing.payload !== canonicalPayload) fail('MESSAGE_ID_CONFLICT', 'messageId 已绑定不同消息。', 409);
       if (existing) return { duplicate: true, local: clone(local), sender, receivedAt: existing.receivedAt };
       if (Object.keys(state.inbox).length >= this._maxMessages) {
-        // 满仓时优先回收「老师已确认看到」的最旧收件，而不是直接 429：
-        // 旧实现一旦满仓就永久拒收，且 dispatch 侧会把 429 当成 NOT_SENT 反复重试。
-        // 未读收件一条都不丢——没有可回收的已读收件时仍然明确拒绝。
+        // 只回收已完成签名已看回执的普通通知；请求和回复仍是后续
+        // 回复校验、重试与去重的依据，不能把“已看”当成流程终态。
         const evictable = Object.values(state.inbox)
-          .filter((row) => typeof row.seenAt === 'string')
-          .sort((left, right) => String(left.seenAt).localeCompare(String(right.seenAt)));
-        if (evictable.length === 0) {
-          fail('MESSAGE_LIMIT', `收件箱已达上限（${this._maxMessages}）且没有已确认看到的历史收件可回收。`, 429);
-        }
+          .filter((row) => row.contentType === 'NOTIFY'
+            && typeof row.seenAt === 'string'
+            && row.seenReceipt === 'ACKNOWLEDGED'
+            && row.request === undefined
+            && row.response === undefined
+            && row.directive === undefined
+            && row.attachment === undefined)
+          .sort((left, right) => String(left.seenAt).localeCompare(String(right.seenAt))
+            || String(left.messageId).localeCompare(String(right.messageId)));
         const overflow = Object.keys(state.inbox).length - this._maxMessages + 1;
+        if (evictable.length < overflow) {
+          fail('MESSAGE_LIMIT', `收件箱已达上限（${this._maxMessages}）且没有已确认看到的普通通知可回收。`, 429);
+        }
         for (const row of evictable.slice(0, overflow)) delete state.inbox[row.messageId];
       }
       const receivedAt = now();
@@ -2464,6 +3259,7 @@ export class MochiLanService extends EventEmitter {
         body,
         ...(request === undefined ? {} : { request }),
         ...(directive === undefined ? {} : { directive }),
+        ...(response === undefined ? {} : { response }),
         ...(attachment === undefined ? {} : { attachment }),
         receivedAt,
         updatedAt: receivedAt,
@@ -2472,7 +3268,13 @@ export class MochiLanService extends EventEmitter {
       return { duplicate: false, local: clone(local), sender, receivedAt };
     });
     if (!recorded.duplicate) this.#event('incoming-message');
+    let fileOpen;
+    if (attachment?.openWith === 'wps') {
+      try { fileOpen = await this.#openReceivedPresentation(id); }
+      catch { fileOpen = { status: 'FAILED', detail: '文件已收到，但当前身份或配对不允许打开。' }; }
+    }
     const ackPayload = {
+      ...(fileOpen ? { fileOpen } : {}),
       v: LAN_PROTOCOL_VERSION,
       type: 'delivery-ack',
       messageId: id,
@@ -2523,8 +3325,8 @@ export class MochiLanService extends EventEmitter {
 
   #event(type) {
     const event = { cursor: ++this._cursor, type, at: now(), snapshot: this.snapshot() };
-    this._events.push(event);
-    if (this._events.length > MAX_EVENTS) this._events.splice(0, this._events.length - MAX_EVENTS);
+    this._eventLog.push(event);
+    if (this._eventLog.length > MAX_EVENTS) this._eventLog.splice(0, this._eventLog.length - MAX_EVENTS);
     this.emit('event', clone(event));
   }
 }

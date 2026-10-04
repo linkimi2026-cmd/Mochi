@@ -25,6 +25,7 @@ const SOURCE_LABELS = {
   user_statement: '用户陈述',
   repeated: '多次重复',
   explicit_request: '明确要求',
+  observed: '日常对话中形成的暂定习惯',
 };
 
 const SCHEMA = `

@@ -95,11 +95,13 @@ const notify = tools.get('mochi_notify_classroom');
 const roster = tools.get('mochi_list_classrooms');
 const fileTool = tools.get('mochi_send_classroom_file');
 const verdictTool = tools.get('mochi_register_verdicts');
+const callTool = tools.get('mochi_call_student');
 const tasksTool = tools.get('mochi_tasks');
 assert.ok(notify);
 assert.ok(roster);
 assert.ok(fileTool);
 assert.ok(verdictTool);
+assert.ok(callTool);
 assert.ok(tasksTool);
 assert.match(roster.description, /已配对设备即使当前未发现，也可由已知地址经人工确认发送/);
 const listed = await roster.execute({}, { agent: { session: {} } });
@@ -123,7 +125,11 @@ assert.equal(lan.sent[0].expectedPeer.fingerprint, 'sha256:classroom');
 assert.equal(approvalCalls.length, 1);
 assert.match(approvalCalls[0].reason, /demo-school/);
 assert.match(approvalCalls[0].reason, /g7-1/);
-assert.match(approvalCalls[0].reason, /sha256:classroom/);
+assert.match(approvalCalls[0].reason, /发给：七一班教室 · demo-school · g7-1/);
+assert.match(approvalCalls[0].reason, /设备：classroom-1/);
+assert.match(approvalCalls[0].reason, /信件内容：\n请在上课前打开第 3 页课件。/);
+assert.match(approvalCalls[0].reason, /确认后发送这份通知；取消不会发送/);
+assert.doesNotMatch(approvalCalls[0].reason, /sha256:|指纹/);
 const firstTask = store.getTask(result.taskId);
 assert.equal(firstTask.transport, 'lan');
 assert.equal(firstTask.owner_user_id, 0);
@@ -379,9 +385,54 @@ assert.equal(verdictApprovalCalls.length, 1);
 assert.match(verdictApprovalCalls[0].reason, /处置名册/);
 assert.match(verdictApprovalCalls[0].reason, /名目：第 5 单元听写/);
 assert.match(verdictApprovalCalls[0].reason, /1 位不过关 · 1 位喊人 · 1 位过关/);
-assert.match(verdictApprovalCalls[0].reason, /1\. 李明（3 号） · 不过关 — th \/θ\/ 读成了 \/s\/，课间来重听第 2 段。/);
+assert.match(verdictApprovalCalls[0].reason, /【1\/3】李明（3 号） · 不过关 — th \/θ\/ 读成了 \/s\/，课间来重听第 2 段。/);
 
-console.log('⑫ 缺个性化交代的过关判决被拒，且拒绝发生在审批与任务写入之前');
+console.log('⑫ 13 人拒批与 64 人通过：审批完整列出名册，末位交代可见且发送内容一致');
+const makeRoster = (count) => Array.from({ length: count }, (_, index) => ({
+  student: '学生' + (index + 1),
+  seat: index + 1,
+  action: 'fail',
+  note: index === count - 1 ? '末位专属交代：补听第 9 段。' : '重听第 ' + (index + 1) + ' 段。',
+}));
+const thirteenLan = lanHarness();
+const thirteenStore = createStore(openStore(':memory:'));
+const thirteenApprovalCalls = [];
+await assert.rejects(
+  () => sendLanDirective({
+    lan: thirteenLan,
+    approval: { request: async (input) => { thirteenApprovalCalls.push(input); return 'denied'; } },
+    store: thirteenStore,
+    args: { classroomEndpointId: 'classroom-1', item: '13 人听写', verdicts: makeRoster(13) },
+    exec: { ...verdictExec, callId: 'verdict-13-denied' },
+  }),
+  /没有获得主人确认/,
+);
+assert.match(thirteenApprovalCalls[0].reason, /【13\/13】学生13（13 号） · 不过关 — 末位专属交代：补听第 9 段。/);
+assert.doesNotMatch(thirteenApprovalCalls[0].reason, /另外 \d+ 位/);
+assert.equal(thirteenLan.directives.length, 0, '拒绝 13 人名册审批后不得投递');
+assert.equal(thirteenStore.listAll().length, 0, '拒绝审批后不得创建任务');
+
+const sixtyFourLan = lanHarness();
+const sixtyFourStore = createStore(openStore(':memory:'));
+const sixtyFourApprovalCalls = [];
+const sixtyFourRoster = makeRoster(64);
+await sendLanDirective({
+  lan: sixtyFourLan,
+  approval: { request: async (input) => { sixtyFourApprovalCalls.push(input); return 'allowed-once'; } },
+  store: sixtyFourStore,
+  args: { classroomEndpointId: 'classroom-1', item: '64 人处置名册', verdicts: sixtyFourRoster },
+  exec: { ...verdictExec, callId: 'verdict-64-approved' },
+});
+assert.match(sixtyFourApprovalCalls[0].reason, /【64\/64】学生64（64 号） · 不过关 — 末位专属交代：补听第 9 段。/);
+assert.doesNotMatch(sixtyFourApprovalCalls[0].reason, /另外 \d+ 位/);
+assert.equal(sixtyFourLan.directives.length, 1);
+assert.deepEqual(sixtyFourLan.directives[0].directive.verdicts, sixtyFourRoster, '成功发送的 64 人名册必须与输入和审批正文对应');
+for (let index = 0; index < sixtyFourRoster.length; index += 1) {
+  const row = sixtyFourRoster[index];
+  assert.ok(sixtyFourApprovalCalls[0].reason.includes('【' + (index + 1) + '/64】' + row.student + '（' + row.seat + ' 号） · 不过关 — ' + row.note));
+}
+
+console.log('⑬ 缺个性化交代的过关判决被拒，且拒绝发生在审批与任务写入之前');
 const beforeVerdictApproval = verdictApprovalCalls.length;
 await assert.rejects(
   () => sendLanDirective({
@@ -418,7 +469,7 @@ await badRoster(Array.from({ length: 65 }, (_, index) => ({ student: '学生' + 
 assert.equal(verdictApprovalCalls.length, beforeVerdictApproval, '任何内容不合格都不得先弹审批卡');
 assert.equal(verdictLan.directives.length, 1);
 
-console.log('⑬ 主人拒绝时不投递；两份内容不同的名册不会互相冒充');
+console.log('⑭ 主人拒绝时不投递；两份内容不同的名册不会互相冒充');
 verdictDecision = 'denied';
 await assert.rejects(
   () => sendLanDirective({
@@ -475,4 +526,55 @@ await assert.rejects(
 );
 assert.equal(classroomDirectiveLan.directives.length, 0);
 
+console.log('⑭ 单人叫号沿用签名名册、审批和幂等；坏输入在审批前拒绝');
+const callLan = lanHarness();
+const callStore = createStore(openStore(':memory:'));
+const callApprovals = [];
+const callTools = createTools(callLan, callStore, { request: async (input) => { callApprovals.push(input); return 'allowed-once'; } });
+const callArgs = { classroomEndpointId: 'classroom-1', student: '张同学', location: '教师办公室', when: '下课后' };
+const callExec = { agent: { session: {} }, callId: 'call-one-student' };
+const callResult = await callTools.get('mochi_call_student').execute(callArgs, callExec);
+assert.equal(callResult.delivery, 'ACKNOWLEDGED');
+assert.equal(callLan.directives.length, 1);
+assert.equal(callLan.sent.length, 0);
+assert.deepEqual(callLan.directives[0].directive.verdicts, [{ student: '张同学', action: 'call', note: '请于下课后到教师办公室。' }]);
+assert.equal(callApprovals[0].toolName, 'mochi_call_student');
+assert.match(callApprovals[0].reason, /张同学 · 喊人 — 请于下课后到教师办公室。/);
+const repeatedCall = await callTools.get('mochi_call_student').execute(callArgs, callExec);
+assert.equal(repeatedCall.重复投递已拦截, true);
+assert.equal(callLan.directives.length, 1);
+await assert.rejects(
+  () => callTools.get('mochi_call_student').execute({ ...callArgs, location: '办公室\n二楼' }, { ...callExec, callId: 'bad-call' }),
+  /不能含换行/,
+);
+assert.equal(callApprovals.length, 1);
+
 console.log('dispatch LAN transport tests passed: standalone local owner, same mochi_tasks seven states, approval binding, receipt projection, conservative file outcomes, verdict rosters (skill-generated notes required), and bounded relay sync');
+
+const wpsLan = lanHarness();
+const wpsStore = createStore(openStore(':memory:'));
+const wpsApprovals = [];
+const wpsTools = createTools(wpsLan, wpsStore, { request: async (input) => { wpsApprovals.push(input); return 'allowed-once'; } });
+const wpsArgs = { classroomEndpointId: 'classroom-1', sourcePath: '/managed/lesson.pptx', message: '提前打开课件。', openWith: 'wps' };
+const olderClassroom = await wpsTools.get('mochi_send_classroom_file').execute(wpsArgs, { agent: { session: {} }, callId: 'wps-old-client' });
+assert.match(wpsApprovals[0].reason, /在这台教室电脑用 WPS 打开/);
+assert.match(wpsApprovals[0].reason, /课件文件：\/managed\/lesson\.pptx/);
+assert.match(wpsApprovals[0].reason, /提前打开课件。/);
+assert.match(wpsApprovals[0].reason, /发给：七一班教室 · demo-school · g7-1/);
+assert.doesNotMatch(wpsApprovals[0].reason, /sha256:|指纹/);
+assert.equal(wpsLan.files[0].openWith, 'wps');
+assert.equal(olderClassroom.fileOpen.status, 'UNKNOWN', 'old receivers never falsely report WPS opened');
+const deniedWps = createTools(lanHarness(), createStore(openStore(':memory:')), { request: async () => 'denied' });
+await assert.rejects(() => deniedWps.get('mochi_send_classroom_file').execute(wpsArgs, { agent: { session: {} }, callId: 'wps-denied' }), /未确认|未发送/);
+console.log('WPS dispatch passed: explicit action in approval, wire intent, and honest old-client result');
+
+// The approval must show the full body even beyond the previous 1,000-character preview.
+const longApprovalCalls = [];
+const longLan = lanHarness();
+const longStore = createStore(openStore(':memory:'));
+const longTools = createTools(longLan, longStore, { request: async review => { longApprovalCalls.push(review); return 'allowed-once'; } });
+const longBody = '完整通知正文'.repeat(220) + '【最后一行不可省略】';
+await longTools.get('mochi_notify_classroom').execute({classroomEndpointId:'classroom-1',message:longBody},{agent:{session:{}},callId:'long-review'});
+assert.ok(longApprovalCalls[0].reason.includes(longBody));
+assert.doesNotMatch(longApprovalCalls[0].reason,/其余内容已省略预览|sha256:classroom/u);
+assert.equal(longLan.sent[0].body,longBody);

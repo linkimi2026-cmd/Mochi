@@ -44,7 +44,7 @@ const expectedProfiles = {
   },
   "mochi-web": {
     bundles: ["@deepseek-ai/dsh-base", "@deepseek-ai/dsh-web-app"],
-    plugins: ["mochi-hello", "mochi-dispatch", "mochi-campus", "mochi-web-search", "mochi-knowledge", "mochi-llm-mimo", "mochi-grades", "mochi-presentations", "mochi-documents", "mochi-files", "mochi-sheets", "mochi-visuals", "mochi-modeling", "mochi-memory", "mochi-task-scheduler", "mochi-modes", "mochi-modes-client", "jxl-theme", "jxl-brand", "jxl-campus", "mochi-model-presets", "dsh-better-sidebar", "mochi-lan", "mochi-lan-client"],
+    plugins: ["mochi-hello", "mochi-dispatch", "mochi-campus", "mochi-web-search", "mochi-knowledge", "mochi-llm-mimo", "mochi-grades", "mochi-presentations", "mochi-documents", "mochi-files", "mochi-sheets", "mochi-visuals", "mochi-modeling", "mochi-memory", "mochi-task-scheduler", "mochi-modes", "mochi-modes-client", "jxl-theme", "jxl-brand", "jxl-campus", "mochi-model-presets", "dsh-better-sidebar", "mochi-lan", "mochi-lan-client", "mochi-approval"],
   },
 };
 
@@ -183,12 +183,10 @@ function pluginRowCount(patch, id) {
   return [...patch.matchAll(new RegExp(`^\\s*-\\s+id:\\s*(?:["']${id}["']|${id})\\s*(?:#.*)?$`, "gm"))].length;
 }
 
-// [Mochi patch] 教师端预设选择器只保留“创造模式”。下面这组断言锁死：
-// 生成器把底座预设目录过滤成 home 下的 presets-visible/，只含白名单预设，
-// 且 cordis 的全部文件逐字节保留。
+// 受控预设根保留历史会话所需预设，并逐字节保留 cordis 的附属文件。
 const installedPresetsRoot = join(desktopRoot, "node_modules", "@deepseek-ai", "dsh-agent-presets", "presets");
 const VISIBLE_PRESET_ROOT_NAME = "presets-visible";
-const EXCLUDED_INSTALLED_PRESETS = ["standard", "ptc", "minimal"];
+const LEGACY_INSTALLED_PRESETS = ["standard", "ptc", "minimal"];
 
 function agentPresetsConfigFromPatch(patch) {
   const match = patch.match(/^- id: agent-presets\n\s+config: (.+)$/m);
@@ -209,8 +207,8 @@ function assertVisiblePresetRoot(home) {
   const visibleRoot = join(home, VISIBLE_PRESET_ROOT_NAME);
   assert.deepEqual(
     readdirSync(visibleRoot).sort(),
-    ["cordis"],
-    "the teacher-visible preset root must expose exactly the creative preset",
+    ["cordis", "minimal", "ptc", "standard"],
+    "historical sessions must retain their installed presets",
   );
   const sourceRoot = join(installedPresetsRoot, "cordis");
   const targetRoot = join(visibleRoot, "cordis");
@@ -224,8 +222,10 @@ function assertVisiblePresetRoot(home) {
       `${VISIBLE_PRESET_ROOT_NAME}/cordis/${relativePath} changed while filtering`,
     );
   }
-  for (const excluded of EXCLUDED_INSTALLED_PRESETS) {
-    assert.equal(existsSync(join(visibleRoot, excluded)), false, `${excluded} must not be visible to teachers`);
+  for (const legacy of LEGACY_INSTALLED_PRESETS) {
+    for (const file of relativeFiles(join(installedPresetsRoot, legacy))) {
+      assert.ok(readFileSync(join(visibleRoot, legacy, file)).equals(readFileSync(join(installedPresetsRoot, legacy, file))), `${legacy}/${file} must remain usable for old sessions`);
+    }
   }
   const config = agentPresetsConfigFromPatch(readFileSync(join(home, "profiles", "mochi-web", "cordis.patch.yml"), "utf8"));
   assert.equal(config.default, "lesson-planning");
@@ -270,6 +270,13 @@ async function assertMimoPluginApply() {
   try {
     mimo.apply({
       get: () => undefined,
+      settings: {
+        installSection(owner, namespace, schema, initial, hooks) {
+          assert.equal(namespace, "mochi-llm-mimo");
+          hooks.setSource(() => initial);
+          hooks.onChange();
+        },
+      },
       llm: {
         registerConfigurableProviders: (providers) => registeredProviders.push(...providers),
         registerAdapter: (_providers, candidate) => { adapter = candidate; },
@@ -393,7 +400,9 @@ try {
     assert.equal(current, patch, `${name} changed on its second clean-home provision`);
     assert.equal(pluginRowCount(current, "mochi-llm-mimo"), 1, `${name} must contain one MIMO entry`);
     assert.ok(current.includes(`config: ${JSON.stringify(expectedMimoInitialConfig)}`), `${name} omitted the versioned MIMO config`);
-    assertMimoConfig(dumpProfile(cleanHome, name));
+    const dump = dumpProfile(cleanHome, name);
+    assertMimoConfig(dump);
+    assert.match(configuredRow(dump, "agent-default-model"), /provider: mochi-mimo\n\s+model: mimo-v2\.5/, `${name} composition fallback must use the model shown in Models`);
   }
   assertVisiblePresetRoot(cleanHome);
   // 负向对照：过滤必须真的把非白名单预设挡在外面，而不是“目录恰好为空”。

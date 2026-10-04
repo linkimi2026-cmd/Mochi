@@ -1,65 +1,87 @@
-// mochi-modes · 「对话界面 / 工作界面」两种模式的纯逻辑（可单测，不依赖 cordis 宿主）。
-//
-// 两个界面共用同一个官方 chat 会话视图，差别只有三处：工具面（restrict 面具）、
-// 工作台显隐（客户端读投影决定）、顶部模式标识文案。
-//
-// 设计事实（全部来自 DSH 官方源码，不猜测）：
-//   * 省 token 的正解是 `ctx.tools.restrict(filter)`：官方 README 明确
-//     “Restrictions that hide tools remove their entire schema cost for that agent.”
-//   * restrict 必须用在 **作用域上下文** 上：`agent.ctx.tools.restrict(...)`，
-//     用根 ctx 会抛 “requires a scoped context (agent.ctx)”。
-//   * 空 filter（`{}`）会抛；未知工具名会抛；保留名 `run_code` 不能出现在
-//     allow/deny 里（PTC 传输保留）。所以 allow 列表必须从**真实可见工具面**
-//     取交集，而不是写死猜的名字。
-//   * 面具是「只留 allow 里的全局/继承工具」，作用域自己那一层注册的工具
-//     不受影响（restrict 文档：restrictions never remove what its OWN layer
-//     registers）。Mochi 的工具插件挂在宿主层、预设工具挂在预设「standing」
-//     层（是 agent 作用域的父层），两者都属于「可被 restrict 过滤」的集合。
-
+// Legacy v2 event projection for existing session replay; it no longer controls tools.
 export const MODE_CHAT = 'chat';
 export const MODE_WORK = 'work';
 
-/** 模型在对话界面唯一能调用的工具：请求老师批准进入工作界面开始干活。 */
+/** Historical tool identity; no tool is registered under this name anymore. */
 export const REQUEST_TOOL = 'mochi_request_work_mode';
-/** 老师手动切换用的斜杠命令（命令名语法：小写字母/数字/_/-）。 */
+/** Historical command identities; no switching command is registered anymore. */
 export const WORK_COMMAND = 'mochi-work';
 export const CHAT_COMMAND = 'mochi-chat';
-/** 确认卡上显示的文案，作为 approval 请求的 reason。 */
-export const WORK_REQUEST_REASON = '需要工作模式，继续？';
-/** 客户端读取模式的 session 投影键。 */
+/** Historical projection key, retained for session checkpoint compatibility. */
 export const PROJECTION_KEY = 'mochiModes';
 
+/** Stable campus-tool ordering only; this list never filters capability or permission. */
+export const CONVERSATION_TOOLS = Object.freeze([
+  REQUEST_TOOL,
+  'mochi_lan_status',
+  'mochi_lan_configure_identity',
+  'mochi_lan_pending_requests',
+  'mochi_lan_reply_student_request',
+  'mochi_lan_probe_classroom',
+  'mochi_lan_pair_classroom',
+  'mochi_lan_send_student_request',
+  'mochi_lan_decide_pairing',
+  'mochi_lan_received_presentations',
+  'mochi_lan_open_presentation',
+  'mochi_list_classrooms',
+  'mochi_notify_classroom',
+  'mochi_call_student',
+  'mochi_register_verdicts',
+  'mochi_set_campus_background',
+  'mochi_open_camera',
+  'mochi_tasks',
+  'mochi_memory_note',
+  'mochi_memory_observe',
+  'mochi_memory_recall',
+  'mochi_memory_forget',
+  'mochi_memory_list',
+  'mochi_journal_read',
+  'mochi_journal_summarize',
+  'mochi_memory_world',
+  'mochi_memory_clear',
+  // Read-only campus tools still authenticate through CampusConnection and the Worker.
+  'jxl_query',
+  'jxl_student_query',
+  'jxl_student_directory_search',
+  'jxl_clinic_status',
+  'jxl_dorm_status',
+  'jxl_campus_status',
+  'jxl_health_events',
+  'jxl_message',
+  'jxl_movement_detail',
+  'jxl_student_card',
+  'jxl_event_detail',
+  'jxl_analytics',
+  'jxl_relay_list',
+  'sidebar_open',
+]);
+
+const CONVERSATION_TOOL_ORDER = new Map(CONVERSATION_TOOLS.map((name, index) => [name, index]));
+
 /**
- * chat 模式保留的工具面。极小：只有请求升级的工具本身。
- * 其余全部被 allow 面具挡掉，省下整份 schema 开销。
+ * 前置本次 assembly 已有的对话工具 schema，并保持其他 schema 的原始顺序。
+ *
+ * 只重排 schema 引用，不复制、创建或删除工具定义。按当前 assembly 的实际可见集
+ * 计算，因此角色缺少的工具不会被静态工具顺序误报为未注册。
+ *
+ * @param {unknown} schemas - PromptAssembly.tools 的本次模型可见列表。
+ * @returns {unknown} 非数组原样返回；数组返回按对话工具优先级排序的副本。
  */
-export const CONVERSATION_TOOLS = Object.freeze([REQUEST_TOOL]);
-
-/** PTC 传输保留名，永远不能出现在 allow/deny 里。 */
-const RESERVED_TOOL = 'run_code';
-
-export function isMode(value) {
-  return value === MODE_CHAT || value === MODE_WORK;
+export function orderConversationSchemas(schemas) {
+  if (!Array.isArray(schemas)) return schemas;
+  return schemas
+    .map((schema, sourceIndex) => ({
+      schema,
+      sourceIndex,
+      order: CONVERSATION_TOOL_ORDER.get(schema?.name) ?? Number.POSITIVE_INFINITY,
+    }))
+    .sort((left, right) => left.order - right.order || left.sourceIndex - right.sourceIndex)
+    .map(({ schema }) => schema);
 }
 
-/**
- * 从**真实可见工具名**算 chat 模式的 allow 面具。
- *
- * 只保留 CONVERSATION_TOOLS ∩ 真实注册面，并剔除保留名。若交集为空
- * （例如请求工具还没注册上），返回 null：调用方必须**放弃限制并如实记日志**，
- * 绝不能伪造一个“已收窄”的假象，也不能拿空 filter 去撞 restrict 的抛错。
- *
- * @param {Iterable<string>} visibleNames - ctx.tools.schemas(agent) 的名字集合。
- * @returns {{ allow: string[] } | null} 可直接喂给 restrict 的 filter，或 null。
- */
-export function planRestriction(visibleNames) {
-  const visible = new Set();
-  for (const name of visibleNames ?? []) {
-    if (typeof name === 'string' && name) visible.add(name);
-  }
-  const allow = CONVERSATION_TOOLS.filter((name) => name !== RESERVED_TOOL && visible.has(name));
-  if (allow.length === 0) return null;
-  return { allow };
+/** Values accepted by the legacy event projection. */
+export function isMode(value) {
+  return value === MODE_CHAT || value === MODE_WORK;
 }
 
 /**
@@ -77,6 +99,9 @@ export function planRestriction(visibleNames) {
 export function foldModeEvent(state, event) {
   const type = event && event.type;
   const data = event && event.data;
+  if (type === 'agent-preset/selected' && typeof data?.agentPreset === 'string') {
+    return { mode: initialMode({ agentPreset:data.agentPreset }), pending:null };
+  }
   if (type === 'command/run' && data) {
     const wanted = data.name === WORK_COMMAND ? MODE_WORK : data.name === CHAT_COMMAND ? MODE_CHAT : null;
     if (wanted === null) return state;
@@ -148,12 +173,13 @@ const viewSchema = makeSchema(
 );
 
 /** session 投影单元定义，交给 ctx.sessionProjections.register()。 */
+export const initialMode = header => header?.agentPreset === 'standard' ? MODE_WORK : MODE_CHAT;
 export const modeProjection = Object.freeze({
   key: PROJECTION_KEY,
-  stateVersion: 1,
+  stateVersion: 2,
   stateSchema,
   viewSchema,
-  init: () => ({ mode: MODE_CHAT, pending: null }),
+  init: header => ({ mode: initialMode(header), pending: null }),
   apply: (state, event) => foldModeEvent(state, event),
   view: (state) => modeView(state),
 });
@@ -171,114 +197,4 @@ export function createProjectionDefinition() {
     apply: modeProjection.apply,
     wire: { viewSchema: modeProjection.viewSchema, view: modeProjection.view },
   };
-}
-
-/**
- * 模式控制器：持有每个 agent 的当前模式与 restrict disposer。
- *
- * 依赖以「接口对象」注入，方便单测：
- * @param {object} deps
- * @param {{schemas: Function, restrict: Function}} deps.tools - 根 ctx 的 tools 服务。
- * @param {(msg: string) => void} [deps.warn] - 失败/降级时的诚实日志出口。
- * @param {() => boolean} [deps.canRestrict] - 是否允许收窄工具面。默认允许。
- *   **没有确认通道时必须传 false**：对话模式下唯一能调用的工具是
- *   `mochi_request_work_mode`，而它要靠审批卡才能解禁。审批通道不存在时会话会被
- *   永久锁死在「只有一个工具」的状态——宁可放开全部工具，也不能锁死老师。
- * @returns {object} 控制器。
- */
-export function createModesController(deps) {
-  const tools = deps && deps.tools;
-  const warn = (typeof deps?.warn === 'function' ? deps.warn : () => {});
-  const canRestrict = (typeof deps?.canRestrict === 'function' ? deps.canRestrict : () => true);
-  if (!tools || typeof tools.schemas !== 'function' || typeof tools.restrict !== 'function') {
-    throw new TypeError('createModesController 需要 tools.schemas / tools.restrict');
-  }
-  /** agent -> { mode, restrict } —— restrict 为 null 表示「当前无限制」。 */
-  const states = new Map();
-
-  function stateFor(agent) {
-    let state = states.get(agent);
-    if (!state) {
-      state = { mode: MODE_CHAT, restrict: null };
-      states.set(agent, state);
-    }
-    return state;
-  }
-
-  function visibleToolNames(agent) {
-    const schemas = tools.schemas(agent) || [];
-    return schemas.map((schema) => schema && schema.name).filter((name) => typeof name === 'string');
-  }
-
-  /** 建限制。失败时返回 null 并如实记日志，绝不假装已收窄。 */
-  function buildRestriction(agent) {
-    if (!canRestrict()) {
-      warn('[mochi-modes] 当前没有可用的确认通道，本轮不收窄工具面（防呆：避免把会话锁死在只有一个工具）');
-      return null;
-    }
-    const filter = planRestriction(visibleToolNames(agent));
-    if (filter === null) {
-      warn(`[mochi-modes] 可见工具面里找不到 ${REQUEST_TOOL}，本轮不施加限制（未收窄，非假装成功）`);
-      return null;
-    }
-    try {
-      return agent.ctx.tools.restrict(filter);
-    } catch (error) {
-      warn(`[mochi-modes] restrict 失败，本轮保持全量工具：${error instanceof Error ? error.message : String(error)}`);
-      return null;
-    }
-  }
-
-  /**
-   * 幂等地把 agent 切到 mode。
-   * @param {object} agent - dsh Agent（需带 .ctx）。
-   * @param {'chat'|'work'} mode
-   * @returns {'chat'|'work'|null} 生效后的模式；agent 不合法时返回 null。
-   */
-  function setMode(agent, mode) {
-    if (!agent || !agent.ctx || !isMode(mode)) return null;
-    const state = stateFor(agent);
-    if (mode === MODE_WORK) {
-      if (state.mode === MODE_WORK && state.restrict === null) return MODE_WORK;
-      if (state.restrict) {
-        state.restrict();
-        state.restrict = null;
-      }
-      state.mode = MODE_WORK;
-      return MODE_WORK;
-    }
-    if (state.mode === MODE_CHAT && state.restrict) return MODE_CHAT;
-    state.mode = MODE_CHAT;
-    if (!state.restrict) state.restrict = buildRestriction(agent);
-    return MODE_CHAT;
-  }
-
-  /**
-   * agent 创建时挂上初始模式（幂等）。
-   * @param {object} agent - 新建的 agent。
-   * @param {'chat'|'work'} durableMode - 从日志投影恢复出的模式。
-   * @returns {'chat'|'work'|null}
-   */
-  function attach(agent, durableMode) {
-    if (!agent || !agent.ctx) return null;
-    stateFor(agent);
-    return setMode(agent, isMode(durableMode) ? durableMode : MODE_CHAT);
-  }
-
-  /** agent 销毁：清掉本地记录；限制本身由 agent.ctx 生命周期自动解除。 */
-  function detach(agent) {
-    states.delete(agent);
-  }
-
-  function modeOf(agent) {
-    const state = states.get(agent);
-    return state ? state.mode : null;
-  }
-
-  function isRestricted(agent) {
-    const state = states.get(agent);
-    return !!(state && state.restrict);
-  }
-
-  return { attach, detach, setMode, modeOf, isRestricted };
 }

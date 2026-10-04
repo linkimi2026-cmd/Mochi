@@ -163,6 +163,9 @@ jobs:
             scripts/test-jxl-campus-static-root.mjs \
             scripts/test-run-detached.cjs
 
+      - name: 缓存探针白名单与隐私回归
+        run: node --test tools/test-cache-hit-probe.mjs
+
       # 技能/文档层的工具名守卫（零依赖，硬门禁）。
       #
       # 为什么单独需要它：test-package-resources.mjs 的两层守卫

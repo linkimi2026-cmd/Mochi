@@ -1,9 +1,11 @@
 import { spawn, type ChildProcessWithoutNullStreams } from "node:child_process";
 import { EventEmitter } from "node:events";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { join } from "node:path";
 import { app } from "electron";
+import { managedRuntimeNodeModulesPath, packagedModernRuntimeModules } from "./runtime-paths";
+export { managedRuntimeNodeModulesPath } from "./runtime-paths";
 import {
   prepareDshHome,
   resolveMochiServiceDefaults,
@@ -34,6 +36,13 @@ export function resolveDshBin(): string | null {
   if (process.env.MOCHI_DSH_BIN && existsSync(process.env.MOCHI_DSH_BIN)) {
     return process.env.MOCHI_DSH_BIN;
   }
+  if (process.env.MOCHI_RUNTIME_NODE_MODULES) {
+    const explicit = join(process.env.MOCHI_RUNTIME_NODE_MODULES,"@deepseek-ai","dsh","lib","bin.js");
+    if (!existsSync(explicit)) throw new Error("指定的 Mochi 内核目录缺少启动文件。");
+    return explicit;
+  }
+  const modern = packagedModernRuntimeModules(process.resourcesPath);
+  if (modern) return join(modern,"@deepseek-ai","dsh","lib","bin.js");
 
   // `@deepseek-ai/dsh-app-boot` maintains a profile dependency fallback using
   // real filesystem links. In an Electron package, resolving the entrypoint
@@ -64,12 +73,6 @@ export function managedPlaywrightBrowsersPath(packaged: boolean, appPath: string
     : join(appPath, ".mochi-package-resources-v1.nosync", "playwright", "browsers");
 }
 
-export function managedRuntimeNodeModulesPath(packaged: boolean, appPath: string, resourcesPath: string): string {
-  return packaged
-    ? join(resourcesPath, "app.asar.unpacked", "node_modules")
-    : join(appPath, "node_modules");
-}
-
 function resolveNodeBin(): { command: string; runAsNode: boolean } {
   if (process.env.MOCHI_DSH_NODE && existsSync(process.env.MOCHI_DSH_NODE)) {
     return { command: process.env.MOCHI_DSH_NODE, runAsNode: false };
@@ -91,6 +94,8 @@ function buildEnv(
       || key === "PLAYWRIGHT_BROWSERS_PATH"
       || key === "NODE_PATH"
       || key === "MOCHI_RUNTIME_NODE"
+      || key === "MOCHI_BROWSER_MODE"
+      || key === "NODE_OPTIONS"
     ) continue;
     env[key] = value;
   }
@@ -104,7 +109,15 @@ function buildEnv(
     env.MOCHI_SEARXNG_ENDPOINT = serviceDefaults.searxngEndpoint;
   }
   const playwrightBrowsers = managedPlaywrightBrowsersPath(app.isPackaged, app.getAppPath(), process.resourcesPath);
-  if (existsSync(playwrightBrowsers)) env.PLAYWRIGHT_BROWSERS_PATH = playwrightBrowsers;
+  const browserMetadata = join(app.isPackaged ? join(process.resourcesPath, "mochi") : join(app.getAppPath(), ".mochi-package-resources-v1.nosync"), "playwright", "metadata.json");
+  const onDemand = existsSync(browserMetadata) && JSON.parse(readFileSync(browserMetadata, "utf8")).mode === "on-demand";
+  if (onDemand) {
+    const bootstrap = app.isPackaged ? join(process.resourcesPath, "browser-on-demand.cjs") : join(app.getAppPath(), "resources", "browser-on-demand.cjs");
+    if (!existsSync(bootstrap)) throw new Error("Mochi 浏览器按需安装组件缺失");
+    env.PLAYWRIGHT_BROWSERS_PATH = join(app.getPath("userData"), "browser-cache");
+    env.MOCHI_BROWSER_MODE = "on-demand";
+    env.NODE_OPTIONS = `--require ${JSON.stringify(bootstrap)}`;
+  } else if (existsSync(playwrightBrowsers)) env.PLAYWRIGHT_BROWSERS_PATH = playwrightBrowsers;
   else if (app.isPackaged) throw new Error(`Mochi 随包 Playwright 浏览器资源不存在：${playwrightBrowsers}`);
   const runtimeNodeModules = managedRuntimeNodeModulesPath(app.isPackaged, app.getAppPath(), process.resourcesPath);
   if (!existsSync(runtimeNodeModules)) {
@@ -136,7 +149,14 @@ export class DshWebHost extends EventEmitter {
 
     const node = resolveNodeBin();
     const serviceDefaults = resolveMochiServiceDefaults();
-    const dshHome = prepareDshHome(this.role);
+    let dshHome: string;
+    try {
+      dshHome = prepareDshHome(this.role);
+    } catch (cause) {
+      throw Object.assign(new Error("Mochi 运行配置准备失败", { cause }), {
+        code: "WEB_HOST_PROFILE_PREPARATION_FAILED",
+      });
+    }
     const env = buildEnv(node.runAsNode, dshHome, serviceDefaults);
     const port = process.env.MOCHI_DSH_PORT ?? "0";
     // Harness uses Node's internal module loader to resolve profile-local ESM

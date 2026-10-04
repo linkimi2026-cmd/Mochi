@@ -5,6 +5,7 @@
  * on window close without starting DSH or contacting a real provider.
  */
 import assert from "node:assert/strict";
+import { createRequire } from "node:module";
 import { spawn } from "node:child_process";
 import { once } from "node:events";
 import {
@@ -27,8 +28,10 @@ const sourceWindow = join(desktopRoot, "electron", "dsh", "doctor-window.ts");
 const sourceDoctor = join(desktopRoot, "electron", "dsh", "doctor.ts");
 const compiledWindow = join(desktopRoot, "dist-electron", "dsh", "doctor-window.js");
 const compiledDoctor = join(desktopRoot, "dist-electron", "dsh", "doctor.js");
-const electronBin = join(desktopRoot, "node_modules", ".bin", "electron");
+const electronBin = createRequire(import.meta.url)("electron-modern");
 const root = mkdtempSync(join(tmpdir(), "mochi-doctor-window-"));
+const evidenceDir = join(desktopRoot, "../../docs/evidence/harness-upgrade-2026-09-30/doctor-recovery");
+mkdirSync(evidenceDir, { recursive: true });
 const fixturePath = join(root, "fixture.cjs");
 const reportPath = join(root, "saved-report.json");
 const copiedPath = join(root, "copied-report.json");
@@ -133,6 +136,18 @@ async function evaluate(debugPort, expression) {
   });
 }
 
+async function screenshot(debugPort, name) {
+  const target = await doctorTarget(debugPort);
+  const data = await new Promise((resolve, reject) => {
+    const socket = new WebSocket(target.webSocketDebuggerUrl);
+    const timer = setTimeout(() => { socket.close(); reject(new Error("Doctor screenshot timed out")); }, 5_000);
+    socket.addEventListener("open", () => socket.send(JSON.stringify({ id: 1, method: "Page.captureScreenshot", params: { format: "png" } })), { once: true });
+    socket.addEventListener("message", event => { const message = JSON.parse(String(event.data)); if (message.id !== 1) return; clearTimeout(timer); socket.close(); if (message.error) reject(new Error(message.error.message)); else resolve(message.result.data); });
+    socket.addEventListener("error", () => { clearTimeout(timer); reject(new Error("Doctor screenshot connection failed")); }, { once: true });
+  });
+  writeFileSync(join(evidenceDir, name + ".png"), Buffer.from(data, "base64"));
+}
+
 function clickButton(debugPort, id) {
   return evaluate(debugPort, `(() => { const button = document.getElementById(${JSON.stringify(id)}); if (!button || button.disabled) return false; button.click(); return true; })()`);
 }
@@ -158,18 +173,20 @@ let runs = 0;
   try {
     app.setName("Mochi");
     await app.whenReady();
+    writeFileSync(join(root, "runtime.json"), JSON.stringify({ electron: process.versions.electron, node: process.versions.node }));
     const controller = createDoctorWindowController({
       createConfig: () => createDesktopDoctorConfig({
         storagePath: join(root, "user-data"),
         campusOrigin: origin + "/?token=" + querySecret,
         searxngEndpoint: origin + "/search?token=" + querySecret,
-        diagnosticEvents: [{ stage: "web-host", code: "WEB_HOST_EXITED" }],
+        diagnosticEvents: [{ stage: "web-host", code: "WEB_HOST_PROFILE_PREPARATION_FAILED" }],
       }),
       dependencies: {
         run: async (config, signal) => {
           runs += 1;
           writeFileSync(runCountPath, String(runs));
-          if (runs === 1) return await runDoctor(config, signal);
+          if (runs === 1) throw new Error("synthetic initial failure");
+          if (runs === 2) return await runDoctor(config, signal);
           return await new Promise((resolve) => {
             const finish = () => {
               writeFileSync(abortedPath, "aborted");
@@ -189,7 +206,7 @@ let runs = 0;
     installDoctorMenu(controller);
     const menu = Menu.getApplicationMenu();
     if (!menu?.getMenuItemById("mochi-doctor-open")) throw new Error("Doctor menu item was not installed");
-    if (!menu.items.some((item) => item.role?.toLowerCase() === "editmenu")) throw new Error("Doctor menu must preserve the standard edit menu");
+    if (!menu.items.some((item) => item.label === "编辑" && item.submenu?.items.some(command => command.role === "copy"))) throw new Error("Doctor menu must preserve native edit commands");
     writeFileSync(menuPath, "installed");
     controller.open();
   } catch (error) {
@@ -241,14 +258,25 @@ try {
   const output = collectOutput(child);
 
   await waitFor(() => existsSync(menuPath), "native Doctor menu installation");
+  await waitFor(async () => {
+    const state = await evaluate(debugPort, "({ text:document.body.innerText, retry:document.getElementById('doctor-rerun')?.disabled===false, alert:!!document.querySelector('[role=alert]') })");
+    return state?.retry && state.alert && state.text.includes("本次没有生成") ? state : null;
+  }, "failed initial check exposes enabled retry");
+  await screenshot(debugPort, "failed-check-retry");
+  await clickButton(debugPort, "doctor-rerun");
   const initial = await waitFor(async () => {
     const state = await evaluate(debugPort, "({ count: document.querySelectorAll('[data-check-id]').length, text: document.body.innerText, running: document.getElementById('doctor-rerun')?.disabled === true })");
     return state?.count === 11 && state.running === false ? state : null;
   }, "initial Doctor result");
   assert.match(initial.text, /模型密钥有效性/);
   assert.match(initial.text, /未检测/);
-  assert.match(initial.text, /模型密钥仍由 DSH 凭据服务管理/);
-  assert.equal(readFileSync(runCountPath, "utf8"), "1", "Doctor window must run its initial check once");
+  assert.match(initial.text, /未检测.*检查尚未完成/);
+  assert.equal(initial.text.includes("凭据服务"), false);
+  assert.equal(initial.text.includes("受限服务桥接"), false);
+  assert.equal(readFileSync(runCountPath, "utf8"), "2", "Doctor retries exactly once after initial exception");
+  assert.match(initial.text, /原设置仍保留/);
+  assert.match(initial.text, /重新检测只检查环境，不会重启工作界面/);
+  await screenshot(debugPort, "recovery-and-checks");
   assert.equal(await evaluate(debugPort, "document.querySelector('[data-check-id=\"campus-service\"] .status')?.textContent"), "通过", "Doctor must probe the verified GET /api/health route instead of a root SPA response");
 
   assert.equal(await clickButton(debugPort, "doctor-copy"), true, "Doctor page must expose the copy action");
@@ -257,6 +285,8 @@ try {
     const text = await evaluate(debugPort, "document.body.innerText");
     return typeof text === "string" && text.includes("脱敏报告已复制。") ? text : null;
   }, "copied report render");
+  assert.equal(await evaluate(debugPort, "document.activeElement?.id"), "doctor-copy", "copy feedback preserves keyboard focus");
+  await screenshot(debugPort, "copied-report-focus");
   const copied = readFileSync(copiedPath, "utf8");
   assert.match(copied, /"format": "mochi-doctor\/v1"/);
   assert.equal(JSON.parse(copied).checks.length, 11, "copied report must retain all eleven checks");
@@ -267,6 +297,7 @@ try {
     const text = await evaluate(debugPort, "document.body.innerText");
     return typeof text === "string" && text.includes("脱敏报告已保存。") ? text : null;
   }, "saved report render");
+  assert.equal(await evaluate(debugPort, "document.activeElement?.id"), "doctor-save", "save feedback preserves keyboard focus");
   const saved = readFileSync(reportPath, "utf8");
   assert.equal(saved, copied, "copy and save must use the same redacted report representation");
   for (const forbidden of [syntheticKey, querySecret, root, origin]) {
@@ -274,7 +305,7 @@ try {
   }
 
   assert.equal(await clickButton(debugPort, "doctor-rerun"), true, "Doctor page must expose the rerun action");
-  await waitFor(() => existsSync(runCountPath) && readFileSync(runCountPath, "utf8") === "2", "Doctor rerun start");
+  await waitFor(() => existsSync(runCountPath) && readFileSync(runCountPath, "utf8") === "3", "Doctor rerun start");
   await waitFor(async () => {
     const state = await evaluate(debugPort, "({ text: document.body.innerText, running: document.getElementById('doctor-rerun')?.disabled === true })");
     return state?.running === true && state.text.includes("正在进行环境检测") ? state : null;
@@ -301,6 +332,7 @@ try {
     }, { once: true });
   });
   await waitFor(() => existsSync(abortedPath), "Doctor close cancellation");
+  writeFileSync(join(evidenceDir, "checkpoints.json"), JSON.stringify({ passed: true, runtime: JSON.parse(readFileSync(join(root, "runtime.json"), "utf8")), isolatedHome: true, localServiceFixture: true, initialExceptionRetry: true, preservesSettingsGuidance: true, rerunDoesNotClaimRestart: true, copiedKeyboardFocus: "doctor-copy", savedKeyboardFocus: "doctor-save", exportedChecks: 11, reportRedacted: true, closeAbortsActiveRun: true }, null, 2) + "\n");
   console.log("[test-doctor-window] PASS: native menu/window rerun, copy/save redaction, and close cancellation are stable.");
   await terminate(child);
   child = null;

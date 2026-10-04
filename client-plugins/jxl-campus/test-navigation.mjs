@@ -178,10 +178,12 @@ class FakeObserver {
 }
 
 const windowListeners = new Map();
+const publicAuthEvents = [];
 let nextFrame = 0;
 const frames = new Map();
 const window = {
 	__ModuleLoader__: { load: (entry) => { window.entry = entry; } },
+	dispatchEvent: event => { if (event.type === "campus:auth-state") publicAuthEvents.push(event.detail); },
 	addEventListener: (type, handler) => {
 		const entries = windowListeners.get(type) ?? [];
 		entries.push(handler);
@@ -213,10 +215,18 @@ let snapshotOverride;
 const stateUpdates = [];
 const react = {
 	createElement: (type, props, ...children) => ({ type, props: { ...props, children } }),
-	useSyncExternalStore: (_subscribe, getSnapshot) => snapshotOverride ?? getSnapshot(),
+	useSyncExternalStore: (_subscribe, getSnapshot) => getSnapshot.name === "authSnapshot" ? getSnapshot() : snapshotOverride ?? getSnapshot(),
 	useState: (initial) => [initial, (next) => { stateUpdates.push(next); }],
 };
+let identityResponse = { user: { id: 1, name: "测试班主任", role: "HEAD_TEACHER" } };
+let identityStatus = 200;
+let identityPoll;
 const context = {
+	CustomEvent: class { constructor(type, options) { this.type = type; this.detail = options.detail; } },
+	setInterval: fn => { identityPoll = fn; return 1; },
+	clearInterval: () => {},
+	AbortSignal,
+	fetch: async () => ({ ok: identityStatus === 200, status: identityStatus, json: async () => identityResponse }),
 	window,
 	document,
 	console: { error: () => {} },
@@ -260,6 +270,9 @@ plugin.apply({
 	},
 });
 
+await new Promise(resolve => setImmediate(resolve));
+assert.equal(window.mochiCampusIdentitySnapshot.status, "authenticated");
+assert.deepEqual(Object.keys(window.mochiCampusIdentitySnapshot.user).sort(), ["id", "name", "role"]);
 assert.equal(windowListeners.get("mochi:close-campus")?.length ?? 0, 1, "close event is fiber-owned");
 assert.equal(document.listeners.get("keydown")?.length ?? 0, 1, "Escape listener is fiber-owned");
 assert.deepEqual(Array.from(plugin.inject), ["slots", "locale"], "the locale service is declared as a runtime dependency");
@@ -278,7 +291,7 @@ hostVNode.props.ref(host);
 
 const campusWorkRegistration = registrations.find(({ options }) => options.id === "jxl-campus-work");
 assert.ok(campusWorkRegistration, "the five campus entries should be a single official footer-slot group");
-assert.equal(registrations.filter(({ options }) => options.name === "sidebar.footer.action").length, 1, "the group does not create a sixth or duplicate footer action");
+assert.equal(registrations.filter(({ options }) => options.name === "sidebar.footer.action").length, 1, "account login belongs in Settings, not another sidebar entry");
 
 function flattenChildren(vnode) {
 	return (vnode?.props?.children ?? []).flat(Infinity).filter(Boolean);
@@ -304,10 +317,10 @@ const initialCampus = renderCampusEntries();
 assert.equal(initialCampus.entryComponents.length, 5, "the campus group contains exactly the five approved entries");
 const groupHeader = findVNodes(initialCampus.group, (vnode) => vnode.type === "button" && vnode.props.className === "jxl-campus-group__toggle")[0];
 assert.ok(groupHeader, "wide sidebar exposes an accessible campus-work disclosure");
-assert.equal(groupHeader.props["aria-expanded"], true);
+assert.equal(groupHeader.props["aria-expanded"], false);
 assert.equal(groupHeader.props["aria-controls"], "jxl-campus-work-links");
 groupHeader.props.onClick();
-assert.equal(stateUpdates.at(-1), false, "the disclosure requests a true collapsed state");
+assert.equal(stateUpdates.at(-1), true, "the collapsed disclosure opens on request");
 const initialLinks = findVNodes(initialCampus.group, (vnode) => vnode.props?.id === "jxl-campus-work-links")[0];
 assert.equal(initialLinks.props.role, "group");
 assert.equal(initialLinks.props["aria-label"], "校园工作入口");
@@ -376,7 +389,31 @@ assert.equal(host.children.length, 0, "overlay slot teardown closes the mounted 
 assert.equal(conversationRoot.listenerCount("click"), 0, "overlay slot teardown removes the native tab listener");
 assert.ok(observers.every((observer) => observer.disconnected), "overlay slot teardown disconnects theme and geometry observers");
 
+identityResponse = { user: { id: 2, role: "SUBJECT_TEACHER" } };
+await windowListeners.get("focus")[0]();
+assert.equal(campusWorkRegistration.component({}), null, "non-head teachers do not see campus work");
+identityResponse = { code: "UPSTREAM_UNAVAILABLE" }; identityStatus = 502;
+await windowListeners.get("focus")[0]();
+assert.equal(window.mochiCampusIdentitySnapshot.status, "unknown", "network failure does not invent logout or current verification");
+assert.equal(window.mochiCampusIdentitySnapshot.user, null);
+assert.equal(window.mochiCampusIdentitySnapshot.lastVerified.id, 2, "historical verification is explicitly separate from current status");
+identityResponse = { code: "UNEXPECTED" }; identityStatus = 401;
+await windowListeners.get("focus")[0]();
+assert.equal(window.mochiCampusIdentitySnapshot.status, "unknown", "only an explicit unauthenticated response clears verification");
+identityResponse = { code: "UNAUTHENTICATED" }; identityStatus = 401;
+await windowListeners.get("focus")[0]();
+assert.equal(window.mochiCampusIdentitySnapshot.status, "unauthenticated");
+assert.equal(window.mochiCampusIdentitySnapshot.lastVerified, null);
+assert.equal(campusWorkRegistration.component({}), null, "logged out users do not see campus work");
+const accountEntry = registrations.find(({ options }) => options.id === "campus-account");
+assert.equal(accountEntry.options.name, "settings.general.item");
+assert.ok(accountEntry.options.order < 0, "user account precedes appearance and other general settings");
+const account = accountEntry.component();
+assert.equal(account.props["aria-label"], "用户账号");
+assert.equal(findVNodes(account, node => node.type === "button")[0].props.children[0], "登录校园账号", "settings keeps login available while business links are hidden");
 for (const dispose of effectDisposers) dispose?.();
+assert.equal(window.mochiCampusIdentitySnapshot, undefined, "public identity is removed on disposal");
+assert.equal(publicAuthEvents.at(-1).status, "unknown");
 assert.equal(windowListeners.get("mochi:close-campus")?.length ?? 0, 0, "fiber teardown removes the close event listener");
 assert.equal(document.listeners.get("keydown")?.length ?? 0, 0, "fiber teardown removes the Escape listener");
 assert.equal(localeDisposals, 1, "fiber teardown removes the workspace locale contribution");

@@ -15,7 +15,8 @@ const pluginDirectory = dirname(scriptDirectory);
 const workspaceDirectory = dirname(dirname(pluginDirectory));
 const templatePath = join(pluginDirectory, "src", "client.template.js");
 const outputPath = join(pluginDirectory, "client.js");
-const piDirectory = join(workspaceDirectory, "apps", "desktop", "node_modules", "@earendil-works", "pi-ai");
+const runtimeModules = process.env.MOCHI_RUNTIME_NODE_MODULES_ROOT ?? join(workspaceDirectory, "apps", "desktop", "runtime-modern", "node_modules");
+const piDirectory = join(runtimeModules, "@earendil-works", "pi-ai");
 const PLACEHOLDER = "/* __MOCHI_MODEL_PRESET_CATALOG__ */";
 
 /** The only hand-curated data: human-facing labels and their official docs. */
@@ -154,7 +155,7 @@ const client = `window.__ModuleLoader__.load({\n`
   + `\t\tvar module = { exports: {} };\n`
   + `\t\tvar exports = module.exports;\n`
   + `\t\tObject.defineProperty(exports, Symbol.toStringTag, { value: \"Module\" });\n`
-  + browserSource.split("\n").map((line) => `\t\t${line}`).join("\n")
+  + browserSource.split("\n").map((line) => line.trim().length === 0 ? "" : `\t\t${line}`).join("\n")
   + `\n\t\treturn module.exports;\n`
   + `\t}\n`
   + `});\n`;

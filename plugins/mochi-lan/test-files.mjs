@@ -148,7 +148,9 @@ const teacher = new MochiLanService({
   discoveryEnabled: false,
   identity: { role: 'teacher', endpointId: 'teacher-files', schoolId: 'file-school', displayName: '王老师' },
 });
+const opened = [];
 const classroom = new MochiLanService({
+  openPresentationImpl: async (path) => { opened.push(path); return { status: 'LAUNCH_REQUESTED' }; },
   dataRoot: classroomRoot,
   bindHost: '127.0.0.1',
   port: 0,
@@ -186,6 +188,28 @@ try {
   const incomingMessage = classroom.snapshot().inbox.find((row) => row.messageId === 'teacher-lesson-notice');
   assert.equal(incomingMessage.attachment.fileId, 'teacher-lesson-pptx');
   assert.equal(classroom.snapshot().files.incoming.find((row) => row.fileId === 'teacher-lesson-pptx').status, 'COMPLETED');
+
+  assert.equal(opened.length, 0, 'sending alone never opens a file');
+  const openMessage = { targetEndpointId: 'classroom-files', body: '请在教室用 WPS 打开。', messageId: 'open-wps-1', attachment: { fileId: 'teacher-lesson-pptx', openWith: 'wps' } };
+  const launched = await teacher.sendMessage({ ...openMessage, authorization: authorization(teacher, 'send-message', 'dispatch-approved') });
+  assert.equal(launched.ack.fileOpen.status, 'LAUNCH_REQUESTED');
+  assert.equal(opened.length, 1);
+  await teacher.sendMessage({ ...openMessage, authorization: authorization(teacher, 'send-message', 'dispatch-approved') });
+  assert.equal(opened.length, 1, 'duplicate signed delivery never reopens the deck');
+  await classroom.openReceivedPresentation({ messageId: 'open-wps-1', authorization: authorization(classroom, 'open-presentation', 'connection-approved') });
+  assert.equal(opened.length, 2, 'a new locally approved request can deliberately reopen the same deck');
+  assert.equal(classroom.receivedPresentations().length, 2);
+  await assert.rejects(() => classroom.openReceivedPresentation({ messageId: 'teacher-lesson-notice' }), (error) => error.code === 'LOCAL_APPROVAL_REQUIRED');
+  await writeFile(receivedPptx, Buffer.from('tampered'));
+  const damaged = await classroom.openReceivedPresentation({ messageId: 'teacher-lesson-notice', authorization: authorization(classroom, 'open-presentation', 'connection-approved') });
+  assert.equal(damaged.status, 'FAILED');
+  assert.equal(opened.length, 2, 'changed received bytes never launch WPS');
+  await writeFile(receivedPptx, sourcePptx);
+  classroom._openPresentation = async () => { throw new Error('教室尚未安装 WPS'); };
+  const missingWps = await teacher.sendMessage({ ...openMessage, messageId: 'open-wps-missing', authorization: authorization(teacher, 'send-message', 'dispatch-approved') });
+  assert.equal(missingWps.delivery, 'ACKNOWLEDGED');
+  assert.equal(missingWps.ack.fileOpen.status, 'FAILED', 'delivery and application launch remain separate facts');
+  classroom._openPresentation = async (path) => { opened.push(path); return { status: 'LAUNCH_REQUESTED' }; };
 
   console.log('② 文件邀请断开后保留同一 fileId 的已落盘块；明确恢复时只续传缺块，不能伪造新文件');
   const partialBytes = Buffer.concat([Buffer.from('%PDF-1.7\n'), Buffer.alloc(LAN_FILE_LIMITS.chunkBytes + 137, 0x41)]);

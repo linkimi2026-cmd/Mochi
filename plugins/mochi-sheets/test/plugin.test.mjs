@@ -18,7 +18,7 @@ test('插件注册的工具名合法、恰好四个、参数契约可用、rende
   const sheets = mount(t, { allowedRoots: [root] });
 
   assert.equal(name, 'mochi-sheets');
-  assert.deepEqual(inject, ['tools']);
+  assert.deepEqual(inject, ['tools', 'sandboxPolicy']);
   assert.deepEqual(sheets.tools.map((tool) => tool.name), REQUIRED_TOOL_NAMES);
   for (const tool of sheets.tools) {
     assert.match(tool.name, SAFE_TOOL_NAME, `工具名 ${tool.name} 会被模型网关拒收`);

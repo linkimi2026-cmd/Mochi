@@ -63,6 +63,8 @@ const lan = new MochiLanService({
   ...(testMulticastPort === undefined ? {} : { testMulticastPort }),
   ...(testMulticastInterface === undefined ? {} : { testMulticastInterface }),
   dropDeliveryAckOnce: process.env.MOCHI_LAN_TEST_DROP_ACK === '1',
+  dropPairAckOnce: process.env.MOCHI_LAN_TEST_DROP_PAIR_ACK === '1',
+  dropPairAcceptAckOnce: process.env.MOCHI_LAN_TEST_DROP_PAIR_ACCEPT_ACK === '1',
   // [Mochi 2026-09-09] WO-6 生产环境由宿主启动配置锁定角色；测试子进程同构注入。
   lockedRole: role,
   ...(autoIdentity ? {} : { identity: { endpointId, role, schoolId, ...(classId === undefined ? {} : { classId }), displayName } }),
@@ -103,6 +105,29 @@ async function rawMessage({ target, classOverride, forged = false, messageId }) 
   return { status: response.status, body };
 }
 
+async function rawRequest({ target, request, messageId }) {
+  const identity = await stateIdentity();
+  const payload = {
+    v: LAN_PROTOCOL_VERSION,
+    type: 'message',
+    messageId: requireText(messageId, 'messageId'),
+    contentType: 'REQUEST',
+    createdAt: new Date().toISOString(),
+    sender: projection(identity),
+    recipient: { endpointId: target.endpointId, schoolId: target.schoolId, ...(target.classId === undefined ? {} : { classId: target.classId }) },
+    body: 'test-only appointment request',
+    request,
+  };
+  const response = await fetch(`http://${target.host}:${target.port}${LAN_HTTP_PATHS.message}`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(signed(identity, identity.privateKey, payload)),
+  });
+  let body = null;
+  try { body = await response.json(); } catch { /* test reports a protocol error below */ }
+  return { status: response.status, body };
+}
+
 async function sendBeacon({ address, expiresAt } = {}) {
   const target = address && typeof address === 'object' ? address : {};
   const host = requireText(target.host, 'address.host');
@@ -131,22 +156,26 @@ async function execute(method, args = {}) {
   switch (method) {
     case 'state': return lan.snapshot();
     case 'discovered': return lan.listDiscovered();
+    case 'find-by-code': return lan.findByPairingCode(args.code);
     case 'events': return lan.eventsAfter(args.cursor);
     case 'beacon': return sendBeacon(args);
     case 'candidate': return lan.pairingCandidate();
     case 'probe': return lan.probeCandidate(args);
+    case 'recover': return lan.recoverPairedAddress({ ...args, authorization: authorization('recover-peer-address') });
     // [Mochi 2026-09-09] WO-6 一键信任：教师端对发现表中设备一次调用完成信任+发起相识。
     case 'trust': return lan.trustDiscovered({ ...args, authorization: authorization('trust-discovered') });
     case 'pair-request': return lan.requestPairing({ ...args, authorization: authorization('request-pairing') });
     case 'pair-accept': return lan.acceptPairing({ ...args, authorization: authorization('accept-pairing') });
     case 'pair-reject': return lan.rejectPairing({ ...args, authorization: authorization('reject-pairing') });
     case 'block': return lan.blockPeer({ ...args, authorization: authorization('block-peer') });
+    case 'unblock': return lan.unblockPeer({ ...args, authorization: authorization('unblock-peer') });
     case 'unpair': return lan.unpairPeer({ ...args, authorization: authorization('unpair-peer') });
     case 'send': return lan.sendMessage({ ...args, authorization: authorization('send-message', 'dispatch-approved') });
     // [Mochi 2026-09-18] 反向通道：教室端的学生预约。与 send 的差别不只是方向——
     // 学生预约是学生本人在设备上的直接动作，所以令牌来源是 connection-direct，
     // 而 send 走的是模型审批链 dispatch-approved。
     case 'request': return lan.sendRequest({ ...args, authorization: authorization('send-request', 'connection-direct') });
+    case 'response': return lan.sendResponse({ ...args, authorization: authorization('send-response', 'connection-direct') });
     // [Mochi 2026-09-18] 教师下发处置名册。令牌来源刻意是 dispatch-approved 而不是
     // connection-direct：名册是模型调 skill 生成后发起的对外动作，必须过审批闸，
     // 所以生产环境里根本没有一条 HTTP 路由能铸出这个令牌。
@@ -154,6 +183,7 @@ async function execute(method, args = {}) {
     case 'retry': return lan.retryMessage({ ...args, authorization: authorization('retry-message', 'dispatch-approved') });
     case 'seen': return lan.markSeen({ ...args, authorization: authorization('mark-seen') });
     case 'wrong-class': return rawMessage({ ...args, classOverride: args.classId });
+    case 'raw-request': return rawRequest(args);
     case 'forged-endpoint': return rawMessage({ ...args, forged: true });
     case 'stop': await lan.stop(); return { stopped: true };
     default: throw new Error(`unknown method ${method}`);

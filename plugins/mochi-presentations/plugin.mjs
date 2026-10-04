@@ -30,6 +30,49 @@ const MAX_SLIDE_TITLE = 100;
 const MAX_BULLET = 140;
 const MAX_BULLETS = 6;
 const MAX_BODY_SUM = 520;
+const SOURCE_SCHEMA = {
+  type: 'object',
+  description: '本页实际资料的声明，尚未经工具独立核验。没有真实资料就省略，课件会标“未核验 · 未提供来源”；不得用课件标题、聊天 ID 或猜测页码充当来源。',
+  properties: {
+    label: { type: 'string', required: true, description: '真实教材、文章、资料或教师提供材料的名称（≤160字）。' },
+    reference: { type: 'string', description: '可追溯定位，如教材版本与页码、文献编号或 URL（≤500字）；不确定时省略。' },
+  },
+  additionalProperties: false,
+};
+const TEACHING_PLAN_SCHEMA = {
+  type: 'object',
+  description: '课堂课件可选的声明性教学计划。objectives 提供简短学习目标；slideMappings 按 create 返回的稳定页号 slide-1、slide-2 等映射教学页。封面/章节页可不映射；每个目标需有关联页面和理解检查，计划至少声明一项学生行动，已映射页面需写角色。不要用于一般演示文稿。完整结构不代表教学设计或学科事实正确。',
+  properties: {
+    objectives: {
+      type: 'array',
+      description: '0-8 个简短学习目标；不确定时保持精简。每项 {id, statement}，id 在本计划内唯一。',
+      items: {
+        type: 'object',
+        properties: {
+          id: { type: 'string', required: true, description: '计划内唯一标识，最多40字。' },
+          statement: { type: 'string', description: '简短、可观察的学习目标，最多180字。' },
+        },
+        additionalProperties: false,
+      },
+    },
+    slideMappings: {
+      type: 'array',
+      description: '按 slideId 为需要覆盖的教学页面作声明；封面或章节页可不映射。角色只描述该页用途，不规定固定顺序。理解检查按目标在计划内汇总，学生行动至少声明一项即可；允许省略字段以生成明确的不完整提示。',
+      items: {
+        type: 'object',
+        properties: {
+          slideId: { type: 'string', required: true, description: '本工具生成页号，如 slide-1；须实际存在。' },
+          objectiveIds: { type: 'array', items: { type: 'string' }, description: '引用 teachingPlan.objectives 中的 id。' },
+          role: { type: 'string', description: '本页作用，如引入、解释、练习、检查或迁移，不要求特定顺序。' },
+          studentAction: { type: 'string', description: '学生在本页要做什么。' },
+          understandingCheck: { type: 'string', description: '用什么可见回答、操作或作品观察理解。' },
+        },
+        additionalProperties: false,
+      },
+    },
+  },
+  additionalProperties: false,
+};
 
 // 把库内的结构化错误翻译成模型可执行的中文指引，其余错误原样上抛。
 function rethrow(error) {
@@ -43,6 +86,7 @@ function rethrow(error) {
     PPTX_NOT_ZIP: '这个文件不是 ZIP 容器，只是扩展名叫 .pptx：它根本不是 PowerPoint 文件。请如实告诉老师，不要描述其中的“幻灯片”。',
     PPTX_NOT_PRESENTATION: '这不是 PowerPoint 演示文稿（可能是改了扩展名的 Word/Excel 文件）。请如实告诉老师文件类型不符，不要把它当作课件来读或改。',
     PPTX_DAMAGED: '这个 .pptx 的 OOXML 部件损坏或缺失，读不出完整结构。请如实告知老师文件可能已损坏，建议在 PowerPoint 中重新另存一份。',
+    PRESENTATION_QUALITY_BLOCKED: '生成的 PPTX 未通过客观结构或字号底线检查，文件不会发布；请按错误细节修正后重新生成。',
     PPTX_TOO_LARGE: '文件或某个部件超过只读检查的大小上限：请如实告诉老师“文件超出检查上限、没有完整读取”，不要假装读完了。',
     PPTX_TOO_MANY_SLIDES: '页数超过只读检查上限：请如实告诉老师“只检查了上限内的页数/未逐页检查”，不要编造未读取的页面内容。',
     PPTX_UNREADABLE: '文件存在但读取失败（权限或磁盘错误）：请如实告知老师，并建议检查文件权限。',
@@ -59,6 +103,12 @@ function rethrow(error) {
   };
   const hint = hints[error.code] ?? '请修正参数后重试。';
   throw new Error(`【mochi-presentations】${error.code}：${error.message}。${hint}`);
+}
+
+function previewNote(bundle) {
+  return bundle.previewPdfPath
+    ? 'presentation-preview.pdf 由最终 PPTX 经 LibreOffice 转换，可打开回看；presentation.pdf 是单独排版的讲义。目标机 PowerPoint/WPS 效果仍需实机确认。'
+    : `PPTX 原样预览未生成（${bundle.manifest.preview.reason === 'SOFFICE_UNAVAILABLE' ? '本机未找到 LibreOffice' : 'LibreOffice 转换失败'}）；presentation.pdf 仅为单独排版的讲义，不能代替 PPTX 预览。`;
 }
 
 function absoluteOutput(args) {
@@ -90,27 +140,30 @@ function normalizeBullets(raw, pageLabel, allowEmpty = false) {
   return bullets;
 }
 
-function visualSpec(raw, pageLabel, { tableKey = 'table', chartKey = 'chart', processKey = 'process' } = {}) {
+function visualSpec(raw, pageLabel, { tableKey = 'table', chartKey = 'chart', processKey = 'process', comparisonKey = 'comparison' } = {}) {
   const table = raw?.[tableKey];
   const chart = raw?.[chartKey];
   const process = raw?.[processKey];
-  if (process !== undefined && (table !== undefined || chart !== undefined)) throw new Error(`${pageLabel}的process不能与table/chart同时填写。`);
-  if (table !== undefined && chart !== undefined) throw new Error(`${pageLabel}不能同时放 table 和 chart：一页只保留一种主视觉，避免投影区域拥挤。`);
+  const comparison = raw?.[comparisonKey];
+  const visuals = [table, chart, process, comparison].filter((value) => value !== undefined);
+  if (visuals.length > 1) throw new Error(`${pageLabel}的table/chart/process/comparison只能选择一种主视觉。`);
   if (table !== undefined && (!table || typeof table !== 'object' || Array.isArray(table))) throw new Error(`${pageLabel}的 table 必须是 {headers, rows} 对象。`);
   if (chart !== undefined && (!chart || typeof chart !== 'object' || Array.isArray(chart))) throw new Error(`${pageLabel}的 chart 必须是 {type, labels, series} 对象。`);
   return {
     ...(table === undefined ? {} : { table }),
     ...(chart === undefined ? {} : { chart }),
     ...(process === undefined ? {} : { process }),
+    ...(comparison === undefined ? {} : { comparison }),
   };
 }
 
 function selectLayout(requested, visual, fallback = 'title-body') {
-  const layout = requested ?? (visual.process ? 'title-process' : visual.chart ? 'title-chart' : visual.table ? 'title-table' : fallback);
+  const layout = requested ?? (visual.process ? 'title-process' : visual.comparison ? 'title-compare' : visual.chart ? 'title-chart' : visual.table ? 'title-table' : fallback);
   if (!SUPPORTED_LAYOUTS.includes(layout)) throw new Error(`未知版式：${layout}`);
   if (visual.process !== undefined && layout !== 'title-process') throw new Error('process 必须使用 title-process 版式。');
   if (visual.table !== undefined && layout !== 'title-table') throw new Error('table 必须使用 title-table 版式。');
   if (visual.chart !== undefined && layout !== 'title-chart') throw new Error('chart 必须使用 title-chart 版式。');
+  if (visual.comparison !== undefined && layout !== 'title-compare') throw new Error('comparison 必须使用 title-compare 版式。');
   return layout;
 }
 
@@ -152,19 +205,31 @@ export function apply(ctx, options = {}) {
     return { guard: createInspectPathGuard(entries), source, rejected };
   }
 
-  register('mochi_ppt_create', '生成真实可编辑 .pptx，返回产物路径和 sourcePath。先通过 skill 加载 classroom-deck，按目标准备简短逐页大纲。支持 theme 预设和 layout 版式选择（封面、章节、重点陈述、关键数字、结束页及文字/表格/图表及title-process流程/循环图）；不支持图片、自由坐标、字体或动画参数，不得声称已实现这些设计。输入超量先精简或拆页，不凑最低字数。生成后主动用 ppt_inspect 核对内容，再调用 mochi_ppt_render：overview 看全册、page 看密集页/图表页/疑似缺陷页。实际查看图像附件后才能声称视觉已检；不可用时说明视觉未核验。首次通过不必修改；有证据的问题用 mochi_ppt_revise 定页修改，使用最新 sourcePath 和最新 PPTX 复验，每个问题最多两轮，剩余硬缺陷标为待修稿。不要重做老师已确认的其他页。', {
+  register('mochi_ppt_create', '生成真实可编辑 .pptx，返回产物路径、sourcePath、客观结构质量状态及可选的教学覆盖声明报告；客观页数/字号硬错误会阻止发布。结构检查通过不代表已验收；视觉复核仍须实际查看图像附件，预览可用也不证明美学或学科正确。若本机有 LibreOffice，同时返回由最终 PPTX 转换的 previewPdf 路径，教师可打开回看。pdf 字段是独立排版的讲义，绝不充当原样预览。先通过 skill 加载 classroom-deck，按目标准备简短逐页大纲。课堂教学可附 teachingPlan，列目标、逐页作用、学生行动和理解检查；一般演示可省略。该报告只核字段完整及目标/页号引用，不判断教学法或学科正确性。映射页的目标、页面作用、学生行动和理解检查会写入 PPTX 演讲者备注；备注中仍标明教学声明未经核验。逐页 source 只填真实可追溯资料；省略则明确标“未核验 · 未提供来源”，填写后也标“来源声明，未核验”。支持主题、封面/章节/重点/数字/结束页、文字/表格/图表、title-process流程图和title-compare两栏逐项对照；对照内容使用comparison左右标题与2-4组配对短句。所有文字/表格/图形均为可编辑对象；不支持图片、自由坐标、字体或动画参数。输入超量先精简或拆页，不凑最低字数。生成后主动用 ppt_inspect 核对内容，再调用 mochi_ppt_render：overview 看全册、page 看密集页/图表页/疑似缺陷页。首次通过不必修改；有证据的问题用 mochi_ppt_revise 定页修改，使用最新 sourcePath 和最新 PPTX 复验，每个问题最多两轮，剩余硬缺陷标为待修稿。不要重做老师已确认的其他页。', {
     title: { type: 'string', required: true, description: '课件标题（≤100 字）。' },
     theme: { type: 'string', enum: THEME_NAMES, description: '全册配色预设。文史 ink/archive，自然 field，理科 lab，信息 swiss，深色 midnight，艺术 stage，活动 festive，默认 neutral；按内容选，不必每次更换。' },
+    teachingPlan: TEACHING_PLAN_SCHEMA,
     slides: {
       type: 'array',
       required: true,
       items: {
         type: 'object',
         properties: {
-          layout: { type: 'string', enum: SUPPORTED_LAYOUTS, description: '可选：cover封面、section章节、statement重点陈述、kpi已核实数字、closing总结；内容页title-body/title-table/title-chart；流程/循环图title-process（必须填process，说明≤1条40字，可为空）。省略则按process/table/chart推断。节奏页只写短副题，允许bullets=[]，不凑要点。' },
+          layout: { type: 'string', enum: SUPPORTED_LAYOUTS, description: '可选：cover封面、section章节、statement重点陈述、kpi已核实数字、closing总结；内容页title-body/title-table/title-chart；流程图title-process；左右逐项对照title-compare（必须填comparison，可省略要点）。省略则按process/comparison/table/chart推断。节奏页只写短副题，允许bullets=[]，不凑要点。' },
           process: PROCESS_SCHEMA,
+          comparison: {
+            type: 'object',
+            description: '可选的两栏对照数据：{leftTitle, rightTitle, rows:[{left,right}, ...]}；2-4组短句按行一一对应，每格投影最多2行。仅在内容确实成对时使用，如两个概念/方案或活动线索与记录方式、行动设计与完成标准；普通任务步骤或独立要点保留title-body。与table/chart/process互斥，使用title-compare；所有文字都是可编辑对象。',
+            properties: {
+              leftTitle: { type: 'string', required: true, description: '左栏标题，≤40字且投影宽度受限。' },
+              rightTitle: { type: 'string', required: true, description: '右栏标题，≤40字且投影宽度受限。' },
+              rows: { type: 'array', required: true, description: '2-4组对应短句，每格≤100字且最多2行。', items: { type: 'object', properties: { left: { type: 'string', required: true, description: '左侧配对短句；投影最多2行。' }, right: { type: 'string', required: true, description: '右侧配对短句；投影最多2行。' } }, additionalProperties: false } },
+            },
+            additionalProperties: false,
+          },
           heading: { type: 'string', required: true, description: '页标题（≤100 字；超过两行投影预算会被拒绝）。' },
           bullets: { type: 'array', required: true, items: { type: 'string' }, description: '字段名是bullets。本页要点：内容页1-6条，每条≤140字；节奏页可为空，排版后正文总行数cover/statement/closing≤3、section≤2、kpi≤4，长句换行也计入。' },
+          source: SOURCE_SCHEMA,
           table: {
             type: 'object',
             description: '可选。PowerPoint 原生可编辑表格：{headers: [2-5 个短列名], rows: [[...], ...]}；与 chart 二选一。',
@@ -188,7 +253,7 @@ export function apply(ctx, options = {}) {
         },
         additionalProperties: false,
       },
-      description: '每页一项：{heading, bullets, layout?, table? | chart? | process?}。表格与图表均写入真 PPTX 的原生 Office 对象。',
+      description: '每页一项：{heading, bullets, source?, layout?, table? | chart? | process? | comparison?}。source 仅填真实资料声明，省略则明确标未核验。表格、图表和两栏对照均为真 PPTX 可编辑对象。',
     },
     outputDirectory: { type: 'string', required: true, description: '全新的输出目录（绝对路径，必须不存在）。' },
   }, async (args) => {
@@ -201,11 +266,13 @@ export function apply(ctx, options = {}) {
     const deckId = `chat-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
     const presentation = {
       schema: 'mochi-lesson-presentation-v1',
-      sourceKind: 'demonstration',
+      // sourceKind describes how the deck was authored, not whether cited facts were checked.
+      sourceKind: 'model-authored-classroom-draft',
       deckId,
       version: 1,
       title,
       ...(args.theme === undefined ? {} : { theme: args.theme }),
+      ...(args.teachingPlan === undefined ? {} : { teachingPlan: args.teachingPlan }),
       slides: args.slides.map((slide, index) => {
         const pageLabel = `第 ${index + 1} 页`;
         const heading = String(slide?.heading || '').trim();
@@ -213,7 +280,7 @@ export function apply(ctx, options = {}) {
         if (heading.length > MAX_SLIDE_TITLE) throw new Error(`${pageLabel}的 heading 超过 ${MAX_SLIDE_TITLE} 字，请精简。`);
         const visual = visualSpec(slide, pageLabel);
         const layout = selectLayout(slide?.layout, visual);
-        const bullets = normalizeBullets(slide?.bullets, pageLabel, layout === 'title-process' || !layout.startsWith('title-'));
+        const bullets = normalizeBullets(slide?.bullets, pageLabel, layout === 'title-process' || layout === 'title-compare' || !layout.startsWith('title-'));
         return {
           id: `slide-${index + 1}`,
           version: 1,
@@ -221,37 +288,56 @@ export function apply(ctx, options = {}) {
           title: heading,
           body: bullets,
           ...visual,
-          source: {
-            label: `${title} ${pageLabel}`.slice(0, 160),
-            reference: `chat:mochi_ppt_create:${deckId}:slide-${index + 1}`.slice(0, 500),
-          },
+          source: slide?.source ?? null,
         };
       }),
     };
     let bundle;
-    try { bundle = await generatePresentationBundle({ presentation, outputDirectory }); } catch (error) { rethrow(error); }
+    try { bundle = await generatePresentationBundle({ presentation, outputDirectory, converter: options.converter }); } catch (error) { rethrow(error); }
     return {
       tool: 'mochi_ppt_create',
       完成: true,
       页数: presentation.slides.length,
-      产物: { pptx: bundle.pptxPath, pdf: bundle.pdfPath, manifest: bundle.manifestPath },
+      产物: { pptx: bundle.pptxPath, previewPdf: bundle.previewPdfPath, pdf: bundle.pdfPath, manifest: bundle.manifestPath },
       sourcePath: bundle.sourcePath,
+      预览状态: bundle.manifest.preview.status,
+      预览说明: previewNote(bundle),
+      质量状态: bundle.manifest.quality.status,
+      结构检查: bundle.manifest.quality.structuralStatus,
+      字号检查口径: bundle.manifest.quality.fontCheckBasis,
+      质量提示: bundle.manifest.quality.hints,
+      教学覆盖: bundle.manifest.quality.teachingCoverage,
+      视觉复核: bundle.manifest.quality.visualReview.note,
+      来源说明: '逐页资料只记录声明，未经独立核验；未提供的页面已明确标注“未核验 · 未提供来源”。',
       提示: `已生成可编辑 .pptx（真 PowerPoint 文件）。老师之后要改第 X 页时，用 mochi_ppt_revise 并带上本次返回的 sourcePath，不要从头重新生成。旧版本保留在 ${bundle.outputDirectory}。`,
     };
   });
 
-  register('mochi_ppt_revise', '老师要改已生成课件的某一页（说“第 X 页改成…”）时用本工具：只重写指定页，其余页的 slide XML 与旧版逐字节一致（生成后用 jszip 重开核验），并写入全新目录——永不覆盖老师已确认的旧版本。previousSourcePath 用上次 create/revise 返回的 sourcePath；instruction 填老师的修改说明；newTitle/newBody/newLayout/newTable/newChart 填改后的本页内容或版式（至少给一个）。绝不要用 ppt_create 从头重做整套课件。', {
+  register('mochi_ppt_revise', '老师要改已生成课件的某一页（说“第 X 页改成…”）时用本工具：只重写指定页，其余页的 slide XML 与旧版逐字节一致（生成后用 jszip 重开核验），并写入全新目录——永不覆盖老师已确认的旧版本。返回基于修订后最终 PPTX 字节重算的结构质量状态与教学覆盖声明报告；结构检查通过不代表已验收，视觉复核仍须实际查看图像附件。previousSourcePath 用上次 create/revise 返回的 sourcePath；instruction 填老师的修改说明；newTitle/newBody/newLayout/newTable/newChart/newProcess/newComparison/newSource/clearSource 填改后的本页内容、版式或来源（至少给一个）。若改了可见内容且不更新 newTeachingPlan，受影响页的旧映射会在报告和 PPTX 演讲者备注中标记为待复核；需要时用 newTeachingPlan 替换整份声明计划。资料声明始终未核验。绝不要用 ppt_create 从头重做整套课件。', {
     previousSourcePath: { type: 'string', required: true, description: '上次课件生成的 sourcePath（绝对路径，原样传入，不得猜测）。' },
     page: { type: 'integer', required: true, description: '要修改的页码（正整数，第 1 页 = 1）。' },
     instruction: { type: 'string', required: true, description: '本页修改说明（老师的原话或归纳）。' },
     outputDirectory: { type: 'string', required: true, description: '全新的输出目录（绝对路径，必须不存在；旧版本原样保留）。' },
-    newLayout: { type: 'string', enum: SUPPORTED_LAYOUTS, description: '可选：只修改本页版式；切换至table/chart时需提供对应数据。其余页保持不变。' },
+    newLayout: { type: 'string', enum: SUPPORTED_LAYOUTS, description: '可选：只修改本页版式；切换至table/chart/process/compare时需提供对应数据。其余页保持不变。' },
     newTitle: { type: 'string', description: '改后的本页标题；不改标题则省略。' },
     newBody: { type: 'array', items: { type: 'string' }, description: '改后的本页要点（1-6 条，每条 ≤140 字）；不改要点则省略。' },
+    newTeachingPlan: { ...TEACHING_PLAN_SCHEMA, description: '可选：替换整份教学目标与逐页映射；省略时保留旧声明。若已修订可见内容，可在新计划中重核目标、角色、学生行动和理解检查以清除旧页的待复核标记。' },
+    newSource: SOURCE_SCHEMA,
+    clearSource: { type: 'boolean', description: '设 true 删除本页原来源声明，并标“未核验 · 未提供来源”；不能和 newSource 同时使用。' },
     newProcess: PROCESS_SCHEMA,
+    newComparison: {
+      type: 'object',
+      description: '改为两栏逐项对照 {leftTitle,rightTitle,rows:[{left,right},...]}；2-4组短句，每格投影最多2行，填入后切换为 title-compare。',
+      properties: {
+        leftTitle: { type: 'string', required: true, description: '≤40字。' },
+        rightTitle: { type: 'string', required: true, description: '≤40字。' },
+        rows: { type: 'array', required: true, description: '2-4组对应短句，每格≤100字且最多2行。', items: { type: 'object', properties: { left: { type: 'string', required: true }, right: { type: 'string', required: true } }, additionalProperties: false } },
+      },
+      additionalProperties: false,
+    },
     newTable: {
       type: 'object',
-      description: '改后的原生表格 {headers, rows}；填入后本页切换为表格版式，不能与 newChart 同时填写。',
+      description: '改后的原生表格 {headers, rows}；填入后本页切换为表格版式，不能与 newChart/newProcess/newComparison 同时填写。',
       properties: {
         headers: { type: 'array', required: true, items: { type: 'string' } },
         rows: { type: 'array', required: true, items: { type: 'array', items: { type: 'string' } } },
@@ -260,7 +346,7 @@ export function apply(ctx, options = {}) {
     },
     newChart: {
       type: 'object',
-      description: '改后的原生图表 {type, title?, labels, series}；填入后本页切换为图表版式，不能与 newTable 同时填写。',
+      description: '改后的原生图表 {type, title?, labels, series}；填入后本页切换为图表版式，不能与 newTable/newProcess/newComparison 同时填写。',
       properties: {
         type: { type: 'string', required: true },
         title: { type: 'string' },
@@ -281,9 +367,11 @@ export function apply(ctx, options = {}) {
     const newTitle = args.newTitle === undefined ? undefined : String(args.newTitle || '').trim();
     if (newTitle !== undefined && newTitle.length > MAX_SLIDE_TITLE) throw new Error(`newTitle 超过 ${MAX_SLIDE_TITLE} 字，请精简。`);
     const newBody = args.newBody === undefined ? undefined : normalizeBullets(args.newBody, `第 ${page} 页`, true);
-    const visual = visualSpec(args, `第 ${page} 页`, { tableKey: 'newTable', chartKey: 'newChart', processKey: 'newProcess' });
-    if (!newTitle && !newBody && args.newLayout === undefined && visual.table === undefined && visual.chart === undefined && visual.process === undefined) {
-      throw new Error('请把老师要改成的结果写进 newTitle / newBody / newLayout / newTable / newChart / newProcess（至少给一个）；instruction 只是修改说明，工具不会替你改写内容。');
+    const visual = visualSpec(args, `第 ${page} 页`, { tableKey: 'newTable', chartKey: 'newChart', processKey: 'newProcess', comparisonKey: 'newComparison' });
+    if (args.newSource !== undefined && (!args.newSource || typeof args.newSource !== 'object' || Array.isArray(args.newSource))) throw new Error('newSource 必须是 {label, reference?} 资料声明；删除来源请用 clearSource: true。');
+    if (args.newSource !== undefined && args.clearSource === true) throw new Error('newSource 和 clearSource 不能同时使用。');
+    if (!newTitle && !newBody && args.newLayout === undefined && visual.table === undefined && visual.chart === undefined && visual.process === undefined && visual.comparison === undefined && args.newSource === undefined && args.clearSource !== true && args.newTeachingPlan === undefined) {
+      throw new Error('请把老师要改成的结果写进 newTitle / newBody / newLayout / newTable / newChart / newProcess / newComparison / newSource / clearSource / newTeachingPlan（至少给一个）；instruction 只是修改说明，工具不会替你改写内容。');
     }
     let prior;
     try { prior = JSON.parse(await readFile(previousSourcePath, 'utf8')); } catch {
@@ -302,9 +390,12 @@ export function apply(ctx, options = {}) {
       ...(visual.table ? { table: visual.table } : {}),
       ...(visual.chart ? { chart: visual.chart } : {}),
       ...(visual.process ? { process: visual.process } : {}),
+      ...(visual.comparison ? { comparison: visual.comparison } : {}),
+      ...(args.newTeachingPlan === undefined ? {} : { teachingPlan: args.newTeachingPlan }),
+      ...(args.newSource !== undefined ? { source: args.newSource } : args.clearSource === true ? { source: null } : {}),
     };
     let bundle;
-    try { bundle = await revisePresentationBundle({ previousSourcePath, revision, outputDirectory }); } catch (error) { rethrow(error); }
+    try { bundle = await revisePresentationBundle({ previousSourcePath, revision, outputDirectory, converter: options.converter }); } catch (error) { rethrow(error); }
     // Golden Demo 核验：未改页 slide XML 与旧版逐字节一致，改动页确实包含新内容。
     const previousPptxPath = join(dirname(previousSourcePath), PPTX_NAME);
     const [oldXml, newXml] = [await slideXmlBuffers(previousPptxPath, priorSlides.length), await slideXmlBuffers(bundle.pptxPath, priorSlides.length)];
@@ -317,7 +408,7 @@ export function apply(ctx, options = {}) {
       untouched.push(number);
     }
     const changedXml = newXml[page - 1].toString('utf8');
-    const slideMarker = newTitle ?? newBody?.[0] ?? visual.table?.headers[0];
+    const slideMarker = newTitle ?? newBody?.[0] ?? visual.table?.headers[0] ?? visual.comparison?.leftTitle ?? (args.newSource ? `来源声明：${args.newSource.label}` : args.clearSource === true ? '未核验 · 未提供来源' : undefined);
     let changedEvidence = `第 ${page} 页被重写并包含新内容。`;
     if (slideMarker && !changedXml.includes(slideMarker)) {
       throw new Error(`【mochi-presentations】核验失败：第 ${page} 页 slide XML 中找不到新内容（${slideMarker.slice(0, 40)}…）。请检查产物。`);
@@ -340,10 +431,22 @@ export function apply(ctx, options = {}) {
       ...(newBody ? { 新要点: newBody } : {}),
       ...(visual.table ? { 新表格: visual.table } : {}),
       ...(visual.chart ? { 新图表: visual.chart } : {}),
+      ...(visual.comparison ? { 新对照: visual.comparison } : {}),
+      ...(args.newSource !== undefined ? { 新来源声明: args.newSource } : {}),
+      ...(args.clearSource === true ? { 已清除来源: true } : {}),
+      来源状态: bundle.manifest.slides[page - 1].sourceStatus,
       未改动页: untouched,
       核验结论: `第 ${untouched.join('、')} 页的 slide XML 与旧版逐字节一致；${changedEvidence}`,
-      产物: { pptx: bundle.pptxPath, pdf: bundle.pdfPath, manifest: bundle.manifestPath },
+      产物: { pptx: bundle.pptxPath, previewPdf: bundle.previewPdfPath, pdf: bundle.pdfPath, manifest: bundle.manifestPath },
       sourcePath: bundle.sourcePath,
+      预览状态: bundle.manifest.preview.status,
+      预览说明: previewNote(bundle),
+      质量状态: bundle.manifest.quality.status,
+      结构检查: bundle.manifest.quality.structuralStatus,
+      字号检查口径: bundle.manifest.quality.fontCheckBasis,
+      质量提示: bundle.manifest.quality.hints,
+      教学覆盖: bundle.manifest.quality.teachingCoverage,
+      视觉复核: bundle.manifest.quality.visualReview.note,
       旧版仍在: dirname(previousSourcePath),
     };
   });

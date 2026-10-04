@@ -2,7 +2,7 @@
   "name": "mochi-modes-client",
   "private": true,
   "version": "0.1.0",
-  "description": "Mochi 对话 / 工作模式开关：读宿主 mochiModes 投影显示模式，经官方命令通道直接切换（不弹窗）。",
+  "description": "Mochi 教师场景：通用与四个专注场景，复用官方会话选择和默认设置。",
   "main": "index.mjs",
   "type": "module",
   "dsh": {
@@ -11,7 +11,9 @@
       "inject": [
         "@deepseek-ai/dsh-api-remotes",
         "@deepseek-ai/dsh-client-ui-renderer",
-        "@deepseek-ai/dsh-client-ui-conversation"
+        "@deepseek-ai/dsh-client-ui-conversation",
+        "@deepseek-ai/dsh-client-ui-agent-preset",
+        "@deepseek-ai/dsh-client-ui-chat"
       ]
     }
   },

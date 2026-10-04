@@ -1,0 +1,416 @@
+[
+  {
+    "feature": "节日祝福",
+    "status": "code_scene_rendered",
+    "scenes": [
+      {
+        "id": "welcome",
+        "start": 0,
+        "duration": 11,
+        "source": "plugins/mochi-user-profile; client-plugins/jxl-brand"
+      }
+    ],
+    "verification": "代码场景已渲染进2560×1440/120fps/286秒成片；不代表实际后端运行验收"
+  },
+  {
+    "feature": "偏好记忆与回看",
+    "status": "code_scene_rendered",
+    "scenes": [
+      {
+        "id": "memory",
+        "start": 22,
+        "duration": 11,
+        "source": "plugins/mochi-memory"
+      }
+    ],
+    "verification": "代码场景已渲染进2560×1440/120fps/286秒成片；不代表实际后端运行验收"
+  },
+  {
+    "feature": "工作日记与依据",
+    "status": "code_scene_rendered",
+    "scenes": [
+      {
+        "id": "journal",
+        "start": 33,
+        "duration": 11,
+        "source": "plugins/mochi-memory"
+      }
+    ],
+    "verification": "代码场景已渲染进2560×1440/120fps/286秒成片；不代表实际后端运行验收"
+  },
+  {
+    "feature": "定时提醒创建与触发",
+    "status": "code_scene_rendered",
+    "scenes": [
+      {
+        "id": "reminder",
+        "start": 44,
+        "duration": 11,
+        "source": "plugins/mochi-task-scheduler"
+      }
+    ],
+    "verification": "代码场景已渲染进2560×1440/120fps/286秒成片；不代表实际后端运行验收"
+  },
+  {
+    "feature": "新手引导",
+    "status": "code_scene_rendered",
+    "scenes": [
+      {
+        "id": "welcome",
+        "start": 0,
+        "duration": 11,
+        "source": "plugins/mochi-user-profile; client-plugins/jxl-brand"
+      }
+    ],
+    "verification": "代码场景已渲染进2560×1440/120fps/286秒成片；不代表实际后端运行验收"
+  },
+  {
+    "feature": "场景切换",
+    "status": "code_scene_rendered",
+    "scenes": [
+      {
+        "id": "welcome",
+        "start": 0,
+        "duration": 11,
+        "source": "plugins/mochi-user-profile; client-plugins/jxl-brand"
+      }
+    ],
+    "verification": "代码场景已渲染进2560×1440/120fps/286秒成片；不代表实际后端运行验收"
+  },
+  {
+    "feature": "学生预约/提问/补做",
+    "status": "code_scene_rendered",
+    "scenes": [
+      {
+        "id": "todos",
+        "start": 55,
+        "duration": 11,
+        "source": "client-plugins/jxl-brand; plugins/mochi-lan"
+      }
+    ],
+    "verification": "代码场景已渲染进2560×1440/120fps/286秒成片；不代表实际后端运行验收"
+  },
+  {
+    "feature": "桌面待办展开与跳转",
+    "status": "code_scene_rendered",
+    "scenes": [
+      {
+        "id": "todos",
+        "start": 55,
+        "duration": 11,
+        "source": "client-plugins/jxl-brand; plugins/mochi-lan"
+      }
+    ],
+    "verification": "代码场景已渲染进2560×1440/120fps/286秒成片；不代表实际后端运行验收"
+  },
+  {
+    "feature": "小信箱已读回执",
+    "status": "code_scene_rendered",
+    "scenes": [
+      {
+        "id": "mail",
+        "start": 66,
+        "duration": 11,
+        "source": "plugins/mochi-lan/chat-tools.mjs"
+      },
+      {
+        "id": "receipt",
+        "start": 99,
+        "duration": 11,
+        "source": "plugins/mochi-lan/lan-service.mjs"
+      }
+    ],
+    "verification": "代码场景已渲染进2560×1440/120fps/286秒成片；不代表实际后端运行验收"
+  },
+  {
+    "feature": "老师确认预约",
+    "status": "code_scene_rendered",
+    "scenes": [
+      {
+        "id": "mail",
+        "start": 66,
+        "duration": 11,
+        "source": "plugins/mochi-lan/chat-tools.mjs"
+      }
+    ],
+    "verification": "代码场景已渲染进2560×1440/120fps/286秒成片；不代表实际后端运行验收"
+  },
+  {
+    "feature": "喊人/叫人",
+    "status": "code_scene_rendered",
+    "scenes": [
+      {
+        "id": "call",
+        "start": 77,
+        "duration": 11,
+        "source": "plugins/mochi-dispatch/index.mjs:mochi_call_student"
+      }
+    ],
+    "verification": "代码场景已渲染进2560×1440/120fps/286秒成片；不代表实际后端运行验收"
+  },
+  {
+    "feature": "教室名单与已看到",
+    "status": "code_scene_rendered",
+    "scenes": [
+      {
+        "id": "board",
+        "start": 88,
+        "duration": 11,
+        "source": "plugins/mochi-dispatch/index.mjs:mochi_register_verdicts; client-plugins/mochi-lan"
+      },
+      {
+        "id": "receipt",
+        "start": 99,
+        "duration": 11,
+        "source": "plugins/mochi-lan/lan-service.mjs"
+      }
+    ],
+    "verification": "代码场景已渲染进2560×1440/120fps/286秒成片；不代表实际后端运行验收"
+  },
+  {
+    "feature": "文件投递与打开课件",
+    "status": "code_scene_rendered",
+    "scenes": [
+      {
+        "id": "delivery",
+        "start": 110,
+        "duration": 11,
+        "source": "plugins/mochi-dispatch/index.mjs:mochi_send_classroom_file"
+      }
+    ],
+    "verification": "代码场景已渲染进2560×1440/120fps/286秒成片；不代表实际后端运行验收"
+  },
+  {
+    "feature": "教师协作A2A",
+    "status": "code_scene_rendered",
+    "scenes": [
+      {
+        "id": "a2a",
+        "start": 264,
+        "duration": 11,
+        "source": "plugins/mochi-dispatch/index.mjs:mochi_ask,mochi_request,mochi_find,mochi_respond"
+      }
+    ],
+    "verification": "代码场景已渲染进2560×1440/120fps/286秒成片；不代表实际后端运行验收"
+  },
+  {
+    "feature": "校园状态查询",
+    "status": "code_scene_rendered",
+    "scenes": [
+      {
+        "id": "campus",
+        "start": 242,
+        "duration": 11,
+        "source": "plugins/mochi-campus; client-plugins/jxl-campus"
+      }
+    ],
+    "verification": "代码场景已渲染进2560×1440/120fps/286秒成片；不代表实际后端运行验收"
+  },
+  {
+    "feature": "人工审批放行",
+    "status": "code_scene_rendered",
+    "scenes": [
+      {
+        "id": "call",
+        "start": 77,
+        "duration": 11,
+        "source": "plugins/mochi-dispatch/index.mjs:mochi_call_student"
+      },
+      {
+        "id": "gate",
+        "start": 253,
+        "duration": 11,
+        "source": "plugins/mochi-campus"
+      }
+    ],
+    "verification": "代码场景已渲染进2560×1440/120fps/286秒成片；不代表实际后端运行验收"
+  },
+  {
+    "feature": "教案与文档",
+    "status": "code_scene_rendered",
+    "scenes": [
+      {
+        "id": "doc",
+        "start": 187,
+        "duration": 11,
+        "source": "plugins/mochi-documents"
+      }
+    ],
+    "verification": "代码场景已渲染进2560×1440/120fps/286秒成片；不代表实际后端运行验收"
+  },
+  {
+    "feature": "课件制作与修订",
+    "status": "code_scene_rendered",
+    "scenes": [
+      {
+        "id": "slides",
+        "start": 198,
+        "duration": 11,
+        "source": "plugins/mochi-presentations; skills/classroom-deck"
+      }
+    ],
+    "verification": "代码场景已渲染进2560×1440/120fps/286秒成片；不代表实际后端运行验收"
+  },
+  {
+    "feature": "练习与试卷",
+    "status": "code_scene_rendered",
+    "scenes": [
+      {
+        "id": "doc",
+        "start": 187,
+        "duration": 11,
+        "source": "plugins/mochi-documents"
+      }
+    ],
+    "verification": "代码场景已渲染进2560×1440/120fps/286秒成片；不代表实际后端运行验收"
+  },
+  {
+    "feature": "表格与成绩分析",
+    "status": "code_scene_rendered",
+    "scenes": [
+      {
+        "id": "grades",
+        "start": 209,
+        "duration": 11,
+        "source": "plugins/mochi-sheets; plugins/mochi-grades; plugins/mochi-visuals"
+      }
+    ],
+    "verification": "代码场景已渲染进2560×1440/120fps/286秒成片；不代表实际后端运行验收"
+  },
+  {
+    "feature": "知识检索/教材技能",
+    "status": "code_scene_rendered",
+    "scenes": [
+      {
+        "id": "knowledge",
+        "start": 165,
+        "duration": 11,
+        "source": "plugins/mochi-knowledge; skills/classroom-deck"
+      }
+    ],
+    "verification": "代码场景已渲染进2560×1440/120fps/286秒成片；不代表实际后端运行验收"
+  },
+  {
+    "feature": "可交互数学建模",
+    "status": "code_scene_rendered",
+    "scenes": [
+      {
+        "id": "model",
+        "start": 220,
+        "duration": 11,
+        "source": "plugins/mochi-modeling"
+      }
+    ],
+    "verification": "代码场景已渲染进2560×1440/120fps/286秒成片；不代表实际后端运行验收"
+  },
+  {
+    "feature": "视觉图表",
+    "status": "code_scene_rendered",
+    "scenes": [
+      {
+        "id": "grades",
+        "start": 209,
+        "duration": 11,
+        "source": "plugins/mochi-sheets; plugins/mochi-grades; plugins/mochi-visuals"
+      }
+    ],
+    "verification": "代码场景已渲染进2560×1440/120fps/286秒成片；不代表实际后端运行验收"
+  },
+  {
+    "feature": "文件与网页",
+    "status": "code_scene_rendered",
+    "scenes": [
+      {
+        "id": "web",
+        "start": 176,
+        "duration": 11,
+        "source": "plugins/mochi-files; plugins/mochi-web-search"
+      }
+    ],
+    "verification": "代码场景已渲染进2560×1440/120fps/286秒成片；不代表实际后端运行验收"
+  },
+  {
+    "feature": "智能体团队",
+    "status": "code_scene_rendered",
+    "scenes": [
+      {
+        "id": "team",
+        "start": 231,
+        "duration": 11,
+        "source": "client-plugins/teacher-agent-presets; client-plugins/jxl-brand; apps/desktop/runtime-modern/package-lock.json"
+      }
+    ],
+    "verification": "代码场景已渲染进2560×1440/120fps/286秒成片；不代表实际后端运行验收"
+  },
+  {
+    "feature": "拍题输入",
+    "status": "code_scene_rendered",
+    "scenes": [
+      {
+        "id": "camera",
+        "start": 143,
+        "duration": 11,
+        "source": "client-plugins/mochi-camera; apps/desktop/electron"
+      }
+    ],
+    "verification": "代码场景已渲染进2560×1440/120fps/286秒成片；不代表实际后端运行验收"
+  },
+  {
+    "feature": "语音输入/语音对话",
+    "status": "code_scene_rendered",
+    "scenes": [
+      {
+        "id": "voice",
+        "start": 154,
+        "duration": 11,
+        "source": "client-plugins/mochi-voice-chat; apps/desktop/electron"
+      }
+    ],
+    "verification": "代码场景已渲染进2560×1440/120fps/286秒成片；不代表实际后端运行验收"
+  },
+  {
+    "feature": "回复朗读",
+    "status": "code_scene_rendered",
+    "scenes": [
+      {
+        "id": "voice",
+        "start": 154,
+        "duration": 11,
+        "source": "client-plugins/mochi-voice-chat; apps/desktop/electron"
+      }
+    ],
+    "verification": "代码场景已渲染进2560×1440/120fps/286秒成片；不代表实际后端运行验收"
+  },
+  {
+    "feature": "课堂听课与教学安排",
+    "status": "code_scene_rendered",
+    "scenes": [
+      {
+        "id": "timetable",
+        "start": 121,
+        "duration": 11,
+        "source": "plugins/mochi-classroom-planner/index.mjs"
+      },
+      {
+        "id": "listen",
+        "start": 132,
+        "duration": 11,
+        "source": "plugins/mochi-classroom-assistant; plugins/mochi-classroom-planner"
+      }
+    ],
+    "verification": "代码场景已渲染进2560×1440/120fps/286秒成片；不代表实际后端运行验收"
+  },
+  {
+    "feature": "称呼/陪伴/主题与本体颜色",
+    "status": "code_scene_rendered",
+    "scenes": [
+      {
+        "id": "personal",
+        "start": 11,
+        "duration": 11,
+        "source": "plugins/mochi-user-profile; client-plugins/jxl-theme/assets/mochi-palettes.json"
+      }
+    ],
+    "verification": "代码场景已渲染进2560×1440/120fps/286秒成片；不代表实际后端运行验收"
+  }
+]

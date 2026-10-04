@@ -83,10 +83,76 @@ window.__ModuleLoader__.load({
 		}
 		//#endregion
 
+		// Sidebar access follows the same backend identity as the embedded campus pages.
+		var campusIdentity = null;
+		var authListeners = new Set();
+		function publishAuth(status, user) {
+			var last = user && Number.isInteger(user.id) ? { id: user.id, name: typeof user.name === "string" ? user.name.slice(0, 80) : "", role: typeof user.role === "string" ? user.role : "" } : null;
+			var previous = window.mochiCampusIdentitySnapshot;
+			var snapshot = Object.freeze({ status: status, user: status === "authenticated" ? last : null, lastVerified: status === "unknown" ? previous?.lastVerified || previous?.user || null : last });
+			window.mochiCampusIdentitySnapshot = snapshot;
+			if (typeof CustomEvent === "function") window.dispatchEvent?.(new CustomEvent("campus:auth-state", { detail: snapshot }));
+		}
+		function authSnapshot() { return campusIdentity; }
+		function authSubscribe(fn) { authListeners.add(fn); return function () { authListeners.delete(fn); }; }
+		function setIdentity(user) {
+			var next = user && Number.isInteger(user.id) ? user : null;
+			if (JSON.stringify(next) === JSON.stringify(campusIdentity)) return;
+			campusIdentity = next;
+			if (!next || next.role !== "HEAD_TEACHER") closeWidget();
+			authListeners.forEach(function (fn) { fn(); });
+		}
+		function watchIdentity() {
+			var disposed = false, generation = 0, pending = false, lastChecked = 0;
+			async function refresh() {
+				if (disposed || pending || document.hidden) return;
+				pending = true; lastChecked = Date.now();
+				var current = generation;
+				try {
+					var response = await fetch("/jxl-api/auth/me", { credentials: "same-origin", cache: "no-store", signal: AbortSignal.timeout(8000) });
+					var result = await response.json();
+					if (disposed || current !== generation) return;
+					if (response.ok) { setIdentity(result.user); publishAuth(campusIdentity ? "authenticated" : "unknown", campusIdentity); }
+					else if (response.status === 401 && ["UNAUTHENTICATED", "SESSION_EXPIRED"].includes(result.code)) { setIdentity(null); publishAuth("unauthenticated", null); }
+					else publishAuth("unknown", campusIdentity);
+				} catch (_) { if (!disposed && current === generation) publishAuth("unknown", campusIdentity); }
+				finally { pending = false; }
+			}
+			function invalidate() { generation++; setIdentity(null); publishAuth("unauthenticated", null); }
+			window.addEventListener("focus", refresh);
+			window.addEventListener("campus:auth-invalid", invalidate);
+			document.addEventListener("visibilitychange", refresh);
+			var timer = setInterval(function () { if (ui.active || Date.now() - lastChecked >= 30000) refresh(); }, 5000);
+			refresh();
+			return function () {
+				disposed = true; generation++; clearInterval(timer);
+				delete window.mochiCampusIdentitySnapshot;
+				if (typeof CustomEvent === "function") window.dispatchEvent?.(new CustomEvent("campus:auth-state", { detail: { status: "unknown", user: null, lastVerified: null } }));
+				window.removeEventListener("focus", refresh);
+				window.removeEventListener("campus:auth-invalid", invalidate);
+				document.removeEventListener("visibilitychange", refresh);
+			};
+		}
+		function CampusAccount() {
+			var user = react.useSyncExternalStore(authSubscribe, authSnapshot);
+			return react.createElement("section", { className: "jxl-campus-account", "aria-label": "用户账号" },
+				react.createElement("span", { className: "jxl-campus-account__avatar", "aria-hidden": true }, react.createElement(CampusIcon, { name: "contact-round" })),
+				react.createElement("div", { className: "jxl-campus-account__identity" },
+					react.createElement("strong", null, user ? user.name : "登录校园账号"),
+					react.createElement("span", null, user ? (user.mustChangePassword ? "请先完成密码设置" : user.role === "HEAD_TEACHER" ? "班主任 · 按本班权限查询与处理" : "当前账号无班主任工作入口") : "登录后，Mochi 可按你的权限查询校园信息")),
+				react.createElement("button", { type: "button", onClick: function (event) {
+					var dialog = event.currentTarget.closest('[role="dialog"]');
+					var close = dialog && dialog.querySelector('[data-slot="settings.close"]')?.closest("button");
+					if (close) close.click();
+					openWidget("dashboard");
+				} }, user ? "查看校园账号" : "登录校园账号"));
+		}
+
 		//#region 样式（小组件面板 + 侧栏入口；JXL 米白画布 + 鼠尾草点缀）
 		function injectStyles() {
 			if (document.getElementById("jxl-campus-style")) return;
 			var css = [
+				".jxl-campus-account{display:flex;align-items:center;gap:14px;padding:4px 0 24px;margin-bottom:4px;border-bottom:1px solid var(--dsw-alias-border-l3);flex-wrap:wrap}.jxl-campus-account__avatar{display:grid;place-items:center;width:48px;height:48px;flex:none;border-radius:50%;background:var(--dsw-alias-bg-layer-1);color:var(--dsw-alias-label-secondary);border:1px solid var(--dsw-alias-border-l3)}.jxl-campus-account__avatar svg{width:24px;height:24px}.jxl-campus-account__identity{display:flex;flex-direction:column;gap:5px;flex:1;min-width:150px}.jxl-campus-account__identity strong{font-size:16px;font-weight:500;line-height:1.4;color:var(--dsw-alias-label-primary)}.jxl-campus-account__identity>span{color:var(--dsw-alias-label-secondary);font-size:12px;line-height:1.6}.jxl-campus-account>button{border:1px solid var(--dsw-alias-border-l3);border-radius:8px;min-height:36px;padding:8px 12px;background:var(--dsw-alias-bg-layer-1);color:var(--dsw-alias-label-primary);font:inherit;font-size:13px;cursor:pointer}.jxl-campus-account>button:hover{background:var(--dsw-alias-interactive-bg-hover)}.jxl-campus-account>button:active{transform:translateY(1px)}.jxl-campus-account>button:focus-visible{outline:2px solid var(--dsw-alias-label-secondary);outline-offset:3px}",
 				/* 群体隔离：campus 样式表进来后保住 Mochi 的暗色与排版 */
 				"html,body{background-color:var(--dsw-alias-bg-base,#1b211e) !important;}",
 				/* 宿主层：由 shell.overlay 承载，几何由官方 conversation slot 实测后写入。 */
@@ -94,12 +160,12 @@ window.__ModuleLoader__.load({
 				/* 小组件面板：浮动卡片（JXL 设计语言长在 Mochi 里） */
 				".jxl-widget-panel{position:absolute;top:10px;right:10px;bottom:10px;left:10px;display:flex;flex-direction:column;overflow:hidden;",
 				"background:var(--canvas,#f7f4ec);color:var(--ink,#2f3a33);border-radius:18px;pointer-events:auto;",
-				"box-shadow:0 24px 70px -30px rgba(15,22,18,.75),0 0 0 1px rgba(69,88,78,.18);",
+				"border:1px solid var(--dsw-alias-border-l2,rgba(69,88,78,.18));box-shadow:none;",
 				"animation:jxl-widget-rise .42s cubic-bezier(.32,.72,0,1);}",
 				"@keyframes jxl-widget-rise{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:none}}",
-				/* Apple：毛玻璃材质头部（vibrancy） */
+				/* 纯色纸面头部，避免高光和模糊造成塑料感。 */
 				".jxl-widget-panel__head{display:flex;align-items:center;gap:10px;padding:12px 16px;flex:none;",
-				"background:rgba(250,248,242,.72);backdrop-filter:saturate(160%) blur(20px);-webkit-backdrop-filter:saturate(160%) blur(20px);",
+				"background:var(--dsw-alias-bg-layer-1,#fcfaf4);backdrop-filter:none;-webkit-backdrop-filter:none;",
 				"border-bottom:1px solid rgba(69,88,78,.14);}",
 				".jxl-widget-panel__logo{width:24px;height:24px;border-radius:7px;object-fit:contain;background:#45584e;flex:none;}",
 				".jxl-widget-panel__titles{display:flex;flex-direction:column;min-width:0;}",
@@ -107,11 +173,11 @@ window.__ModuleLoader__.load({
 				".jxl-widget-panel__desc{font:400 12px/1.4 'PingFang SC',system-ui,sans-serif;color:#5c6f64;letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}",
 				".jxl-widget-panel__close{margin-left:auto;display:flex;align-items:center;gap:8px;border:1px solid rgba(69,88,78,.25);",
 				"background:rgba(247,244,236,.92);color:#315f50;font:600 12px/1 'PingFang SC',system-ui,sans-serif;letter-spacing:.04em;",
-				"padding:8px 14px;border-radius:999px;cursor:pointer;box-shadow:0 6px 18px -10px rgba(47,58,51,.45);flex:none;",
+				"padding:8px 14px;border-radius:999px;cursor:pointer;box-shadow:none;flex:none;",
 				"transition:transform .18s cubic-bezier(.32,.72,0,1),background .18s ease,box-shadow .18s ease;}",
 				".jxl-widget-panel__close:hover{background:#fff;transform:translateY(-1px);}",
 				/* Apple：按压即时反馈（pointer-down 生效，不等 release） */
-				".jxl-widget-panel__close:active{transform:scale(.95);box-shadow:0 2px 8px -6px rgba(47,58,51,.45);}",
+				".jxl-widget-panel__close:active{transform:scale(.95);}",
 				".jxl-widget-panel__close img{width:16px;height:16px;border-radius:5px;object-fit:contain;background:#45584e;}",
 				".jxl-widget-panel__stage{flex:1;position:relative;overflow:auto;}",
 				".jxl-widget-panel__stage>div{min-height:100%;}",
@@ -120,32 +186,23 @@ window.__ModuleLoader__.load({
 				".jxl-widget-panel__error{color:#a4552f;}",
 				".jxl-widget-panel__ring{width:26px;height:26px;border-radius:50%;border:3px solid rgba(69,88,78,.18);border-top-color:#315f50;animation:jxl-widget-spin .9s linear infinite;}",
 				"@keyframes jxl-widget-spin{to{transform:rotate(360deg)}}",
-				/* ── WorkBuddy 式侧栏重排（用户 2026-09-04 指定：功能入口左上、任务左下）──
-				   dsh-v0.1.3-alpha.1 源码锁定哈希类：hHd-Xa_*（侧栏骨架）。 */
-				'[class*="hHd-Xa_root"]{position:relative;}',
-				/* 拆开 footArea，让入口与设置独立参与纵向排布 */
-				'[class*="hHd-Xa_footArea"]{display:contents;}',
-				/* 任务/会话列表：order 2 紧跟新会话（用户 2026-09-05 裁定对调），弹性占据中部 */
-				'[class*="hHd-Xa_regionArea"]{order:2;flex:1 1 auto !important;min-height:120px;}',
-				/* 小组件入口组沉底：margin-top:auto 钉在设置上方 */
-				'[class*="hHd-Xa_footerActions"]{order:4;margin:auto 0 0;}',
-				'[class*="hHd-Xa_settingsArea"]{order:5;}',
-				/* 官方 footer list slot 自身是 display:contents；让一个校园工作组填满座位。 */
-				'[data-slot="sidebar.footer.action"]{display:block !important;inline-size:100% !important;min-inline-size:0;max-height:38vh;overflow-y:auto;}',
+				/* Native sidebar order is already workspace → actions → settings.
+				   Only the campus links scroll; appearance and sound remain reachable. */
+				'[data-slot="sidebar.footer.action"]{display:flex !important;flex-direction:column;gap:6px;inline-size:100% !important;min-inline-size:0;overflow:visible;}',
 				/* Campus Work：一层轻材质归组，主 Mochi 品牌仍由官方 brand slots 承担。 */
 				".jxl-campus-group{display:flex;flex-direction:column;gap:3px;inline-size:100%;min-inline-size:0;padding:4px;box-sizing:border-box;",
 				"border:1px solid var(--jxl-glass-border,rgba(255,255,255,.4));border-radius:14px;background:var(--jxl-glass-bg,rgba(247,244,236,.78));",
-				"box-shadow:inset 0 1px 0 var(--jxl-control-top-rim,rgba(255,255,255,.4)),0 8px 18px -18px rgba(24,34,29,.55);",
-				"backdrop-filter:saturate(135%) blur(12px);-webkit-backdrop-filter:saturate(135%) blur(12px);}",
+				"box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;}",
 				".jxl-campus-group__toggle{display:flex;align-items:center;gap:7px;min-block-size:28px;padding:2px 6px;border:0;background:transparent;color:var(--dsw-alias-label-secondary);",
 				"font:650 11px/1 'PingFang SC','Noto Sans CJK SC',system-ui,sans-serif;letter-spacing:.08em;text-align:left;cursor:pointer;border-radius:9px;}",
 				".jxl-campus-group__toggle:hover{background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-primary);}",
 				".jxl-campus-group__toggle:active{transform:scale(.985);}",
-				".jxl-campus-group__brand{inline-size:16px;block-size:16px;object-fit:contain;border-radius:5px;background:var(--dsw-alias-brand-primary);flex:none;}",
+				".jxl-campus-group__brand{inline-size:16px;block-size:16px;background:currentColor;flex:none;",
+				"mask:url('/jxl-assets/icons/icon.svg') center/contain no-repeat;-webkit-mask:url('/jxl-assets/icons/icon.svg') center/contain no-repeat;}",
 				".jxl-campus-group__title{min-inline-size:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}",
 				".jxl-campus-group__chevron{margin-left:auto;inline-size:15px;block-size:15px;transition:transform var(--jxl-dur-control,100ms) var(--jxl-spring,ease);}",
 				".jxl-campus-group__toggle[aria-expanded=\"false\"] .jxl-campus-group__chevron{transform:rotate(-90deg);}",
-				".jxl-campus-group__links{display:flex;flex-direction:column;gap:2px;min-inline-size:0;}",
+				".jxl-campus-group__links{display:flex;flex-direction:column;gap:2px;min-inline-size:0;max-block-size:min(210px,26vh);overflow-y:auto;scrollbar-width:thin;}",
 				/* The footer slot's flex rule otherwise overrides the browser [hidden] default. */
 				".jxl-campus-group__links[hidden]{display:none !important;}",
 				/* 五项都占满组宽；图标遵循 Lucide 的 currentColor 线性语言。 */
@@ -155,7 +212,7 @@ window.__ModuleLoader__.load({
 				".jxl-campus-entry:hover{background:var(--dsw-alias-interactive-bg-hover);}",
 				".jxl-campus-entry:active{transform:scale(.985);}",
 				".jxl-campus-entry.is-active{background:var(--dsw-alias-interactive-bg-hover-accent,rgba(217,135,62,.16)) !important;color:var(--dsw-alias-label-primary) !important;",
-				"box-shadow:inset 2px 0 0 #d9873e,inset 0 0 0 1px color-mix(in srgb,#d9873e 34%,transparent);}",
+				"border-inline-start:2px solid #d9873e;}",
 				".jxl-campus-entry__icon{inline-size:18px;block-size:18px;flex:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}",
 				".jxl-campus-entry__label{min-inline-size:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:.01em;}",
 				".jxl-campus-entry__state{margin-left:auto;inline-size:6px;block-size:6px;border-radius:99px;background:transparent;transition:background-color var(--jxl-dur-control,100ms) ease;}",
@@ -170,7 +227,7 @@ window.__ModuleLoader__.load({
 				/* Apple：减弱动态时保留色彩反馈但不缩放；减弱透明时转为实底。 */
 				"@media (prefers-reduced-motion:reduce){.jxl-widget-panel{animation:none}.jxl-campus-entry,.jxl-campus-group__toggle,.jxl-campus-group__chevron,.jxl-widget-panel__close{transition:none}.jxl-campus-entry:active,.jxl-campus-group__toggle:active{transform:none}}",
 				"@media (prefers-reduced-transparency:reduce){.jxl-campus-group{background:var(--dsw-alias-bg-layer-1);backdrop-filter:none;-webkit-backdrop-filter:none}}",
-				"@media (prefers-contrast:more){.jxl-campus-group{border-color:var(--dsw-alias-label-primary)}.jxl-campus-entry.is-active{box-shadow:inset 3px 0 0 #d9873e,inset 0 0 0 1px var(--dsw-alias-label-primary)}}"
+				"@media (prefers-contrast:more){.jxl-campus-group{border-color:var(--dsw-alias-label-primary)}.jxl-campus-entry.is-active{border:1px solid var(--dsw-alias-label-primary);border-inline-start:3px solid #d9873e}}"
 			].join("");
 			var el = document.createElement("style");
 			el.id = "jxl-campus-style";
@@ -374,11 +431,12 @@ window.__ModuleLoader__.load({
 				'<div class="jxl-widget-panel__head">' +
 				'<img class="jxl-widget-panel__logo" src="' + LOGO_URL + '" alt=""/>' +
 				'<div class="jxl-widget-panel__titles">' +
+				'<span class="jxl-widget-panel__trail">校园工作</span>' +
 				'<span class="jxl-widget-panel__title"></span>' +
 				'<span class="jxl-widget-panel__desc"></span>' +
 				"</div>" +
 				'<button class="jxl-widget-panel__close" title="返回 Mochi 对话（ESC）">' +
-				'<img src="' + LOGO_URL + '" alt=""/>返回 Mochi</button>' +
+				'<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m10 6-6 6 6 6M4 12h16"/></svg>返回对话<kbd>esc</kbd></button>' +
 				"</div>" +
 				'<div class="jxl-widget-panel__stage"><div id="' + stageId + '"></div>' +
 				'<div class="jxl-widget-panel__booting"></div>' +
@@ -516,10 +574,12 @@ window.__ModuleLoader__.load({
 		function CampusWorkGroup(props) {
 			var state = react.useSyncExternalStore(uiSubscribe, uiSnapshot);
 			var activeId = state ? state.slice(state.indexOf(":") + 1) : "";
-			var statePair = react.useState(true);
+			var statePair = react.useState(false);
 			var expanded = statePair[0];
 			var setExpanded = statePair[1];
 			var wide = props.wide !== false;
+			var user = react.useSyncExternalStore(authSubscribe, authSnapshot);
+			if (!user || user.role !== "HEAD_TEACHER" || user.mustChangePassword) return null;
 			return react.createElement(
 				"section",
 				{
@@ -537,7 +597,7 @@ window.__ModuleLoader__.load({
 						"aria-controls": CAMPUS_WORK_LIST_ID,
 						onClick: function () { setExpanded(!expanded); },
 					},
-					react.createElement("img", { className: "jxl-campus-group__brand", src: LOGO_URL, alt: "" }),
+					react.createElement("span", { className: "jxl-campus-group__brand", "aria-hidden": true }),
 					react.createElement("span", { className: "jxl-campus-group__title" }, "校园工作"),
 					react.createElement(
 						"svg",
@@ -565,6 +625,10 @@ window.__ModuleLoader__.load({
 		//#region apply（slot 注册）
 		function apply(ctx) {
 			injectStyles();
+			ctx.effect(watchIdentity, "jxl-campus: backend identity");
+			ctx.slots.inject("settings.general.item", function* () {
+				yield ctx.slots.register({ name: "settings.general.item", id: "campus-account", order: -100 }, CampusAccount);
+			});
 			ctx.effect(function () { return installEsc(); }, "jxl-campus: close controls");
 			/* Exact official key: ui-workspace owns workspace.section.workspaces.
 			 * zh-JXL falls through to zh for every other workspace key. */

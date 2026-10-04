@@ -6,10 +6,10 @@
   "main": "index.mjs",
   "description": "Mochi 记忆域：长期记忆（SimpleMem 衰减 + 双时态冲突消解 + 敏感护栏）+ 工作状态快照",
   "scripts": {
-    "test": "node test.mjs && node test-memstore.mjs && node test-worldstate.mjs && node test-active-context.mjs",
+    "test": "node test.mjs && node test-memstore.mjs && node test-worldstate.mjs && node test-active-context.mjs && node --test test-proactive.mjs test-management.mjs test-role-policy.mjs test-journal-store.mjs test-journal-management.mjs test-journal-activity.mjs test-journal-writer.mjs test-journal-context.mjs test-journal-scheduler.mjs",
     "test:prompt-assembly": "node test-active-prompt-assembly.mjs"
   },
-  "dependencies": {
-    "@deepseek-ai/dsh-tools": "0.1.3-alpha.1"
+  "peerDependencies": {
+    "@deepseek-ai/dsh-tools": "0.1.3-alpha.1 || 0.2.0-rc.2"
   }
 }

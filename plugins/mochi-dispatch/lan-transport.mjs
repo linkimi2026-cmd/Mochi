@@ -136,8 +136,6 @@ const VERDICT_LABELS = Object.freeze({ call: '喊人', pass: '过关', fail: '�
 const MAX_VERDICTS = 64;
 const MAX_VERDICT_NOTE = 200;
 const MAX_DIRECTIVE_ITEM = 120;
-/** 审批卡上最多列出多少行名册。超过就写「另有 N 位」——卡片不是表格，没人会读 64 行。 */
-const ROSTER_PREVIEW_ROWS = 12;
 
 function boundedText(value, maximum, label) {
   if (typeof value !== 'string') throw new Error('【未发送】' + label + '必须是文本。');
@@ -220,18 +218,17 @@ function rosterCounts(verdicts) {
  * 交代一并列出来——只写「下发 6 位同学的处置」等于让主人盲签。
  */
 function rosterPreview(directive) {
-  const shown = directive.verdicts.slice(0, ROSTER_PREVIEW_ROWS).map((row, index) => {
+  const total = directive.verdicts.length;
+  const shown = directive.verdicts.map((row, index) => {
     const seat = row.seat === undefined ? '' : '（' + row.seat + ' 号）';
     const note = row.note ? ' — ' + row.note : '';
-    return (index + 1) + '. ' + row.student + seat + ' · ' + VERDICT_LABELS[row.action] + note;
+    return '【' + (index + 1) + '/' + total + '】' + row.student + seat + ' · ' + VERDICT_LABELS[row.action] + note;
   });
-  const rest = directive.verdicts.length - shown.length;
   return [
     '名目：' + directive.item,
     '合计：' + rosterCounts(directive.verdicts),
     '',
     ...shown,
-    ...(rest > 0 ? ['…以及另外 ' + rest + ' 位'] : []),
   ].join('\n');
 }
 
@@ -246,6 +243,7 @@ async function dispatchLanDelivery({ lan, approval, args, exec, store, toolName,
   if (!store?.createLanDispatchAttempt || !store?.getLanDispatchState || !store?.transition || !store?.recordDeliveryOutcome) {
     throw new TypeError('mochi_notify_classroom requires the local dispatch task store.');
   }
+  if (args?.openWith !== undefined && (kind !== 'file' || args.openWith !== 'wps')) throw new Error('打开方式仅支持 wps。');
   const reviewed = currentTeacherPeer(lan, args?.classroomEndpointId);
   const approvedIdentity = approvalBinding(reviewed.identity);
   const approvedPeer = approvalBinding(reviewed.peer);
@@ -257,7 +255,7 @@ async function dispatchLanDelivery({ lan, approval, args, exec, store, toolName,
   const controls = parseControls(args);
   const mode = controls.retryTaskId !== null ? 'retry' : controls.newTask ? 'new' : 'default';
   const fingerprintGoal = kind === 'file'
-    ? 'FILE\n' + String(sourcePath || '') + '\n' + message
+    ? 'FILE\n' + String(sourcePath || '') + (args?.openWith ? '\nOPEN:wps' : '') + '\n' + message
     : kind === 'directive'
       // 名册必须整份进指纹：两份内容不同的名册若共用同一句说明文字，会被幂等层
       // 当成同一件事拦下来，第二份名单就永远发不出去。
@@ -278,19 +276,18 @@ async function dispatchLanDelivery({ lan, approval, args, exec, store, toolName,
     return existingLanResult(state.blocking || state.latest);
   }
   if (!approval || typeof approval.request !== 'function') throw new Error('【未发送】当前会话没有人工确认通道，通知没有发出。');
-  const preview = message.length <= 1_000 ? message : message.slice(0, 1_000) + '…（其余内容已省略预览）';
-  const fileLine = kind === 'file' ? '\n课件文件：' + String(sourcePath) : '';
+  const fileLine = kind === 'file' ? '\n课件文件：' + String(sourcePath) + (args?.openWith === 'wps' ? '\n接收后：在这台教室电脑用 WPS 打开课件。' : '\n接收后：仅保存文件。') : '';
   const kindLabel = kind === 'file' ? '课件文件' : kind === 'directive' ? '处置名册' : '通知';
   // 三种载荷的审批卡正文不同：名册要逐人列出将显示到教室屏上的字，否则主人是在盲签。
   const payloadBlock = kind === 'directive'
     ? rosterPreview(directive)
-    : '通知：\n' + preview;
+    : '信件内容：\n' + message;
   const decision = await approval.request({
     agent: exec?.agent,
     toolName,
     callId: exec?.callId,
     signal: exec?.signal,
-    reason: '以已配置教师端「' + approvedIdentity.displayName + '」向已配对教室发送' + kindLabel + '：\n\n学校：' + approvedPeer.schoolId + '\n班级：' + approvedPeer.classId + '\n设备：' + approvedPeer.displayName + '（' + approvedPeer.endpointId + '，' + approvedPeer.fingerprint + '）' + fileLine + '\n\n' + payloadBlock,
+    reason: '发给：' + approvedPeer.displayName + ' · ' + approvedPeer.schoolId + ' · ' + approvedPeer.classId + '\n设备：' + approvedPeer.endpointId + '\n\n' + payloadBlock + (kind === 'directive' ? '\n\n随信内容：\n' + message : '') + fileLine + '\n\n来自：' + approvedIdentity.displayName + '\n确认后发送这份' + kindLabel + '；取消不会发送。',
   });
   if (decision !== 'allowed-once') throw new Error('【未发送】教室通知没有获得主人确认。请如实告知，不能说成已发送。');
 
@@ -325,6 +322,7 @@ async function dispatchLanDelivery({ lan, approval, args, exec, store, toolName,
       ? await lan.sendFile({
         targetEndpointId: peer.endpointId,
         sourcePath,
+        ...(args?.openWith ? { openWith: args.openWith } : {}),
         body: message,
         fileId: lanFileId(task),
         messageId,
@@ -354,13 +352,14 @@ async function dispatchLanDelivery({ lan, approval, args, exec, store, toolName,
           authorization: lan.authorize('send-message', 'dispatch-approved'),
           signal: exec?.signal,
         });
-    const delivered = store.transition(task.id, 'DELIVERED', { deliveryOutcome: 'DELIVERED' }).task;
+    const fileOpen = kind === 'file' && args?.openWith ? wire.message?.ack?.fileOpen ?? { status: 'UNKNOWN', detail: '教室端未返回 WPS 打开回执，可能需要更新；不能认定已打开。' } : undefined;
+    const delivered = store.transition(task.id, 'DELIVERED', { deliveryOutcome: 'DELIVERED', ...(fileOpen ? { resultAnswer: fileOpen.detail } : {}) }).task;
     return {
       ...taskResult(delivered),
       messageId,
       target: { endpointId: peer.endpointId, schoolId: peer.schoolId, classId: peer.classId, displayName: peer.displayName, fingerprint: peer.fingerprint },
       ...(kind === 'file'
-        ? { file: wire.file, delivery: wire.message?.delivery }
+        ? { file: wire.file, delivery: wire.message?.delivery, ...(fileOpen ? { fileOpen } : {}) }
         : { delivery: wire.delivery, ack: wire.ack }),
       ...(kind === 'directive' ? { item: directive.item, 名册: rosterCounts(directive.verdicts), 人数: directive.verdicts.length } : {}),
     };
@@ -442,7 +441,7 @@ export async function sendLanFile({ lan, approval, args, exec, store }) {
  * 名册里的逐人交代由 Mochi 调 skill 生成后随判决一起走——服务层和派生层都只负责
  * 搬运和显示，谁都不会在缺内容时补一个模板上去。
  */
-export async function sendLanDirective({ lan, approval, args, exec, store }) {
+export async function sendLanDirective({ lan, approval, args, exec, store, toolName = 'mochi_register_verdicts' }) {
   const directive = verdictsFor(args);
   return dispatchLanDelivery({
     lan,
@@ -450,8 +449,28 @@ export async function sendLanDirective({ lan, approval, args, exec, store }) {
     exec,
     store,
     args: { ...args, message: directiveMessage(args, directive) },
-    toolName: 'mochi_register_verdicts',
+    toolName,
     kind: 'directive',
     directive,
+  });
+}
+
+/** 单人叫号沿用名册的签名、审批和幂等链路。 */
+export async function sendLanStudentCall({ lan, approval, args, exec, store }) {
+  const student = boundedText(args?.student, 120, '学生姓名');
+  const location = boundedText(args?.location, 80, '地点');
+  const when = args?.when === undefined ? '' : boundedText(args.when, 40, '时间');
+  const instruction = args?.instruction === undefined ? '' : boundedText(args.instruction, 80, '补充交代');
+  const note = '请' + (when ? '于' + when : '') + '到' + location + (instruction ? '；' + instruction : '。');
+  return sendLanDirective({
+    lan, approval, exec, store, toolName: 'mochi_call_student',
+    args: {
+      classroomEndpointId: args?.classroomEndpointId,
+      item: '老师叫号',
+      verdicts: [{ student, action: 'call', note }],
+      message: '请' + student + '查看老师的通知。',
+      retryTaskId: args?.retryTaskId,
+      newTask: args?.newTask,
+    },
   });
 }

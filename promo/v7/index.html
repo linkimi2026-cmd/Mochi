@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>Mochi · Motion Graphics 宣传片 V7</title>
+<script src="assets/gsap.min.js"></script>
+<style>
+@font-face{font-family:Mochi;src:url(assets/NotoSansCJKsc-Regular.otf)}
+@font-face{font-family:MochiBold;src:url(assets/NotoSansCJKsc-Bold.otf)}
+@font-face{font-family:MochiSerif;src:url(assets/NotoSerifCJKsc-SemiBold.otf)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#faf8f2;font-family:Mochi,sans-serif;color:#283d35}
+#film{position:relative;width:2560px;height:1440px;overflow:hidden;background:
+  radial-gradient(#283d350f 2.4px,transparent 2.4px) 0 0/48px 48px,#faf8f2}
+.scene{position:absolute;inset:0;visibility:hidden}
+.v{visibility:hidden}
+
+/* ---------- S1 切碎的一天 ---------- */
+.chip{position:absolute;width:300px;height:92px;background:#fff;border:1px solid #dcdcd8;
+  border-radius:8px;box-shadow:0 6px 14px #283d3512;display:flex;align-items:center;justify-content:center;
+  font-family:MochiBold;font-size:40px;color:#283d35}
+.chip::before{content:'';position:absolute;top:0;left:24px;right:24px;height:6px;border-radius:0 0 6px 6px;background:#3F5B99;opacity:.85}
+.chip.alt::before{background:#d5a54e}
+.s1-title{position:absolute;left:0;right:0;top:560px;text-align:center;font-family:MochiSerif;
+  font-size:132px;letter-spacing:.04em;color:#283d35}
+.s1-sub{position:absolute;left:0;right:0;top:780px;text-align:center;font-size:42px;color:#5d6b63}
+
+/* ---------- S2 Mochi 登场 ---------- */
+#s2-orb{position:absolute;left:190px;top:270px;width:980px;height:789px}
+#s2-name{position:absolute;left:1360px;top:470px;font-family:MochiSerif;font-size:216px;color:#3F5B99;letter-spacing:.02em}
+#s2-tag{position:absolute;left:1368px;top:780px;font-size:46px;color:#283d35}
+#s2-greet{position:absolute;left:1368px;top:920px;width:900px;background:#fff;border:1px solid #dcdcd8;
+  border-radius:20px;padding:30px 40px;font-family:MochiBold;font-size:44px;color:#283d35;box-shadow:0 8px 22px #283d3514}
+#s2-greet .flips{display:block;perspective:800px}
+#s2-greet .flip{display:block;transform-origin:50% 50%}
+#s2-date{position:absolute;left:2150px;top:880px;background:#3F5B99;color:#fff;font-family:MochiBold;
+  font-size:30px;padding:12px 24px;border-radius:999px;transform:rotate(4deg)}
+#s2-fest{position:absolute;left:1372px;top:1090px;font-size:30px;color:#5d6b63}
+
+/* ---------- S3 连续流程 ---------- */
+#s3-svg{position:absolute;inset:0}
+#s3-title{position:absolute;left:0;right:0;top:1010px;text-align:center;font-family:MochiSerif;font-size:96px}
+.node-label{position:absolute;width:380px;text-align:center;font-family:MochiBold;font-size:42px;color:#283d35}
+.node-num{position:absolute;width:112px;height:112px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-family:MochiBold;font-size:46px;color:#283d35;background:#fff;border:3px solid #283d3533}
+
+/* ---------- S4 真实产物 ---------- */
+.file-card{position:absolute;top:400px;width:560px;height:640px;background:#fff;border-radius:28px;
+  box-shadow:0 18px 44px #283d3518;border:1px solid #eceade;overflow:hidden}
+.file-card .band{height:10px;width:100%}
+.file-icon{margin:44px auto 0;width:190px;height:232px;position:relative}
+.file-icon .paper{position:absolute;inset:0;background:#f4f3eb;border:2px solid #dcdcd8;border-radius:10px}
+.file-icon .fold{position:absolute;right:0;top:0;width:56px;height:56px;background:#fff;border-left:2px solid #dcdcd8;border-bottom:2px solid #dcdcd8;border-radius:0 0 0 12px}
+.file-icon .tag{position:absolute;left:22px;bottom:30px;padding:8px 18px;border-radius:8px;color:#fff;font-family:MochiBold;font-size:30px}
+.file-scene{margin-top:36px;text-align:center;font-family:MochiBold;font-size:52px}
+.file-note{margin-top:16px;text-align:center;font-size:32px;color:#5d6b63}
+.file-name{position:absolute;left:0;right:0;bottom:34px;text-align:center;font-family:ui-monospace,Menlo,monospace;font-size:28px;color:#8a948e}
+.s4-title{position:absolute;left:0;right:0;top:1120px;text-align:center;font-family:MochiSerif;font-size:92px}
+
+/* ---------- S5 A2A ---------- */
+.a2a-node{position:absolute;width:128px;height:128px;border-radius:50%;background:#fff;border:4px solid #3F5B99;
+  display:flex;align-items:center;justify-content:center;font-family:MochiBold;font-size:32px;color:#283d35}
+.a2a-node.human{border-color:#d5a54e}
+.a2a-node.mochi{border-width:6px}
+.a2a-name{position:absolute;width:280px;text-align:center;font-family:MochiBold;font-size:36px;color:#283d35}
+.status-pill{position:absolute;padding:10px 22px;border-radius:999px;font-family:MochiBold;font-size:28px;background:#fff;border:2px solid #dcdcd8;color:#5d6b63}
+.status-pill.done{background:#2f7a4f;border-color:#2f7a4f;color:#fff}
+.status-pill.sent{border-color:#3F5B99;color:#3F5B99}
+.status-pill.wait{background:#fbf5e8;border-color:#d5a54e;color:#8a6a2c}
+#s5-line1{position:absolute;left:0;right:0;top:1150px;text-align:center;font-size:38px;color:#283d35}
+#s5-line2{position:absolute;left:0;right:0;top:1230px;text-align:center;font-family:MochiBold;font-size:40px;color:#b4552d}
+#s5-dot{display:inline-block;width:18px;height:18px;border-radius:50%;background:#b4552d;margin-right:14px}
+
+/* ---------- S6 人在回路 ---------- */
+#s6-card{position:absolute;left:820px;top:280px;width:920px;height:600px;background:#fff;border-radius:24px;
+  box-shadow:0 24px 60px #283d3522;border:1px solid #eceade;overflow:hidden}
+#s6-card .head{height:96px;background:#3F5B99;display:flex;align-items:center;padding:0 44px;justify-content:space-between}
+#s6-card .head .t{color:#fff;font-family:MochiBold;font-size:42px}
+#s6-card .head .fake{color:#ffffffb3;font-size:24px;border:1px solid #ffffff66;border-radius:999px;padding:4px 16px}
+.s6-row{display:flex;align-items:baseline;gap:28px;padding:0 44px;margin-top:38px;font-size:38px}
+.s6-row .k{width:130px;font-family:MochiBold;font-size:30px;color:#3F5B99;flex:none}
+.s6-row .val{color:#283d35}
+.s6-btnrow{position:absolute;left:0;right:0;bottom:44px;display:flex;justify-content:center;gap:60px}
+.s6-btn{width:260px;height:88px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-family:MochiBold;font-size:40px}
+.s6-btn.ok{background:#2f7a4f;color:#fff}
+.s6-btn.no{background:#fff;border:2px solid #dcdcd8;color:#5d6b63}
+#s6-cursor{position:absolute;width:64px;height:64px;left:0;top:0}
+#s6-stamp{position:absolute;left:1420px;top:600px;width:280px;height:280px;border:10px solid #2f7a4f;border-radius:50%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;color:#2f7a4f;background:#2f7a4f0d;
+  font-family:MochiBold;transform:rotate(-12deg)}
+#s6-stamp .big{font-size:56px}
+#s6-stamp .small{font-size:26px;margin-top:10px}
+#s6-stamp::after{content:'';position:absolute;inset:14px;border:3px solid #2f7a4f;border-radius:50%}
+.s6-title{position:absolute;left:0;right:0;top:1150px;text-align:center;font-family:MochiSerif;font-size:96px}
+
+/* ---------- S7 收尾 ---------- */
+.grid-card{position:absolute;width:400px;height:200px;background:#fff;border-radius:20px;border:1px solid #eceade;
+  box-shadow:0 10px 26px #283d3510;display:flex;align-items:center;gap:24px;padding:0 34px}
+.grid-card .ic{width:56px;height:56px;border-radius:14px;flex:none;opacity:.9}
+.grid-card .tx{font-family:MochiBold;font-size:44px;color:#283d35}
+#s7-orb{position:absolute;left:1110px;top:150px;width:340px;height:290px}
+.s7-line{position:absolute;left:0;right:0;text-align:center;font-family:MochiSerif;font-size:86px;letter-spacing:.03em}
+#s7-slogan2{color:#3F5B99}
+#s7-brand{position:absolute;left:0;right:0;top:1150px;text-align:center}
+#s7-brand .b1{font-family:MochiBold;font-size:44px;color:#283d35}
+#s7-brand .b2{margin-top:14px;font-size:30px;color:#5d6b63}
+</style>
+</head>
+<body>
+<main id="film" data-composition-id="mochiV7" data-width="2560" data-height="1440" data-duration="62" data-fps="60">
+
+  <!-- ============ S1 切碎的一天 0–8.0s ============ -->
+  <section class="scene" id="s1">
+    <div class="chip" id="c0" style="left:490px;top:374px">找资料</div>
+    <div class="chip alt" id="c1" style="left:1130px;top:294px">做课件</div>
+    <div class="chip" id="c2" style="left:1750px;top:384px">整理试卷</div>
+    <div class="chip alt" id="c3" style="left:370px;top:714px">核对表格</div>
+    <div class="chip" id="c4" style="left:1100px;top:654px">查找学生</div>
+    <div class="chip" id="c5" style="left:1830px;top:734px">联系老师</div>
+    <div class="chip alt" id="c6" style="left:670px;top:1004px">处理放行</div>
+    <div class="chip" id="c7" style="left:1530px;top:1014px">返班登记</div>
+    <h1 class="s1-title v" id="s1-title">教师的一天，被切碎了</h1>
+    <p class="s1-sub v" id="s1-sub">每件事都不复杂，却要在多个软件、文件夹和角色之间反复切换</p>
+  </section>
+
+  <!-- ============ S2 Mochi 登场 8.0–15.5s ============ -->
+  <section class="scene" id="s2">
+    <svg id="s2-orb" viewBox="0 0 820 660">
+      <defs>
+        <radialGradient id="orbGrad" cx="42%" cy="30%" r="80%">
+          <stop offset="0%" stop-color="#ffffff"/><stop offset="70%" stop-color="#eef3fb"/><stop offset="100%" stop-color="#d7e2f4"/>
+        </radialGradient>
+      </defs>
+      <g id="orb-g">
+        <ellipse cx="410" cy="612" rx="180" ry="26" fill="#283d35" opacity="0.12"/>
+        <ellipse id="orb-body" cx="410" cy="350" rx="152" ry="164" fill="url(#orbGrad)" stroke="#3F5B99" stroke-width="5"/>
+        <g id="orb-face">
+          <ellipse id="eye-l" cx="352" cy="322" rx="15" ry="22" fill="#283d35"/>
+          <ellipse id="eye-r" cx="468" cy="322" rx="15" ry="22" fill="#283d35"/>
+          <path d="M388 382 Q410 400 432 382" stroke="#283d35" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <circle cx="316" cy="380" r="13" fill="#f0c9c0" opacity="0.65"/>
+          <circle cx="504" cy="380" r="13" fill="#f0c9c0" opacity="0.65"/>
+        </g>
+        <rect id="orb-screen" x="338" y="512" width="144" height="86" rx="10" fill="#1d2b26" stroke="#3F5B99" stroke-width="4"/>
+        <rect id="orb-glow" x="352" y="524" width="116" height="62" rx="6" fill="#3F5B99" opacity="0.35"/>
+        <rect x="300" y="600" width="220" height="14" rx="7" fill="#283d35"/>
+        <circle id="hand-l" cx="296" cy="546" r="19" fill="#ffffff" stroke="#3F5B99" stroke-width="5"/>
+        <circle id="hand-r" cx="524" cy="546" r="19" fill="#ffffff" stroke="#3F5B99" stroke-width="5"/>
+      </g>
+    </svg>
+    <h1 id="s2-name" class="v">Mochi</h1>
+    <p id="s2-tag" class="v">运行在教师电脑与教室一体机上的校园 AI Agent</p>
+    <div id="s2-greet" class="v"><span class="flips"><span class="flip" id="s2-greet-txt">你好，我是 Mochi</span></span></div>
+    <div id="s2-date" class="v">10 · 1 国庆节</div>
+    <p id="s2-fest" class="v">春节 · 元宵 · 端午 · 中秋 · 教师节 …… 问候随节日自动切换</p>
+  </section>
+
+  <!-- ============ S3 连续流程 15.5–24.5s ============ -->
+  <section class="scene" id="s3">
+    <svg id="s3-svg" viewBox="0 0 2560 1440">
+      <line x1="330" y1="620" x2="2230" y2="620" stroke="#283d3522" stroke-width="6"/>
+      <line id="s3-progress" x1="330" y1="620" x2="2230" y2="620" stroke="#3F5B99" stroke-width="9" stroke-linecap="round" style="transform-origin:330px 620px" />
+    </svg>
+    <div class="node-num v" id="n0" style="left:274px;top:564px">1</div>
+    <div class="node-num v" id="n1" style="left:654px;top:564px">2</div>
+    <div class="node-num v" id="n2" style="left:1034px;top:564px">3</div>
+    <div class="node-num v" id="n3" style="left:1414px;top:564px">4</div>
+    <div class="node-num v" id="n4" style="left:1794px;top:564px">5</div>
+    <div class="node-num v" id="n5" style="left:2174px;top:564px">6</div>
+    <div class="node-label v" id="l0" style="left:140px;top:440px">说出需求</div>
+    <div class="node-label v" id="l1" style="left:520px;top:440px">选择能力</div>
+    <div class="node-label v" id="l2" style="left:900px;top:440px">展示执行</div>
+    <div class="node-label v" id="l3" style="left:1280px;top:440px">真实产物</div>
+    <div class="node-label v" id="l4" style="left:1660px;top:440px">连接校园</div>
+    <div class="node-label v" id="l5" style="left:2040px;top:440px">人工确认</div>
+    <h2 class="s3-title v" id="s3-title">把切碎的工作，放进同一条连续流程</h2>
+  </section>
+
+  <!-- ============ S4 真实产物 24.5–34.5s ============ -->
+  <section class="scene" id="s4">
+    <div class="file-card v" id="f0" style="left:106px">
+      <div class="band" style="background:#3F5B99"></div>
+      <div class="file-icon"><div class="paper"></div><div class="fold"></div><div class="tag" style="background:#3F5B99">.pptx</div></div>
+      <div class="file-scene">新增课件</div><div class="file-note">组织教学结构，生成并打开</div>
+      <div class="file-name" id="fn0">lesson-fractions.pptx</div>
+    </div>
+    <div class="file-card v" id="f1" style="left:702px">
+      <div class="band" style="background:#d5a54e"></div>
+      <div class="file-icon"><div class="paper"></div><div class="fold"></div><div class="tag" style="background:#d5a54e">.docx</div></div>
+      <div class="file-scene">整理试卷</div><div class="file-note">题目 · 答案 · 说明</div>
+      <div class="file-name" id="fn1">exam-unit4.docx</div>
+    </div>
+    <div class="file-card v" id="f2" style="left:1298px">
+      <div class="band" style="background:#2f7a4f"></div>
+      <div class="file-icon"><div class="paper"></div><div class="fold"></div><div class="tag" style="background:#2f7a4f">.xlsx</div></div>
+      <div class="file-scene">表格处理</div><div class="file-note">读取 · 计算 · 回写</div>
+      <div class="file-name" id="fn2">grades-term2.xlsx</div>
+    </div>
+    <div class="file-card v" id="f3" style="left:1894px">
+      <div class="band" style="background:#b4552d"></div>
+      <div class="file-icon"><div class="paper"></div><div class="fold"></div><div class="tag" style="background:#b4552d">模型</div></div>
+      <div class="file-scene">教学建模</div><div class="file-note">可视化 · 模型文件</div>
+      <div class="file-name" id="fn3">triangle-model.html</div>
+    </div>
+    <h2 class="s4-title v" id="s4-title">不是一段建议，是能直接打开的文件</h2>
+  </section>
+
+  <!-- ============ S5 Agent to Agent 34.5–45.0s ============ -->
+  <section class="scene" id="s5">
+    <svg id="s5-svg" viewBox="0 0 2560 1440" style="position:absolute;inset:0">
+      <line x1="320" y1="720" x2="800" y2="560" stroke="#283d3522" stroke-width="6"/>
+      <line x1="800" y1="560" x2="1280" y2="720" stroke="#283d3522" stroke-width="6"/>
+      <line x1="1280" y1="720" x2="1760" y2="560" stroke="#283d3522" stroke-width="6"/>
+      <line x1="1760" y1="560" x2="2240" y2="720" stroke="#283d3522" stroke-width="6"/>
+      <circle id="pkg0" r="17" fill="#3F5B99" style="visibility:hidden"/>
+      <circle id="pkg1" r="17" fill="#3F5B99" style="visibility:hidden"/>
+      <circle id="pkg2" r="17" fill="#3F5B99" style="visibility:hidden"/>
+      <circle id="pkg3" r="17" fill="#3F5B99" style="visibility:hidden"/>
+    </svg>
+    <div class="a2a-node v" id="a0" style="left:256px;top:656px">资料</div>
+    <div class="a2a-node v" id="a1" style="left:736px;top:496px">课件</div>
+    <div class="a2a-node v" id="a2" style="left:1216px;top:656px">校园</div>
+    <div class="a2a-node human v" id="a3" style="left:1696px;top:496px">班主任</div>
+    <div class="a2a-node mochi v" id="a4" style="left:2176px;top:656px">Mochi</div>
+    <div class="a2a-name v" id="an0" style="left:180px;top:806px">资料 Agent</div>
+    <div class="a2a-name v" id="an1" style="left:660px;top:646px">课件 Agent</div>
+    <div class="a2a-name v" id="an2" style="left:1140px;top:806px">校园 Agent</div>
+    <div class="a2a-name v" id="an3" style="left:1620px;top:646px">班主任 · 人</div>
+    <div class="a2a-name v" id="an4" style="left:2100px;top:806px">汇总产物与状态</div>
+    <div class="status-pill sent v" id="st1" style="left:680px;top:380px">已发送 → 已送达</div>
+    <div class="status-pill done v" id="st2" style="left:1176px;top:916px">已完成</div>
+    <div class="status-pill wait v" id="st3" style="left:1656px;top:380px">等待批准</div>
+    <div class="status-pill done v" id="st4" style="left:2088px;top:916px">产物 + 状态 已汇总</div>
+    <p id="s5-line1" class="v">系统区分：已发送 · 已送达 · 已完成 · 已拒绝 · 结果未知</p>
+    <p id="s5-line2" class="v"><span id="s5-dot"></span>结果未知时，不自动重发</p>
+  </section>
+
+  <!-- ============ S6 人在回路 45.0–53.5s ============ -->
+  <section class="scene" id="s6">
+    <div id="s6-card" class="v">
+      <div class="head"><span class="t">放行申请</span><span class="fake">演示数据 · 虚构</span></div>
+      <div class="s6-row v" id="r0"><span class="k">学生</span><span class="val">李明（演示用虚构）</span></div>
+      <div class="s6-row v" id="r1"><span class="k">目的地</span><span class="val">校门口 → 家长接送</span></div>
+      <div class="s6-row v" id="r2"><span class="k">发起</span><span class="val">班主任 · 已送达</span></div>
+      <div class="s6-row v" id="r3"><span class="k">影响</span><span class="val">离校登记将同步校园记录</span></div>
+      <div class="s6-btnrow">
+        <div class="s6-btn no" id="btn-no">驳回</div>
+        <div class="s6-btn ok" id="btn-ok">批准</div>
+      </div>
+    </div>
+    <svg id="s6-cursor" class="v" viewBox="0 0 64 64"><path d="M8 4 L8 52 L22 40 L32 60 L42 54 L32 36 L50 34 Z" fill="#283d35" stroke="#fff" stroke-width="3"/></svg>
+    <div id="s6-stamp" class="v"><span class="big">已批准</span><span class="small">人工确认 · 2026-10-01</span></div>
+    <h2 class="s6-title v" id="s6-title">AI 准备和提议，人来批准和负责</h2>
+  </section>
+
+  <!-- ============ S7 收尾 53.5–62.0s ============ -->
+  <section class="scene" id="s7">
+    <div id="s7-grid">
+      <div class="grid-card v" id="g0"  style="left:644px;top:236px"><span class="ic" style="background:#3F5B99"></span><span class="tx">新增课件</span></div>
+      <div class="grid-card v" id="g1"  style="left:1080px;top:236px"><span class="ic" style="background:#d5a54e"></span><span class="tx">整理试卷</span></div>
+      <div class="grid-card v" id="g2"  style="left:1516px;top:236px"><span class="ic" style="background:#2f7a4f"></span><span class="tx">表格处理</span></div>
+      <div class="grid-card v" id="g3"  style="left:644px;top:472px"><span class="ic" style="background:#b4552d"></span><span class="tx">教学建模</span></div>
+      <div class="grid-card v" id="g4"  style="left:1080px;top:472px"><span class="ic" style="background:#3F5B99"></span><span class="tx">知识搜索</span></div>
+      <div class="grid-card v" id="g5"  style="left:1516px;top:472px"><span class="ic" style="background:#d5a54e"></span><span class="tx">查找学生</span></div>
+      <div class="grid-card v" id="g6"  style="left:644px;top:708px"><span class="ic" style="background:#2f7a4f"></span><span class="tx">沟通老师</span></div>
+      <div class="grid-card v" id="g7"  style="left:1080px;top:708px"><span class="ic" style="background:#b4552d"></span><span class="tx">批准放行</span></div>
+      <div class="grid-card v" id="g8"  style="left:1516px;top:708px"><span class="ic" style="background:#3F5B99"></span><span class="tx">教室连接</span></div>
+      <div class="grid-card v" id="g9"  style="left:644px;top:944px"><span class="ic" style="background:#d5a54e"></span><span class="tx">小信箱</span></div>
+      <div class="grid-card v" id="g10" style="left:1080px;top:944px"><span class="ic" style="background:#2f7a4f"></span><span class="tx">工作日记</span></div>
+      <div class="grid-card v" id="g11" style="left:1516px;top:944px"><span class="ic" style="background:#b4552d"></span><span class="tx">节日问候</span></div>
+    </div>
+    <svg id="s7-orb" viewBox="0 0 340 290" class="v">
+      <ellipse cx="170" cy="266" rx="76" ry="12" fill="#283d35" opacity="0.12"/>
+      <ellipse id="s7-body" cx="170" cy="140" rx="66" ry="72" fill="url(#orbGrad)" stroke="#3F5B99" stroke-width="4"/>
+      <ellipse cx="146" cy="122" rx="7" ry="10" fill="#283d35"/>
+      <ellipse cx="194" cy="122" rx="7" ry="10" fill="#283d35"/>
+      <path d="M156 164 Q170 174 184 164" stroke="#283d35" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <rect x="140" y="214" width="60" height="36" rx="6" fill="#1d2b26" stroke="#3F5B99" stroke-width="3"/>
+      <rect x="126" y="250" width="88" height="8" rx="4" fill="#283d35"/>
+    </svg>
+    <h2 class="s7-line v" id="s7-slogan1" style="top:600px">嘉行联，连接校园中的状态</h2>
+    <h2 class="s7-line v" id="s7-slogan2" style="top:730px">Mochi，连接校园中的人 · Agent · 任务</h2>
+    <div id="s7-brand" class="v"><div class="b1">Mochi · 校园 AI Agent</div><div class="b2">嘉行联 AI 创意实践大赛 · 高中组</div></div>
+  </section>
+
+  <audio id="bgm" src="assets/music.wav" data-start="0" data-duration="62"></audio>
+</main>
+
+<script>
+const $ = s => document.querySelector(s);
+const show = tl => (els, at, dur=0.001) => { tl.set(els, {autoAlpha:1}, at); };
+
+/* ================= 主时间轴（秒，确定性） ================= */
+const tl = gsap.timeline({paused:true, defaults:{ease:'power2.out'}});
+
+/* ---------- S1 切碎的一天 0–8.0 ---------- */
+tl.set('#s1',{autoAlpha:1},0);
+const chips=['#c0','#c1','#c2','#c3','#c4','#c5','#c6','#c7'];
+const chipFrom=[[-1400,-900],[0,-1100],[1400,-800],[-1600,-200],[0,-1200],[1600,-100],[-1400,600],[1500,700]];
+chips.forEach((c,i)=>{
+  tl.fromTo(c,
+    {x:chipFrom[i][0], y:chipFrom[i][1], autoAlpha:0, rotation:(i%2? -18:16)},
+    {x:0, y:0, autoAlpha:1, rotation:(i%2? 4:-5), duration:.55, ease:'back.out(1.3)'}, .55+i*.38);
+});
+tl.to(chips.join(','),{autoAlpha:.35, scale:.93, duration:.6, ease:'power1.inOut'},4.55);
+tl.fromTo('#s1-title',{y:90,autoAlpha:0},{y:0,autoAlpha:1,duration:.7},5.05);
+tl.fromTo('#s1-sub',{y:40,autoAlpha:0},{y:0,autoAlpha:1,duration:.6},5.85);
+tl.to('#s1',{y:-60,autoAlpha:0,duration:.6,ease:'power1.in'},7.35);
+
+/* ---------- S2 Mochi 登场 8.0–15.5 ---------- */
+tl.set('#s2',{autoAlpha:1},8.0);
+tl.fromTo('#orb-g',{scale:0, y:140, transformOrigin:'50% 90%'},
+  {scale:1, y:0, duration:1.05, ease:'elastic.out(1,0.62)'},8.15);
+/* 打字摇摆（确定性 repeat） */
+tl.to('#orb-body',{rotation:2.2, duration:.34, yoyo:true, repeat:13,
+  transformOrigin:'50% 82%', ease:'sine.inOut'},8.6);
+tl.to('#hand-l',{y:-12, duration:.17, yoyo:true, repeat:27, ease:'sine.inOut'},8.6);
+tl.to('#hand-r',{y:-12, duration:.17, yoyo:true, repeat:27, ease:'sine.inOut'},8.77);
+tl.to('#orb-glow',{opacity:.75, duration:.5, yoyo:true, repeat:11, ease:'sine.inOut'},8.7);
+/* 眨眼 */
+[[9.8],[11.6],[13.4]].forEach(([t])=>{
+  tl.to('#eye-l',{scaleY:.12, duration:.12, yoyo:true, repeat:1, transformOrigin:'50% 50%'},t);
+  tl.to('#eye-r',{scaleY:.12, duration:.12, yoyo:true, repeat:1, transformOrigin:'50% 50%'},t);
+});
+tl.fromTo('#s2-name',{x:420,autoAlpha:0},{x:0,autoAlpha:1,duration:.85,ease:'power3.out'},10.55);
+tl.fromTo('#s2-tag',{y:44,autoAlpha:0},{y:0,autoAlpha:1,duration:.6},11.4);
+/* 节日问候：真实文案 holiday-greeting.mjs */
+tl.fromTo('#s2-greet',{y:60,autoAlpha:0,rotationX:24},{y:0,autoAlpha:1,rotationX:0,duration:.7,ease:'back.out(1.2)'},12.15);
+tl.to('#s2-greet-txt',{rotationX:90,duration:.22,ease:'power1.in',transformOrigin:'50% 50%'},13.15);
+tl.set('#s2-greet-txt',{textContent:'国庆快乐，愿你度过舒心的一天'},13.37);
+tl.fromTo('#s2-greet-txt',{rotationX:-90},{rotationX:0,duration:.28,ease:'back.out(1.4)'},13.38);
+tl.fromTo('#s2-date',{scale:0,autoAlpha:0},{scale:1,autoAlpha:1,duration:.4,ease:'back.out(2)'},13.7);
+tl.fromTo('#s2-fest',{y:26,autoAlpha:0},{y:0,autoAlpha:1,duration:.5},14.25);
+tl.to('#s2',{autoAlpha:0,duration:.55,ease:'power1.in'},14.95);
+
+/* ---------- S3 连续流程 15.5–24.5 ---------- */
+tl.set('#s3',{autoAlpha:1},15.5);
+const nodes=['#n0','#n1','#n2','#n3','#n4','#n5'];
+const labels=['#l0','#l1','#l2','#l3','#l4','#l5'];
+nodes.forEach((n,i)=>tl.fromTo(n,{scale:.4,autoAlpha:0},{scale:1,autoAlpha:1,duration:.4,ease:'back.out(1.6)'},15.72+i*.14));
+tl.fromTo('#s3-progress',{scaleX:0},{scaleX:1,duration:5.6,ease:'none'},17.0);
+nodes.forEach((n,i)=>{
+  const t=17.35+i*.95;
+  tl.set(n,{backgroundColor:'#3F5B99',borderColor:'#3F5B99',color:'#fff'},t);
+  tl.fromTo(n,{scale:1},{scale:1.14,duration:.16,yoyo:true,repeat:1,ease:'power1.inOut'},t);
+  tl.fromTo(labels[i],{y:36,autoAlpha:0},{y:0,autoAlpha:1,duration:.4},t);
+});
+tl.to('#s3-svg,'+nodes.join(',')+','+labels.join(','),{y:-46,duration:.5},22.7);
+tl.fromTo('#s3-title',{y:70,autoAlpha:0},{y:0,autoAlpha:1,duration:.6},23.15);
+tl.to('#s3',{autoAlpha:0,duration:.55,ease:'power1.in'},23.95);
+
+/* ---------- S4 真实产物 24.5–34.5 ---------- */
+tl.set('#s4',{autoAlpha:1},24.5);
+const cards=['#f0','#f1','#f2','#f3'];
+const names=['#fn0','#fn1','#fn2','#fn3'];
+cards.forEach((c,i)=>{
+  tl.fromTo(c,{y:280,autoAlpha:0,rotation:(i%2?5:-5)},
+    {y:0,autoAlpha:1,rotation:0,duration:.62,ease:'back.out(1.25)'},25.35+i*.65);
+  tl.fromTo(names[i],{clipPath:'inset(0 100% 0 0)'},{clipPath:'inset(0 0% 0 0)',duration:.7,ease:'none'},26.15+i*.65);
+});
+tl.to(cards.join(','),{y:-30,scale:.92,duration:.5},31.55);
+tl.fromTo('#s4-title',{y:70,autoAlpha:0},{y:0,autoAlpha:1,duration:.6},32.1);
+tl.to('#s4',{autoAlpha:0,duration:.55,ease:'power1.in'},33.9);
+
+/* ---------- S5 Agent to Agent 34.5–45.0 ---------- */
+tl.set('#s5',{autoAlpha:1},34.5);
+const aNodes=['#a0','#a1','#a2','#a3','#a4'];
+const aNames=['#an0','#an1','#an2','#an3','#an4'];
+aNodes.forEach((n,i)=>tl.fromTo(n,{scale:.4,autoAlpha:0},{scale:1,autoAlpha:1,duration:.4,ease:'back.out(1.6)'},34.72+i*.13));
+aNames.forEach((n,i)=>tl.fromTo(n,{autoAlpha:0},{autoAlpha:1,duration:.35},34.95+i*.13));
+/* 消息包沿链滑动 */
+const seg=[[320,720,800,560],[800,560,1280,720],[1280,720,1760,560],[1760,560,2240,720]];
+seg.forEach((s,i)=>{
+  const id='#pkg'+i, t0=35.85+i*1.05;
+  tl.set(id,{attr:{cx:s[0],cy:s[1]},autoAlpha:1},t0);
+  tl.to(id,{attr:{cx:s[2],cy:s[3]},duration:.8,ease:'power1.inOut'},t0);
+  tl.set(id,{autoAlpha:0},t0+.82);
+});
+tl.fromTo('#st1',{scale:.6,autoAlpha:0},{scale:1,autoAlpha:1,duration:.35,ease:'back.out(1.8)'},36.75);
+tl.fromTo('#st2',{scale:.6,autoAlpha:0},{scale:1,autoAlpha:1,duration:.35,ease:'back.out(1.8)'},38.05);
+tl.fromTo('#st3',{scale:.6,autoAlpha:0},{scale:1,autoAlpha:1,duration:.35,ease:'back.out(1.8)'},39.15);
+tl.fromTo('#st4',{scale:.6,autoAlpha:0},{scale:1,autoAlpha:1,duration:.35,ease:'back.out(1.8)'},40.75);
+tl.fromTo('#s5-line1',{y:34,autoAlpha:0},{y:0,autoAlpha:1,duration:.5},41.5);
+tl.fromTo('#s5-dot',{scale:0},{scale:1,duration:.3,ease:'back.out(2)'},42.3);
+tl.fromTo('#s5-line2',{y:34,autoAlpha:0},{y:0,autoAlpha:1,duration:.5},42.35);
+tl.to('#s5',{autoAlpha:0,duration:.55,ease:'power1.in'},44.2);
+
+/* ---------- S6 人在回路 45.0–53.5 ---------- */
+tl.set('#s6',{autoAlpha:1},45.0);
+tl.fromTo('#s6-card',{scale:.82,autoAlpha:0},{scale:1,autoAlpha:1,duration:.6,ease:'back.out(1.2)'},45.15);
+['#r0','#r1','#r2','#r3'].forEach((r,i)=>
+  tl.fromTo(r,{x:-46,autoAlpha:0},{x:0,autoAlpha:1,duration:.45},46.25+i*.4));
+tl.fromTo('#s6-cursor',{x:2050,y:1250,autoAlpha:0},{x:1118,y:905,autoAlpha:1,duration:.8,ease:'power2.inOut'},48.55);
+tl.to('#btn-ok',{scale:.93,duration:.14,yoyo:true,repeat:1,ease:'power1.inOut'},49.55);
+tl.set('#btn-ok',{backgroundColor:'#26603e'},49.7);
+tl.fromTo('#s6-stamp',{scale:2.4,autoAlpha:0,rotation:-30},
+  {scale:1,autoAlpha:1,rotation:-12,duration:.3,ease:'power4.in'},49.95);
+tl.to('#s6-card',{y:6,duration:.1,yoyo:true,repeat:1,ease:'power1.inOut'},50.22);
+tl.fromTo('#s6-title',{y:70,autoAlpha:0},{y:0,autoAlpha:1,duration:.6},51.4);
+tl.to('#s6',{autoAlpha:0,duration:.55,ease:'power1.in'},52.9);
+
+/* ---------- S7 收尾 53.5–62.0 ---------- */
+tl.set('#s7',{autoAlpha:1},53.5);
+const grid=['#g0','#g1','#g2','#g3','#g4','#g5','#g6','#g7','#g8','#g9','#g10','#g11'];
+grid.forEach((g,i)=>tl.fromTo(g,{scale:.55,autoAlpha:0},{scale:1,autoAlpha:1,duration:.34,ease:'back.out(1.7)'},53.8+i*.06));
+tl.fromTo('#s7-grid',{y:0,autoAlpha:1,scale:1},{y:-70,autoAlpha:0,scale:.86,duration:.55,ease:'power1.in'},56.5);
+tl.set('#s7-grid',{visibility:'hidden'},57.06);
+tl.fromTo('#s7-orb',{scale:0,autoAlpha:0,transformOrigin:'50% 88%'},{scale:1,autoAlpha:1,duration:.9,ease:'elastic.out(1,0.6)'},57.0);
+tl.fromTo('#s7-slogan1',{y:60,autoAlpha:0},{y:0,autoAlpha:1,duration:.6},57.85);
+tl.fromTo('#s7-slogan2',{y:60,autoAlpha:0},{y:0,autoAlpha:1,duration:.6},58.6);
+/* 球庆祝两跳（squash & stretch） */
+tl.to('#s7-body',{scaleY:.86,scaleX:1.1,duration:.16,yoyo:true,repeat:1,transformOrigin:'50% 92%',ease:'power1.inOut'},58.4);
+tl.to('#s7-orb',{y:-46,duration:.26,yoyo:true,repeat:3,ease:'sine.inOut'},58.6);
+tl.fromTo('#s7-brand',{y:40,autoAlpha:0},{y:0,autoAlpha:1,duration:.6},60.0);
+
+/* ================= 暴露给 hyperframes ================= */
+window.__timelines={mochiV7:tl};
+</script>
+</body>
+</html>

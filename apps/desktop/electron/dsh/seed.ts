@@ -17,7 +17,7 @@ import type { MochiRuntimeRole } from "./profile";
  *
  * 打包资源里带有构建期生成的种子（`<resourceRoot>/seeds/`，由
  * `scripts/seed-packaging-keys.cjs` 从本地密钥文件或 CI Secrets 渲染）。
- * 首启（teacher 角色、每次宿主启动前幂等执行）把种子补齐进运行时 home：
+ * 首启（每个角色独立 home、每次宿主启动前幂等执行）把种子补齐进运行时 home：
  *
  *   - `.credentials.yaml`：缺失的 refs 以 0600 原子写入；已有值一律不动。
  *   - `settings.yaml`：完全没有模型配置时写入默认模型链；已有配置不覆盖。
@@ -227,13 +227,15 @@ function hasModelConfig(text: string): boolean {
  */
 export function seedRuntimeHome(options: { homeDir: string; resourceRoot: string; role: MochiRuntimeRole }): MochiSeedSummary {
   const { homeDir, resourceRoot, role } = options;
-  if (role !== "teacher") {
-    // 教室端独立数据目录，不读教师密钥（与首启角色选择对话框口径一致）。
-    return { status: "disabled", credentialRefsInserted: [], credentialRefsPresent: [], settingsAction: "absent" };
-  }
-
-  const credentialsSeed = readCredentialsSeed(resourceRoot);
-  const settingsSeed = readSettingsSeed(resourceRoot);
+  // Factory seeds are role-scoped; never read credentials from the other role's home.
+  const requiredRefs = role === "classroom" ? ["MIMO_API_KEY"] : SEEDABLE_CREDENTIAL_REFS;
+  const sourceSeed = readCredentialsSeed(resourceRoot);
+  const credentialsSeed = sourceSeed && {
+    ...sourceSeed,
+    refs: Object.fromEntries(Object.entries(sourceSeed.refs).filter(([ref]) => requiredRefs.includes(ref))),
+  };
+  // Classroom defaults already come from its role profile, not the teacher model chain.
+  const settingsSeed = role === "teacher" ? readSettingsSeed(resourceRoot) : null;
 
   const credentialsPath = join(homeDir, CREDENTIALS_FILENAME);
   const existingCredentials = existsSync(credentialsPath) ? readFileSync(credentialsPath, "utf8") : "";
@@ -254,8 +256,17 @@ export function seedRuntimeHome(options: { homeDir: string; resourceRoot: string
   let settingsAction: MochiSeedSummary["settingsAction"] = "absent";
   const settingsPath = join(homeDir, SETTINGS_FILENAME);
   const existingSettings = existsSync(settingsPath) ? readFileSync(settingsPath, "utf8") : "";
+  const profilePath = join(homeDir, "profiles", "mochi-web", "package.json");
+  const migratedSettings = existsSync(join(homeDir, `${SETTINGS_FILENAME}.imported`))
+    && existsSync(profilePath)
+    && JSON.parse(readFileSync(profilePath, "utf8")).dsh?.profile?.bundles
+      ?.includes("@deepseek-ai/dsh-experimental-voice-input-bundle");
   if (settingsSeed !== null) {
-    if (existingSettings.trim().length === 0) {
+    if (migratedSettings) {
+      // The candidate persists live settings in its profile patch. Recreating
+      // the retired document would import factory defaults over user edits.
+      settingsAction = "kept";
+    } else if (existingSettings.trim().length === 0) {
       const document = renderSettingsSeedDocument(settingsSeed, "# Mochi 默认模型链（安装包内置种子，可在设置页修改）\n");
       mkdirSync(dirname(settingsPath), { recursive: true });
       writeFileSync(settingsPath, document, "utf8");
@@ -269,14 +280,14 @@ export function seedRuntimeHome(options: { homeDir: string; resourceRoot: string
     }
   }
 
-  const credentialsRefsPresent = SEEDABLE_CREDENTIAL_REFS.filter((key) => credentialRefPresent(credentialsText, key));
+  const credentialsRefsPresent = requiredRefs.filter((key) => credentialRefPresent(credentialsText, key));
   if (credentialsRefsPresent.length === 0) {
     notifyMissingKeysOnce();
   }
 
   const status: MochiSeedStatus = credentialsSeed === null
     ? "absent"
-    : rejected.length === 0 && credentialsRefsPresent.length === SEEDABLE_CREDENTIAL_REFS.length
+    : rejected.length === 0 && credentialsRefsPresent.length === requiredRefs.length
       ? "seeded"
       : "partial";
   return { status, credentialRefsInserted: inserted, credentialRefsPresent: credentialsRefsPresent, settingsAction };

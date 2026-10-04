@@ -141,7 +141,7 @@ export class CampusConnection {
     const session = exec?.agent?.session;
     if (!session) { console.log('[mochi-campus] binding 失败：当前执行上下文没有会话（需在 Mochi 对话中调用）。'); throw new Error('校园操作需要在 Mochi 对话中执行。'); }
     if (!this.#active) await this.#restore();
-    if (!this.#active) { console.log('[mochi-campus] binding 失败：本进程未激活校园登录（浏览器侧需先打开任一校园页面）。'); throw new Error('请先在侧栏任一校园页面登录账号，再继续此对话。'); }
+    if (!this.#active) { console.log('[mochi-campus] binding 失败：本进程未激活校园登录（浏览器侧需先打开任一校园页面）。'); throw new Error('请先打开设置，在顶部“用户账号”登录校园账号，再继续此对话。'); }
     const bound = this.#bindings.get(session);
     if (bound !== undefined && bound !== this.#active.user.id) throw new Error('校园账号已切换。请新建对话，以当前账号重新开始。');
     this.#bindings.set(session, this.#active.user.id);

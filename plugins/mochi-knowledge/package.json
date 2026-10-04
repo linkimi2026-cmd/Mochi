@@ -12,10 +12,12 @@
     "knowledge-page-image.mjs",
     "scripts/build-catalog-from-audit.mjs",
     "scripts/build-private-textbook-snapshot.mjs",
+    "scripts/build-textbook-skills.mjs",
     "scripts/import-textbooks.mjs",
     "scripts/install-textbook-snapshot.mjs",
     "scripts/ocr-scanned-books.mjs",
-    "scripts/render-pdf-page.py"
+    "scripts/render-pdf-page.py",
+    "vendor/book-to-skill"
   ],
   "scripts": {
     "test": "node --test test/*.test.mjs",
@@ -24,8 +26,10 @@
     "ocr": "node scripts/ocr-scanned-books.mjs"
   },
   "dependencies": {
-    "@deepseek-ai/dsh-tools": "0.1.3-alpha.1",
     "@napi-rs/canvas": "1.0.8",
     "pdfjs-dist": "6.3.289"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh-tools": "0.1.3-alpha.1 || 0.2.0-rc.2"
   }
 }

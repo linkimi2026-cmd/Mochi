@@ -65,8 +65,8 @@
 
 /* 老师气泡：偏焦糖的暖底，靠明度与 Mochi 区分，不跳色相 */
 .chat-row--teacher .chat-bubble {
-  background: var(--accent-soft);
-  color: #4a2c10;
+  background: var(--surface-soft);
+  color: var(--ink);
   border-bottom-right-radius: var(--radius-xs);
 }
 

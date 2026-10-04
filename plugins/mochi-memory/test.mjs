@@ -23,7 +23,7 @@ console.log('① 六工具注册齐全、名字正确');
 {
   assert.deepEqual(
     [...tools.keys()].sort(),
-    ['mochi_memory_clear', 'mochi_memory_forget', 'mochi_memory_list', 'mochi_memory_note', 'mochi_memory_recall', 'mochi_memory_world'].sort(),
+    ['mochi_memory_clear', 'mochi_memory_forget', 'mochi_memory_list', 'mochi_memory_note', 'mochi_memory_recall', 'mochi_memory_world', 'mochi_memory_observe'].sort(),
   );
 }
 

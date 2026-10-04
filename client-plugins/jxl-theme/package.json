@@ -7,11 +7,22 @@
   "type": "module",
   "dsh": {
     "client": {
-      "platform": "web"
+      "platform": "web",
+      "inject": [
+        "remote"
+      ]
     }
   },
   "exports": {
     ".": "./index.mjs",
     "./client": "./client.js"
+  },
+  "scripts": {
+    "build": "node scripts/build-client.mjs",
+    "test": "node --test test/*.test.mjs"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh-tools": "0.1.3-alpha.1 || 0.2.0-rc.2",
+    "@deepseek-ai/schemastery": "3.18.2 || 3.18.4"
   }
 }

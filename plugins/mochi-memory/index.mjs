@@ -1,11 +1,19 @@
 // mochi-memory · Mochi 记忆域（工单 MOCHI-P5-MEM-03 / MEM-03c）。
 // 把已验收的两层存储（world-state.mjs 纯文件层 + mem-store.mjs sqlite 层）包成 dsh 插件，
-// 注册 6 个对话工具。记忆是本地低风险读写，不走审批闸（memory_clear 防误清靠描述复述纪律 + forget 快照可恢复两层）。
+// 注册原记忆工具和有原句依据的观察工具，复用本地存储与审计。
 // 写入纪律（Memory Confidence）写在工具描述里，模型靠描述决策；存储层另有正则护栏兜底。
 import { defineTool } from '@deepseek-ai/dsh-tools';
 import { createStore } from './mem-store.mjs';
 import { openWorldState } from './world-state.mjs';
 import { installActiveMemoryPrompt } from './active-context.mjs';
+import { installMemoryManagement } from './management.mjs';
+import { ProactiveMemory, userEvidence } from './proactive.mjs';
+import { JournalStore } from './journal-store.mjs';
+import { installJournalManagement } from './journal-management.mjs';
+import { activityFromTurn, activityFromLesson } from './journal-activity.mjs';
+import { JournalWriter } from './journal-writer.mjs';
+import { installJournalContext } from './journal-context.mjs';
+import { createJournalScheduler } from './journal-scheduler.mjs';
 
 export const name = 'mochi-memory';
 export const inject = ['tools', 'systemPrompt'];
@@ -26,16 +34,76 @@ const SOURCE_LABELS = {
   user_statement: '用户陈述',
   repeated: '多次重复',
   explicit_request: '明确要求',
+  observed: '日常对话中形成的暂定习惯',
 };
 
 const sourceLabel = (source) => SOURCE_LABELS[source] || '未注明来源';
 
 export function apply(ctx, storeArg = null, worldArg = null) {
-  const store = storeArg || createStore();
+  // Cordis passes a config object as the second argument; only explicit test stores are injectable.
+  const store = typeof storeArg?.note === 'function' ? storeArg : createStore();
   const world = worldArg || openWorldState();
+  const proactive = store.db ? new ProactiveMemory(store, {role:storeArg?.role}) : null;
+  const journal = store.db && ['teacher','classroom'].includes(storeArg?.role)
+    ? new JournalStore(store.db, {role:storeArg.role}) : null;
+  const writer = journal ? new JournalWriter(journal) : null;
+  let journalScheduler = null;
+  if (writer && typeof ctx.inject === 'function') ctx.inject(['llm'], host => {
+    writer.stream = options => host.llm.stream(options);
+    const scheduler = createJournalScheduler(journal,{generate:(date,options)=>writer.generate(date,options)});
+    journalScheduler = scheduler;
+    void scheduler.start().catch(()=>ctx.logger?.warn?.('mochi-memory journal scheduling could not start'));
+    return async () => { if (journalScheduler === scheduler) journalScheduler = null; writer.stream = null; await scheduler.close(); };
+  });
+  if (typeof ctx.inject === 'function') ctx.inject(['connection'], host => {
+    const cleanup = installMemoryManagement(host,store,world,proactive);
+    if (journal) cleanup.push(...installJournalManagement(host,journal,{
+      generate:async date=>{const result=await writer.generate(date);journalScheduler?.refreshHistory();return result;},
+      configured:()=>journalScheduler?.configure(),
+      scheduling:()=>journalScheduler?.status()??null,
+    }));
+    return () => cleanup.reverse().forEach(dispose=>dispose?.());
+  });
   const register = (toolName, description, parameters, execute) => ctx.tools.register(defineTool({ name: toolName, description, parameters, output, execute }));
+  if (journal) {
+    installJournalContext(ctx,journal);
+    register('mochi_journal_read','查看本机角色的 Mochi 日记与长期历史。未指定ID时返回历史及日记目录；指定目录中真实ID可读取完整日记。自动整理不是认证事实，不得把请求当已完成成果。',
+      {id:{type:'string',description:'可选的真实日记ID。'}},args=>args.id?journal.get(args.id):{history:journal.history(),entries:journal.list().slice(0,60).map(({id,date,title})=>({id,date,title}))});
+    register('mochi_journal_summarize','按日期提取本机已有日记，供回答回顾问题或整理历史。返回有出处的本地合并预览，不自动覆盖用户编辑的历史；没有日记的日期不编造。',
+      {from:{type:'string',required:true},to:{type:'string',required:true}},args=>journal.summarizeRange(args));
+  }
   // 动态历史资料是 user-role context；工具写入纪律是独立 system section，二者不能混为一谈。
-  installActiveMemoryPrompt(ctx, store, world);
+  installActiveMemoryPrompt(ctx, store, world, proactive);
+  if (proactive && typeof ctx.on === 'function') ctx.on('session/event', (session,event) => {
+    try { proactive.capture(session,event); }
+    catch { ctx.logger?.warn?.('mochi-memory observation was not saved'); }
+  }, { global:true });
+  if (journal && typeof ctx.on === 'function') {
+    ctx.on('session/event', (session,event) => {
+      try {
+        if (!journal.settings().autoEnabled) return;
+        const activity = activityFromTurn(session,event);
+        if (activity) { journal.recordActivity(activity); writer.observeRoute(session,event); }
+      } catch { ctx.logger?.warn?.('mochi-memory journal activity was not saved'); }
+    }, { global:true });
+    if (journal.role === 'classroom') ctx.on('mochi-classroom/lesson-finished', note => {
+      try {
+        if (!journal.settings().autoEnabled) return;
+        const activity = activityFromLesson(note);
+        if (activity) journal.recordActivity(activity);
+      } catch { ctx.logger?.warn?.('mochi-memory classroom journal activity was not saved'); }
+    }, { global:true });
+  }
+
+  if (proactive) register('mochi_memory_observe',
+    '主动从当前真实用户对话提炼稳定习惯的候选，不用等用户说记住。适用常用文件格式、排版与表达偏好、班级整体风格。先给出简短原句quote（必须逐字存在于当前会话最近用户消息）；summary只总结原句支持的内容；value使用稳定短标签以合并同类观察。一次选择只观察，至少3次且跨2个对话才形成暂定偏好；明确长期偏好仍用memory_note。不能记录学生个人画像、健康、成绩、凭据或把模型自己的文字当证据。不要为收集习惯追问或打断任务。',
+    { topic:{type:'string',enum:['file_format','layout_style','communication_style','class_portrait'],required:true},value:{type:'string',required:true},summary:{type:'string',required:true},quote:{type:'string',required:true} },
+    (args,exec)=>{
+      const session=exec?.agent?.session;
+      const evidence=(session?.snapshotEvents?.()??[]).slice(-60).map(event=>userEvidence(session,event)).filter(Boolean).reverse().find(row=>row.text.includes(args.quote));
+      if(!evidence)throw new Error('没有对应的真实用户原句，观察未保存。');
+      return proactive.observe(args,evidence);
+    });
 
   // 1) 写长期记忆。描述即纪律：只有三种情况允许写，敏感内容绝不写（存储层护栏还会拒一次）。
   register('mochi_memory_note', '把一条长期记忆写入 Mochi 的记忆库。写入纪律（Memory Confidence，必须遵守）：只在三种情况写——①主人明确表达长期偏好（例如"我以后都要…""记住我…"）；②同一偏好多次稳定重复；③主人主动要求记住。一次性闲聊、成绩明细、医疗健康、密码令牌、私人文件全文绝不写入（即使写了，存储层护栏也会拒绝）。主人随口一提的临时事项请用 mochi_memory_world 的 append-todo，不要写进长期记忆。', {
@@ -96,6 +164,8 @@ export function apply(ctx, storeArg = null, worldArg = null) {
   }, async (args) => {
     const id = Math.floor(Number(args.id));
     const result = store.forget(id);
+    proactive?.dismissMemory(id);
+    if (result.snapshot.kind === 'convention') world.removeConvention(result.snapshot.summary || result.snapshot.content);
     return {
       已忘记: true,
       记忆ID: id,
@@ -173,14 +243,20 @@ export function apply(ctx, storeArg = null, worldArg = null) {
   //    决策记录（工单 MEM-03c）：不接 approval 审批闸；防误清靠 ①模型侧复述确认 ②forget 审计快照可恢复。
   register('mochi_memory_clear', '清空 Mochi 长期记忆库里的全部记忆（一键清空）。这是批量删除操作：执行前必须先向主人复述"将删除全部 N 条记忆（含 X 条 pinned 免疫记忆）"，获得主人明确同意后才可执行，绝不擅自执行。清空是不可逆的，但审计日志会保留每条记忆的快照备查。', {}, async () => {
     const stats = store.stats();
+    const observations = proactive?.clear() ?? 0;
     if (stats.total === 0) {
-      return { 已清空: true, 删除条数: 0, 说明: '记忆库本来就是空的。' };
+      return { 已清空: true, 删除条数: 0, 删除观察条数: observations, 说明: observations ? '观察记录已清空，原候选不会立即重新学习。' : '记忆库本来就是空的。' };
     }
     const rows = store.listAll({ includeInvalid: true });
-    for (const row of rows) store.forget(row.id); // forget 已留审计快照；pinned 行同样清掉（一键清空=全部，描述已向主人明示）。
+    for (const row of rows) {
+      store.forget(row.id);
+      proactive?.dismissMemory(row.id);
+      if (row.kind === 'convention') world.removeConvention(row.summary || row.content);
+    }
     return {
       已清空: true,
       删除条数: stats.total,
+      删除观察条数: observations,
       其中pinned: stats.pinned,
       说明: '全部记忆已清空，审计日志保留每条快照备查。',
     };

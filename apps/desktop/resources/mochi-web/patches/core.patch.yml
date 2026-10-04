@@ -30,6 +30,14 @@
 - id: plugin-package-inventory-deepseek
   disabled: true
 
+# Classroom uses MiMo. Teacher first run reads its separate, non-secret
+# settings default (D-008); a saved model or session choice still takes priority.
+- id: agent-default-model
+  name: '@deepseek-ai/dsh-agent-default-model'
+  config:
+    provider: mochi-mimo
+    model: mimo-v2.5
+
 # ─── Mochi 免费检索提供方（2026-09-06）─────────────────────────────────
 # base bundle 已挂载完整 web 栈（web 服务 + deepseek 搜索后端 + http fetch +
 # tool-web）；web-app 按 preset 组合 tool-web，standard preset 自带 web_search。

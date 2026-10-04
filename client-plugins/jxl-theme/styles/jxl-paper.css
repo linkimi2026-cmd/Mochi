@@ -1,0 +1,500 @@
+/* Paper workstation. Stable DSH data hooks preserve the native editor and menus. */
+:root, body {
+  --jxl-paper: var(--dsw-alias-bg-layer-2);
+  --jxl-machine: var(--dsw-alias-bg-base);
+  --jxl-recess: var(--dsw-alias-bg-layer-3);
+  --jxl-key-shadow: 0 2px 0 rgba(80, 69, 49, .16), 0 3px 6px rgba(80, 69, 49, .04);
+  --jxl-key-rim: inset 0 1px 0 rgba(255, 255, 255, .7);
+  --dsw-alias-bg-module-platform: var(--dsw-alias-bg-layer-3) !important;
+  --dsw-alias-bg-module: var(--dsw-alias-bg-layer-1) !important;
+  --dsw-alias-interactive-bg-hover-solid: var(--dsw-alias-bg-layer-3) !important;
+  --dsw-alias-button-floating-fill: var(--dsw-alias-bg-layer-2) !important;
+  --dsw-alias-button-floating-hover: var(--dsw-alias-bg-layer-3) !important;
+  --dsw-alias-button-secondary-fill: var(--dsw-alias-bg-layer-1) !important;
+  --dsw-alias-button-secondary-hover: var(--dsw-alias-bg-layer-3) !important;
+  --dsw-alias-button-elevated-fill: var(--dsw-alias-bg-layer-2) !important;
+  --dsw-alias-button-tool-bar-fill: var(--dsw-alias-bg-layer-1) !important;
+  --dsw-alias-button-tool-bar-hover: var(--dsw-alias-bg-layer-3) !important;
+  --dsw-alias-button-info-fill: var(--dsw-alias-bg-layer-3) !important;
+  --dsw-alias-button-info-hover: var(--dsw-alias-interactive-bg-hover) !important;
+  --dsw-alias-interactive-bg-active: var(--dsw-alias-bg-layer-3) !important;
+  --dsw-alias-bg-overlay: var(--dsw-alias-bg-layer-1) !important;
+  --dsw-alias-bg-skeleton: var(--dsw-alias-bg-layer-3) !important;
+  --dsw-alias-state-business-primary: var(--dsw-alias-brand-text) !important;
+}
+body[data-ds-dark-theme] {
+  --jxl-key-shadow: 0 2px 0 rgba(0, 0, 0, .3), 0 3px 6px rgba(0, 0, 0, .1);
+  --jxl-key-rim: inset 0 1px 0 rgba(255, 255, 255, .07);
+  color-scheme: dark;
+}
+body:not([data-ds-dark-theme]) { color-scheme: light; }
+
+[data-composer-card] {
+  position: relative;
+  background: var(--jxl-paper) !important;
+  border: 1px solid var(--dsw-alias-border-l3) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 3px 0 var(--jxl-recess), 0 8px 22px rgba(65, 53, 33, .06) !important;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+[data-composer-card]:focus-within {
+  border-color: var(--dsw-alias-brand-text) !important;
+  box-shadow: 0 3px 0 var(--jxl-recess), 0 0 0 2px var(--dsw-alias-interactive-bg-hover) !important;
+}
+[data-composer-card] [data-input-scroll] {
+  border-inline-start: 1px dashed var(--dsw-alias-border-l3);
+  margin-inline: 14px 8px;
+  padding-inline-start: 10px;
+}
+[data-composer-input] { line-height: 1.7 !important; }
+[data-composer-card] button[class*="_primary"] {
+  border-radius: 10px !important;
+  border: 1px solid var(--dsw-alias-border-l3) !important;
+  box-shadow: var(--jxl-key-rim), var(--jxl-key-shadow) !important;
+  transition: transform 100ms ease, box-shadow 100ms ease, background-color 180ms ease;
+}
+[data-composer-card] button[class*="_primary"]:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, .16) !important;
+}
+/* Vermilion send key; stop/retry controls keep their own semantics. */
+[data-composer-card] button:is([aria-label="发送消息"], [aria-label="Send message"]):not(:disabled):not([aria-disabled="true"]) {
+  background: #a84032 !important;
+  color: #fff8ed !important;
+  border: 1px solid #89362b !important;
+  border-radius: 10px !important;
+  box-shadow: inset 0 1px 0 #ffffff30, 0 2px 0 #743126, 0 3px 5px #56221818 !important;
+}
+[data-composer-card] button:is([aria-label="发送消息"], [aria-label="Send message"]):hover:not(:disabled):not([aria-disabled="true"]) { background: #95392d !important; }
+[data-composer-card] button:is([aria-label="发送消息"], [aria-label="Send message"]):active:not(:disabled):not([aria-disabled="true"]) {
+  transform: translateY(2px); box-shadow: inset 0 1px 3px #48170f50 !important;
+}
+[data-composer-card] button:is([aria-label="发送消息"], [aria-label="Send message"]):is(:disabled, [aria-disabled="true"]) {
+  background: var(--jxl-recess) !important; color: var(--dsw-alias-label-tertiary) !important;
+  box-shadow: none !important;
+}
+body[data-ds-dark-theme] [data-composer-card] button:is([aria-label="发送消息"], [aria-label="Send message"]):not(:disabled):not([aria-disabled="true"]) { border-color: #d47a65 !important; }
+
+/* Compact desktop toolbar: native editor, responsive wrapping and activity takeover stay intact. */
+[data-composer-card] div:has(> div > [data-slot="conversation.input.left"]) {
+  gap: 8px;
+  padding: 6px 8px 8px;
+}
+[data-composer-card] div:has(> [data-slot="conversation.input.left"]),
+[data-composer-card] div:has(> [data-slot="conversation.input.model"]) {
+  gap: 4px;
+  align-items: center;
+}
+[data-composer-card] :is(
+  button[aria-label="添加文件或调用指令"],
+  [data-slot="conversation.input.permission"] button,
+  [data-slot="conversation.input.model"] button[aria-haspopup="menu"],
+  button[aria-label="摄像头或展台拍题"],
+  .mochi-reasoning > summary
+) {
+  min-height: 32px;
+  height: 32px;
+  box-sizing: border-box;
+  border-radius: 8px;
+}
+[data-composer-card] button[aria-label="摄像头或展台拍题"] {
+  padding: 0 8px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  font-size: 13px;
+  font-weight: 500;
+}
+[data-composer-card] button[aria-label="摄像头或展台拍题"]:hover:not(:disabled) {
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+[data-composer-card] [data-slot="conversation.input.model"] button[aria-haspopup="menu"] {
+  max-width: min(164px, 35cqw);
+}
+[data-composer-card] .mochi-reasoning > summary { padding-inline: 8px; font-size: 12px; }
+
+/* Voice keeps the same paper controls; text complements the microphone icon. */
+[data-composer-card] button:is([aria-label="开始录音"], [aria-label="打开语音输入引导"]){width:auto;min-width:72px;min-height:32px;height:32px;border-radius:8px;gap:5px;padding-inline:8px;color:var(--dsw-alias-label-primary)}
+[data-composer-card] button:is([aria-label="开始录音"], [aria-label="打开语音输入引导"])::after{content:"语音输入";font-size:12px;white-space:nowrap}
+[data-voice-activity]{min-height:38px;gap:10px}
+[data-voice-activity] button[aria-label="停止并识别"]{background:#a84435;color:#fff9f2;border-color:#8d382d}
+[data-voice-activity] button[aria-label="停止并识别"]::after{content:"完成";font-size:12px;margin-left:4px}
+[data-voice-activity] button:is([aria-label="停止并识别"],[aria-label="重新录音"]){width:auto;min-width:40px;padding-inline:10px}
+[data-composer-card] button:focus-visible,
+.jxl-theme-dial:focus-visible {
+  outline: 2px solid var(--dsw-alias-brand-text);
+  outline-offset: 3px;
+}
+[data-composer-card][data-jxl-feeding]::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  inset: 6px 16px auto;
+  height: 44px;
+  border: 1px solid var(--dsw-alias-border-l3);
+  border-inline-style: dashed;
+  border-radius: 2px 2px 8px 8px;
+  background: repeating-linear-gradient(0deg, transparent 0 13px, var(--dsw-alias-border-l1) 13px 14px) var(--jxl-paper);
+  box-shadow: 0 -2px 0 var(--dsw-alias-brand-primary);
+  animation: jxl-paper-transmit 520ms cubic-bezier(.2, .7, .2, 1) both;
+}
+@keyframes jxl-paper-transmit {
+  0% { opacity: 0; clip-path: inset(0); transform: translateY(12px); }
+  20% { opacity: .95; clip-path: inset(0); transform: translateY(0); }
+  85% { opacity: .8; clip-path: inset(0 0 95%); transform: translateY(0); }
+  100% { opacity: 0; clip-path: inset(0 0 100%); transform: translateY(0); }
+}
+@keyframes jxl-paper-arrive {
+  from { opacity: .3; transform: translateY(-12px); clip-path: inset(0 0 18%); }
+  to { opacity: 1; transform: translateY(0); clip-path: inset(0); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-composer-card] [data-input-scroll] { animation: jxl-paper-arrive 420ms cubic-bezier(.2, .7, .2, 1); }
+  #jxl-campus-widgets-host .jxl-widget-panel { animation: jxl-paper-arrive 320ms cubic-bezier(.2, .7, .2, 1); }
+  body, [data-composer-card], [role="dialog"], [role="menu"] {
+    transition: background-color 220ms ease, border-color 220ms ease, color 220ms ease;
+  }
+}
+
+/* One compact rotary control; persistence and system following belong to DSH. */
+.jxl-theme-control { display: flex; align-items: center; gap: 8px; color: var(--dsw-alias-label-secondary); }
+.jxl-theme-control > span { font-size: 12px; white-space: nowrap; }
+.jxl-theme-dial {
+  position: relative; flex: none; width: 56px; height: 44px; border-radius: 10px;
+  padding: 0; border: 0; background: transparent; color: var(--dsw-alias-label-primary); cursor: pointer;
+}
+.jxl-theme-dial__marks { position: absolute; inset: 0 1px auto; display: flex; justify-content: space-between; font: 12px/16px system-ui; color: var(--dsw-alias-label-tertiary); }
+.jxl-theme-dial__seat { position: absolute; left: 16px; top: 16px; width: 24px; height: 24px; border: 1px solid var(--dsw-alias-border-l3); border-radius: 50%; background: var(--jxl-recess); box-shadow: inset 0 1px 3px rgba(0,0,0,.12); }
+.jxl-theme-dial__lever { position: absolute; left: 25px; top: 13px; width: 7px; height: 18px; border-radius: 5px; border: 1px solid var(--dsw-alias-border-l3); background: var(--jxl-paper); box-shadow: var(--jxl-key-shadow); transform-origin: 50% 15px; transition: transform 320ms cubic-bezier(.22,.9,.3,1.15); }
+.jxl-theme-dial__lever::before { content: ""; position: absolute; top: 3px; left: 1px; right: 1px; height: 3px; border-radius: 2px; background: #b77349; }
+.jxl-theme-dial[data-preference="light"] .jxl-theme-dial__lever { transform: rotate(-48deg); }
+.jxl-theme-dial[data-preference="system"] .jxl-theme-dial__lever { transform: rotate(0); }
+.jxl-theme-dial[data-preference="dark"] .jxl-theme-dial__lever { transform: rotate(48deg); }
+button[class*="_themeCube"] { border-radius: 12px !important; background: var(--jxl-paper); box-shadow: var(--jxl-key-rim), var(--jxl-key-shadow); }
+button[class*="_themeCube"][aria-pressed="true"] { background: var(--jxl-recess); border-color: var(--dsw-alias-brand-text); box-shadow: inset 0 1px 3px rgba(60,50,35,.1); }
+
+@media (prefers-reduced-motion: reduce) {
+  [data-composer-card], [data-composer-card] *, .jxl-theme-dial *, #jxl-campus-widgets-host .jxl-widget-panel { animation: none !important; transition: none !important; }
+  [data-composer-card][data-jxl-feeding]::after { animation: none; height: 2px; border: 0; opacity: .6; }
+}
+@media (prefers-contrast: more) {
+  [data-composer-card], .jxl-theme-dial__seat, .jxl-theme-dial__lever { border-color: currentColor !important; box-shadow: none !important; }
+}
+
+/* Location → page → content. Keep the same native routes and focus handling. */
+#jxl-campus-widgets-host .jxl-widget-panel__head {
+  min-height: 76px; padding: 12px 22px; gap: 14px;
+  background: var(--jxl-paper); border-bottom: 1px solid var(--dsw-alias-border-l3);
+}
+#jxl-campus-widgets-host .jxl-widget-panel__trail {
+  color: var(--dsw-alias-label-tertiary); font: 600 10px/1.5 system-ui; letter-spacing: .13em;
+}
+#jxl-campus-widgets-host .jxl-widget-panel__title { font-size: 18px; line-height: 1.5; letter-spacing: -.02em; }
+#jxl-campus-widgets-host .jxl-widget-panel__desc {
+  display: block; color: var(--dsw-alias-label-secondary); font-size: 12px;
+}
+#jxl-campus-widgets-host .jxl-widget-panel__close {
+  border-radius: 10px; min-height: 36px; padding: 8px 12px; gap: 8px;
+  background: var(--jxl-paper); color: var(--dsw-alias-label-primary);
+  box-shadow: var(--jxl-key-rim), var(--jxl-key-shadow);
+}
+#jxl-campus-widgets-host .jxl-widget-panel__close:hover { background: var(--jxl-recess); transform: none; }
+#jxl-campus-widgets-host .jxl-widget-panel__close:active { transform: translateY(2px); box-shadow: none; }
+.jxl-widget-panel__close kbd { padding: 2px 4px; border: 1px solid var(--dsw-alias-border-l2); border-radius: 4px; font: 10px/1.2 ui-monospace,monospace; color: var(--dsw-alias-label-tertiary); }
+#jxl-campus-widgets-host .painterly-page__hero { border: 1px solid var(--dsw-alias-border-l1); }
+#jxl-campus-widgets-host .rui-section-header { padding-bottom: 10px; border-bottom: 1px solid var(--dsw-alias-border-l2); }
+#jxl-campus-widgets-host :is(.painterly-page__back,.painterly-page__actions > button) { box-shadow: var(--jxl-key-rim), var(--jxl-key-shadow); }
+.jxl-campus-group { background: var(--jxl-paper) !important; border-color: var(--dsw-alias-border-l2) !important; }
+.jxl-campus-entry[aria-current="page"] { background: var(--jxl-recess) !important; box-shadow: inset 3px 0 0 var(--dsw-alias-brand-text); }
+[role="dialog"] { background: var(--jxl-paper); border-radius: 18px; border-color: var(--dsw-alias-border-l3); }
+@media (max-width: 600px) {
+  #jxl-campus-widgets-host .jxl-widget-panel__head { padding: 10px 14px; }
+  #jxl-campus-widgets-host .jxl-widget-panel__close kbd { display: none; }
+  #jxl-campus-widgets-host .jxl-widget-panel__desc { white-space: normal; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #jxl-campus-widgets-host .jxl-widget-panel__close:active { transform: none; }
+}
+/* Verified Modal header/close hooks in the pinned DSH primitives. */
+[role="dialog"] > [class*="_content"] > [class*="_header"] {
+  padding: 18px 18px 16px 24px; background: var(--jxl-paper);
+  border-bottom: 1px solid var(--dsw-alias-border-l2);
+}
+[role="dialog"] [class*="_header"] > button[class*="_close"] {
+  width: 32px; height: 32px; border-radius: 9px;
+  border: 1px solid var(--dsw-alias-border-l3); background: var(--jxl-paper);
+  box-shadow: var(--jxl-key-rim), var(--jxl-key-shadow);
+  transition: transform 100ms ease, background-color 160ms ease;
+}
+[role="dialog"] [class*="_header"] > button[class*="_close"]:active { transform: translateY(2px); box-shadow: none; }
+[role="dialog"] [class*="_header"] > button[class*="_close"]:focus-visible { outline: 2px solid var(--dsw-alias-brand-text); outline-offset: 3px; }
+[data-slot="sidebar.workspaces"] [class*="projectRow"][aria-current="page"],
+[data-slot="sidebar.workspaces"] [class*="projectRow"][aria-current="true"],
+[data-slot="sidebar.workspaces"] [class*="projectRow"][data-active="true"] {
+  color: var(--dsw-alias-label-primary) !important;
+  background: var(--jxl-recess) !important;
+  box-shadow: inset 3px 0 0 var(--dsw-alias-brand-text) !important;
+}
+button[class*="_newSession"] {
+  border: 1px solid var(--dsw-alias-border-l3) !important;
+  border-radius: 10px !important; color: var(--dsw-alias-label-primary) !important;
+  background: var(--jxl-paper) !important; box-shadow: var(--jxl-key-rim), var(--jxl-key-shadow) !important;
+}
+button[class*="_newSession"]:active { transform: translateY(2px); box-shadow: none !important; }
+.jxl-theme-control[data-wide="false"] .jxl-theme-dial { width: 36px; }
+.jxl-theme-control[data-wide="false"] .jxl-theme-dial__marks { font-size: 9px; }
+.jxl-theme-control[data-wide="false"] .jxl-theme-dial__seat { left: 6px; }
+.jxl-theme-control[data-wide="false"] .jxl-theme-dial__lever { left: 15px; }
+@media (prefers-reduced-motion: reduce) {
+  [role="dialog"] [class*="_header"] > button[class*="_close"], button[class*="_newSession"] { transition: none; transform: none !important; }
+}
+
+/* Requests and receipts: a document, not nested translucent dashboard cards. */
+body .mochi-lan-overlay { background: rgba(30,27,22,.28); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
+body .mochi-lan-panel {
+  width: min(760px, calc(100vw - 48px)); max-height: calc(100vh - 64px);
+  border: 1px solid var(--dsw-alias-border-l3); border-radius: 14px;
+  background: var(--jxl-machine); color: var(--dsw-alias-label-primary);
+  box-shadow: 0 18px 60px rgba(30,27,22,.16); backdrop-filter: none; -webkit-backdrop-filter: none;
+}
+body .mochi-lan-head { padding: 18px 24px; background: var(--jxl-paper); border-color: var(--dsw-alias-border-l2); backdrop-filter: none; -webkit-backdrop-filter: none; }
+body .mochi-lan-head__eyebrow { font-weight: 500; letter-spacing: .04em; color: var(--dsw-alias-label-tertiary); }
+body :is(.mochi-lan-head__title,.mochi-lan-guide__title) { color: var(--dsw-alias-label-primary); font-weight: 600; letter-spacing: -.02em; line-height: 1.4; }
+body :is(.mochi-lan-head__desc,.mochi-lan-card__intro,.mochi-lan-meta,.mochi-lan-guide__desc,.mochi-lan-empty,.mochi-lan-fingerprint) { color: var(--dsw-alias-label-secondary); }
+body .mochi-lan-body { padding: 20px 24px; gap: 20px; }
+body .mochi-lan-grid { gap: 24px; }
+body .mochi-lan-card { padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; }
+body .mochi-lan-card__title { color: var(--dsw-alias-label-primary); font-weight: 600; font-size: 16px; }
+body .mochi-lan-list { gap: 0; border-top: 1px solid var(--dsw-alias-border-l2); }
+body .mochi-lan-row { padding: 18px 0; gap: 8px; border: 0; border-bottom: 1px solid var(--dsw-alias-border-l2); border-radius: 0; background: transparent; }
+body .mochi-lan-row__name { font-weight: 600; }
+body .mochi-lan-row__top { flex-wrap: wrap; align-items: baseline; }
+body .mochi-lan-row[data-mochi-lan-focused="true"] { background: var(--jxl-paper); border-color: var(--dsw-alias-brand-text); box-shadow: inset 3px 0 var(--dsw-alias-brand-text); padding-inline: 14px; }
+body :is(.mochi-lan-bodytext,.mochi-lan-guide__quote,.mochi-lan-confirm__body) { color: var(--dsw-alias-label-primary); line-height: 1.7; }
+body .mochi-lan-guide { background: var(--jxl-paper); border: 1px solid var(--dsw-alias-border-l2); border-radius: 12px; box-shadow: none; }
+body .mochi-lan-guide__example { border: 0; border-left: 1px solid var(--dsw-alias-border-l3); border-radius: 0; background: transparent; }
+body :is(.mochi-lan-guide__eyebrow,.mochi-lan-guide__label) { color: var(--dsw-alias-label-secondary); font-weight: 500; }
+body :is(.mochi-lan-notice,.mochi-lan-confirm) { border: 1px solid var(--dsw-alias-border-l3); border-radius: 12px; background: var(--jxl-paper); padding: 20px; box-shadow: none; }
+body :is(.mochi-lan-notice__title,.mochi-lan-confirm__title) { color: var(--dsw-alias-label-primary); font-weight: 600; }
+body :is(.mochi-lan-notice__body,.mochi-lan-confirm__target,.mochi-lan-directive) { background: var(--jxl-machine); color: var(--dsw-alias-label-primary); border-radius: 6px; line-height: 1.7; }
+body .mochi-lan-status { padding: 0; border-radius: 0; background: transparent; color: var(--dsw-alias-label-secondary); font-weight: 400; white-space: normal; max-width: 100%; }
+body .mochi-lan-status::before { display: none; }
+body .mochi-lan-status--danger { color: var(--dsw-static-red-600); }
+body .mochi-lan-code { border-color: var(--dsw-alias-border-l2); border-radius: 8px; background: var(--jxl-paper); }
+body :is(.mochi-lan-code summary,.mochi-lan-code__value) { color: var(--dsw-alias-label-primary); }
+body :is(.mochi-lan-button,.mochi-lan-close) { border: 1px solid var(--dsw-alias-border-l3); border-radius: 9px; background: var(--dsw-alias-button-primary-fill); color: var(--dsw-alias-label-primary-inverted); font-weight: 500; box-shadow: var(--jxl-key-rim), var(--jxl-key-shadow); }
+body :is(.mochi-lan-button--soft,.mochi-lan-close) { background: var(--jxl-paper); color: var(--dsw-alias-label-primary); }
+body :is(.mochi-lan-button,.mochi-lan-close):hover { background: var(--dsw-alias-button-primary-hover); transform: none; }
+body :is(.mochi-lan-button--soft,.mochi-lan-close):hover { background: var(--jxl-recess); }
+body :is(.mochi-lan-button,.mochi-lan-close):active:not(:disabled) { transform: translateY(2px); box-shadow: none; }
+@media(max-width:600px) {
+  body .mochi-lan-head { padding: 16px; }
+  body .mochi-lan-body { padding: 18px 16px; }
+}
+@media(prefers-reduced-motion:reduce) { body :is(.mochi-lan-button,.mochi-lan-close):active { transform: none; } }
+@media(prefers-contrast:more) { body :is(.mochi-lan-panel,.mochi-lan-list,.mochi-lan-row) { border-color: currentColor; } }
+body .mochi-lan-secondary { border-top: 1px solid var(--dsw-alias-border-l2); padding-top: 14px; }
+body .mochi-lan-secondary > summary { cursor: pointer; color: var(--dsw-alias-label-secondary); font-size: 13px; padding: 6px 0; }
+body .mochi-lan-secondary[open] > :not(summary) { margin-top: 18px; }
+body .mochi-lan-secondary > summary:focus-visible { outline: 2px solid var(--dsw-alias-brand-text); outline-offset: 3px; }
+.jxl-sound-toggle { display: grid; place-items: center; flex: none; width: 30px; height: 30px; margin-left: auto; padding: 0; border: 1px solid var(--dsw-alias-border-l2); border-radius: 8px; background: var(--jxl-paper); color: var(--dsw-alias-label-secondary); box-shadow: var(--jxl-key-shadow); cursor: pointer; }
+.jxl-sound-toggle[aria-pressed="false"] { background: var(--jxl-recess); box-shadow: inset 0 1px 2px rgba(0,0,0,.07); }
+.jxl-sound-toggle:focus-visible { outline: 2px solid var(--dsw-alias-brand-text); outline-offset: 3px; }
+.jxl-theme-control[data-wide="false"] { flex-direction: column; gap: 7px; }
+.jxl-theme-control[data-wide="false"] .jxl-sound-toggle { margin: 0; }
+[data-composer-card][data-jxl-feeding]::before { content: ''; position: absolute; z-index: 2; pointer-events: none; top: 4px; left: 16px; right: 16px; height: 3px; border-radius: 3px; background: var(--dsw-alias-label-tertiary); box-shadow: 0 1px 0 var(--jxl-paper),inset 0 1px 2px rgba(0,0,0,.22); }
+[data-composer-card][data-jxl-feeding]::after { height: 68px; animation-duration: 640ms; }
+@media(prefers-reduced-motion:reduce) { [data-composer-card][data-jxl-feeding]::before { display: none; } [data-composer-card][data-jxl-feeding]::after { height: 2px; } }
+/* Native discrete visibility transitions keep ESC/focus semantics immediate. */
+@media(prefers-reduced-motion:no-preference) {
+  body .mochi-lan-overlay {
+    opacity: 1;
+    transition: opacity 180ms ease, display 180ms allow-discrete;
+  }
+  body .mochi-lan-overlay[hidden] { opacity: 0; pointer-events: none; }
+  body .mochi-lan-panel { animation: none; transform: translateY(0); transition: transform 220ms cubic-bezier(.2,.75,.25,1); }
+  body .mochi-lan-overlay[hidden] .mochi-lan-panel { transform: translateY(8px); }
+  @starting-style {
+    body .mochi-lan-overlay:not([hidden]) { opacity: 0; }
+    body .mochi-lan-overlay:not([hidden]) .mochi-lan-panel { transform: translateY(-10px); }
+  }
+}
+
+/* Preferences belong to Settings; the sidebar remains navigation. */
+.jxl-settings-appearance { display:grid;grid-template-columns:minmax(0,1fr) 56px 86px;gap:20px 14px;width:100%;padding:12px 0; }
+.jxl-setting-label { grid-column:1;font:500 14px/1.5 system-ui,sans-serif;color:var(--dsw-alias-label-primary); }
+.jxl-setting-label p { margin:4px 0 0;font-size:12px;font-weight:400;color:var(--dsw-alias-label-secondary); }
+.jxl-settings-appearance > .jxl-sound-toggle { grid-column:3;justify-self:start; }
+@media(max-width:560px){.jxl-settings-appearance{grid-template-columns:minmax(0,1fr) 56px 68px;gap:18px 8px}.jxl-setting-label p{max-width:24ch;}}
+
+body .mochi-lan-head__eyebrow { display:none; }
+body .mochi-lan-head__title { font-size:20px; }
+body .mochi-lan-head__desc { margin-top:5px;font-size:12px; }
+body .mochi-lan-close { min-width:32px;width:32px;height:32px;min-height:32px;padding:0;display:grid;place-items:center;border-radius:8px;box-shadow:none; }
+body .mochi-lan-request-time { display:flex;gap:14px;align-items:baseline;margin:4px 0;font-size:13px; }
+body .mochi-lan-request-time > span { color:var(--dsw-alias-label-secondary); }
+body .mochi-lan-request-time > strong { font-weight:500;color:var(--dsw-alias-label-primary); }
+body .mochi-lan-secondary { padding-top:14px; }
+
+body .mochi-lan-pane { display:flex;flex-direction:column;gap:20px; }
+body .mochi-lan-pane[hidden] { display:none; }
+body .mochi-lan-panel-footer { display:flex;align-items:center;gap:16px;flex:none;padding:12px 24px;border-top:1px solid var(--dsw-alias-border-l2); }
+body .mochi-lan-panel-footer button { padding:4px 0;border:0;background:transparent;color:var(--dsw-alias-label-secondary);font:12px/1.5 system-ui,sans-serif;cursor:pointer; }
+body .mochi-lan-panel-footer button:hover { color:var(--dsw-alias-label-primary); }
+body .mochi-lan-panel-footer button:focus-visible { outline:2px solid var(--dsw-alias-brand-text);outline-offset:4px; }
+body .mochi-lan-panel-footer .mochi-lan-refresh { margin-inline-start:auto; }
+
+/* Navigation belongs before the page title; the native window tools stay right. */
+#jxl-campus-widgets-host .jxl-widget-panel__close {
+  order: -1;
+  margin-left: 0;
+  flex: none;
+  min-height: 38px;
+}
+#jxl-campus-widgets-host .jxl-widget-panel__titles { flex: 1; min-width: 0; }
+#jxl-campus-widgets-host .jxl-widget-panel__title { white-space: normal; }
+#jxl-campus-widgets-host .jxl-widget-panel__trail { letter-spacing: .02em; }
+@media (max-width: 760px) {
+  #jxl-campus-widgets-host .jxl-widget-panel__head { gap: 10px; }
+  #jxl-campus-widgets-host .jxl-widget-panel__close { padding: 8px; }
+  #jxl-campus-widgets-host .jxl-widget-panel__close kbd { display: none; }
+}
+/* Keep the underlying conversation from showing through the page entrance. */
+#jxl-campus-widgets-host:has(.jxl-widget-panel) { background: var(--dsw-alias-bg-base); }
+
+/* Sidebar chrome follows the paper workspace; content keeps its own layout. */
+[data-dsh-better-sidebar] [class*="tabBar"]:not([class*="tabBarPlus"]) {
+  background: var(--jxl-machine);
+}
+[data-dsh-better-sidebar] [class*="tabList"] > [draggable] {
+  margin: 3px 2px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  color: var(--dsw-alias-label-secondary);
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+[data-dsh-better-sidebar] [class*="tabList"] > [draggable][class*="tabActive"] {
+  color: var(--dsw-alias-label-primary);
+  background: var(--jxl-paper);
+  border-color: var(--dsw-alias-border-l1);
+  box-shadow: var(--jxl-key-rim);
+}
+[data-dsh-better-sidebar] [class*="tabClose"] {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+}
+[data-dsh-better-sidebar] [class*="tabClose"]:hover {
+  color: var(--dsw-alias-label-primary);
+  background: var(--jxl-recess);
+}
+[data-dsh-better-sidebar] button:focus-visible {
+  outline: 2px solid var(--dsw-alias-brand-text);
+  outline-offset: -2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-dsh-better-sidebar] [class*="tabList"] > [draggable] { transition: none; }
+}
+
+/* Mochi Post: the existing paper workstation becomes a little mail machine. */
+body .mochi-lan-mailbox { position:relative; padding:8px 12px 20px; gap:24px; }
+body .mochi-mail-slot { position:relative; height:12px; margin:8px 4px 2px; border:1px solid var(--dsw-alias-border-l3); border-radius:12px; background:var(--jxl-recess); box-shadow:inset 0 3px 5px #30241435,0 1px 0 #ffffff60; }
+body .mochi-mail-slot span { position:absolute; right:10px; top:-26px; font:10px/1.5 ui-monospace,monospace; letter-spacing:.18em; color:var(--dsw-alias-label-secondary); }
+body .mochi-mail-hint { margin:0 6px 4px; font-size:12px; line-height:1.6; color:var(--dsw-alias-label-secondary); }
+body .mochi-lan-mailbox .mochi-lan-card__title { font-size:13px; letter-spacing:.04em; }
+body .mochi-lan-mailbox .mochi-lan-card__intro { display:none; }
+body .mochi-lan-mailbox .mochi-lan-list { gap:16px; border:0; }
+body .mochi-lan-mailbox article.mochi-lan-row, body article.mochi-letter-piece { position:relative; padding:22px 24px 20px 38px; border:1px solid var(--dsw-alias-border-l2); border-radius:3px; background:var(--jxl-paper); box-shadow:0 3px 0 -1px var(--jxl-recess),0 6px 12px #3024140a; gap:10px; }
+body .mochi-lan-mailbox article.mochi-lan-row::before, body article.mochi-letter-piece::before { content:''; position:absolute; inset:10px auto 10px 10px; width:8px; background:radial-gradient(circle at 4px 8px,var(--jxl-machine) 3px,var(--dsw-alias-border-l2) 3px 4px,transparent 4px) 0 0/8px 22px; }
+body .mochi-lan-mailbox article.mochi-lan-row::after, body article.mochi-letter-piece::after { content:''; position:absolute; top:0; bottom:0; left:27px; border-left:1px dashed var(--dsw-alias-border-l2); pointer-events:none; }
+body .mochi-lan-mailbox .mochi-lan-bodytext { margin:5px 0; font-size:16px; line-height:1.85; color:var(--dsw-alias-label-primary); }
+body .mochi-lan-mailbox .mochi-lan-row__top { padding-bottom:10px; border-bottom:1px dashed var(--dsw-alias-border-l2); }
+body .mochi-lan-mailbox .mochi-lan-status { border-radius:3px; transform:rotate(-2deg); font-size:11px; }
+body .mochi-lan-mailbox .mochi-lan-actions { padding-top:12px; border-top:1px dashed var(--dsw-alias-border-l2); }
+body .mochi-lan-mailbox .mochi-lan-button { min-height:36px; }
+body .mochi-lan-mailbox .mochi-lan-button:active { transform:translateY(2px); box-shadow:none!important; }
+body .mochi-lan-mailbox .mochi-lan-history { padding:14px 0 0; }
+body .mochi-lan-mailbox .mochi-lan-history>summary { font-size:13px; cursor:pointer; }
+body .mochi-lan-mailbox .mochi-lan-empty { padding:20px 0; text-align:center; }
+@media(max-width:600px) { body .mochi-lan-mailbox{padding-inline:0} body .mochi-lan-mailbox article.mochi-lan-row{padding-right:14px;padding-left:32px} }
+@media(prefers-reduced-motion:no-preference) { body .mochi-lan-mailbox>.mochi-lan-card { animation:mochi-letter-feed 260ms ease-out; } @keyframes mochi-letter-feed { from{opacity:.5;transform:translateY(-8px)}to{opacity:1;transform:none} } }
+@media(prefers-contrast:more) { body .mochi-lan-mailbox article.mochi-lan-row{border-color:currentColor;box-shadow:none} }
+
+/* One letter-paper shell. Decorative backgrounds never cover controls or consume layout space. */
+body {
+  --jxl-envelope-holes: radial-gradient(circle at 4px 8px, var(--jxl-machine) 2px, var(--dsw-alias-border-l2) 2px 3px, transparent 3px);
+  --jxl-envelope-fold: linear-gradient(225deg, var(--jxl-recess) 0 45%, var(--dsw-alias-border-l2) 46% 49%, transparent 50%);
+  --jxl-envelope-seam: repeating-linear-gradient(to bottom, var(--dsw-alias-border-l2) 0 4px, transparent 4px 8px);
+}
+body :is(.mochi-lan-panel, .mochi-memory-panel, .mochi-planner, .mochi-classroom-panel, .mochi-camera__dialog, .jxl-widget-panel, .mochi-guide,
+  [data-plugin-panel], [data-testid="task-manager-page"], [data-composer-card], [role="dialog"]:has(> nav) > [class*="_content"],
+  [role="dialog"] > [class*="_content"]) {
+  background-image: var(--jxl-envelope-holes), var(--jxl-envelope-fold), var(--jxl-envelope-seam);
+  background-position: 6px 12px, right top, 20px top;
+  background-size: 8px 22px, 20px 20px, 1px calc(100% - 12px);
+  background-repeat: repeat-y, no-repeat, no-repeat;
+}
+/* The compact guide's existing 16px padding leaves a narrower decorative margin. */
+body .mochi-guide {
+  background-position: 2px 12px, right top, 12px top;
+}
+/* The existing composer uses an important background shorthand. Preserve its fill. */
+body [data-composer-card] {
+  background-image: var(--jxl-envelope-holes), var(--jxl-envelope-fold), var(--jxl-envelope-seam) !important;
+  background-position: 6px 12px, right top, 20px top !important;
+  background-size: 8px 22px, 20px 20px, 1px calc(100% - 12px) !important;
+  background-repeat: repeat-y, no-repeat, no-repeat !important;
+}
+/* The campus shell already has an id-scoped fill. Decorate that same outer surface. */
+#jxl-campus-widgets-host .jxl-widget-panel {
+  background-image: var(--jxl-envelope-holes), var(--jxl-envelope-fold), var(--jxl-envelope-seam) !important;
+  background-position: 6px 12px, right top, 20px top !important;
+  background-size: 8px 22px, 20px 20px, 1px calc(100% - 12px) !important;
+  background-repeat: repeat-y, no-repeat, no-repeat !important;
+  box-shadow: 0 3px 0 -1px var(--jxl-recess), 0 6px 0 -2px var(--jxl-paper), 0 16px 44px #30241418;
+}
+/* Conversation keeps the selected campus background visible through its transparent center. */
+body [data-conversation-content] {
+  background-image: var(--jxl-envelope-holes), var(--jxl-envelope-seam);
+  background-position: 6px 12px, 20px top;
+  background-size: 8px 22px, 1px calc(100% - 12px);
+  background-repeat: repeat-y, no-repeat;
+}
+body :is(.mochi-lan-panel, .mochi-memory-panel, .mochi-planner, .mochi-classroom-panel, .mochi-camera__dialog, .jxl-widget-panel,
+  [role="dialog"]:has(> nav)) {
+  box-shadow: 0 3px 0 -1px var(--jxl-recess), 0 6px 0 -2px var(--jxl-paper), 0 16px 44px #30241418;
+}
+/* Existing headers otherwise paint over the outer fold. Keep their fills and button styles. */
+body :is(.mochi-lan-head, .jxl-widget-panel__head,
+  [role="dialog"] > [class*="_content"] > [class*="_header"]) {
+  background-image: var(--jxl-envelope-fold);
+  background-position: right top;
+  background-size: 20px 20px;
+  background-repeat: no-repeat;
+}
+#jxl-campus-widgets-host .jxl-widget-panel__head {
+  background-image: var(--jxl-envelope-fold);
+  background-position: right top;
+  background-size: 20px 20px;
+  background-repeat: no-repeat;
+}
+@media (prefers-contrast: more) {
+  body :is(.mochi-lan-panel, .mochi-memory-panel, .mochi-planner, .mochi-classroom-panel, .mochi-camera__dialog, .jxl-widget-panel, .mochi-guide,
+    [data-plugin-panel], [data-testid="task-manager-page"], [role="dialog"]:has(> nav)) {
+    border-color: currentColor;
+    box-shadow: none;
+  }
+}
+
+/* Public list-slot anchors are display:contents. Keep all school navigation
+   contributions in one column rather than shrinking them beside each other. */
+:has(> [data-slot="sidebar.footer.action"]) {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+  width: 100%;
+  min-width: 0;
+}
+:has(> [data-slot="sidebar.footer.action"]):has([data-wide="false"]) {
+  align-items: center;
+}

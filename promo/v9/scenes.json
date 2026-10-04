@@ -1,0 +1,578 @@
+[
+  {
+    "id": "welcome",
+    "chapter": "01 日常陪伴",
+    "title": "早上好，林老师",
+    "sub": "从一句问候，开始一天的校园工作。",
+    "prompt": "今天，帮我把教学和班级事务安排好。",
+    "kind": "home",
+    "data": [
+      "国庆快乐，林老师",
+      "愿假期轻松，也愿每次备课都有好思路。",
+      "节日日期演示 · 10月1日"
+    ],
+    "features": [
+      "节日祝福",
+      "新手引导",
+      "场景切换"
+    ],
+    "source": "plugins/mochi-user-profile; client-plugins/jxl-brand",
+    "start": 0,
+    "duration": 11
+  },
+  {
+    "id": "personal",
+    "chapter": "01 日常陪伴",
+    "title": "让 Mochi 更像你的伙伴",
+    "sub": "称呼、配色、昼夜外观，随你的习惯。",
+    "prompt": "以后叫我林老师，使用经典焦糖配色。",
+    "kind": "settings",
+    "data": [
+      "林老师",
+      "经典焦糖",
+      "奶油米白",
+      "鼠尾草绿",
+      "雾桃奶茶"
+    ],
+    "features": [
+      "称呼/陪伴/主题与本体颜色"
+    ],
+    "source": "plugins/mochi-user-profile; client-plugins/jxl-theme/assets/mochi-palettes.json",
+    "start": 11,
+    "duration": 11
+  },
+  {
+    "id": "memory",
+    "chapter": "01 日常陪伴",
+    "title": "记住偏好，接着做事",
+    "sub": "记忆可以回看，内容由你掌握。",
+    "prompt": "记住：教案按教学目标、课堂活动、随堂练习来组织。",
+    "kind": "memory",
+    "data": [
+      "教学目标 → 课堂活动 → 随堂练习",
+      "教学偏好",
+      "来源：本次对话",
+      "保存到长期记忆"
+    ],
+    "features": [
+      "偏好记忆与回看"
+    ],
+    "source": "plugins/mochi-memory",
+    "start": 22,
+    "duration": 11
+  },
+  {
+    "id": "journal",
+    "chapter": "01 日常陪伴",
+    "title": "工作日记，有迹可循",
+    "sub": "把已发生的工作整理成可回看的记录。",
+    "prompt": "整理一下今天的备课记录。",
+    "kind": "journal",
+    "data": [
+      "09:00 记录备课偏好",
+      "09:20 制作一次函数课件",
+      "10:10 确认学生答疑预约",
+      "查看对应对话依据"
+    ],
+    "features": [
+      "工作日记与依据"
+    ],
+    "source": "plugins/mochi-memory",
+    "start": 33,
+    "duration": 11
+  },
+  {
+    "id": "reminder",
+    "chapter": "01 日常陪伴",
+    "title": "该做的事，到点提醒",
+    "sub": "创建提醒、查看安排，再回到原任务。",
+    "prompt": "下午四点半提醒我给小林讲第3题。",
+    "kind": "reminder",
+    "data": [
+      "今天 16:30",
+      "数学答疑 · 带上随堂练习第3题",
+      "一次性提醒",
+      "提醒到了：准备给小林讲题"
+    ],
+    "features": [
+      "定时提醒创建与触发"
+    ],
+    "source": "plugins/mochi-task-scheduler",
+    "start": 44,
+    "duration": 11
+  },
+  {
+    "id": "todos",
+    "chapter": "02 班级事务",
+    "title": "待办就在 Mochi 身边",
+    "sub": "展开待办，直接进入对应的小信箱。",
+    "prompt": "看看还有哪些学生在等我。",
+    "kind": "todos",
+    "data": [
+      "小林 · 数学错题答疑 · 16:30",
+      "小陈 · 英语长句理解 · 待回复",
+      "小周 · 语文练习补做 · 待安排"
+    ],
+    "features": [
+      "桌面待办展开与跳转",
+      "学生预约/提问/补做"
+    ],
+    "source": "client-plugins/jxl-brand; plugins/mochi-lan",
+    "start": 55,
+    "duration": 11
+  },
+  {
+    "id": "mail",
+    "chapter": "02 班级事务",
+    "title": "读到诉求，再给明确回复",
+    "sub": "预约、提问、补做，保留原请求和处理进度。",
+    "prompt": "确认小林16:30的预约，请他带上第3题。",
+    "kind": "mail",
+    "data": [
+      "小林（演示） · 座号12",
+      "函数图像错题答疑",
+      "希望时间：今天16:30",
+      "已确认，请带上数学随堂练习第3题。"
+    ],
+    "features": [
+      "老师确认预约",
+      "小信箱已读回执"
+    ],
+    "source": "plugins/mochi-lan/chat-tools.mjs",
+    "start": 66,
+    "duration": 11
+  },
+  {
+    "id": "call",
+    "chapter": "02 班级事务",
+    "title": "叫人，一句话说清楚",
+    "sub": "学生、地点、时间与交代，发送前一起核对。",
+    "prompt": "叫小陈第二节课后带英语练习来办公室。",
+    "kind": "approval",
+    "data": [
+      "高一（1）班（演示）",
+      "小陈 · 第二节课后",
+      "教师办公室",
+      "带英语阅读练习第2题，讲解长句。"
+    ],
+    "features": [
+      "喊人/叫人",
+      "人工审批放行"
+    ],
+    "source": "plugins/mochi-dispatch/index.mjs:mochi_call_student",
+    "start": 77,
+    "duration": 11
+  },
+  {
+    "id": "board",
+    "chapter": "02 班级事务",
+    "title": "教室名单，逐人有交代",
+    "sub": "喊人、过关、不过关、补做，都有下一步。",
+    "prompt": "把本次练习的结果和个性化建议发给教室。",
+    "kind": "board",
+    "data": [
+      [
+        "小陈",
+        "请到办公室",
+        "带第2题，课后来讲解"
+      ],
+      [
+        "小林",
+        "已过关",
+        "保留两点法的完整步骤"
+      ],
+      [
+        "小周",
+        "需补做",
+        "完成第1页，再交给老师"
+      ],
+      [
+        "小李",
+        "暂未过关",
+        "先核对截距，再重画图像"
+      ]
+    ],
+    "features": [
+      "教室名单与已看到",
+      "批量过关/不过关/补做"
+    ],
+    "source": "plugins/mochi-dispatch/index.mjs:mochi_register_verdicts; client-plugins/mochi-lan",
+    "start": 88,
+    "duration": 11
+  },
+  {
+    "id": "receipt",
+    "chapter": "02 班级事务",
+    "title": "已送达，和已看到分开",
+    "sub": "学生点击已看到，老师收到明确回执。",
+    "prompt": "看看小陈是否已经看到叫人通知。",
+    "kind": "receipt",
+    "data": [
+      "教师端",
+      "教室端",
+      "通知已送达",
+      "小陈点击「已看到」",
+      "已读回执已返回"
+    ],
+    "features": [
+      "小信箱已读回执",
+      "教室名单与已看到"
+    ],
+    "source": "plugins/mochi-lan/lan-service.mjs",
+    "start": 99,
+    "duration": 11
+  },
+  {
+    "id": "delivery",
+    "chapter": "02 班级事务",
+    "title": "把课件送到教室",
+    "sub": "确认受管文件与目标班级，再投递附件。",
+    "prompt": "把一次函数课件发送到高一（1）班教室。",
+    "kind": "delivery",
+    "data": [
+      "一次函数.pptx",
+      "6页 · 可编辑课件",
+      "高一（1）班（演示）",
+      "文件校验 → 接收完成",
+      "可请求用 WPS 打开"
+    ],
+    "features": [
+      "文件投递与打开课件"
+    ],
+    "source": "plugins/mochi-dispatch/index.mjs:mochi_send_classroom_file",
+    "start": 110,
+    "duration": 11
+  },
+  {
+    "id": "timetable",
+    "chapter": "02 班级事务",
+    "title": "课表进来，安排清楚",
+    "sub": "核对照片中的课程和时间，建立课前提醒。",
+    "prompt": "导入这张课表，看不清的内容先问我。",
+    "kind": "timetable",
+    "data": [
+      [
+        "08:10",
+        "语文",
+        "数学",
+        "英语"
+      ],
+      [
+        "09:10",
+        "数学",
+        "英语",
+        "语文"
+      ],
+      [
+        "10:20",
+        "英语",
+        "物理",
+        "数学"
+      ],
+      [
+        "14:00",
+        "体育",
+        "班会",
+        "音乐"
+      ]
+    ],
+    "features": [
+      "课堂听课与教学安排"
+    ],
+    "source": "plugins/mochi-classroom-planner/index.mjs",
+    "start": 121,
+    "duration": 11
+  },
+  {
+    "id": "listen",
+    "chapter": "02 班级事务",
+    "title": "课堂管家，留下教学线索",
+    "sub": "开启听课，结束后整理课堂记录。",
+    "prompt": "开始这节一次函数课的课堂记录。",
+    "kind": "listen",
+    "data": [
+      "本地识别模型已准备（演示）",
+      "正在听课 · 数学",
+      "课堂片段：k 决定直线的倾斜方向。",
+      "本节小结：两点法、斜率与截距"
+    ],
+    "features": [
+      "课堂听课与教学安排"
+    ],
+    "source": "plugins/mochi-classroom-assistant; plugins/mochi-classroom-planner",
+    "start": 132,
+    "duration": 11
+  },
+  {
+    "id": "camera",
+    "chapter": "03 教学制作",
+    "title": "拍下问题，继续讲解",
+    "sub": "摄像头或展台拍题，把题目带入对话。",
+    "prompt": "看一下这道题：过(0,2)和(4,4)的直线怎么求？",
+    "kind": "camera",
+    "data": [
+      "已拍摄题目",
+      "直线经过 A(0,2)、B(4,4)",
+      "设 y=kx+b → b=2",
+      "4=4k+2 → k=0.5 → y=0.5x+2"
+    ],
+    "features": [
+      "拍题输入"
+    ],
+    "source": "client-plugins/mochi-camera; apps/desktop/electron",
+    "start": 143,
+    "duration": 11
+  },
+  {
+    "id": "voice",
+    "chapter": "03 教学制作",
+    "title": "说出来，也能听回复",
+    "sub": "语音输入接入任务，回复可开启朗读。",
+    "prompt": "请用学生能听懂的语言解释斜率。",
+    "kind": "voice",
+    "data": [
+      "语音输入",
+      "请解释一次函数中的斜率",
+      "斜率表示 x 每增加1，y 变化多少。",
+      "回复朗读 · 语音对话"
+    ],
+    "features": [
+      "语音输入/语音对话",
+      "回复朗读"
+    ],
+    "source": "client-plugins/mochi-voice-chat; apps/desktop/electron",
+    "start": 154,
+    "duration": 11
+  },
+  {
+    "id": "knowledge",
+    "chapter": "03 教学制作",
+    "title": "先找依据，再做材料",
+    "sub": "资料入库、教材技能、关键词检索，保留来源。",
+    "prompt": "从我导入的课例中查找一次函数的教学目标。",
+    "kind": "knowledge",
+    "data": [
+      "课例材料.txt · 自编资料",
+      "命中：一次函数的图像与性质",
+      "目标：理解 k 与 b，会用两点法画图",
+      "资料来源与片段可回看"
+    ],
+    "features": [
+      "知识检索/教材技能"
+    ],
+    "source": "plugins/mochi-knowledge; skills/classroom-deck",
+    "start": 165,
+    "duration": 11
+  },
+  {
+    "id": "web",
+    "chapter": "03 教学制作",
+    "title": "文件和网页，都在工作区",
+    "sub": "查找、阅读、整理素材，再打开成果。",
+    "prompt": "查找工作区的一次函数材料，并补充公开教学资料。",
+    "kind": "files",
+    "data": [
+      "课例材料.txt",
+      "演示成绩.csv",
+      "一次函数课件.pptx",
+      "网页检索 · 查看来源链接"
+    ],
+    "features": [
+      "文件与网页"
+    ],
+    "source": "plugins/mochi-files; plugins/mochi-web-search",
+    "start": 176,
+    "duration": 11
+  },
+  {
+    "id": "doc",
+    "chapter": "03 教学制作",
+    "title": "一份教案，从目标到练习",
+    "sub": "生成可编辑文档，内容按你的偏好组织。",
+    "prompt": "根据课例材料制作15分钟教案和三道随堂练习。",
+    "kind": "doc",
+    "data": [
+      "一次函数的图像与性质",
+      "一、教学目标：理解 k 与 b",
+      "二、课堂活动：预测 → 描点 → 验证",
+      "三、随堂练习与参考答案"
+    ],
+    "features": [
+      "教案与文档",
+      "练习与试卷"
+    ],
+    "source": "plugins/mochi-documents",
+    "start": 187,
+    "duration": 11
+  },
+  {
+    "id": "slides",
+    "chapter": "03 教学制作",
+    "title": "课件生成，还能继续修改",
+    "sub": "结构、预览、修订，留在同一个对话里。",
+    "prompt": "制作6页课件，把第4页改成 k 与 b 的对比。",
+    "kind": "slides",
+    "data": [
+      "一次函数的图像与性质",
+      "k：倾斜方向与程度",
+      "b：与 y 轴的交点",
+      "第4页已按要求修订"
+    ],
+    "features": [
+      "课件制作与修订"
+    ],
+    "source": "plugins/mochi-presentations; skills/classroom-deck",
+    "start": 198,
+    "duration": 11
+  },
+  {
+    "id": "grades",
+    "chapter": "03 教学制作",
+    "title": "成绩分析，数字可复核",
+    "sub": "表格、公式与图表，一起交付。",
+    "prompt": "分析这五名演示学生的成绩，生成表格和均分图。",
+    "kind": "grades",
+    "data": [
+      [
+        "语文",
+        80.6
+      ],
+      [
+        "数学",
+        83.4
+      ],
+      [
+        "英语",
+        83.6
+      ]
+    ],
+    "features": [
+      "表格与成绩分析",
+      "视觉图表"
+    ],
+    "source": "plugins/mochi-sheets; plugins/mochi-grades; plugins/mochi-visuals",
+    "start": 209,
+    "duration": 11
+  },
+  {
+    "id": "model",
+    "chapter": "03 教学制作",
+    "title": "让数学变成可以操作的模型",
+    "sub": "拖动参数，观察图像怎样变化。",
+    "prompt": "做一个可以调节 k 和 b 的一次函数模型。",
+    "kind": "model",
+    "data": [
+      "y = kx + b",
+      "k = 0.5",
+      "b = 2",
+      "调节 k，直线绕截距旋转"
+    ],
+    "features": [
+      "可交互数学建模"
+    ],
+    "source": "plugins/mochi-modeling",
+    "start": 220,
+    "duration": 11
+  },
+  {
+    "id": "team",
+    "chapter": "03 教学制作",
+    "title": "复杂任务，一起完成",
+    "sub": "课件、教案、数据分工，主 Mochi 汇总成果。",
+    "prompt": "组建团队，协作准备一次函数教学材料。",
+    "kind": "team",
+    "data": [
+      "主 Mochi · 统筹与核验",
+      "课件伙伴 · PPTX",
+      "教案伙伴 · DOCX",
+      "数据伙伴 · XLSX + 图表"
+    ],
+    "features": [
+      "智能体团队"
+    ],
+    "source": "client-plugins/teacher-agent-presets; client-plugins/jxl-brand; apps/desktop/runtime-modern/package-lock.json",
+    "start": 231,
+    "duration": 11
+  },
+  {
+    "id": "campus",
+    "chapter": "04 校园协作",
+    "title": "校园信息，按权限查询",
+    "sub": "连接校园账号，查询有来源的状态。",
+    "prompt": "查看演示班学生的当前状态和近期记录。",
+    "kind": "campus",
+    "data": [
+      "林小禾（演示）",
+      "当前状态：在班",
+      "最近记录：已到达教室",
+      "来源：校园服务 · 按账号权限可见"
+    ],
+    "features": [
+      "校园状态查询"
+    ],
+    "source": "plugins/mochi-campus; client-plugins/jxl-campus",
+    "start": 242,
+    "duration": 11
+  },
+  {
+    "id": "gate",
+    "chapter": "04 校园协作",
+    "title": "重要操作，留给人确认",
+    "sub": "先核对申请，再审批，再回看结果。",
+    "prompt": "核对这条学生出入申请，提交给我确认。",
+    "kind": "approval",
+    "data": [
+      "林小禾（演示）",
+      "申请：前往医务室",
+      "时间：本节课间",
+      "核对申请内容后，老师点击批准。"
+    ],
+    "features": [
+      "人工审批放行"
+    ],
+    "source": "plugins/mochi-campus",
+    "start": 253,
+    "duration": 11
+  },
+  {
+    "id": "a2a",
+    "chapter": "04 校园协作",
+    "title": "同事协作，让请求有来有回",
+    "sub": "问一句、请帮忙、找物品，双方主人决定。",
+    "prompt": "帮我问顾老师，下午能否借用几何教具。",
+    "kind": "a2a",
+    "data": [
+      "林老师的 Mochi",
+      "顾老师的 Mochi",
+      "请求：下午借用几何教具",
+      "对方确认：可以，课前来取",
+      "回复已回到原任务"
+    ],
+    "features": [
+      "教师协作A2A"
+    ],
+    "source": "plugins/mochi-dispatch/index.mjs:mochi_ask,mochi_request,mochi_find,mochi_respond",
+    "start": 264,
+    "duration": 11
+  },
+  {
+    "id": "end",
+    "chapter": "04 校园协作",
+    "title": "Mochi · 你的校园工作伙伴",
+    "sub": "从一条待办，到一堂课，再到一次协作。",
+    "prompt": "把时间留给教学，把繁琐交给 Mochi。",
+    "kind": "end",
+    "data": [
+      "教学制作",
+      "班级事务",
+      "校园协作",
+      "持续陪伴"
+    ],
+    "features": [
+      "功能总览"
+    ],
+    "source": "promo/v9/功能覆盖与来源.md",
+    "start": 275,
+    "duration": 11
+  }
+]

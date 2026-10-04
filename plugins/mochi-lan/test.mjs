@@ -187,6 +187,25 @@ try {
   assert.equal((await teacher.call('state')).peers.length, 1);
   assert.equal((await classroom.call('state')).peers.length, 1);
 
+  console.log('①a UDP 关闭且教室端口变化：旧配对只在原私钥签名挑战通过后更新地址');
+  const previousPort = classroom.snapshot.http.port;
+  await classroom.stop();
+  let movedPort = await availableTcpPort();
+  while (movedPort === previousPort) movedPort = await availableTcpPort();
+  classroom = await LanChild.start({ dataRoot: classroomRoot, endpointId: 'classroom-lan-test', role: 'classroom', schoolId: 'demo-school', classId: 'g7-1', displayName: '七一班教室', port: movedPort, dropDeliveryAckOnce: true });
+  assert.equal((await teacher.call('state')).peers[0].address.port, previousPort);
+  await rejectCode(() => teacher.call('recover', {
+    endpointId: 'classroom-lan-test', address: { host: '127.0.0.1', port: previousPort },
+  }), 'DISCOVERY_UNAVAILABLE');
+  await rejectCode(() => teacher.call('recover', {
+    endpointId: 'classroom-lan-test', address: { host: '127.0.0.1', port: teacher.snapshot.http.port },
+  }), 'SIGNATURE_INVALID');
+  assert.equal((await teacher.call('state')).peers[0].address.port, previousPort, 'wrong private key must not redirect a pairing');
+  const recovered = await teacher.call('recover', { endpointId: 'classroom-lan-test', address: { host: '127.0.0.1', port: movedPort } });
+  assert.equal(recovered.status, 'updated');
+  assert.equal((await teacher.call('state')).peers[0].address.port, movedPort);
+  assert.equal((await teacher.call('recover', { endpointId: 'classroom-lan-test', address: { host: '127.0.0.1', port: movedPort } })).status, 'unchanged');
+
   console.log('② ACK 丢失后不自动重发；教室持久化、重启后人工已看到可发回签名 receipt');
   await rejectCode(
     () => teacher.call('send', { targetEndpointId: 'classroom-lan-test', body: '请打开第 3 页课件。', messageId: 'notify-ack-lost' }),
@@ -222,7 +241,7 @@ try {
   const studentRequest = await classroom.call('request', {
     targetEndpointId: 'teacher-lan-test',
     body: '第三题不太懂，想请老师讲一下。',
-    request: { student: '李明', seat: 3, kind: 'appointment', topic: '二次函数', slot: '第八节晚自习' },
+    request: { student: '李明', seat: 3, kind: 'appointment', topic: '二次函数', slot: '第八节  晚自习 ' },
     messageId: 'request-seen',
   });
   assert.equal(studentRequest.delivery, 'ACKNOWLEDGED');
@@ -236,6 +255,72 @@ try {
   assert.equal(requestRows[0].request.seat, 3);
   assert.equal(requestRows[0].from.role, 'classroom');
   assert.equal(requestRows[0].seenAt, undefined);
+  await rejectCode(() => teacher.call('response', {
+    targetEndpointId: 'classroom-lan-test', body: '老师建议改期。',
+    response: { replyToMessageId: 'request-seen', decision: 'rescheduled', slot: ' 第八节   晚自习 ' },
+    messageId: 'same-time-reschedule',
+  }), 'INVALID_RESPONSE');
+  await rejectCode(() => teacher.call('response', {
+    targetEndpointId: 'classroom-lan-test', body: '老师已确认预约时间。',
+    response: { replyToMessageId: 'request-seen', decision: 'confirmed', slot: '明天第八节课后' },
+    messageId: 'different-time-confirmation',
+  }), 'INVALID_RESPONSE');
+  const teacherReply = await teacher.call('response', {
+    targetEndpointId: 'classroom-lan-test',
+    body: '老师已确认预约时间。',
+    response: { replyToMessageId: 'request-seen', decision: 'confirmed', slot: '第八节 晚自习' },
+    messageId: 'teacher-reply-1',
+  });
+  assert.equal(teacherReply.delivery, 'ACKNOWLEDGED');
+  let classroomStateAfterReply = await classroom.call('state');
+  const replyRow = classroomStateAfterReply.inbox.find((item) => item.messageId === 'teacher-reply-1');
+  assert.equal(replyRow.response.replyToMessageId, 'request-seen');
+  assert.equal(replyRow.response.decision, 'confirmed');
+  assert.equal(replyRow.response.slot, '第八节 晚自习');
+  assert.equal(replyRow.seenAt, undefined, '教师回复不等于学生已看到');
+  const duplicateTeacherReply = await teacher.call('response', {
+    targetEndpointId: 'classroom-lan-test',
+    body: '老师已确认预约时间。',
+    response: { replyToMessageId: 'request-seen', decision: 'confirmed', slot: '第八节 晚自习' },
+    messageId: 'teacher-reply-1',
+  });
+  assert.equal(duplicateTeacherReply.delivery, 'ACKNOWLEDGED', '同一回复 id 重试保持幂等');
+  await rejectCode(() => teacher.call('response', {
+    targetEndpointId: 'classroom-lan-test',
+    body: '老师建议改期。',
+    response: { replyToMessageId: 'request-seen', decision: 'rescheduled', slot: '周五课后' },
+    messageId: 'teacher-reply-conflict',
+  }), 'RESPONSE_ALREADY_SENT');
+  await rejectCode(() => teacher.call('response', {
+    targetEndpointId: 'classroom-lan-test', body: '请到办公室聊聊。',
+    response: { replyToMessageId: 'request-seen', decision: 'replied' }, messageId: 'appointment-text-reply',
+  }), 'INVALID_RESPONSE');
+  await classroom.call('request', {
+    targetEndpointId: 'teacher-lan-test', body: '这道题为什么要配方？',
+    request: { student: '李明', kind: 'question', topic: '二次函数' }, messageId: 'question-request',
+  });
+  await rejectCode(() => teacher.call('response', {
+    targetEndpointId: 'classroom-lan-test', body: '明天课后见。',
+    response: { replyToMessageId: 'question-request', decision: 'confirmed', slot: '明天课后' }, messageId: 'question-time-reply',
+  }), 'INVALID_RESPONSE');
+  await rejectCode(() => teacher.call('response', {
+    targetEndpointId: 'classroom-lan-test', body: '我会讲配方法。',
+    response: { replyToMessageId: 'question-request', decision: 'replied', slot: '' }, messageId: 'question-malformed-reply',
+  }), 'INVALID_RESPONSE');
+  const textReplyArgs = {
+    targetEndpointId: 'classroom-lan-test', body: '我会在明天的答疑时间讲配方法。',
+    response: { replyToMessageId: 'question-request', decision: 'replied' }, messageId: 'question-text-reply',
+  };
+  const questionReply = await teacher.call('response', textReplyArgs);
+  assert.equal(questionReply.delivery, 'ACKNOWLEDGED');
+  classroomStateAfterReply = await classroom.call('state');
+  const questionReplyRow = classroomStateAfterReply.inbox.find((item) => item.messageId === 'question-text-reply');
+  assert.equal(questionReplyRow.body, textReplyArgs.body, 'signed reply text reaches the classroom in the message body');
+  assert.equal(questionReplyRow.response.decision, 'replied');
+  const duplicateQuestionReply = await teacher.call('response', textReplyArgs);
+  assert.equal(duplicateQuestionReply.delivery, 'ACKNOWLEDGED');
+  assert.equal(duplicateQuestionReply.ack.duplicate, true, 'replayed signed text reply is idempotent');
+  assert.equal((await classroom.call('state')).inbox.filter((item) => item.messageId === 'question-text-reply').length, 1);
   const teacherSeen = await teacher.call('seen', { messageId: 'request-seen' });
   assert.equal(teacherSeen.status, 'ACKNOWLEDGED');
   assert.equal((await teacher.call('state')).inbox.find((item) => item.messageId === 'request-seen')?.seenAt !== undefined, true);
@@ -258,6 +343,49 @@ try {
     }),
     'INVALID_REQUEST',
   );
+  await rejectCode(() => classroom.call('request', {
+    targetEndpointId: 'teacher-lan-test', body: '预约未填写时间。',
+    request: { student: '李明', kind: 'appointment', topic: '二次函数' }, messageId: 'appointment-no-slot',
+  }), 'INVALID_REQUEST');
+  await rejectCode(() => classroom.call('request', {
+    targetEndpointId: 'teacher-lan-test', body: '预约时间只有空白。',
+    request: { student: '李明', kind: 'appointment', slot: '   ' }, messageId: 'appointment-blank-slot',
+  }), 'INVALID_REQUEST');
+  const noSlotQuestion = await classroom.call('request', {
+    targetEndpointId: 'teacher-lan-test', body: '普通问题不需要预约时间。',
+    request: { student: '李明', kind: 'question', topic: '函数' }, messageId: 'question-no-slot',
+  });
+  assert.equal(noSlotQuestion.delivery, 'ACKNOWLEDGED', '非预约问题仍可不填时间');
+  assert.equal((await teacher.call('state')).inbox.find((item) => item.messageId === 'question-no-slot')?.request.slot, undefined);
+  const legacySlotRequest = await classroom.call('request', {
+    targetEndpointId: 'teacher-lan-test', body: '旧客户端预约。',
+    request: { student: '李明', slot: '周三课后' }, messageId: 'legacy-slot-appointment',
+  });
+  assert.equal(legacySlotRequest.delivery, 'ACKNOWLEDGED');
+  assert.equal((await teacher.call('state')).inbox.find((item) => item.messageId === 'legacy-slot-appointment')?.request.kind, 'appointment');
+  await teacher.call('response', {
+    targetEndpointId: 'classroom-lan-test', body: '旧客户端预约已确认。',
+    response: { replyToMessageId: 'legacy-slot-appointment', decision: 'confirmed', slot: '周三课后' }, messageId: 'legacy-slot-appointment-reply',
+  });
+  const explicitOtherWithSlot = await classroom.call('request', {
+    targetEndpointId: 'teacher-lan-test', body: '我有个问题，但这个时间只是方便联系。',
+    request: { student: '李明', kind: 'other', slot: '周四' }, messageId: 'explicit-other-slot',
+  });
+  assert.equal(explicitOtherWithSlot.delivery, 'ACKNOWLEDGED');
+  assert.equal((await teacher.call('state')).inbox.find((item) => item.messageId === 'explicit-other-slot')?.request.kind, 'other');
+  await teacher.call('response', {
+    targetEndpointId: 'classroom-lan-test', body: '收到，我会联系你。',
+    response: { replyToMessageId: 'explicit-other-slot', decision: 'replied' }, messageId: 'explicit-other-text-reply',
+  });
+
+  console.log('③d 教师端对签名预约也强制要求时间，防止绕过发送端校验');
+  const invalidIncomingRequest = await classroom.call('raw-request', {
+    target: { host: '127.0.0.1', port: teacher.snapshot.http.port, endpointId: 'teacher-lan-test', schoolId: 'demo-school' },
+    request: { student: '李明', kind: 'appointment', topic: '二次函数' }, messageId: 'signed-appointment-no-slot',
+  });
+  assert.equal(invalidIncomingRequest.status, 400);
+  assert.equal(invalidIncomingRequest.body?.code, 'INVALID_REQUEST');
+  assert.equal((await teacher.call('state')).inbox.some((item) => item.messageId === 'signed-appointment-no-slot'), false);
 
   console.log('③c 教师下发处置名册：一批判决走一条消息，逐人个性化交代随信封过网');
   const directive = await teacher.call('directive', {
@@ -378,6 +506,16 @@ try {
   assert.equal((await classroom.call('state')).peers.length, 0);
   assert.equal((await classroom.call('state')).blockedPeers.some((row) => row.endpointId === 'teacher-lan-test'), true);
   await rejectCode(() => teacher.call('send', { targetEndpointId: 'classroom-lan-test', body: '拉黑后不得送达。', messageId: 'notify-blocked' }), 'PEER_BLOCKED');
+  const unblocked = await classroom.call('unblock', { endpointId: 'teacher-lan-test' });
+  assert.equal(unblocked.status, 'unblocked');
+  assert.equal((await classroom.call('state')).blockedPeers.length, 0);
+  assert.equal((await classroom.call('state')).peers.length, 0, '解除拉黑不能自动恢复旧信任');
+  await rejectCode(() => teacher.call('send', { targetEndpointId: 'classroom-lan-test', body: '解除拉黑不能直接送达。', messageId: 'notify-unblocked-unpaired' }), 'PAIRING_REQUIRED');
+  await teacher.call('unpair', { endpointId: 'classroom-lan-test' });
+  const freshPair = await teacher.call('pair-request', { candidate: rePairCandidate, address: { host: '127.0.0.1', port: classroom.snapshot.http.port } });
+  assert.equal((await classroom.call('state')).pendingPairings.some((row) => row.requestId === freshPair.requestId), true);
+  await classroom.call('pair-accept', { requestId: freshPair.requestId });
+  assert.equal((await classroom.call('state')).peers.length, 1, '双方重新人工确认后才恢复配对');
   console.log('⑥ 两个独立进程发现：主信标与组播并行、同 endpoint 去重，且本地 TTL 以收包时间到期');
   const observerPort = await availableUdpPort();
   const senderPort = await availableUdpPort();

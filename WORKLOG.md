@@ -1,5 +1,121 @@
 # Mochi 工程日志（WORKLOG）
 
+## 2026-09-25 · 双端聊天配对与最终 Mac 样式包
+
+- 从两个未配对的隔离 Electron/DSH 角色出发，`test:chat-appointment-live-ui` 现在完整走通教师对话发起配对、教室对话读取真实待确认请求并接受、双方核对对端 ID 和指纹，再在同一会话发送学生预约、教师按原时间确认、教室收到签名结果。测试使用确定性本机 SSE 模型夹具；12 次脚本化模型调用和两个真实 LAN 服务验证的是工具、审批与签名接线，不证明真实模型的自然语言理解或学校有线网络。配对批准仍仅是本机使用者点击，不证明其教师/管理员身份；教室是学生共享设备，授权策略待确认。
+- 上述聊天配对测试曾完整通过；后续在本机连续复测时，两个角色并行启动和教师端单独先启均遇到产品自身的 `WEB_HOST_TIMEOUT`，在模型网关请求及配对逻辑前停止。脚本现顺序启动角色、以产品 90 秒上限判断就绪、精简失败输出；没有放宽产品超时或把失败记为通过。开发态仍从 iCloud 工作区读取插件和模块，而复制安装的 Mac 包启动通过；运行位置是线索，尚未隔离证实根因。
+- 根 `npm run check` 本次在 149 项核心插件测试中 147 项通过、2 项因 30 秒超时取消，未出现功能断言失败。课件路径安全和拥挤原生表格两项单独按名称运行分别用 5.75 秒、5.09 秒通过。全量并行负载、默认 LibreOffice 预览与 iCloud 工作区均是可能影响因素，尚未隔离；不能把本次全量检查写成通过。
+- 最终 macOS arm64 无密钥 DMG 已从非 iCloud 暂存树重建并晋升到 `apps/desktop/release/Mochi-0.1.0-mac-arm64.dmg`，733,932,275 B / SHA256 `b230ffe121c67878e3fe899443d6db40a23cda0bf82fc8d0479584b249a59dbb`。发布输入清单 133 项 / 28,147,475 B；镜像与边车校验、包内最终 rail 编译文件和资源内容、唯一无密钥设置种子、12 个目标 arm64 原生模块架构均通过。从镜像复制的 `.app` 教师 11.7 秒、教室 2.0 秒启动并输出 `MOCHI_DESKTOP_SMOKE_OK`。直接在只读挂载镜像内启动教师角色 90 秒内未获得成功标记，不能列作通过。前包三件套归档于 `apps/desktop/release/archive/2026-09-25-pre-rail-pages-css/`；新 DMG 未签名、未公证，学校设备、真实 Key、扬声器、WPS 和 Gatekeeper 尚待现场验收。
+- 当前 Windows x64 安装器见[交付台账](docs/DELIVERY-LEDGER.md)中的私有 [run 36092244751](https://github.com/linkimi2026-cmd/jyl-campus-health/actions/runs/36092244751)；它通过原生 Windows 构建、安装后双角色启动、语音 WAV 和桌宠截图门禁。新增的双端聊天配对测试与文档未改变该 Windows 包的产品代码；学校双机有线网络与成年授权仍需现场验证。
+
+## 2026-09-25 · 教学备注、桌宠原生截图与阶段性 Mac 交付
+
+- 课件生成器把已声明的逐页教学目标、页面作用、学生行动和理解检查写进 PPTX 演讲者备注；有可见内容修订的旧映射提示复核。真实 7 页样例的备注第 2–7 页可回读，投影页 OOXML 与前版逐字节相同，课件测试 38/38；目标 WPS 备注显示未现场验收。
+- 教师桌宠与教室板的 Electron 内容截图门禁扩充为折叠、展开、教室板顶部及 64 人溢出入口四张。深色教室板白色滚动槽已修正，本机内容截图与点击、窗口显隐回归通过。私有 Windows run `36079583446`、`36080159920` 在测试夹具可见性同步断言失败；run `36081027844` 越过该断言后遇到未固定系统动效偏好的呼吸断言。夹具现用 CDP 分别设置正常与减少动效，验证呼吸、单次提醒与动画停止，本机通过；原生 Windows 新 run 待结果。`capturePage()` 只证明应用内容，不能证明学校设备的 DWM 透明合成、DPI 或动画流畅度。
+- Mac arm64 受管发布输入 133 项 / 28,147,475 B，SHA256 `2732555bc5769f8f35ae6c4b70d0f56607cf0bf29e806075cfed6d4d75a53c30`，无密钥种子。该阶段 DMG 734,489,799 B / SHA256 `ce469d96db28ce1f62d14b72e9f5681f168c9ec7b137f16bd143236f29c545ff`，边车与 `hdiutil verify`（VALID）通过。electron-builder 在有效 DMG 生成后的 blockmap 子进程异常退出；随后项目自带 app-builder 单独生成 blockmap（SHA256 `f8914c863fe92e70325e271ed304992f26eea2789de85673cfdbf9a0882bae83`）。只读镜像中课件、LAN、rail 等 5 个资源逐字节匹配；复制后教师 12.5 秒、教室 1.9 秒均 `MOCHI_DESKTOP_SMOKE_OK`。前一候选归档在 `apps/desktop/release/archive/2026-09-25-pre-speaker-notes/`。DMG 未签名、未公证；学校 Key、LAN、WPS、扬声器及新 Mac Gatekeeper 待现场验收。
+- 随后教室板源码又增加末行留白和“未过关”标签对比度修正；当时 Mac 重打在 iCloud Drive File Provider 工作区扫描依赖超过一小时仍未形成镜像，且本机出现已安装 JS 首次读取为空、重读正常的现象。该次未完成构建已停止，已从 `apps/desktop/release/archive/2026-09-25-pre-final-board-polish/` 恢复上面已验收的 DMG、blockmap、边车，并再次确认 DMG SHA 与 `hdiutil verify`（VALID）。当时恢复的包包含主要业务升级和课件备注，**尚不包含这两处后续样式**；本日志最新节记录了包含样式的最终包。File Provider 是最强的环境线索，但未证明每次空读取的系统原因。
+
+## 2026-09-25 · 课件留白、桌宠弹簧、MiMo 403 与新版安装包
+
+- PPT 原生表格第 4 页由 1.52 英寸增至 3.28 英寸，左右边距 0.12 英寸；OOXML 几何/文字与 7 页重渲染通过，第 4 页人工复看。Windows/Linux 桌宠窗体改双轴临界阻尼弹簧，反向接续速度，Mac 分支保留；rail 逻辑 171 项、模型 267 项及真实 Electron 运行时回归通过。
+- MiMo 401 仍归认证错误；403 只有明确余额/额度或权限信息才分级，其他报“原因待确认”。伪网关流测试与桌面运行配置回归通过，真实供应商 Key 未试。根 `npm run check` 全通过，Windows 精确快照 544 项 / 93,016,217 B 零差异。
+- 当时 Mac arm64 无密钥 DMG：734,052,895 B / SHA256 `c5db06521e8e9ccb1e49e6fa4e5db26537910c65ca4e6bfaabf8c6d95f758d76`。sidecar `shasum -a 256 -c`、`hdiutil verify`（VALID）、只读镜像中的主进程/rail/spring/LAN/课件/MiMo 字节比对及唯一非密钥设置种子核对均通过；从镜像复制后教师端 10.9 秒、教室端 1.9 秒启动均有 `MOCHI_DESKTOP_SMOKE_OK`。DMG 未签名、未公证；学校实机、网络、扬声器未验收。
+- 私有 Windows 源码候选提交 `40c43eedbb26d8192e6957765e6e4bd0c2c337dd` 的 [run 36038536562](https://github.com/linkimi2026-cmd/jyl-campus-health/actions/runs/36038536562) 构建、原生 Kokoro 与 NSIS 均成功，但包内启动验收在启动前读取了私有快照中不存在的源码设置种子路径，run 失败且未留下 EXE；保留该失败历史。仅修改 CI workflow 的后继提交 `8cb898724052fab1f610662c4ba15202f9afb969` 的 [run 36040854416](https://github.com/linkimi2026-cmd/jyl-campus-health/actions/runs/36040854416) 是配对修复前成功候选：通过原生 Kokoro、NSIS、唯一无密钥设置种子核对及 packaged teacher/classroom 启动，两种角色均输出 `MOCHI_DESKTOP_SMOKE_OK`，约 7.5 秒 / 5.1 秒；其 EXE 与 sidecar 仍保留于旧私有草稿 Release。当时配对修复候选提交 `a742c988e1e7b502a45cc3e29ad3dacb73c0cec9`（tree `127c08d3bf77abd7e9de7cdd13635d725cddcc68`）的 [run 36052484007](https://github.com/linkimi2026-cmd/jyl-campus-health/actions/runs/36052484007) 验证 546 项批准源码输入，并通过 LAN 配对码回归、原生 Kokoro 合成与 18,044 B WAV 检查、NSIS、包内唯一无密钥种子核对及 packaged teacher/classroom 启动；两角色均输出 `MOCHI_DESKTOP_SMOKE_OK`，耗时 7.9 秒 / 6.6 秒。Actions artifact 因配额上传失败，私有 draft Release 已留存 465,478,276 B 未签名 EXE，SHA256 `9da70cccaa9d36878edb1c6aea84aa109562906f5b630ae1ce2b07a96495e1f2`；95 B `.sha256` sidecar 资产 SHA256 `72a74952b839459879384dee97dd3fd73d7bee5b9bf877674e7e7d3c88413f9a`，内容与 EXE 哈希匹配。Release API 核实目标提交匹配且 draft=true：[私有草稿 Release](https://github.com/linkimi2026-cmd/jyl-campus-health/releases/tag/untagged-d512a0983f39671027a8)。学校设备安装、有线 LAN、真实 Key、扬声器听感、PPT/WPS 仍待实机验证；CI packaged 冒烟不是学校实机验收。
+
+## 2026-09-25 · Windows 原生语音验收、双平台前一轮候选包
+
+- 当时 Mac arm64 无密钥 DMG：734,261,740 B / SHA256 `527bf73454d360a03883ee42bf3a357c36336a45d3569b769275c6f562c6b5f4`。sidecar、`hdiutil verify`、只读挂载后三个语音模块与 `dist-electron` 逐字节匹配、仅有非密钥设置种子均通过；从镜像复制后教师 10.1 秒、教室 1.9 秒均 exit 0 且有 `MOCHI_DESKTOP_SMOKE_OK`。前版归档于 `apps/desktop/release/archive/2026-09-25-pre-bzip2-helper/`。Mac DMG 未签名、公证，且没有 Windows `7za.exe`。
+- Windows 根 `npm run check` 通过；精确快照 542 项 / 92,999,792 B 零差异。私有提交 `436c4478015a9cc0a99457122dd3cd88e99cdf80` 的 [run 36030805114](https://github.com/linkimi2026-cmd/jyl-campus-health/actions/runs/36030805114) 通过真实 Windows 解包、Kokoro 合成与 18,044 B WAV 检查，并成功构建 NSIS 安装器。7za BZip2→TAR runtime/model 耗时 1,755/5,270 ms；tar 列表 44/39 ms，提取 783/999 ms。Actions 工件上传因存储配额失败，EXE 与 `.sha256` 边车已转存[私有草稿 Release](https://github.com/linkimi2026-cmd/jyl-campus-health/releases/tag/untagged-04f57c067c3bb2e26cab)：465,473,456 B，资源元数据 SHA256 `3061f90c981951af4b2c0e37824dc4341f9a8a113b21b5ac134df9eb972da919`。Windows EXE 未签名，未在学校设备安装、连 LAN 或试听扬声器。
+- 第二轮私有 Windows [run 36024973225](https://github.com/linkimi2026-cmd/jyl-campus-health/actions/runs/36024973225) 的失败记录：PATH 第一项、生产进程调用均为 `C:\Windows\System32\tar.exe`（bsdtar 3.8.4），但并行读取的两份 `.tar.bz2` 之一达到 180 秒超时；日志无法判定具体归档。原先 Git tar 抢 PATH 的推测已证伪。libarchive v3.8.4 源码显示缺少 bzlib 时会转调外部 `bzip2 -d`；runner 版本字符串未列出 bz2lib，是线索但未在该 runner 单独复现。随后复用现有 7-Zip 解包器，当前成功结果见本节首段。
+- `test:chat-appointment-live-ui` 在两份隔离 Electron/DSH 中用本机脚本化 SSE 模型触发真实学生预约和教师回复工具；两次“允许一次”审批、签名投递确认、教师读取原请求及教室按原 ID/原时间展示决定均通过。LAN 配对由真实服务在测试目录预置；这项验证不包含真实供应商对任意自然语言的理解或学校有线网络。
+- Windows 教室自然语音包增加固定目录离线导入，两个归档先按大小与 SHA-256 校验，再走原有归档路径和安装后文件校验；损坏的本地归档回退在线下载。原生 Windows 静音冒烟共用生产 sherpa/Kokoro CLI 参数，检查输出为单声道 24 kHz PCM16 非静音 WAV。Mac 上 `test:voice-pack`、WAV 结构校验夹具测试、桌面 typecheck 与根 `npm run check` 通过；随后 Windows [run 36030805114](https://github.com/linkimi2026-cmd/jyl-campus-health/actions/runs/36030805114) 完成实际合成和 WAV 检查。学校扬声器音色仍以现场试听为准。
+- 此前阶段 Mac arm64 无密钥 DMG 为 734,373,760 B / SHA256 `8c3794412b170f14f31784fafee8993a1a5468c3e7889df38614e957e2015b3d`；边车、`hdiutil verify` 和只读挂载 asar/三个语音模块核对通过。从镜像复制到独立临时目录后，教师 13.2 秒、教室 2.0 秒均 exit 0 且出现 `MOCHI_DESKTOP_SMOKE_OK`；包未签名、公证，Gatekeeper 仍待新机验收。前一 DMG 已归档至 `apps/desktop/release/archive/2026-09-24-pre-native-voice-appointment/`。
+- 当时 Windows 快照清单更新为 541 项 / 92,983,874 B，零差异；私有候选树 542 个快照 blob 与清单一致。提交 `2b7c8403ab4641ccd6a94c3a3bdf85d4cf98f917` 已推至 `codex/mochi-windows-20260924`，触发 [run 36022637374](https://github.com/linkimi2026-cmd/jyl-campus-health/actions/runs/36022637374)；结果见下方记录。上一份 Windows EXE 属于旧源码，不能代表本轮原生语音验收。
+- 当前实际 DSH 请求形状由本机假网关抓到聊天态 13 个工具、工作态 96 个工具、共同 system 前缀 7,405 字符。旧版“1→89”只作为历史记录；新抓包未提供供应商缓存命中率或账单节省。
+- 首个原生语音 [run 36022637374](https://github.com/linkimi2026-cmd/jyl-campus-health/actions/runs/36022637374) 在完成固定哈希归档下载后，`tar.exe -tjf` 命中 180 秒超时，未进入 WAV 或安装器步骤。GitHub runner-images 历史问题显示 Git tar 可能抢先于系统 tar 并误读 Windows 盘符；本次 PATH 未记录，暂列推测。生产代码已改为 `%SystemRoot%\System32\tar.exe`，回归覆盖不同系统盘；工作流打印 tar 候选及版本。修复快照 541 项 / 92,985,176 B 零差异，私有提交 `819ac8df3e678d3ed16f69e1b8734a2e265b1e2c` 触发 [run 36024973225](https://github.com/linkimi2026-cmd/jyl-campus-health/actions/runs/36024973225)。Mac DMG 尚未按这处 Windows 专用代码重建。
+- System32-tar 路线阶段的 Mac arm64 候选为 734,122,716 B / SHA256 `b54eff4fc9a26ee532ad53536743f3ea262e8187ad67252a79ee504aa6aa1d78`；边车、镜像 CRC、包内三个语音模块及唯一非密钥种子核对通过。镜像复制后教师 12.3 秒、教室 1.9 秒启动成功。该候选归档于 `apps/desktop/release/archive/2026-09-25-pre-system32-tar/`；Mac 启动不能证明 Windows tar 修复或扬声器效果。
+
+## 2026-09-24 · 对话配对实链与阶段性双平台出包
+
+- `test:chat-lan-live-ui` 在隔离 Electron 教师对话中经本机合成 SSE 模型调用 `mochi_lan_pair_classroom`，人工点“允许一次”后，实际教室 LAN 服务持久化签名的待配对请求，教师看到匹配身份指纹。教室仍须单独接受；此项没有使用真实供应商或学校双机。桌面 typecheck、根 `npm run check`、`git diff --check` 通过。
+- 当时 macOS arm64 无密钥 DMG 为 733,924,005 B，SHA256 `2c405643712b4226c0105435d7f47f573f59a21f90eb778e7fe87ae3f3f49ccd`；边车、`hdiutil verify`、只读挂载源码/资源和构建应用教师角色冒烟通过。当时尚未从镜像复制后重跑教室角色冒烟。安装包未签名、未公证，Gatekeeper 现场影响待验证。
+- 后续补跑同一 DMG 的镜像复制冒烟：只读挂载后 `ditto` 到隔离临时目录，教师与教室角色分别使用独立 home/userData；教师 13.7 秒、教室 2.0 秒均 exit 0 且出现 `MOCHI_DESKTOP_SMOKE_OK`，教师日志显示 settings written、refs 无。镜像正常卸载，临时副本清理；该记录补足上一条的包内双角色启动缺口，但不代表全新 Mac 手工安装。
+- Windows 输入快照 538 项 / 92,941,778 B 零差异，私有 `mochi-source` 539 个 blob 与本机逐字节映射一致。第一次 [run 36010945444](https://github.com/linkimi2026-cmd/jyl-campus-health/actions/runs/36010945444) 因我覆盖旧私仓工作流遗漏 Python 3.12 所需 `setuptools` 兼容步骤而在 `npm ci` 失败；恢复既有 Windows 步骤并叠加语音测试、`--without-key-seeds` 与草稿 Release 兜底后，第二次 [run 36012662277](https://github.com/linkimi2026-cmd/jyl-campus-health/actions/runs/36012662277) 成功构建 NSIS EXE。Actions 附件仍因存储配额上传失败，但 EXE 和 SHA256 边车已存入[私有草稿 Release](https://github.com/linkimi2026-cmd/jyl-campus-health/releases/tag/untagged-854ccb9713f986a7decd)，目标提交 `0d4f5b5f760efee1145fa914d4627c8b082d054c`。EXE 资源元数据为 465,056,177 B / SHA256 `3cab42b7aaceb058cd4414e2ee0c7603c8b5019dadc6038044a9b319cc80a9fc`；尚未下载核对边车文本，也未在 Windows 教室机实装、联网配对或试听自然语音。精确验收层级见 `docs/DELIVERY-LEDGER.md`。
+
+## 2026-09-24 · 自然语音叫号、双端背景切换与阶段性 macOS 包
+
+- 教室端新增教师单人叫号的自然语音通报：只播报通过身份、配对、消息类型与签名判定校验的新叫号公开信息，历史消息不重播；不朗读成绩或私密备注。用户同意教室 Windows 端安装后自动下载可选语音包。采用 sherpa-onnx v1.13.8 Windows CLI 与 Kokoro 中文 int8 模型，官方归档共约 164.4 MB，校验后本地离线合成，不用付费 API Key；下载未完成或失败时尝试 Windows 已安装中文语音。语音队列满载而消息确认未入队时，现在会延迟并重新校验重试，避免叫号永久漏播；应用重启后仍以静默基线开始。语音叫号构建、typecheck 和测试通过；当前没有真实 Windows 下载、CLI/模型运行、音色听感或扬声器验收，不能把“自然、不像医院播报”写成已证结果。GitHub 复用与依赖、许可证及维护取舍记录于 `docs/reuse-audit.md`。
+- 教师端与教室端都可从 Mochi 对话切换本地校园背景，两个角色分别保存偏好。Mac 包活动插件路径中的背景工具 `index.mjs`、`client.js` 和两张新增插画与源码逐字节匹配；新增资源由背景插件回归、实际 DSH 工具列表与 Electron 页面检查覆盖。
+- 队列修复后的阶段性 macOS arm64 无密钥 DMG：734,260,507 B，SHA256 `afa5e1a9bae1bf8a3654fe6e71b04276c53697c5e08a6326dfe1ff6917f85687`，边车与 `hdiutil verify`（VALID）通过。挂载核对确认 asar 主进程及三个语音模块与本机编译输出一致，活动运行路径中的背景工具和两张插画与源码一致，种子仅有 `settings-defaults.json`。复制后的教师应用在 12.7 秒通过启动冒烟；教室角色在隔离 userData 下也通过（两者 exit 0、`MOCHI_DESKTOP_SMOKE_OK`）。该 DMG 未签名、未公证，Gatekeeper 对分发安装的影响尚未在全新 Mac 验证。此前 734,047,865 B / `8b3f453c…` 候选已归档至 `apps/desktop/release/archive/2026-09-24-pre-voice-backpressure`。
+- 根 `npm run check`、`voice-call` 构建/typecheck/测试通过。Windows 输入快照完整校验通过：537 项 / 92,924,059 B 声明与实际一致，0 差异、0 缺失；快照尚未推送或进入远端 Windows 原生 CI 构建，因而没有与这轮源码相配的可下载 EXE，也没有目标机实测。教室电脑可接入学校有线网络不等于真实双机发现、供应商连接或 Windows 语音已验收。
+
+## 2026-09-24 · 教师 Key 实链、额度误报修正与阶段 macOS 包
+
+- 隔离、无预置 Key 的教师 Electron 页面通过原生 `DeepSeek（内置）` 卡保存 fixture Key；新会话实际向本机假网关发送 `deepseek-v4.1-flash`，授权头正确且页面/进程输出不回显 Key。教室 MiMo 的同类真实页面回归也通过。已确认这两条配置链可写可读；用户最初报错没有日志，根因仍不能定论。
+- 固定版 `@deepseek-ai/dsh-llm-pi-ai@0.1.3-alpha.1` 原先把所有 403 先判为 `AUTH`。以可复现的单处补丁产出本地 tarball 并更新锁文件；安装版 `PiAiAdapter` 对本机假网关三次真实流请求分别给出 403 余额不足→`QUOTA`、401→`AUTH`、普通 403→`AUTH`。Doctor 独立状态探测将 401、402、403 分开提示，403 不单凭状态码判定 Key 错误；脱敏测试与原生窗口回归通过。补丁维护成本及上游复用审查见 `docs/reuse-audit.md`。
+- 一次依赖重装导致本机 `zod`/`undici` 偏离锁文件，随后以系统 Python 3.9 执行 `npm ci` 恢复精确版本，并重建 Electron ABI 140 原生模块；ABI 探测三个二进制通过。根 `npm run check`、桌面资源暂存、教师/教室模型真实 UI、Doctor 和模型传输回归通过。当时的 Windows 本地快照为 528 项 / 92,539,747 B，零缺失/差异；这个数字不代表本轮新源码的当前清单。该阶段尚未生成与当时源码相配的原生 EXE。
+- 该阶段无密钥 macOS arm64 DMG：733,910,596 B，SHA256 `f6053dbc3dbfaf20d72698bc32bb1614adb1d9fda8bcb4b521372ced7f357d15`。边车和镜像 CRC 校验、挂载后 25 插件/五项浏览器资源/仅非密钥设置种子、25 处 asar JS 及 LAN/模型/pi-ai 文件字节一致均通过；复制到可写目录的应用在 11.2 秒通过启动冒烟（`MOCHI_DESKTOP_SMOKE_OK`、refs: 无）。直接前版归档于 `apps/desktop/release/archive/2026-09-24-pre-quota-fix/`。学校有线双机、真实账户额度、全新 Mac 与当时 Windows 包仍待现场验收。
+
+## 2026-09-24 · 既有会话模型提示、有线双向诊断与阶段 macOS 包
+
+- 教室模型卡读取 DSH 原生当前会话模型，明确区分“MiMo Key 已保存”“新对话默认模型”和“当前会话路由”；保留原生会话选择器，未静默改旧会话。首次真实 UI 回归暴露重复订阅导致模型设置请求激增，修正为稳定订阅与同值不更新后，隔离 Electron 页面通过保存 fixture Key、Doctor 探测、当前会话 MiMo 发起请求及模型卡实时显示。模型卡 15/15、根 `npm run check` 通过；真实供应商 Key 和原故障日志未得。
+- LAN 两端展示各自非回环 IPv4/监听端口；教室向教师增加只读身份探测。探测将 TCP 拒绝、五秒超时、主动取消、无效身份分开，保留原有指纹不匹配和远端未配置身份；`plugins/mochi-lan` 全套测试通过。它只证明本机及合成网络条件，学校有线双机仍待现场实测。
+- 无密钥 macOS arm64 DMG 重出：733,104,422 B，SHA256 `c83102681ee007a8edbf971ca537d3ab8ad430e9e719026c1ad4302f8f7efdff`。边车和 `hdiutil verify` 通过；挂载后核对 25 插件、五项浏览器资源、仅有非密钥设置种子，LAN 客户端/服务和模型插件源码逐字节一致，asar 内 25 个编译 JS 与当前 `dist-electron` 匹配。从 DMG 复制到可写目录的应用冒烟 11.4 秒通过（`MOCHI_DESKTOP_SMOKE_OK`、refs: 无）。直接前版归档于 `apps/desktop/release/archive/2026-09-24-pre-bidirectional-diagnostics/`。
+- 当时 Windows 输入清单为 525 项 / 92,455,964 B，`check-snapshot-manifest --fail` 零差异。私有仓原生 Windows runner 的先前构建被 artifact 配额挡在上传，且本机 `gh` 未登录，该阶段源码 EXE 未得。真实学校双机双向 TCP、供应商 Key、全新 Mac 与当前 Windows EXE 仍属未验证。
+
+## 2026-09-24 · 预约决定语义、桌宠断联状态与视觉来源
+
+- 教师确认预约只可用学生原时间，改期必须不同；LAN 服务发送/接收两侧校验，历史已签名的矛盾回复在界面上展示原申请与旧回复时间并标为异常，不改签名数据。客户端 35/35、LAN 完整测试通过。
+- 桌宠轮询失败时保留待办并显示“同步中断”、上次成功时间和折叠态静态状态点；成功轮询恢复，主进程 20 秒无心跳也标旧。本机真实 Electron rail、preload、客户端轮询夹具和根 `npm run check` 通过；学校双机的睡眠、掉线及恢复仍未验证。
+- 缓存验收器拒绝在缺 `zstd` CLI 时只读多帧日志首帧；首帧恰以换行结尾的假 99% 用例回归通过。联动计划 HEAD `cd17ff8` 的可用形象是球体和小电脑，Mochi 已复用；逐查本机 737 张图片未找到独立螃蟹素材。Codex Pet 网站螃蟹图集与 Clawd on Desk 美术未得到可再分发许可，本版不接入，具体搜索和许可证见 `docs/reuse-audit.md`。
+- macOS arm64 无密钥 DMG 重出：733,383,147 B，SHA256 `a1a977f04fcd66b7bcdb5c2c8c6668a9c9fe985a3540dee3ddeefaaac074d293`。边车、镜像、挂载包五项浏览器资源/25 插件/仅非密钥设置种子、六处 asar 编译文件和三处插件源码对照通过；镜像复制到可写目录后启动冒烟 11.5 秒通过。前版归档于 `apps/desktop/release/archive/2026-09-24-pre-sync-health/`。Windows 本地快照 525 条 / 92,448,183 B 零差异，仍无当前源码的可下载原生安装器。
+
+## 2026-09-24 · 查码不中断刷新、桌宠后台提醒与课件字号复核
+
+- 配对码搜索从 3 秒 LAN 状态轮询中拆出；服务端 12 秒整体时限、8 路并行，跨轮轮转候选，避免慢设备长期挡住后面的教室。挂起查码仍能继续轮询的浏览器回归、服务轮转夹具与 LAN 全套双端测试通过。此路径仍需要 UDP 已发现候选；学校跨 VLAN 规则待确认。
+- rail 显式隐藏期间保留弹窗队列且不自行重弹，显示后恢复队首；桌宠仅新待办到达时短摇一次，积压时保持轻呼吸，50 行之外的新待办数也能触发。逻辑 150 项及真实 Electron rail 回归通过。macOS 普通关闭隐藏并保留认证页，主窗禁用后台定时器节流以维持 3 秒 LAN 状态同步；真实 Electron 主进程测试 close→hidden/poll→显式 Quit 均通过。关闭节流可能增加隐藏窗功耗；Dock/真实第二实例恢复未做 GUI 实测。
+- 发件箱不再无条件回收旧行；仅回收已投递且已人工看到的普通通知，保留未确定投递、预约和教师回复，没有安全项则明确 `MESSAGE_LIMIT`。低上限真实双端收发、同 ID 重试、防重复回复及原子容量失败通过。1000 条关联请求/回复的长期归档尚未实现；不能把容量策略称为无限期可靠。
+- PPTX 结构门槛改用实际可见文字的已知最小有效字号；人为将单个 run 改成 7pt 会阻止发布，主题/母版继承不确定时报告未知，不假装已完成视觉复核。课件目标回归及根 `npm run check` 退出 0。
+- macOS arm64 无密钥 DMG 已重出为 733,415,601 B，SHA256 `f93c1509cbe5e118805931b4391dc4d72397104aefd2cf6abd5608f06aad53dc`。边车、`hdiutil verify`、挂载资源（5 项浏览器资源、25 个插件、仅非密钥种子）、8 处 asar/插件源码字节一致和从 DMG 复制后的应用冒烟通过（14.2 秒）。前版归档于 `apps/desktop/release/archive/2026-09-24-pre-background-lan-quality/`。Windows 本地快照清单已收敛为 525 条 / 92,435,967 B 且校验 0 差异；未基于该新版重新生成可下载 Windows EXE，旧 run 的存储配额阻断仍在。
+
+## 2026-09-24 · 桌宠可读性与无障碍收尾
+
+- 真实 Electron 复现 65 字学生原话加摘要导致弹窗内容撞按钮、网页重载后桌宠页面与主进程展开状态不同步；修正为只展示完整原话、以可视矩形决定是否允许快捷签名、主进程在同步快照时发送展开状态。65 字中文原话可完整签收，故意超长异常负载只能关闭；重载后第一次点击正常收起。
+- 教师 60 条待办被 50 行上限裁剪时保留真实计数和辅助播报；教室 64 人名册同样播报 64 人。焦点行消失或 Esc 收起时，焦点回到展开按钮。高对比为实色背景，减弱动效覆盖球体、内层电脑与字符。联动计划 SVG 继续作为 Mochi 视觉来源，本仓维护打包使用的无障碍 CSS。
+- GitHub 复用审查与版本/许可/维护权衡记录于 `docs/reuse-audit.md`；沿用当前 Electron 窗口和签名回执，不新引入桌宠框架或通知库。桌宠模型 258 项、逻辑 137 项、真实 Electron rail/preload、运行配置、资源装配及根 `npm run check` 均通过。学校 Windows 高对比显示、真实供应商 Key、有线双机、PPTX 在目标 WPS/PowerPoint 的表现仍待现场验收。
+- 该阶段 macOS arm64 无密钥 DMG 为 733,862,433 B，SHA256 `e11bab48ab892ea0d4ffe1e4dea8f3418548728aaf934977dd9e2c4ac031fe27`；校验边车、镜像、五项浏览器资源、25 个插件、仅非密钥设置种子、关键编译文件与插件逐字节匹配均通过。从镜像复制出的应用 10 秒内出现 `MOCHI_DESKTOP_SMOKE_OK`，教师模型设置写入且凭据引用为零。此版现归档于 `apps/desktop/release/archive/2026-09-24-pre-background-lan-quality/`。
+- 该阶段 Windows 私有快照清单自动登记 `apps/desktop/scripts`，排除唯一 `.bak` 备份；快照 524 条 / 92,417,237 B 已推送，commit `eddc7ea3a1b3cc237867755be57a68761fba2d93`。run `35957828187` 的依赖、运行时、资源与原生安装器构建步骤均成功，最后上传因 GitHub Actions artifact 存储配额已满失败；run 没有可下载 EXE，尚无法核对其 PE 结构和 SHA256。当前旧 Windows 归档不能代表本次源码。
+
+## 2026-09-24 · 预约原话/改期边界、教室模型实测与课件质量
+
+- 单条学生请求弹窗仅在完整展示原话时允许快捷签名“我已看到”；长/空原话只预览并引导打开完整请求。教师建议改期不能沿用学生原时间，客户端禁用提交，LAN 发送/接收均拒绝，旧消息同 ID 精确重试保持幂等。
+- 全新隔离教室 Electron UI 实点首启、LAN 身份、MiMo Key 保存/连接测试和新对话默认；本机假网关收到了 `mimo-v2.5` 与 fixture Bearer，页面与进程输出不回显 Key。又用应用内目录浏览器创建临时工作区、新建会话，在原生会话模型选择器中实点 MiMo 并发送合成提示，假网关再次收到该模型与对应 Bearer。真实供应商/学校双机仍待现场。
+- 课件对最终 PPTX 做 OOXML 结构检查并将质量报告绑定 SHA256/版次；客观页数及已能证明的小字号错误拦发布，连续 3 页普通文字版式仅提示。视觉与学科复核仍标未进行。七年级水循环样例改为 7 页，复用现有封面、原生可编辑流程图和结束页；封面、流程页、结尾的真实 PPTX 转换预览已目视检查，课件与预览归档于 `docs/evidence/ppt-quality-2026-09-24/`。
+- 课件插件 33/33、根 `npm run check`（核心 140 项等）、LAN 客户端/服务、桌宠模型 251 项、真实 Electron rail、打包资源/安装参数/原生 ABI 均通过；一次课件测试因样例从 6 页变 7 页而使“第 7 页越界”旧断言失效，改为第 8 页后全绿。
+- 当时 macOS arm64 无密钥 DMG 为 733,462,951 B，SHA256 `676c846d7f41e1ae54946c265364130325ca5300a2c96f34ffd68df045522a91`；边车、`hdiutil verify`、挂载包资源与源码 hash、从 DMG 复制后的应用冒烟（11.2 秒）通过。该版现归档于 `apps/desktop/release/archive/2026-09-24-pre-rail-final-audit/`；当前 Mac 与 Windows 出包另见本日志最新记录及交付台账。
+- Windows CI 凭据诊断曾意外把本机 GitHub credential helper 输出带入任务工具结果；未写仓库或文档、未在此记录值。应由凭据所有者轮换；其后操作只允许不回显的凭据读取与最小范围私有快照同步。
+
+## 2026-09-24 · 弹窗人工已看到回执与最终 macOS 出包
+
+- 修复办公室喊人等单条真实收件的弹窗确认：明确点击“我已看到”后，由主进程请求隔离 preload 携带已有同源会话调用 LAN `message-seen`，服务端核对原收件身份与配对并生成签名回执；只在返回匹配原消息 ID 的 `ACKNOWLEDGED` 后关闭。失败保留提醒并可重试，Escape 仅关闭提醒。已在主面板人工确认的原消息会同步撤下旧弹窗；聚合名册、多个判定和配对提示只可关闭，避免误把未逐条阅读的项目标成已看。
+- 根 `npm run check`、桌面 TypeScript、`test:rail-model` 246 项、`test:rail-logic` 131 项、真实 Electron `test:rail-runtime`、隔离 preload 的 Electron 39.8.10 同源 Cookie 夹具、LAN 签名服务回归均通过。本机夹具验证了请求身份传输和页面不能伪造回报接口；学校双机回执可达性仍未现场验收。
+- macOS arm64 无密钥 DMG 最终重出：733,224,367 B，SHA256 `7e8da1a3c2412a7199c085dc62bc443ed5193a0306e8b836b4d0357a15527bdb`。边车、镜像、五项浏览器资源、仅非密钥设置种子及六个关键编译文件核对通过；从镜像复制到可写目录后的应用启动冒烟通过（11.9 秒，`MOCHI_DESKTOP_SMOKE_OK`）。前两轮归档到 `apps/desktop/release/archive/2026-09-24-pre-popup-receipt/` 与 `apps/desktop/release/archive/2026-09-24-pre-isolated-receipt/`。
+
+## 2026-09-24 · 无密钥首启模型路由与模型卡默认选择
+
+- 复核既有 D-008 决策后，把教室新会话的组合兜底设为 `mochi-mimo/mimo-v2.5`，无密钥包从权威表重新生成仅含非密钥设置的教师种子，维持教师 `mochi-aiaaa/deepseek-v4.1-flash` 默认。源目录旧凭据种子不进入包；已有用户与会话选择不被静默覆盖。
+- MiMo 模型卡显示新对话默认路由；保存 Key、连接测试和显式“设为新对话默认模型”分开。写入使用原生设置 revision，未配置 Key 或冲突时拒绝。旧会话需用原生模型选择器主动切换。
+- 资源暂存、两角色隔离首启、模型卡 14 项、实际教室 DSH 首轮本机假网关请求及根 `npm run check` 均通过。真实供应商 Key 与学校网络未测。
+- macOS arm64 无预置 Key DMG 重出：733,427,167 B，SHA256 `59011aa5781e04c3e55e0828990162075a5ff17eb254a5d02c547fb40b5cf116`。镜像校验、挂载包仅有非密钥设置种子、包内模型卡/core 补丁 hash 及复制后启动冒烟（15.2 秒，`settings: written`）通过。前版归档于 `apps/desktop/release/archive/2026-09-24-pre-model-default/`。
+
+## 2026-09-24 · 学生请求分型回复、桌宠空闲修正与 macOS 重新出包
+
+- 教室可按预约讲题、提问、补做登记、留言发请求；教师对预约确认/改期，对其他类别签名文字回复。LAN 服务两端校验原请求类别及身份、同消息 ID 幂等；页面和桌宠区分回复、投递与人工已看到。协议全套、客户端 34 项、桌宠模型 241 项及真实 Electron rail 回归通过。旧对端不识别新回复类型，需双端升级。
+- 教师桌宠电脑字符在空闲/有待办时静止，球体呼吸/轻摇与角标保留；复用联动计划球体加小电脑的现有形象。该目录未找到独立螃蟹位图；Clawd on Desk 源码与美术许可不能当作 MIT 素材引入。
+- 当时 macOS arm64 无预置 Key 包重出：现归档于 `apps/desktop/release/archive/2026-09-24-pre-model-default/`，733,425,612 B，SHA256 `3643ec4803dbe47e3934dac63c9974e09708bc444228cc9c9e635c2ee46da9ca`。该版镜像完整性、无种子、包内源码匹配和复制后启动冒烟通过；学校双机、真实 Key、全新 Mac 和 Windows 当前包未验收。
+- 本机假网关实抓聊天 1 工具→工作 89 工具；两次工作请求 system 和工具 schema 一致，聊天历史消息不同。无供应商缓存计数，不能宣称实际费用下降。曾有一处假 schema 乱码，定位为临时抓包器逐块解码 UTF-8，修正抓包器后消失。
+
+
 ## 2026-09-19 · 补掉清单完整性的第三个来源，Windows 快照 495 → 504 并推出新一轮 CI
 
 - 干了什么：按用户「Windows 端是要打包的」推进全盘打包。过程里发现**两个真缺口**，
@@ -2290,3 +2406,104 @@ building        target=nsis file=release\Mochi-Setup-0.1.0-win-x64.exe oneClick=
 - 宣传片 Git 边界收敛为脚本、时间轴、许可和轻量输入；录屏、媒体、渲染输出与 QA 帧继续留在本机，不把数 GB 派生资产写入 Git。两个原先位于个人“测试”目录的 V4 输入已归入 `promo/inputs/`。
 - 当前答辩制作脚本从 `.build/` 移入 `参赛PPT/Mochi四分钟答辩/scripts/`，并移除源脚本中的 Mochi 项目绝对路径；`.build/` 和 `output/` 由 Git 忽略，比赛成品继续通过根目录完整交付包提供。
 - 旧录屏操作脚本归档到 `参赛PPT/evidence/` 时发现 10 份文件仍含演示密码，已统一替换为 `REDACTED_DEMO_PASSWORD` 并标记为不可直接执行；后续采集必须从本机受控凭据读取。
+
+## 2026-09-19 · 双端重打包 + 两次 Git 同步（12:55–14:0x）
+
+**入口状态**：本地 130 项改动未提交；`apps/desktop/release/` 已有一份 12:36 重出的 arm64 dmg；CI run #34（`35412334064`）的 Windows 包刚下满；本地 `package-desktop.cjs` 与 `package.json` 比 CI 快照多出两处**事后守卫**，且新增的 `check-native-abi.cjs` 不在清单里。
+
+**先判定"run #34 的包算不算最新"**：把本地工作树与快照 commit `9a935a93a` 逐条比对 —— `mochi-source/` 下 505 个 blob 全部存在、只有 2 个 sha 不同，差异确实只是那两处守卫。但守卫脚本必须随快照走，否则 CI 下一次 `dist:win:x64` 会因为 `package-desktop.cjs` 引用一个快照里没有的文件而**直接失败**。→ 决定重跑 CI，让"包 ← 快照 ← 本地"三层重新对齐。
+
+**01 · 清单收敛 504 → 505**
+- 手工登记 `apps/desktop/scripts/check-native-abi.cjs`：`reconcile` 只按 PLUGINS / 整目录源根 / tgz 三来源新增，`apps/desktop/scripts` 是逐文件维护的历史条目，脚本**不会**自动收它。
+- `reconcile --write` → 重算 2 条哈希，条目 505 / 92,001,632 B；`check-snapshot-manifest --fail` → ±0、0 不一致、0 缺失。
+
+**02 · 门禁**（CI 会执行的 5 个 + 守卫本体，本机全绿）
+- `test:installer-config` / `test:dsh-host-peers` / `test:runtime-profile` / `test:release-input` / `test:package-resources`（25 插件）全 PASS。
+- `test:native-abi` PASS：node-pty/pty.node 与 fs-ext/fs_ext.node 共 3 个二进制均为 Electron ABI 140。
+
+**03 · 公开仓推送**（`linkimi2026-cmd/Mochi`）
+- 远程 `908ef6e4` 的 tree 与本地 `e3be3d1` **完全相同**（`0edd90a429cf`），只是 commit sha 不同 → 常规 push 必被拒，走 Git Data API 增量：545 新增/修改 + 204 删除。
+- blob 上传改 8 并发 + 断点缓存：首轮串行 494 s 才走完 450/545 就被工具超时中断，并发后 **89 s** 走完。这个提速对下次同样的推送有直接价值。
+- 四项核对：新 tree `02b2e608` == 本地 `HEAD^{tree}`；远程多出 0 / 本地独有 0 / hash 不同 0（1205 个 blob）→ commit `fced960b`，最后才 PATCH ref。
+
+**04 · 私有仓快照推送 + 触发 CI**
+- 只 4 个文件需要上传（`package.json`、`package-desktop.cjs`、`check-native-abi.cjs`、清单自身）。
+- 四项核对全过：mochi-source 506 blob == 清单 506；逐条 sha1 与本地自算一致；无清单外文件；**仓内其他 1215 条与基线逐条相同**（联动的嘉行联内容纹丝未动）。
+- commit `8d28eeeef3da` 推入 `codex/mochi-windows-20260919` → run `35423708830`。
+
+**05 · Mac 侧**
+- dmg 733,197,188 B / 12:36；sha256 `14f6a374…`，与手工边车逐字节一致（`shasum -c` OK）——这里推翻了一个假设：边车 mtime 是 08:31，本以为是"旧哈希配新包"，实测**内容一致**，说明该构建可复现。
+- 包内 `app.asar` 6.2 MB、12:35 构建，含 rail 全套模块 → 确认是当前代码的产物。
+- `npm run smoke:packaged` → `MOCHI_DESKTOP_SMOKE_OK`（3.7 s，exit 0）：出包验收⑥第一次有自动化证据，不再靠"双击看看"。
+
+**06 · Windows 侧**
+- CI 13 min 56 s，conclusion=success。工件 `10578657583`（`mochi-windows-x64-35423708830`，462,327,295 B，到期 10-03）。
+- 比 run #34 多 340 B —— 正是 `package.json` 新增的两个 scripts 条目，**证实两次构建内容确实不同**（先前"内容等价"的判断只对 asar 之外的层面成立）。
+
+**留给用户裁定**
+- `01-Mochi-参赛交付包-2026-09-14/` 里两个安装器仍是 09-13/09-14 版（arm64 sha `ce5d3144…`、Windows run `34728914066`）。交付入口目前指向旧包；要更新得重跑 `assemble-competition-delivery.mjs` 并重签 `SHA256SUMS.txt` / `delivery-manifest.json`。
+- 出厂默认模型链 `mochi-aiaaa` 仍 403 INSUFFICIENT_BALANCE。
+
+## 2026-09-25 · 本轮收口：旧会话模型、课件聊天与安装后启动
+
+- 教师与教室真实 Electron 旧会话分别验证 DeepSeek A Key → MiMo B Key 切换，发往本机假网关的模型 ID 与 B Bearer 一致，重开原会话仍为 MiMo。真实供应商账户、余额和校园网络没有因此被验证。
+- 新增自然语言课件聊天端到端回归：隔离教师会话经工作模式审批后实际产出 3 页 PPTX/PDF，`ppt_inspect` 回读 3 页并打开 PDF 预览。合成 SSE 模型只证实接线，不替真实模型的规划或学科审稿。回归揭示 `/var/folders` 与 `/private/var/folders` 路径别名误拒，课件白名单在保持真实路径根约束下修复，9/9 安全回归通过。
+- 发现并修复 MiMo 设置卡空闲时的重复请求：修复前隔离 Electron 30 秒分别出现 8,316/8,320 次 settings/credentials 描述请求；修复后两类请求增量均为 0。根因是 `ctx.remote` 每次返回新代理却被用作 effect 依赖；稳定依赖与一次性代理捕获的组件回归 16/16。旧会话两端回归修复后再次通过。
+- Windows 私有 [run 36059879685](https://github.com/linkimi2026-cmd/jyl-campus-health/actions/runs/36059879685) 首次将 NSIS 安装到新目录后核对无密钥设置种子，并从安装目录启动教师/教室（7.6 秒 / 6.2 秒，两者成功）；该候选早于上述模型页修复。最终精确快照只更新了生成模型卡和清单，547 个源码输入 / 93,084,557 B 零差异，提交 `a830c0f52c2e9c631515881a87f2eb475df5e1bf` 触发的 [run 36062403850](https://github.com/linkimi2026-cmd/jyl-campus-health/actions/runs/36062403850) 成功：原生 Kokoro 18,044 B WAV、NSIS、解包版双角色 7.3/6.0 秒、安装目录双角色 6.4/6.1 秒均通过；唯一无密钥设置种子再次核对。EXE 465,479,330 B / SHA256 `df8c48fb3b5409fa617819c390f0a9484f22162f326f43598f080a56a6d45940`，Actions 配额阻止 artifact 上传，CI 已转存[私有草稿 Release](https://github.com/linkimi2026-cmd/jyl-campus-health/releases/tag/untagged-36eb17618668122564d4)。
+- 当前 Mac arm64 DMG 为 734,384,734 B / SHA256 `a170686bba8eb5ddd5b35c7dba7428349eb45510a61b67d43f5dfe483133123e`。边车与镜像校验通过，活动模型卡和课件插件逐字节匹配本地源码，种子只有非密钥默认设置；从镜像复制后教师 10.9 秒、教室 1.8 秒启动成功。未签名、未公证；学校双机网络、语音扬声器和真实供应商仍待现场验收。
+
+## 2026-09-25 · 课件教学计划、LAN 端口与共享工具前缀
+
+- 开工前按 `docs/reuse-audit.md` 记录完整课件应用/代理宿主/局域网应用，再查教学计划、DSH hook 和 UDP 部件。部分借鉴 Presenton、PPTAgent 和 K12 蓝图的可审计结构；Yan 渐进工具插件与当前 DSH alpha 的 peer/内部接口不兼容，未接入。
+- 课件插件加入可选教学目标→页面角色/学生行动/理解检查声明，报告未声明、缺口和已映射；改过课堂页的可见内容会要求复核旧映射。封面无需凑教学任务。插件 38/38、教师真实 Electron 合成模型课件聊天/回读/预览通过，仍不证明真实模型学科正确。
+- LAN 插件自定义 `discoveryPort` 不再因未声明变量抛错；插件完整测试和真实 UDP 绑定回归通过，学校有线/VLAN 未测。缓存验收脚本不再把缺失 `inputTokens` 当 0 并误报 100%；5/5 针对性测试通过。
+- `mochi-modes` 经公开 `system-prompt/assemble` 只重排当前可见的共享工具 schemas；真实教师 Electron 的聊天→工作请求，共享工具名及完整 schema 哈希逐项保持前缀，审批和课件工具可见时机不变。模式 20/20、根 `npm run check`、课件聊天回归通过；供应商缓存读数未测。
+- 本轮 Windows 清单 548 项 / 93,105,261 B，零不一致；私有 `mochi-source/` 549 个文件与本地逐个 Git blob 对齐，校园仓其余文件未动。私有分支提交 `695d100e8f4c277ed7baf2b1f44c383cf63d3e94` 增加原生 Windows 自定义 UDP 端口测试，[run 36070307101](https://github.com/linkimi2026-cmd/jyl-campus-health/actions/runs/36070307101) 正运行。
+- Mac arm64 无密钥 DMG 734,291,430 B / SHA256 `8763cfe59713fab926d54bc59210c8831b1554804420dc3bd5f68ad80aaedd04`：边车、`hdiutil verify`、本轮 7 个包内源文件与无密钥种子核对通过；镜像复制后教师 10.8 秒、教室 2.0 秒启动通过。上一候选归档。未签名/公证，学校设备上的 Key、网络、扬声器、WPS 和视觉体验尚需现场验收。
+- 原生 Windows [run 36070307101](https://github.com/linkimi2026-cmd/jyl-campus-health/actions/runs/36070307101) 在新增端口测试加载阶段因私有快照缺少 `mochi-lan` 的 DSH 工具依赖 junction 失败；配对码 8 项先行通过，端口逻辑尚未运行。补入必需链接；同时把课件聊天抓包校验加严到完整 tool JSON，并在开发依赖路径连续 `WEB_HOST_TIMEOUT` 后用本轮已核对的 Mac 包插件/依赖路径重跑，16.6 秒通过。开发态超时原因未隔离。更新后清单 548 项 / 93,105,866 B，私有树内 549 文件与本地逐个 Git blob 相等；提交 `63eeafe3539a57e95dde80110b652e9a365de2cb` 触发[新 run 36071828792](https://github.com/linkimi2026-cmd/jyl-campus-health/actions/runs/36071828792)。
+- [run 36071828792](https://github.com/linkimi2026-cmd/jyl-campus-health/actions/runs/36071828792) 最终成功：110 个插件依赖链接建立、配对码 8/8、自定义 UDP 端口测试、原生 Kokoro 18,044 B WAV、NSIS、解包版教师/教室及安装到新目录后的教师/教室启动均通过，四次均输出 `MOCHI_DESKTOP_SMOKE_OK`。Actions 工件配额阻止普通 artifact 上传，CI 将安装器和 95 B 校验边车转存[私有草稿 Release](https://github.com/linkimi2026-cmd/jyl-campus-health/releases/tag/untagged-688eac561912c6cbbacd)。Release 元数据核实目标提交 `63eeafe3539a57e95dde80110b652e9a365de2cb`、EXE 465,483,615 B / SHA256 `2c793b3348cbf9fd87e464e0ca63f482be917ff80185b72fb81c79ea5b7d6a6f`。学校真实 Key/余额、有线双机网络、扬声器和目标 WPS 尚未验收。
+
+## 2026-09-25 · 逐页教学备注与最终桌宠视觉证据
+
+- 教学计划的页面角色、学生行动和理解检查现进入 PPTX 第 2–7 页演讲者备注；封面保留来源备注，修订可见内容时标记教学映射待复核。七页样例逐页回读，投影可见页 OOXML 与前版逐字节一致；课件插件 38/38 通过。目标 WPS 的备注显示和学科判断尚未现场确认。
+- 本机 Electron 四张合成数据界面图见 `docs/evidence/rail-final-2026-09-25/`；教室板修复白色滚动槽、末行留白和未过关文字对比度。Windows 原生 [run 36090296374](https://github.com/linkimi2026-cmd/jyl-campus-health/actions/runs/36090296374) 虽通过原 rail、LAN、语音和安装门禁，两张教室板 PNG 却完全相同，不能当作两个滚动位置的视觉证据。夹具现显式滚到顶部/底部、等待绘制并要求图像不同；本机和新 [run 36092244751](https://github.com/linkimi2026-cmd/jyl-campus-health/actions/runs/36092244751) 均通过。Windows 顶部/底部 PNG 分别为 23,194 B / SHA256 `13ecc8db3d97e281b7b7a7ee2191368c59cd314f830aeba8bf525c7f3eee5758`、24,911 B / SHA256 `7fa495c6c24bae99ada7a0144ea90ef366b394216aad012a477b26b7b7ff4cc5`。
+- 当前 Mac arm64 DMG 734,489,799 B / SHA256 `ce469d96db28ce1f62d14b72e9f5681f168c9ec7b137f16bd143236f29c545ff`，包含课件备注和滚动槽修复；镜像与边车重验、包内 5 个资源比对及复制后双角色启动通过。它早于教室板末行留白和未过关标签提亮两处样式。标准重打在 iCloud Drive 工作区依赖扫描超过一小时没有新镜像；直接改包会触及 ASAR 完整性和镜像重验，故保留已验收镜像，待稳定本地构建环境再出最终样式包。
+- 根 `npm run check` 最终完整通过，`test:rail-runtime` 最新 18 次位置保存与顶部/底部两张不同 PNG 通过；快照清单更新到 548 项 / 93,113,336 B，零差异。此前一次根检查遇到依赖导出短暂异常，另一次在高负载下触发 3 秒模型流空闲超时；依赖静态核对与单项测试随后通过，未据此修改产品逻辑。真实校园双机、模型供应商 Key、扬声器与 Windows 桌面合成仍待目标环境验收。
+- Windows 当前 [私有草稿 Release](https://github.com/linkimi2026-cmd/jyl-campus-health/releases/tag/untagged-0597efba861a9ddbd468) 对应提交 `9cd4a0c9a5433a78cd7bf5f20ac42b6fad4d50b6`；EXE 465,483,569 B / SHA256 `6d0c80150ec8b02c408aed9d409c6fbf3b00800b413971e47f7be4ea73213e77`，附 95 B 校验边车与四张截图。原生 CI 全绿，NSIS 安装到新目录后教师与教室角色均 `MOCHI_DESKTOP_SMOKE_OK`。Actions artifact 配额不足，由 CI 保存在私有草稿 Release；安装器未签名、无预置 Key。
+
+## 2026-09-28 · 教室 WPS 课件任务
+
+- 通知措辞“学生呼叫”；桌宠72–160px无可见手柄缩放、关闭状态持久化、应用头像增大已安装。
+- 增加签名附件openWith=wps，确认卡明确目标教室与打开动作；教室核对配对/身份/接收哈希，仅启动PPTX。普通传输不打开，重复通知不重开，新的现场批准可再次打开。
+- 新增教室工具mochi_lan_received_presentations与mochi_lan_open_presentation；仍无通用系统命令与角色切换权限。回执LAUNCH_REQUESTED不冒充完成加载，失败/未知独立于送达。
+- Mac实际双端签名传输到WPS窗口显示已验收，见docs/evidence/ui-paper-2026-09-27/wps-signed-mac.json。旧.ppt尚不支持，Windows WPS实机显示未验证。
+- Mac最终安装器280259601字节，SHA256 118b3e2d8a4e0ca843b20fe353813a25a8dcd945538fb7e6c17259c9b9f548aa；已安装/Applications/Mochi.app，两角色注入与实际浏览器检查通过。34张具名截图在deliverables/2026-09-27/Mochi-功能截图-20260928.zip。
+- Windows最新私有分支codex/mochi-windows-20260927-paper，dabc70c0467778fc3cee84028aa732831914b212，run36334190705运行中。此前WPS测试通过，原生截图总20秒超时已改120秒，内部每项8秒保留；profile删除使用Node原生重试。不得宣称Windows安装器已交付。
+
+Windows后续：dabc70c run36334190705仍在RAF/截图类无超时等待处挂起；不能仅靠延长总预算解决。测试截图前显示并聚焦窗口、使用Electron39 stayAwake，RAF/截图各独立8秒超时，增加阶段日志；Mac完整原生测试通过。最新9ee832a59902e961e249a274b61b5abe3cd2a3dd / run36334784398正在运行，Mac运行源码未改，无需再安装。
+
+2026-09-28：侧边栏真实模型工具调用验收通过。MOCHI_SIDEBAR_LIVE=1 在隔离Electron教师会话中发出sidebar_open tool_calls，收到工具结果后网页iframe的实际标题可见，随后同一会话A/B模型切换、凭据不回显及重开会话验证均通过。此证据覆盖网页成果自动打开，不据此宣称文件编辑、所有侧栏功能已完成全面升级。Windows36334784398现已进入NSIS安装后验收。
+
+2026-09-28 Windows交付：run36334784398成功，私有artifact配额失败后既定private draft release回退成功。安装器已下载deliverables/2026-09-27/windows/Mochi-Setup-0.1.0-win-x64.exe，279858845字节，SHA256 9c240a342a6b7f794c69d04cbe76bcf7a37b6108e74af8975cc8c05797db078b 与构建机一致。NSIS真实安装及安装后双角色首启凭据引用一致性、按需浏览器实际启动和133校园文件一致性均通过。WPS Windows实际应用显示未验，侧边栏全面升级仍在继续。
+
+2026-09-28侧栏后续：默认Files通过公开sidebar服务改为文件，涵盖上下分栏/浮窗/语言切换，保留真实文件和自定义标题；标签纸面选中态、24px关闭点击区、键盘焦点已调整。单元验证和MOCHI_SIDEBAR_LIVE隔离Electron完整网页/文件打开、文件编辑保存、关闭回到上一页均通过。新快照610文件92628232字节；私有提交fa88782a0887569984212fd841e26f60581bb3f0，Windows run36336113393正在运行。Mac release-mac-sidebar-final正在构建，新包内主题client.js已与源码SHA256核对一致。上一版双端已验收交付包保留，尚未替换。
+
+侧边栏Mac安装完成：280147933字节、SHA256 f456c50cad4667392d5e639cfb407c6805d8650473dcab64cb1940696e301b23，DMG CRC6394B541，已从镜像安装/Applications/Mochi.app；安装后teacher/classroom --expect-seeds及按需Chromium检查通过，原生CUA实际展开确认文件标签中文。Windows36336113393仍运行，旧已验证包保留。
+
+Windows36336113393终止失败：原生弹窗套件notification截图之后无结果，120秒外层超时。测试仅关闭类点击#p-ack/#hide和Escape改为原生输入，避免等待被销毁renderer；所有JS读取8秒边界，逐等待阶段日志，子进程退出立即失败。Mac完整原生套件已通过。生产源码不变，不需重装Mac。
+
+最新Windows c681da652a62219bd6e4c65504e3060cbcd284ff / run36336940426 已启动。后端只读核对：worker/lib/permissions.ts studentScope按user.id与HEAD_TEACHER关系限制学生，messages.ts按recipient_user_id绑定收件人，movement/permissions.ts核查班级关系；不将本地源码证据冒充线上真实账号验收。
+
+2026-09-28完成审计补充：安装后6个client插件按runtime-profile真实resourcePath与源码哈希一致，证据installed-client-parity.json。联动计划现有security/messages-privacy/assistant-privacy三文件24项测试通过（本地SQLite/路由，非线上学校账号）。原生菜单doctor-window.ts显式中文label并保留标准编辑role；TypeScript、doctor测试、真实Electron菜单label/role探针通过，尚未打入安装包。审计表goal-acceptance.md记录终端/Git/浮窗还需完整交互验收，不能仅以文件编辑代表全面验收。Windows36336940426已通过原生窗口门禁，正在打包。
+
+侧栏完整交互补验通过：浮窗移出/回靠、原生PTY写入临时会话目录并核对实际文件、Git真实临时仓库显示编辑与新文件。早期测试定位失败分别因terminal标题为zsh、隐藏文件树与可见Git同名元素，不是功能失效，修正定位后整套通过。菜单版Mac release-mac-menu-final构建完成，session48604验证镜像与双角色；Windows最新b9b382d663459acded91daf87d456c3ad4db5a69/run36337837310运行中，旧36336940426尚在安装验收。
+
+2026-09-28：Mac 中文原生菜单最终版已从 DMG 安装，280216723 bytes，SHA256 989eef99ecc1ebc6d0dd6aded3f8d8f3f92c121bd741fbec3232c0b0dc9a6d22。安装后双角色种子引用检查和实际Chromium启动/DOM/截图均通过；CUA看到编辑、窗口、帮助。旧应用及DMG移入废纸篓、用户配置保留。具名截图包39PNG/6355604 bytes，ZIP CRC通过。Windows36337837310当前仍在原生构建。
+
+2026-09-28 Windows最终版run36337837310成功，安装器下载校验通过：279860136 bytes SHA256 d44cd8b663795bc8dd8b13b317190b9b8c07e9e2b71473dd378f3cc178439266。NSIS安装前后teacher/classroom种子引用、真实Chromium与133校园静态文件一致性通过；六张原生窗口夹具截图保存，未把其当作Windows WPS/DWM桌面验收。
+
+## 2026-09-30 课堂助手 / Harness升级继续
+
+- 用户明确区分：教室端点击式语音输入、开机自动后台监听都需要。状态绿色仅改标签，保留原按钮及宠物可选配色。
+- 官方0.2.0-rc.2隔离安装和真实启动发现预设、设置和模型API迁移点；生产内核未切换。证据及完整未完成要求见docs/classroom-assistant-progress.md、docs/evidence/harness-upgrade-2026-09-30。
+- 新增可复跑依赖审计及Mochi主窗口麦克风权限处理、macOS用途说明。桌面构建、2项权限测试、28项LAN测试、Electron信箱/按钮/宠物回归通过；未宣称完成录音识别或Windows实机验收。

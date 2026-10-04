@@ -132,8 +132,7 @@ function parseSecretsFile(text) {
   return result;
 }
 
-function readLocalSecrets() {
-  const path = join(workspaceRoot, SECRETS_FILENAME);
+function readLocalSecrets(path = join(workspaceRoot, SECRETS_FILENAME)) {
   if (!existsSync(path)) return null;
   const parsed = parseSecretsFile(readFileSync(path, "utf8"));
   const refs = {};
@@ -242,7 +241,7 @@ function writeSeedFile(path, content) {
 function buildPackagingSeeds({ env = process.env, secretsPath = join(workspaceRoot, SECRETS_FILENAME) } = {}) {
   let refs = null;
   if (existsSync(secretsPath)) {
-    refs = readLocalSecrets();
+    refs = readLocalSecrets(secretsPath);
   } else {
     refs = readEnvironmentSecrets(env);
   }
@@ -266,6 +265,11 @@ function writePackagingSeeds(options = {}) {
 
 if (require.main === module) {
   try {
+    const requireComplete = process.argv.includes("--require-complete");
+    const available = buildPackagingSeeds();
+    if (requireComplete && AUTHORITATIVE_PROVIDERS.some(entry => !available?.credentialsSeed.refs[entry.apiKeyEnv])) {
+      throw new Error("正式安装包缺少完整首启凭据来源；需要 MIMO_API_KEY 与 MOCHI_AIAAA_API_KEY，已停止打包。");
+    }
     const seeds = writePackagingSeeds();
     if (seeds === null) {
       console.warn(`[mochi] 未找到打包密钥源（${SECRETS_FILENAME} 或 MOCHI_SEED_* 环境变量）；跳过首启种子生成，安装包将在设置页引导教师自行配置。`);

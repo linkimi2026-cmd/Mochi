@@ -1,0 +1,42 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { DatabaseSync } from 'node:sqlite';
+import { JournalStore } from './journal-store.mjs';
+import { installJournalManagement } from './journal-management.mjs';
+
+test('日记路由：空日不编写、生成后快照、版本冲突、长正文及总结预览', async t => {
+  const db = new DatabaseSync(':memory:');
+  t.after(() => db.close());
+  const now = Date.parse('2026-09-30T12:00:00Z');
+  const journal = new JournalStore(db, { role: 'classroom', now: () => now });
+  const routes = new Map();
+  let configured = 0;
+  installJournalManagement({ connection: { fetch: { register: route => { routes.set(route.path, route); return () => {}; } } } }, journal, { configured: () => { configured++; } });
+  const call = async (path, body) => {
+    const url = 'http://localhost/api/mochi-memory/journal' + path;
+    const route = routes.get(new URL(url).pathname);
+    const response = await route.fetch(new Request(url, body ? { method: 'POST', body: JSON.stringify(body) } : {}));
+    return { status: response.status, data: await response.json() };
+  };
+  assert.equal((await call('/generate', { date: '2026-09-29' })).data.generated, null);
+  assert.equal(journal.list().length, 0);
+  journal.recordActivity({ id: 'lesson-1', kind: 'classroom', at: now, summary: '今天一起讨论了植物怎样生长。', sourceIds: ['lesson-1'] });
+  const generated = await call('/generate', { date: '2026-09-30' });
+  assert.equal(generated.data.entries.length, 1);
+  assert.equal(generated.data.entries[0].body, undefined);
+  const entry = generated.data.generated;
+  assert.match((await call('/entry?id=' + encodeURIComponent(entry.id))).data.body, /植物/);
+  assert.equal((await call('/edit', { id: entry.id, expectedRevision: 88, body: '不能覆盖' })).status, 409);
+  assert.equal((await call('/edit', { id: entry.id, expectedRevision: entry.revision, title: '我们的小花园', body: '大家提出了新的观察方法。' })).status, 200);
+  assert.equal((await call('/versions?id=' + encodeURIComponent(entry.id))).data.length, 1);
+  const preview = await call('/summarize', { from: '2026-09-01', to: '2026-09-30' });
+  assert.match(preview.data.body, /小花园/);
+  assert.equal(journal.history().body, '');
+  assert.equal((await call('/history', { expectedRevision: 0, body: preview.data.body, sourceEntryIds: preview.data.sourceEntryIds })).status, 200);
+  assert.equal(journal.history().edited, true);
+  const settings = journal.settings();
+  assert.equal((await call('/configure', { expectedRevision: settings.revision, diaryName: '班级手记', autoEnabled: false })).status, 200);
+  assert.equal(configured, 1);
+  assert.equal((await call('/entry?id=missing')).status, 404);
+  assert.equal((await call('/history', { expectedRevision: 1, body: '字'.repeat(30001) })).status, 400);
+});

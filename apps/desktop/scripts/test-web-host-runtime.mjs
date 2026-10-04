@@ -30,6 +30,7 @@ if (!existsSync(compiled) || statSync(compiled).mtimeMs < statSync(source).mtime
 const { buildDshArgs, managedPlaywrightBrowsersPath, managedRuntimeNodeModulesPath, resolveDshBin } = createRequire(import.meta.url)(compiled);
 const originalResourcesPath = Object.getOwnPropertyDescriptor(process, "resourcesPath");
 const originalDshBin = process.env.MOCHI_DSH_BIN;
+const originalModules = process.env.MOCHI_RUNTIME_NODE_MODULES;
 const root = mkdtempSync(join(tmpdir(), "mochi-web-host-runtime-"));
 
 function setResourcesPath(value) {
@@ -37,6 +38,7 @@ function setResourcesPath(value) {
 }
 
 try {
+  delete process.env.MOCHI_RUNTIME_NODE_MODULES;
   const unpacked = join(root, "app.asar.unpacked", "node_modules", "@deepseek-ai", "dsh", "lib", "bin.js");
   mkdirSync(dirname(unpacked), { recursive: true });
   writeFileSync(unpacked, "// fixture only\n");
@@ -65,6 +67,19 @@ try {
 
   delete process.env.MOCHI_DSH_BIN;
   assert.equal(resolveDshBin(), unpacked, "packaged launch must prefer the physical DSH entrypoint");
+  const modern = join(root,"mochi","node_modules"), core = join(modern,"@deepseek-ai","dsh");
+  mkdirSync(join(core,"lib"),{recursive:true});
+  writeFileSync(join(core,"lib","bin.js"),"// modern fixture\n");
+  writeFileSync(join(core,"package.json"),JSON.stringify({version:"0.2.0-rc.2"}));
+  writeFileSync(join(root,"mochi","package-integrity.json"),JSON.stringify({modernRuntime:{coreVersion:"0.2.0-rc.2"}}));
+  assert.equal(resolveDshBin(),join(core,"lib","bin.js"));
+  assert.equal(managedRuntimeNodeModulesPath(true,"/unused",root),modern,"profile and launch share the same modern physical tree");
+  writeFileSync(join(core,"package.json"),JSON.stringify({version:"0.1.3-alpha.1"}));
+  assert.throws(()=>resolveDshBin(),/版本不一致/,"a broken modern release must not silently start the old core");
+  writeFileSync(join(core,"package.json"),JSON.stringify({version:"0.2.0-rc.2"}));
+  process.env.MOCHI_RUNTIME_NODE_MODULES=modern;
+  assert.equal(managedRuntimeNodeModulesPath(false,"/unused",root),modern);
+  assert.equal(resolveDshBin(),join(core,"lib","bin.js"));
   assert.deepEqual(
     buildDshArgs("/fixture/dsh/bin.js", "0", true),
     ["--expose-internals", "/fixture/dsh/bin.js", "--profile", "mochi-web", "--port", "0", "--no-open"],
@@ -80,10 +95,31 @@ try {
   process.env.MOCHI_DSH_BIN = custom;
   assert.equal(resolveDshBin(), custom, "MOCHI_DSH_BIN must continue to override the bundled entrypoint");
 
+  const require = createRequire(import.meta.url);
+  const profile = require(join(desktopRoot, "dist-electron", "dsh", "profile.js"));
+  const originalPrepare = profile.prepareDshHome;
+  const originalDefaults = profile.resolveMochiServiceDefaults;
+  const cause = new Error("private configuration detail");
+  try {
+    profile.resolveMochiServiceDefaults = () => ({});
+    profile.prepareDshHome = () => { throw cause; };
+    await assert.rejects(new (require(compiled).DshWebHost)("teacher").start(), error => {
+      assert.equal(error.code, "WEB_HOST_PROFILE_PREPARATION_FAILED");
+      assert.equal(error.cause, cause);
+      assert.equal(error.message.includes("private configuration detail"), false);
+      return true;
+    });
+  } finally {
+    profile.prepareDshHome = originalPrepare;
+    profile.resolveMochiServiceDefaults = originalDefaults;
+  }
+
   console.log("[test-web-host-runtime] PASS: packaged DSH entrypoint and launch arguments are stable.");
 } finally {
   if (originalDshBin === undefined) delete process.env.MOCHI_DSH_BIN;
   else process.env.MOCHI_DSH_BIN = originalDshBin;
+  if (originalModules === undefined) delete process.env.MOCHI_RUNTIME_NODE_MODULES;
+  else process.env.MOCHI_RUNTIME_NODE_MODULES = originalModules;
   if (originalResourcesPath) Object.defineProperty(process, "resourcesPath", originalResourcesPath);
   else delete process.resourcesPath;
   rmSync(root, { recursive: true, force: true });

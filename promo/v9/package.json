@@ -1,0 +1,14 @@
+{
+  "name": "mochi-promo",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "hyperframes check .",
+    "render": "bash render.sh",
+    "build": "python3 build-film.py"
+  },
+  "devDependencies": {
+    "hyperframes": "0.8.36",
+    "gsap": "3.15.0"
+  }
+}

@@ -10,7 +10,8 @@
       "platform": "web",
       "inject": [
         "@deepseek-ai/dsh-api-remotes",
-        "@deepseek-ai/dsh-client-ui-settings-models"
+        "@deepseek-ai/dsh-client-ui-settings-models",
+        "@deepseek-ai/dsh-client-ui-model-selection"
       ]
     }
   },
@@ -20,6 +21,6 @@
   },
   "scripts": {
     "build": "node scripts/build.mjs",
-    "test": "node scripts/build.mjs && node --test test/client.test.mjs"
+    "test": "node scripts/build.mjs && node --test test/*.test.mjs"
   }
 }

@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "1.0.0",
+  "purpose": "Mochi paper canvas; former illustration assets retained only for provenance.",
+  "defaultBackground": "paper",
+  "realCampusDepiction": false,
+  "backgrounds": [
+    {
+      "id": "paper",
+      "label": "米白纸面",
+      "asset": null,
+      "position": "center"
+    }
+  ],
+  "archivedBackgrounds": [
+    {
+      "id": "watercolor",
+      "label": "嘉行联水彩校园",
+      "asset": "jxl-campus-watercolor-v1.webp",
+      "position": "center",
+      "dimensions": {
+        "width": 1440,
+        "height": 901
+      },
+      "status": "existing-mochi-asset",
+      "sha256": "fc831da9b070d92bd6275c0f2fe887cad33396226e9f469b6ed71f6ef2040bc7"
+    },
+    {
+      "id": "campus-route",
+      "label": "校园漫游",
+      "asset": "jxl-campus-route-world-v2.webp",
+      "position": "center 48%",
+      "sourceProject": "../联动计划",
+      "sourceAssetId": "painterly-runtime-campus-route-world-v2",
+      "sourcePath": "public/assets/campus/painterly/runtime/v2/campus-route-world-v2.webp",
+      "sourceSha256": "afb856a5817570e230bf29a432fb6ad6ca2498a5cfc098c17c3711fb9b260791",
+      "sha256": "afb856a5817570e230bf29a432fb6ad6ca2498a5cfc098c17c3711fb9b260791",
+      "dimensions": {
+        "width": 941,
+        "height": 1672
+      },
+      "permission": "用户授权概念校园演示版；不得宣称真实成华校区",
+      "authorizationEvidencePath": "docs/visual-rebuild/CAMPUS_ART_SPEC.md",
+      "provenanceManifest": "docs/visual-rebuild/CAMPUS_ASSET_PROVENANCE.json"
+    },
+    {
+      "id": "ginkgo-walkway",
+      "label": "银杏林荫道",
+      "asset": "jxl-campus-ginkgo-walkway-v2.webp",
+      "position": "center 48%",
+      "sourceProject": "../联动计划",
+      "sourceAssetId": "painterly-runtime-ginkgo-shaded-campus-walkway-v2",
+      "sourcePath": "public/assets/campus/painterly/runtime/v2/ginkgo-shaded-campus-walkway-v2.webp",
+      "sourceSha256": "535a3bdc3ce39977d74a1673059ed172f3c143ef7117e205ecee25c9e02c5872",
+      "sha256": "535a3bdc3ce39977d74a1673059ed172f3c143ef7117e205ecee25c9e02c5872",
+      "dimensions": {
+        "width": 941,
+        "height": 1672
+      },
+      "permission": "用户授权概念校园演示版；不得宣称真实成华校区",
+      "authorizationEvidencePath": "docs/visual-rebuild/CAMPUS_ART_SPEC.md",
+      "provenanceManifest": "docs/visual-rebuild/CAMPUS_ASSET_PROVENANCE.json"
+    }
+  ]
+}

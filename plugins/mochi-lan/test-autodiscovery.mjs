@@ -98,6 +98,9 @@ class LanChild {
         MOCHI_LAN_TEST_ENDPOINT: options.endpointId,
         MOCHI_LAN_TEST_PORT: String(options.port ?? 0),
         MOCHI_LAN_TEST_AUTO_IDENTITY: '1',
+        ...(options.dropPairAckOnce === true ? { MOCHI_LAN_TEST_DROP_PAIR_ACK: '1' } : {}),
+        ...(options.dropPairAcceptAckOnce === true ? { MOCHI_LAN_TEST_DROP_PAIR_ACCEPT_ACK: '1' } : {}),
+        ...(options.dropDeliveryAckOnce === true ? { MOCHI_LAN_TEST_DROP_ACK: '1' } : {}),
         ...(options.identitySeedEnv === undefined ? {} : { MOCHI_LAN_IDENTITY: JSON.stringify(options.identitySeedEnv) }),
         MOCHI_LAN_TEST_DISCOVERY: '1',
         MOCHI_LAN_TEST_DISCOVERY_PORT: String(options.discovery.port),
@@ -202,11 +205,14 @@ try {
   teacher = await LanChild.start({
     dataRoot: teacherRoot, endpointId: 'teacher-e2e-boot', role: 'teacher', schoolId: SCHOOL_ID, displayName: '王老师的办公电脑',
     identitySeedEnv: { schoolId: SCHOOL_ID, displayName: '王老师的办公电脑' },
+    dropPairAcceptAckOnce: true,
+    dropDeliveryAckOnce: true,
     discovery: { port: teacherUdp, targetPort: classroomUdp, multicastPort: classroomUdp },
   });
   classroom = await LanChild.start({
     dataRoot: classroomRoot, endpointId: 'classroom-e2e-boot', role: 'classroom', schoolId: SCHOOL_ID, classId: CLASS_ID, displayName: '高一（3）班教室大屏',
     discovery: { port: classroomUdp, targetPort: teacherUdp, multicastPort: teacherUdp },
+    dropPairAckOnce: true,
   });
   assert.equal(teacher.snapshot.configured, true, '教师端身份应自动创建');
   assert.equal(classroom.snapshot.configured, true, '教室端身份应自动创建');
@@ -245,18 +251,49 @@ try {
     '教室端反向发现教师端',
   );
 
-  console.log('③ 教师端一键信任：一次调用完成指纹复核 + 发起相识');
-  const trusted = await teacher.call('trust', { endpointId: classroomEndpointId });
+  console.log('③ 教师端用教室屏幕上的短码匹配候选，再复核指纹并发起相识');
+  const pairingCode = classroom.snapshot.pairingCode?.code;
+  assert.match(pairingCode, /^\d{6}$/u, '启动后应生成短期配对码');
+  let codeMatches = [];
+  for (let search = 0; search < 6; search += 1) codeMatches = await teacher.call('find-by-code', { code: pairingCode });
+  assert.equal(codeMatches.length, 1, '短码搜索应只返回匹配码的附近端点');
+  assert.equal(codeMatches[0].endpointId, classroomEndpointId);
+  assert.equal(codeMatches[0].schoolId, SCHOOL_ID);
+  assert.equal(codeMatches[0].classId, CLASS_ID);
+  assert.equal(codeMatches[0].role, 'classroom');
+  assert.equal(codeMatches[0].fingerprint, classroomFingerprint);
+  const trusted = await teacher.call('pair-request', { candidate: codeMatches[0], address: codeMatches[0].address, pairingCode });
   assert.equal(trusted.status, 'pending');
   assert.equal(trusted.peer.fingerprint, classroomFingerprint);
   const pending = await classroom.call('state');
+  assert.notEqual(pending.pairingCode.code, pairingCode, '配对码成功使用后立即轮换');
   assert.equal(pending.pendingPairings.length, 1, '教室端出现待确认卡数据（设备名/角色/指纹）');
   assert.equal(pending.pendingPairings[0].peer.displayName, '王老师的办公电脑');
   assert.equal(pending.pendingPairings[0].peer.role, 'teacher');
   assert.equal(pending.pendingPairings[0].peer.fingerprint, teacherFingerprint);
 
   console.log('④ 教室端人工按那一下：接受相识（首次信任必须有人确认，红线）');
-  await classroom.call('pair-accept', { requestId: pending.pendingPairings[0].requestId });
+  await assert.rejects(
+    classroom.call('pair-accept', { requestId: pending.pendingPairings[0].requestId }),
+    /DELIVERY_UNKNOWN/iu,
+    '模拟教师端已提交配对但 HTTP ACK 丢失',
+  );
+  const teacherHttpPort = teacher.snapshot.http.port;
+  await teacher.stop();
+  teacher = await LanChild.start({
+    dataRoot: teacherRoot, endpointId: 'teacher-e2e-boot', role: 'teacher', schoolId: SCHOOL_ID, displayName: '王老师的办公电脑',
+    port: teacherHttpPort,
+    identitySeedEnv: { schoolId: SCHOOL_ID, displayName: '王老师的办公电脑' },
+    dropDeliveryAckOnce: true,
+    discovery: { port: teacherUdp, targetPort: classroomUdp, multicastPort: classroomUdp },
+  });
+  const acceptRetry = await classroom.call('pair-accept', { requestId: pending.pendingPairings[0].requestId });
+  assert.equal(acceptRetry.status, 'paired', '重启后同一 requestId 的重试应返回幂等成功');
+  await waitUntil(
+    () => teacher.call('discovered'),
+    (rows) => rows.some((row) => row.endpointId === classroomEndpointId && row.fingerprint === classroomFingerprint),
+    '配对接收方重启后重新发现教室端',
+  );
   const teacherPeers = (await teacher.call('state')).peers;
   const classroomPeers = (await classroom.call('state')).peers;
   assert.equal(teacherPeers.length, 1);
@@ -271,6 +308,20 @@ try {
   const seenReceipt = await classroom.call('seen', { messageId: 'auto-notify-1' });
   assert.equal(seenReceipt.status, 'ACKNOWLEDGED');
   assert.equal((await teacher.call('state')).receipts.some((row) => row.messageId === 'auto-notify-1'), true);
+
+  console.log('⑤a 学生预约 ACK 丢失时用原 ID 重试，教师待办只保留一条');
+  const requestBody = '第三题的解题步骤不清楚。';
+  let firstRequestResult;
+  try {
+    firstRequestResult = await classroom.call('request', { targetEndpointId: teacherEndpointId, request: { student: '测试学生', kind: 'question', topic: '函数', slot: '周五课后' }, body: requestBody, messageId: 'auto-request-ack-loss-1' });
+  } catch (error) {
+    firstRequestResult = { delivery: error.code };
+  }
+  assert.ok(firstRequestResult.delivery === 'UNKNOWN' || firstRequestResult.delivery === 'DELIVERY_UNKNOWN', '首次预约已写入教师端但 HTTP ACK 被测试钩子丢弃');
+  const requestRetry = await classroom.call('request', { targetEndpointId: teacherEndpointId, request: { student: '测试学生', kind: 'question', topic: '函数', slot: '周五课后' }, body: requestBody, messageId: 'auto-request-ack-loss-1' });
+  assert.equal(requestRetry.delivery, 'ACKNOWLEDGED');
+  const teacherRequestRows = (await teacher.call('state')).inbox.filter((row) => row.messageId === 'auto-request-ack-loss-1');
+  assert.equal(teacherRequestRows.length, 1, '同 ID 的精确签名重试只产生一条教师预约待办');
 
   console.log('⑥ 已信任对端重复一键信任不打扰：返回 already-paired，不新增配对请求');
   const again = await teacher.call('trust', { endpointId: classroomEndpointId });

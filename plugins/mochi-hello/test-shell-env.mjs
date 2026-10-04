@@ -10,9 +10,14 @@ function fixture() {
   const routes = [];
   const injections = [];
   const disposals = [];
+  const hooks = [];
   let injectedDisposer;
   const ctx = {
     logger: { info() {} },
+    on(name, callback, options) {
+      hooks.push({ name, callback, options });
+      return () => disposals.push('web-prompt');
+    },
     inject(dependencies, callback) {
       injections.push(dependencies);
       if (dependencies.length === 1 && dependencies[0] === 'systemPrompt') {
@@ -65,6 +70,7 @@ function fixture() {
     routes,
     injections,
     disposals,
+    hooks,
     disposeInjected() { injectedDisposer?.(); },
   };
 }
@@ -76,9 +82,12 @@ test.after(() => {
 
 test('exports the managed Electron Node through shellEnv and explains the Playwright invocation', () => {
   process.env.MOCHI_RUNTIME_NODE = process.execPath;
-  const { ctx, registrations, sections, routes, injections, disposals, disposeInjected } = fixture();
+  const { ctx, registrations, sections, routes, injections, disposals, hooks, disposeInjected } = fixture();
   plugin.apply(ctx);
 
+  assert.equal(hooks.length, 1);
+  assert.equal(hooks[0].name, 'system-prompt/assemble');
+  assert.equal(hooks[0].options.global, true);
   assert.deepEqual(injections, [['systemPrompt'], ['connection', 'llm'], ['shellEnv', 'systemPrompt']]);
   assert.equal(routes.length, 1, 'the pre-existing host diagnostic must still register');
   assert.equal(routes[0].path, '/api/mochi-doctor/check-model');
@@ -97,10 +106,43 @@ test('exports the managed Electron Node through shellEnv and explains the Playwr
   assert.deepEqual(disposals, ['prompt', 'environment']);
 });
 
+test('Web prompt keeps GUI guidance but removes startup-specific port before model assembly', async () => {
+  process.env.MOCHI_RUNTIME_NODE = '/definitely/not/a/mochi-runtime-node';
+  const { ctx, hooks } = fixture();
+  plugin.apply(ctx);
+  const assembly = (port) => ({
+    sections: [
+      { name: 'app:web-surface', text: `You are in the GUI at http://127.0.0.1:${port}. Starting another server does not update this GUI.` },
+      { name: 'another', text: 'keep me' },
+    ], contexts: [], tools: [], variables: {},
+  });
+  const first = await hooks[0].callback(assembly(50001), {}, async () => assembly(50001));
+  const second = await hooks[0].callback(assembly(60002), {}, async () => assembly(60002));
+  assert.deepEqual(first, second, 'two cold starts have the same model-visible first section');
+  assert.match(first.sections[0].text, /DSH_WEB_URL/);
+  assert.match(first.sections[0].text, /Starting another server does not update this GUI/);
+  assert.doesNotMatch(first.sections[0].text, /127\.0\.0\.1:\d+/);
+  assert.deepEqual(plugin.stableWebSurface({ sections: [{ name: 'app:web-surface', text: 'future source without a local URL' }] }), {
+    sections: [{ name: 'app:web-surface', text: 'future source without a local URL' }],
+  }, 'unknown future upstream prompt is left intact');
+});
+
 test('does not advertise an ambient or non-existent runtime executable', () => {
   process.env.MOCHI_RUNTIME_NODE = '/definitely/not/a/mochi-runtime-node';
   const { ctx, registrations, sections } = fixture();
   plugin.apply(ctx);
   assert.deepEqual(registrations, []);
   assert.deepEqual(sections, []);
+});
+
+
+test('tool guidance reflects only the current role-filtered tool surface', () => {
+  const base = {sections:[],tools:[{name:'jxl_query'},{name:'sidebar_open'}]};
+  const result = plugin.toolAwareness(base);
+  assert.equal(result.tools, base.tools);
+  assert.match(result.sections[0].text, /delivered=false/);
+  assert.match(result.sections[0].text, /设置顶部/);
+  const classroom = plugin.toolAwareness({sections:[],tools:[]});
+  assert.doesNotMatch(classroom.sections[0].text, /sidebar_open|jxl_query/);
+  assert.equal(plugin.toolAwareness(result).sections.length, 1);
 });

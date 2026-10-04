@@ -153,3 +153,24 @@ test('重复任务送达后推进到下一次而不是结束；stop() 之后不�
   scheduler.stop();
   assert.equal(scheduler.pendingTimer, false, 'stop 之后定时器被清掉');
 });
+
+test('逾期投递失败按tick间隔重试，不进行0ms忙循环', async t => {
+  const store=makeStore(t);
+  store.createSchedule({...BASE,kind:'notify',frequency:'once',localDate:'2026-09-13',nextRunAt:Date.now()-1000});
+  let attempts=0;
+  const scheduler=createScheduler({store,timeZone:TIME_ZONE,tickMs:100,deliver:async()=>{attempts++;return{outcome:'pending',channel:'test'};}});
+  t.after(()=>scheduler.stop());scheduler.start();
+  await new Promise(resolve=>setTimeout(resolve,350));
+  assert.ok(attempts>=2 && attempts<=5,`应间隔重试，实际${attempts}次`);
+});
+
+test('关闭会等待真实timer已开始的投递完成', async t => {
+  const store=makeStore(t);
+  store.createSchedule({...BASE,kind:'notify',frequency:'once',localDate:'2026-09-13',nextRunAt:Date.now()-1000});
+  let begin,release;const started=new Promise(r=>begin=r),barrier=new Promise(r=>release=r);
+  const scheduler=createScheduler({store,timeZone:TIME_ZONE,tickMs:100,deliver:async()=>{begin();await barrier;return{outcome:'delivered',channel:'test'};}});
+  scheduler.start();await started;
+  let stopped=false;const stopping=scheduler.stop().then(()=>stopped=true);
+  await new Promise(r=>setTimeout(r,20));assert.equal(stopped,false);
+  release();await stopping;assert.equal(stopped,true);assert.equal(scheduler.pendingTimer,false);
+});

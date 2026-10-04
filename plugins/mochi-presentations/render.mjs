@@ -135,7 +135,10 @@ function throwIfAborted(signal) {
 
 /** LibreOffice 可执行文件：显式配置优先，其次是各平台常见安装位置。 */
 export function resolveSoffice(explicit) {
-  const ordered = [explicit, process.env.MOCHI_SOFFICE, ...SOFFICE_CANDIDATES].filter(Boolean);
+  // An explicit choice is authoritative. In particular, a missing test/host path must
+  // not silently fall back to a different installed LibreOffice binary.
+  const ordered = (explicit === undefined ? [process.env.MOCHI_SOFFICE, ...SOFFICE_CANDIDATES] : [explicit])
+    .filter((candidate) => typeof candidate === 'string' && candidate.trim());
   for (const candidate of ordered) {
     if (candidate.includes('/') || candidate.includes('\\')) {
       if (existsSync(candidate)) return candidate;

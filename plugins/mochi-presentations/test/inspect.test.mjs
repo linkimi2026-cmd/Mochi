@@ -1,12 +1,12 @@
 // ppt_inspect（只读 PPTX 检查）测试。
 //
-// 覆盖：① 真 .pptx（教师样例 6 页）的结构化检查结果
+// 覆盖：① 真 .pptx（教师样例 7 页）的结构化检查结果
 //      ② 改名的假 pptx（docx / 纯文本）被识别并明确报错，绝不返回“0 张幻灯片”
 //      ③ 大小上限 / 页数上限如实拒绝
 //      ④ 路径越界（绝对路径、符号链接）被拒；主目录与磁盘根不会被默认放开
 //      ⑤ XML 解析器真解实体，不做正则猜结构
 import assert from 'node:assert/strict';
-import { lstat, mkdir, mkdtemp, open, readFile, rm, symlink, writeFile } from 'node:fs/promises';
+import { lstat, mkdir, mkdtemp, open, readFile, realpath, rm, symlink, writeFile } from 'node:fs/promises';
 import { homedir, tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
@@ -39,7 +39,7 @@ async function rejectCode(operation, code) {
   });
 }
 
-/** 生成一份真 .pptx（教师样例，6 页），返回产物路径。 */
+/** 生成一份真 .pptx（教师样例，7 页），返回产物路径。 */
 async function realPptx(root) {
   const bundle = await generatePresentationBundle({ presentation: teacherLessonSample(), outputDirectory: join(root, 'deck') });
   return bundle.pptxPath;
@@ -74,8 +74,8 @@ test('真 .pptx：读出页数、尺寸、逐页文字/表格/图表/版式/备�
   assert.equal(report.完成, true);
   assert.equal(report.文件.真pptx, true);
   assert.equal(report.文件.主部件, 'ppt/presentation.xml');
-  assert.equal(report.页数, 6);
-  assert.equal(report.检查页数, 6);
+  assert.equal(report.页数, 7);
+  assert.equal(report.检查页数, 7);
   assert.equal(report.文件.大小字节 > 0, true);
   assert.match(report.文件.sha256, /^[0-9a-f]{64}$/u);
   assert.match(report.文件.修改时间, /^\d{4}-\d{2}-\d{2}T/u);
@@ -89,7 +89,7 @@ test('真 .pptx：读出页数、尺寸、逐页文字/表格/图表/版式/备�
   // 文档元数据来自 docProps/core.xml + app.xml
   assert.equal(report.文档元数据.标题, '七年级科学：水循环与节水行动');
   assert.equal(report.文档元数据.创建者, 'Mochi Presentations');
-  assert.equal(report.文档元数据.声明页数, 6);
+  assert.equal(report.文档元数据.声明页数, 7);
   assert.equal(report.文档元数据.页数声明一致, true);
 
   // 每页都有尺寸，且文字被组织成形状（标题/正文/页脚分开）
@@ -102,10 +102,10 @@ test('真 .pptx：读出页数、尺寸、逐页文字/表格/图表/版式/备�
   const roles = first.文字.map((shape) => shape.角色);
   assert.deepEqual(roles, ['标题', '正文', '页脚或来源']);
   assert.equal(first.文字[0].文字, '水从哪里来，又到哪里去？');
-  assert.equal(first.文字[0].字号, 34);
+  assert.equal(first.文字[0].字号, 44);
   assert.equal(first.文字[0].加粗, true);
-  assert.equal(first.文字[1].段落.length, 3, '正文段落应逐条读出');
-  assert.match(first.文字[1].文字, /蒸发、凝结和降水/u);
+  assert.equal(first.文字[1].段落.length, 2, '封面副题应逐条读出');
+  assert.match(first.文字[1].文字, /七年级科学/u);
 
   // 可读性硬底线（2026-09-12 起进入契约）：标题 ≥28pt、正文 ≥14pt、页脚 ≥11pt。
   // 全篇每一页都要成立，而不只是被抽样的这一页——2 行标题曾经掉到 24pt，
@@ -123,16 +123,20 @@ test('真 .pptx：读出页数、尺寸、逐页文字/表格/图表/版式/备�
   assert.match(first.备注, /Slide ID: opening/u);
   assert.match(first.备注页部件, /^ppt\/notesSlides\/notesSlide\d+\.xml$/u);
 
-  // 第 3 页：原生表格（存在与数量 + 行列）
-  const tableSlide = report.幻灯片[2];
+  const processSlide = report.幻灯片[2];
+  assert.match(processSlide.文字.map((shape) => shape.文字).join(' '), /地表水受热成为水蒸气/u);
+  assert.equal(processSlide.图片.数量, 0);
+
+  // 第 4 页：原生表格（存在与数量 + 行列）
+  const tableSlide = report.幻灯片[3];
   assert.equal(tableSlide.表格.数量, 1);
   assert.equal(tableSlide.表格.条目[0].行数, 4);
   assert.equal(tableSlide.表格.条目[0].列数, 3);
   assert.deepEqual(tableSlide.表格.条目[0].首行, ['过程', '条件', '可观察证据']);
   assert.equal(tableSlide.图片.数量, 0);
 
-  // 第 4 页：原生图表（真读 ppt/charts/chart1.xml 得到类型与标题）
-  const chartSlide = report.幻灯片[3];
+  // 第 5 页：原生图表（真读 ppt/charts/chart1.xml 得到类型与标题）
+  const chartSlide = report.幻灯片[4];
   assert.equal(chartSlide.图表.数量, 1);
   assert.equal(chartSlide.图表.条目[0].类型, 'barChart');
   assert.equal(chartSlide.图表.条目[0].类型名称, '柱状图');
@@ -146,10 +150,10 @@ test('真 .pptx：读出页数、尺寸、逐页文字/表格/图表/版式/备�
 
   // 只查一页
   const single = await inspectPresentationFile({ path: pptxPath, slide: 2 });
-  assert.equal(single.页数, 6);
+  assert.equal(single.页数, 7);
   assert.equal(single.检查页数, 1);
   assert.equal(single.仅检查页, 2);
-  assert.match(single.幻灯片[0].文字[0].文字, /追踪一滴水/u);
+  assert.match(single.幻灯片[0].文字[0].文字, /沿下一页的简化路径找线索/u);
 });
 
 test('改名的假 pptx：docx 与纯文本都被识别并明确报错，绝不返回“0 张幻灯片”', { timeout: 30_000 }, async (t) => {
@@ -199,22 +203,22 @@ test('大文件保护：超过大小上限 / 页数上限时如实拒绝，不�
     (error) => error.message.includes(String(MAX_INSPECT_BYTES + 1)) && /上限/u.test(error.message),
   );
 
-  // 页数上限：真 6 页课件 + maxSlides=3 → 明确拒绝（并说明实际页数）
+  // 页数上限：真 7 页课件 + maxSlides=3 → 明确拒绝（并说明实际页数）
   const bytes = await readFile(pptxPath);
-  await rejectCode(() => inspectPptxBuffer(bytes, { sourceName: '六页课件.pptx', limits: { maxSlides: 3 } }), 'PPTX_TOO_MANY_SLIDES');
+  await rejectCode(() => inspectPptxBuffer(bytes, { sourceName: '七页课件.pptx', limits: { maxSlides: 3 } }), 'PPTX_TOO_MANY_SLIDES');
   await assert.rejects(
-    () => inspectPptxBuffer(bytes, { sourceName: '六页课件.pptx', limits: { maxSlides: 3 } }),
-    (error) => /共 6 页/u.test(error.message) && /上限 3 页/u.test(error.message),
+    () => inspectPptxBuffer(bytes, { sourceName: '七页课件.pptx', limits: { maxSlides: 3 } }),
+    (error) => /共 7 页/u.test(error.message) && /上限 3 页/u.test(error.message),
   );
 
   // 单部件上限（zip 炸弹第二道防线）：声明解压后过大时不解析
   await assert.rejects(
-    () => inspectPptxBuffer(bytes, { sourceName: '六页课件.pptx', limits: { maxBytes: 1 } }),
+    () => inspectPptxBuffer(bytes, { sourceName: '七页课件.pptx', limits: { maxBytes: 1 } }),
     (error) => error.code === 'PPTX_TOO_LARGE',
   );
 
   // slide 越界
-  await rejectCode(() => inspectPresentationFile({ path: pptxPath, slide: 7 }), 'INVALID_INPUT');
+  await rejectCode(() => inspectPresentationFile({ path: pptxPath, slide: 8 }), 'INVALID_INPUT');
   await rejectCode(() => inspectPresentationFile({ path: pptxPath, slide: 0 }), 'INVALID_INPUT');
 });
 
@@ -234,6 +238,12 @@ test('路径安全：越出允许根（绝对路径 / 符号链接）被拒，�
   // 允许根内的绝对路径与相对路径都可以
   assert.equal((await guard.resolve(pptxPath)).path, pptxPath);
   assert.equal((await guard.resolve('deck/presentation.pptx')).path, pptxPath);
+  const canonicalWorkspace = await realpath(workspace);
+  if (canonicalWorkspace !== workspace) {
+    const canonical = await resolveInspectAllowedRoots({ options: { allowedRoots: [canonicalWorkspace] } });
+    assert.equal((await createInspectPathGuard(canonical.entries).resolve(pptxPath)).path, pptxPath,
+      'an existing file reached through a system path alias stays inside the same real root');
+  }
   // 越界：绝对路径
   await rejectCode(() => guard.resolve(outsideFile), 'PATH_ESCAPE');
   await rejectCode(() => guard.resolve('/etc/hosts'), 'PATH_ESCAPE');
@@ -271,8 +281,8 @@ test('插件接线：ppt_inspect 已注册，能检查工作区内文件，并�
   const tool = registered.get('ppt_inspect');
   const report = await tool.execute({ path: pptxPath }, {});
   assert.equal(report.完成, true);
-  assert.equal(report.页数, 6);
-  assert.equal(report.幻灯片[2].表格.数量, 1);
+  assert.equal(report.页数, 7);
+  assert.equal(report.幻灯片[3].表格.数量, 1);
   assert.match(String(report.提示), /mochi_ppt_revise/u);
 
   // 越界路径给出可执行的中文指引

@@ -65,6 +65,7 @@ export interface DoctorStorageConfig {
 }
 
 export type DoctorDiagnosticCode =
+  | "WEB_HOST_PROFILE_PREPARATION_FAILED"
   | "WEB_HOST_RUNTIME_MISSING"
   | "WEB_HOST_TIMEOUT"
   | "WEB_HOST_EXITED"
@@ -600,8 +601,14 @@ async function checkCredentials(config: DoctorConfig, signal: AbortSignal): Prom
   }
   try {
     const response = await requestCredentialProbe(credentials, signal);
-    if (response.statusCode === 401 || response.statusCode === 402) {
-      return content("fail", "模型密钥无效或额度不可用。", "请在设置中更换密钥后重新检测。");
+    if (response.statusCode === 401) {
+      return content("fail", "模型服务拒绝认证（HTTP 401）。", "请核对服务地址、密钥和账号权限后重新检测。");
+    }
+    if (response.statusCode === 402) {
+      return content("fail", "模型账号需要处理额度或付款状态（HTTP 402）。", "请检查服务商账户余额或套餐后重新检测。");
+    }
+    if (response.statusCode === 403) {
+      return content("warn", "模型服务拒绝访问（HTTP 403），原因尚未确认。", "请核对服务地址、账号权限和额度；仅凭状态码不能判定密钥错误。");
     }
     return response.statusCode >= 200 && response.statusCode < 300 && response.hasRecognizedChatResponse
       ? content("pass", "模型密钥已通过最小验证。", "无需处理。")
@@ -676,6 +683,7 @@ function safeDiagnosticEvents(events: readonly DoctorDiagnosticEvent[] | undefin
   if (!events) return [];
   return events
     .filter((event) => event.stage === "web-host" && [
+      "WEB_HOST_PROFILE_PREPARATION_FAILED",
       "WEB_HOST_RUNTIME_MISSING",
       "WEB_HOST_TIMEOUT",
       "WEB_HOST_EXITED",

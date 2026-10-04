@@ -1,0 +1,21 @@
+{
+  "name": "mochi-modern-runtime",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Locked Harness runtime for Mochi release staging; application plugins are staged from reviewed source.",
+  "dependencies": {
+    "@deepseek-ai/dsh": "0.2.0-rc.2",
+    "dsh-better-sidebar": "0.24.1",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "@mochi/pdf-layout": "file:../../../vendor/local-plugins/mochi-pdf-layout-0.1.0-c4a3d2c2.tgz",
+    "exceljs": "4.4.0",
+    "pptxgenjs": "4.0.1",
+    "jszip": "3.10.1",
+    "docx": "9.7.1",
+    "pdfjs-dist": "6.3.289",
+    "@napi-rs/canvas": "1.0.8",
+    "playwright": "1.55.0",
+    "tmp": "0.2.5"
+  }
+}

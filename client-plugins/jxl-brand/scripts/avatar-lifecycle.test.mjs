@@ -32,6 +32,8 @@ class FakeElement {
     this.textContent = '';
   }
 
+  get lastElementChild() { return this.children.at(-1) ?? null; }
+
   get firstChild() {
     return this.children[0] ?? null;
   }
@@ -123,6 +125,7 @@ function matches(element, selector) {
   if (selector === '.jxl-pending-mochi--approval') return element.classList.contains('jxl-pending-mochi--approval');
   if (selector === '[data-streaming]') return element.hasAttribute('data-streaming');
   if (selector === '[data-streaming="true"]') return element.getAttribute('data-streaming') === 'true';
+  if (selector === '[data-chat-running]') return element.hasAttribute('data-chat-running');
   if (selector === '[data-chat-flow]') return element.hasAttribute('data-chat-flow');
   if (selector === '[data-conversation-scroll]') return element.hasAttribute('data-conversation-scroll');
   if (selector === '[data-composer-seat]') return element.hasAttribute('data-composer-seat');
@@ -228,16 +231,16 @@ function activeMochiCount(document) {
   return typingAvatars.length + pendingHosts(document).length;
 }
 
-test('one current Mochi covers official running, streaming, and approval lifecycle phases', () => {
+for (const modern of [false, true]) test(`one current Mochi covers running, streaming and approval (${modern ? 'new' : 'old'} Harness)`, () => {
   const client = readFileSync(new URL('../client.js', import.meta.url), 'utf8');
-  assert.match(client, /const inject = \["slots", "locale", "sessions", "uiSession"\]/u);
+  assert.match(client, /const inject = \["slots", "locale", "sessions", "uiSession", "sidebarRight"\]/u);
   assert.match(client, /SessionSnapshot\.running/u);
   assert.match(client, /\[data-streaming="true"\]/u);
   assert.match(client, /pendingInteractions\.getSnapshot\(\)/u);
   assert.match(client, /pointer-events:none/u);
-  assert.match(client, /currentComposerSeat/u);
+  assert.doesNotMatch(client, /currentComposerSeat/u);
   assert.match(client, /insertBefore\(host, parent\.firstChild\)/u);
-  assert.match(client, /Mochi 正在处理/u);
+  assert.match(client, /Mochi 探索中/u);
   assert.match(client, /jxl-pending-mochi--flow\{position:relative/u);
   assert.doesNotMatch(client, /querySelectorAll\("button"\)/u);
   assert.doesNotMatch(client, /turn-process/u);
@@ -256,7 +259,7 @@ test('one current Mochi covers official running, streaming, and approval lifecyc
   let current = 'session-a';
   const listListeners = new Set();
   const list = {
-    getSnapshot: () => ({ current }),
+    getSnapshot: () => modern ? ({ids:[...bindings.keys()],byId:{},phase:"ready",projectionsBySession:{}}) : ({ current }),
     subscribe(listener) {
       listListeners.add(listener);
       return () => listListeners.delete(listener);
@@ -306,8 +309,20 @@ test('one current Mochi covers official running, streaming, and approval lifecyc
       for (const callback of queued) callback();
     }
   };
+  let now = 0;
+  let nextTimer = 0;
+  const timers = new Map();
+  const advanceTime = (ms) => {
+    now += ms;
+    for (const [id, timer] of timers) {
+      if (timer.at > now) continue;
+      timers.delete(id);
+      timer.callback();
+    }
+    flushFrames();
+  };
   const context = vm.createContext({
-    window: { __ModuleLoader__: moduleLoader },
+    window: { __ModuleLoader__: moduleLoader, document: { addEventListener() {}, removeEventListener() {} }, addEventListener() {}, removeEventListener() {}, setTimeout() { return 0; }, clearTimeout() {} },
     document,
     MutationObserver: FakeMutationObserver,
     requestAnimationFrame: (callback) => {
@@ -316,6 +331,13 @@ test('one current Mochi covers official running, streaming, and approval lifecyc
       return id;
     },
     cancelAnimationFrame: (id) => frames.delete(id),
+    performance: { now: () => now },
+    setTimeout: (callback, ms) => {
+      const id = ++nextTimer;
+      timers.set(id, { at: now + ms, callback });
+      return id;
+    },
+    clearTimeout: (id) => timers.delete(id),
     console,
   });
   vm.runInContext(client, context, { filename: 'jxl-brand/client.js' });
@@ -355,7 +377,11 @@ test('one current Mochi covers official running, streaming, and approval lifecyc
   const falseStreamingA = assistantStep(document, flowA, { streaming: false });
   plugin.apply({
     sessions: { list, binding: (id) => bindings.get(id) },
-    uiSession: { pendingInteractions },
+    ...(modern ? {sidebarRight:{mounted:{...list,getSnapshot:()=>current}}} : {}),
+    uiSession: modern ? { sessionStatus: {
+      ...pendingInteractions,
+      getSnapshot: () => new Map([...pending].map(([id, pendingInteraction]) => [id, { pendingInteraction }])),
+    } } : { pendingInteractions },
     slots: { inject: () => () => {}, register: () => () => {} },
     locale: {
       addLanguage: () => () => {},
@@ -374,14 +400,41 @@ test('one current Mochi covers official running, streaming, and approval lifecyc
   // data-streaming="false" is explicitly not an active official stream.
   assert.equal(avatarState(historicalA), 'idle');
   assert.equal(avatarState(falseStreamingA.step), 'idle');
-  assert.equal(pendingHosts(document).length, 1, 'first-token/tool wait receives one composer-adjacent Mochi');
-  assert.equal(pendingHosts(document)[0].parentNode, composerA.seat, 'first-token/tool wait belongs in the measured sticky composer seat');
-  assert.equal(composerA.seat.children[0], pendingHosts(document)[0], 'the compact indicator stays above the native composer');
-  assert.equal(composerA.seat.children[1], composerA.nativeComposer, 'the native composer remains intact and interactive');
+  assert.equal(pendingHosts(document).length, 1, 'first-token/tool wait receives one message-flow Mochi');
+  assert.equal(pendingHosts(document)[0].parentNode, flowA, 'first-token/tool wait belongs in the message flow');
+  assert.equal(flowA.children.at(-1), pendingHosts(document)[0], 'the indicator remains in the message flow');
+  assert.equal(composerA.seat.children[0], composerA.nativeComposer, 'the native composer remains intact and interactive');
   assert.equal(roots.get(pendingHosts(document)[0]).renders.at(-1).props.compact, true);
   assert.equal(activeMochiCount(document), 1);
 
-  // When native markdown starts streaming, its current avatar replaces the composer-adjacent Mochi.
+  // rc2 status lives outside the flow and owns both its accessible label and live clock.
+  const running = document.createElement('div');
+  running.setAttribute('data-chat-running', 'true');
+  const live = document.createElement('span');
+  live.setAttribute('role', 'status');
+  const divider = document.createElement('span');
+  const content = document.createElement('span');
+  const whale = document.createElement('span');
+  whale.setAttribute('aria-hidden', 'true');
+  const clock = document.createElement('span');
+  clock.textContent = 'Mochi 探索中，用时 3秒 ···';
+  content.appendChild(whale); content.appendChild(clock);
+  running.appendChild(live); running.appendChild(divider); running.appendChild(content);
+  scroll.appendChild(running);
+  triggerMutation(); flushFrames();
+  assert.equal(pendingHosts(document).length, 1);
+  const statusMochi = pendingHosts(document)[0];
+  assert.equal(statusMochi.parentNode, content);
+  assert.equal(statusMochi.getAttribute('aria-hidden'), 'true', 'native live announcement is not duplicated');
+  assert.equal(roots.get(statusMochi).renders.at(-1).props.state, 'thinking');
+  assert.equal(roots.get(statusMochi).renders.at(-1).props.size, 28);
+  clock.textContent = 'Mochi 探索中，用时 4秒 ···';
+  triggerMutation(); flushFrames();
+  assert.equal(pendingHosts(document)[0], statusMochi, 'clock ticks do not remount the character');
+  assert.equal(content.children[1], clock, 'native clock element is retained');
+  scroll.removeChild(running);
+
+  // When native markdown starts streaming, its current avatar replaces the message-flow Mochi.
   const activeA = assistantStep(document, flowA, { streaming: true }).step;
   triggerMutation();
   flushFrames();
@@ -412,8 +465,8 @@ test('one current Mochi covers official running, streaming, and approval lifecyc
   setPending(new Map());
   flushFrames();
   assert.equal(pendingHosts(document).length, 1, 'approval resolution resumes the current running indicator');
-  assert.equal(pendingHosts(document)[0].parentNode, composerA.seat);
-  assert.equal(composerA.seat.children[1], composerA.nativeComposer, 'resuming the indicator never replaces the native composer');
+  assert.equal(pendingHosts(document)[0].parentNode, flowA);
+  assert.equal(composerA.seat.children[0], composerA.nativeComposer, 'resuming the indicator never replaces the native composer');
   setPending(new Map([['session-a', { kind: 'approval', key: 'approval-reject' }]]));
   const approvalReject = approvalPanel(document, 'approval-reject');
   triggerMutation();
@@ -439,9 +492,18 @@ test('one current Mochi covers official running, streaming, and approval lifecyc
   assert.equal(avatarState(activeA), 'idle', 'old-session assistant never regains a running state');
   assert.equal(activeMochiCount(document), 1);
 
+  const detachedRoot = avatar(historicalA).__jxlAvatarRoot;
+  historicalA.parentNode.removeChild(historicalA);
+  triggerMutation();
+  flushFrames();
+  assert.equal(detachedRoot.unmounted, true, 'removing a transcript row releases its animation root');
+
   // Dispose cancels an already scheduled rAF and ignores late observer/session callbacks.
   sessionB.setSnapshot({ running: false });
   flushFrames();
+  assert.equal(avatarState(activeB), 'celebrate', 'successful stream completion briefly celebrates');
+  advanceTime(4_201);
+  assert.equal(avatarState(activeB), 'idle', 'completion motion settles back to idle');
   sessionB.setSnapshot({ running: true });
   assert.equal(frames.size, 1, 'running update schedules one frame before disposal');
   const staleSessionCallback = sessionB.listeners()[0];
@@ -453,7 +515,8 @@ test('one current Mochi covers official running, streaming, and approval lifecyc
   flushFrames();
   assert.equal(frames.size, 0, 'disposed effect cancels its rAF');
   assert.equal(pendingHosts(document).length, 0, 'late callbacks cannot recreate a Mochi in an old view');
-  assert.equal(avatarState(activeB), 'idle');
+  assert.ok([...roots.values()].every(root => root.unmounted), 'disposal releases every React root and its engine listeners');
+  assert.equal(activeB.querySelector('.jxl-msg-avatar-row'), null, 'unloaded plugin removes its avatar seat');
 
   for (const dispose of effects.values()) dispose?.();
 });

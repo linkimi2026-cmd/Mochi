@@ -17,7 +17,7 @@ import { SheetsError } from './paths.mjs';
 import { createSheetsHandlers } from './tools.mjs';
 
 export const name = 'mochi-sheets';
-export const inject = ['tools'];
+export const inject = ['tools', 'sandboxPolicy'];
 // ⚠️ render 签名是 (args, value)：第一个参数是调用参数，第二个才是工具返回值。
 export const output = {
   schema: { type: 'object', additionalProperties: true },

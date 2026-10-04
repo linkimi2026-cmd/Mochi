@@ -1,0 +1,36 @@
+{
+  "name": "mochi-onboarding",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "index.mjs",
+  "description": "Original role-aware Mochi guide over official onboarding and Host settings.",
+  "dsh": {
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-renderer",
+        "@deepseek-ai/dsh-client-ui-sidebar",
+        "@deepseek-ai/dsh-client-ui-settings"
+      ]
+    }
+  },
+  "exports": {
+    ".": "./index.mjs",
+    "./client": "./client.js"
+  },
+  "files": [
+    "index.mjs",
+    "steps.mjs",
+    "client.js",
+    "package.json"
+  ],
+  "peerDependencies": {
+    "@deepseek-ai/schemastery": "3.18.2 || 3.18.4",
+    "@deepseek-ai/dsh-client-ui-primitives": "0.2.0-rc.2"
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --test test/*.test.mjs"
+  }
+}

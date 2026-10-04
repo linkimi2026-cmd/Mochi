@@ -13,25 +13,24 @@
  *  · 全局细节：滚动条、选区、focus 环、加速度曲线。
  *  · 品牌名换装由 jxl-brand client 插件经 slot 系统完成（本文件只管皮肤）。
  *
- * 纪律：嘉行联源值原样入境（--sage-800 / --accent 用户确认不许调）；
- *       【派生】= 官方别名没有嘉行联对应源时的补足插值，非新设计。
+ * 2026-09-27：纸白机身与暖灰夜间材质；颜色变更以本轮全界面升级为准。
  * ═══════════════════════════════════════════════════════════════════ */
 
 /* ── 亮色（calm-tokens.css :root 原值） ─────────────────────────────── */
 :root,
 body {
   /* 画布与表面 */
-  --dsw-alias-bg-base: #f5f2e9 !important;            /* --canvas 暖米白 */
-  --dsw-alias-bg-layer-1: #fcfaf4 !important;         /* --surface 暖白 */
-  --dsw-alias-bg-layer-2: #ffffff !important;         /* --surface-strong */
-  --dsw-alias-bg-layer-3: #eeede5 !important;         /* --surface-soft */
+  --dsw-alias-bg-base: #f6f3ec !important;            /* --canvas 暖米白 */
+  --dsw-alias-bg-layer-1: #fffdf8 !important;         /* --surface 暖白 */
+  --dsw-alias-bg-layer-2: #fffefa !important;         /* --surface-strong */
+  --dsw-alias-bg-layer-3: #ece8df !important;         /* --surface-soft */
 
   /* 文字（label 阶梯） */
-  --dsw-alias-label-primary: #2d3833 !important;      /* --ink 墨绿灰 */
-  --dsw-alias-label-primary-inverted: #fcfaf4 !important;
-  --dsw-alias-label-secondary: #55605a !important;    /* 【派生】ink↔muted 之间 */
-  --dsw-alias-label-tertiary: #747c76 !important;     /* --muted */
-  --dsw-alias-label-caption: #747c76 !important;
+  --dsw-alias-label-primary: #34332f !important;      /* --ink 墨绿灰 */
+  --dsw-alias-label-primary-inverted: #fffdf8 !important;
+  --dsw-alias-label-secondary: #666258 !important;    /* 【派生】ink↔muted 之间 */
+  --dsw-alias-label-tertiary: #767166 !important;     /* --muted */
+  --dsw-alias-label-caption: #767166 !important;
   --dsw-alias-label-dimmed: rgba(116, 124, 118, 0.72) !important;
 
   /* 品牌与交互（鼠尾草绿体系） */
@@ -50,15 +49,15 @@ body {
   --dsw-alias-border-l4: rgba(57, 72, 63, 0.26) !important;
 
   /* Markdown 代码面 */
-  --dsw-alias-markdown-inline-code: #eeede5 !important;
-  --dsw-alias-markdown-code-block: #eeede5 !important;
+  --dsw-alias-markdown-inline-code: #ece8df !important;
+  --dsw-alias-markdown-code-block: #ece8df !important;
 
-  /* 玻璃与阴影（calm-tokens 原值） */
-  --jxl-glass-bg: linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(255, 253, 248, 0.78));
-  --jxl-glass-border: rgba(255, 255, 255, 0.55);
-  --jxl-shadow-card: 0 8px 24px rgba(50, 61, 54, 0.075);
-  --jxl-shadow-float: 0 16px 40px rgba(43, 54, 48, 0.14);
-  --jxl-control-top-rim: rgba(255, 255, 255, 0.6);
+  /* 纸张表面：靠明度和细边框分层，避免叠加玻璃高光。 */
+  --jxl-glass-bg: #fffdf8;
+  --jxl-glass-border: rgba(57, 72, 63, 0.12);
+  --jxl-shadow-card: 0 2px 8px rgba(50, 61, 54, 0.045);
+  --jxl-shadow-float: 0 8px 24px rgba(43, 54, 48, 0.10);
+  --jxl-control-top-rim: transparent;
 
   /* 动效（motion.ts：spring + Apple 公开曲线） */
   --jxl-spring: cubic-bezier(0.22, 0.78, 0.24, 1);
@@ -70,16 +69,16 @@ body {
 
 /* ── 暗色（body[data-ds-dark-theme]；calm-tokens [data-theme="dark"] 原值） ── */
 body[data-ds-dark-theme] {
-  --dsw-alias-bg-base: #1b211e !important;
-  --dsw-alias-bg-layer-1: #242c28 !important;
-  --dsw-alias-bg-layer-2: #2a332e !important;
-  --dsw-alias-bg-layer-3: #303833 !important;
+  --dsw-alias-bg-base: #242320 !important;
+  --dsw-alias-bg-layer-1: #2d2b27 !important;
+  --dsw-alias-bg-layer-2: #36332e !important;
+  --dsw-alias-bg-layer-3: #39362f !important;
 
-  --dsw-alias-label-primary: #e7ebe7 !important;
-  --dsw-alias-label-primary-inverted: #17221e !important;
-  --dsw-alias-label-secondary: #c2cbc4 !important;    /* 【派生】 */
-  --dsw-alias-label-tertiary: #aeb8b1 !important;     /* --muted 暗 */
-  --dsw-alias-label-caption: #aeb8b1 !important;
+  --dsw-alias-label-primary: #f1ede4 !important;
+  --dsw-alias-label-primary-inverted: #242320 !important;
+  --dsw-alias-label-secondary: #c9c2b6 !important;    /* 【派生】 */
+  --dsw-alias-label-tertiary: #b4ac9e !important;     /* --muted 暗 */
+  --dsw-alias-label-caption: #b4ac9e !important;
   --dsw-alias-label-dimmed: rgba(174, 184, 177, 0.72) !important;
 
   --dsw-alias-brand-primary: #6f806f !important;      /* --cozy-sage-strong */
@@ -95,14 +94,14 @@ body[data-ds-dark-theme] {
   --dsw-alias-border-l3: rgba(255, 255, 255, 0.16) !important;
   --dsw-alias-border-l4: rgba(255, 255, 255, 0.24) !important;
 
-  --dsw-alias-markdown-inline-code: #303833 !important;
-  --dsw-alias-markdown-code-block: #303833 !important;
+  --dsw-alias-markdown-inline-code: #39362f !important;
+  --dsw-alias-markdown-code-block: #39362f !important;
 
-  --jxl-glass-bg: linear-gradient(145deg, rgba(30, 47, 43, 0.92), rgba(22, 40, 36, 0.86));
-  --jxl-glass-border: rgba(255, 255, 255, 0.14);
-  --jxl-shadow-card: 0 8px 24px rgba(0, 0, 0, 0.2);
-  --jxl-shadow-float: 0 16px 40px rgba(0, 0, 0, 0.35);
-  --jxl-control-top-rim: rgba(255, 255, 255, 0.14);
+  --jxl-glass-bg: #2d2b27;
+  --jxl-glass-border: rgba(255, 255, 255, 0.10);
+  --jxl-shadow-card: 0 2px 8px rgba(0, 0, 0, 0.10);
+  --jxl-shadow-float: 0 8px 24px rgba(0, 0, 0, 0.18);
+  --jxl-control-top-rim: transparent;
 }
 
 /* ── 字体主权（calm-tokens --font-sans / --font-title 原栈） ─────────── */
@@ -178,30 +177,30 @@ body[data-ds-dark-theme] ::-webkit-scrollbar-thumb:hover {
   }
 }
 
-/* ── 底层色板主权（v2.1）：--dsw-static-neutral-bluish-* → 嘉行联暖沙绿阶 ──
+/* ── 底层色板主权（v2.1）：--dsw-static-neutral-bluish-* → 暖纸中性色阶 ──
  * 官方 80 个别名全部指向这套 static 阶梯；替换阶梯 = 一次翻转全部表面。
  * 命名沿用官方变量名（不改组件层），值 = calm-tokens 体系推演（标注【派生】）。 */
 :root,
 body {
-  --dsw-static-neutral-bluish-00: #ffffff !important;
+  --dsw-static-neutral-bluish-00: #fffefa !important;
   --dsw-static-neutral-bluish-50: #faf9f4 !important;   /* 【派生】 */
-  --dsw-static-neutral-bluish-60: #f5f2e9 !important;   /* --canvas 原值 */
+  --dsw-static-neutral-bluish-60: #f6f3ec !important;   /* --canvas 原值 */
   --dsw-static-neutral-bluish-75: #f3f0e5 !important;   /* 【派生】 */
-  --dsw-static-neutral-bluish-100: #eeede5 !important;  /* --surface-soft */
-  --dsw-static-neutral-bluish-150: #e7ebe4 !important;  /* --sage-100 */
-  --dsw-static-neutral-bluish-200: #dde3de !important;  /* --rui-line */
-  --dsw-static-neutral-bluish-300: #c9d0c6 !important;  /* --sage-200 */
-  --dsw-static-neutral-bluish-400: #a8b3a9 !important;  /* 【派生】sage-400 邻域 */
-  --dsw-static-neutral-bluish-500: #8a968c !important;  /* 【派生】 */
-  --dsw-static-neutral-bluish-600: #687a6e !important;  /* --sage-600 */
-  --dsw-static-neutral-bluish-700: #556158 !important;  /* 【派生】 */
-  --dsw-static-neutral-bluish-750: #4a5a51 !important;  /* 【派生】sage-800 邻域 */
-  --dsw-static-neutral-bluish-800: #3f4d45 !important;  /* 【派生】 */
-  --dsw-static-neutral-bluish-850: #33403a !important;  /* 【派生】 */
-  --dsw-static-neutral-bluish-875: #2b3731 !important;  /* 【派生】 */
-  --dsw-static-neutral-bluish-900: #242e28 !important;  /* 【派生】 */
-  --dsw-static-neutral-bluish-950: #1c2620 !important;  /* 【派生】 */
-  --dsw-static-neutral-bluish-1000: #17221e !important; /* --ink-strong */
+  --dsw-static-neutral-bluish-100: #ece8df !important;  /* --surface-soft */
+  --dsw-static-neutral-bluish-150: #e6e1d7 !important;  /* --sage-100 */
+  --dsw-static-neutral-bluish-200: #dcd6cb !important;  /* --rui-line */
+  --dsw-static-neutral-bluish-300: #c9c1b3 !important;  /* --sage-200 */
+  --dsw-static-neutral-bluish-400: #afa797 !important;  /* 【派生】sage-400 邻域 */
+  --dsw-static-neutral-bluish-500: #908879 !important;  /* 【派生】 */
+  --dsw-static-neutral-bluish-600: #746d60 !important;  /* --sage-600 */
+  --dsw-static-neutral-bluish-700: #625b50 !important;  /* 【派生】 */
+  --dsw-static-neutral-bluish-750: #554f45 !important;  /* 【派生】sage-800 邻域 */
+  --dsw-static-neutral-bluish-800: #474238 !important;  /* 【派生】 */
+  --dsw-static-neutral-bluish-850: #3c3831 !important;  /* 【派生】 */
+  --dsw-static-neutral-bluish-875: #34312b !important;  /* 【派生】 */
+  --dsw-static-neutral-bluish-900: #2b2823 !important;  /* 【派生】 */
+  --dsw-static-neutral-bluish-950: #211f1b !important;  /* 【派生】 */
+  --dsw-static-neutral-bluish-1000: #242320 !important; /* --ink-strong */
 
   /* DeepSeek 蓝 → 嘉行联深绿（--rui-deep #315f50 家族） */
   --dsw-static-deepseek-50: #eef4ef !important;
@@ -224,7 +223,7 @@ body {
 
   /* 滚动条 / 提示层 */
   --dsw-static-neutral-200: #d5d2c4 !important; /* 【派生】 */
-  --dsw-static-neutral-700: #4a5a51 !important; /* 【派生】 */
+  --dsw-static-neutral-700: #554f45 !important; /* 【派生】 */
 }
 
 /* 暗色主题：中性阶梯【不】重定义——官方机制是一套固定阶梯，亮暗靠别名选档
@@ -245,11 +244,22 @@ body[data-ds-dark-theme] {
   --dsw-static-green-500: #7da284 !important;   /* 【派生】暗下 success 提亮 */
   --dsw-static-amber-500: #d9973e !important;
   --dsw-static-red-400: #d08a74 !important;
-  --dsw-static-red-600: #bf6048 !important;
+  --dsw-static-red-600: #e3a394 !important;
   --dsw-static-blue-900: #b6dcc7 !important;    /* --rui-deep 暗值 */
 }
 
 /* ── 品牌字标（jxl-brand 挂进 sidebar.brand.name 的内容上样） ─────────── */
+.mochi-brand-mark {
+  display: inline-block;
+  background: var(--dsw-alias-brand-text, #45584e);
+  -webkit-mask: url('/jxl-assets/icons/icon.svg') center / contain no-repeat;
+  mask: url('/jxl-assets/icons/icon.svg') center / contain no-repeat;
+}
+/* Host glyphs include filled paths inside fill=none SVGs. Adding a stroke
+   outlines those filled shapes twice; preserve their native geometry. */
+[data-slot="sidebar.workspaces"] svg,
+[data-slot="sidebar.footer.action"] svg,
+[data-slot="sidebar.settings"] svg { color: var(--dsw-alias-label-secondary); }
 .jxl-brand-name {
   font-family: "Songti SC", "STSong", "Noto Serif CJK SC", "Source Han Serif SC", serif !important;
   font-weight: 600;
@@ -269,7 +279,7 @@ body[data-ds-dark-theme] {
    嘉行联按钮语言迁入 Mochi 侧栏（2026-09-04，用户裁定：
    "特别按左半边的按钮样式"——联动计划侧栏 nav-pill）
    源：联动计划/src/styles.css .nav-pill
-   - 16px 圆角胶囊；激活 = --sage-800 实底 + 顶部内高光 + 深投影
+   - 16px 圆角胶囊；激活 = --sage-800 实底
    - 非激活透明底，仅前景变化；悬停 = 柔和填充
    ══════════════════════════════════════════════════════════════════════ */
 
@@ -277,16 +287,14 @@ body[data-ds-dark-theme] {
 [data-slot="sidebar.workspaces"] [class*="newSession"],
 [class*="sidebar"] [class*="newSession"] {
   border-radius: 16px !important;
-  background: var(--sage-800, #315f50) !important;
-  color: #f5f2e9 !important;
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, #ffffff 14%, transparent),
-    0 10px 22px -14px color-mix(in srgb, var(--sage-800, #315f50) 60%, transparent) !important;
+  background: var(--dsw-alias-button-primary-fill) !important;
+  color: var(--dsw-alias-label-primary-inverted) !important;
+  box-shadow: none !important;
   border: 0 !important;
 }
 [data-slot="sidebar.workspaces"] [class*="newSession"]:hover,
 [class*="sidebar"] [class*="newSession"]:hover {
-  background: #3c6f5e !important;
+  background: var(--dsw-alias-button-primary-hover) !important;
 }
 
 /* 工作区/会话行：透明底 + 柔和悬停 + 激活胶囊 */
@@ -295,16 +303,13 @@ body[data-ds-dark-theme] {
   transition: background-color 160ms ease, color 160ms ease !important;
 }
 [data-slot="sidebar.workspaces"] [class*="projectRow"]:hover {
-  background: color-mix(in srgb, var(--sage-800, #315f50) 10%, transparent) !important;
+  background: var(--dsw-alias-interactive-bg-hover) !important;
 }
 [data-slot="sidebar.workspaces"] [class*="projectRow"][aria-current="true"],
 [data-slot="sidebar.workspaces"] [class*="projectRow"][aria-current="page"],
 [data-slot="sidebar.workspaces"] [class*="projectRow"][data-active="true"],
 [data-slot="sidebar.workspaces"] [class*="projectRow"].active {
-  background: var(--sage-800, #315f50) !important;
-  color: #f5f2e9 !important;
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, #ffffff 14%, transparent),
-    0 10px 22px -14px color-mix(in srgb, var(--sage-800, #315f50) 60%, transparent) !important;
+  background: var(--dsw-alias-button-primary-fill) !important;
+  color: var(--dsw-alias-label-primary-inverted) !important;
+  box-shadow: none !important;
 }
-

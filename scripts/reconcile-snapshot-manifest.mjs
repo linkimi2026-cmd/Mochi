@@ -38,10 +38,34 @@ const RESOURCE_SCRIPT = join(repoRoot, "apps", "desktop", "scripts", "prepare-mo
  * `main.ts` 里的字符串路径 `join(__dirname, "rail-preload.js")`，
  * 所以导入闭包扫描同样扫不到；少一个文件不会报编译错，只会让 rail 窗口
  * **静默地没有 preload 桥**，一路带到安装包里。
+ *
+ * ⚠️ 2026-09-24 再补 `apps/desktop/scripts`：Windows CI 从 package.json 调用目录内
+ * 的测试入口及串联 helper；逐条登记入口会漏掉后来新增的脚本。纳入整目录，
+ * 让新增脚本自动进入精确快照；Git 忽略的 `*.bak` 备份仍由 walkFiles 排除。
+ * MiMo 的 HTTP 错误分级回归由桌面 `test:runtime-profile` 调用，测试源码也
+ * 是私有 Windows CI 的必要输入，因此将该插件测试目录纳入快照。
  */
 const SOURCE_DIRECTORIES = Object.freeze([
+  { root: "apps/desktop/build", category: "desktop-source" },
+  { root: "client-plugins/jxl-brand/src", category: "desktop-source" },
+  { root: "client-plugins/mochi-model-presets/src", category: "desktop-source" },
+  { root: "client-plugins/mochi-model-presets/scripts", category: "desktop-source" },
+  { root: "client-plugins/mochi-model-presets/test", category: "desktop-test-source" },
+  { root: "client-plugins/mochi-modes/test", category: "desktop-test-source" },
+  { root: "client-plugins/mochi-voice-chat/test", category: "desktop-test-source" },
+  { root: "client-plugins/jxl-brand/scripts", category: "desktop-source" },
+  { root: "client-plugins/jxl-theme/styles", category: "desktop-source" },
+  { root: "client-plugins/jxl-theme/scripts", category: "desktop-source" },
+  { root: "client-plugins/jxl-theme/test", category: "desktop-test-source" },
   { root: "skills", category: "desktop-source" },
   { root: "apps/desktop/electron", category: "desktop-source" },
+  { root: "apps/desktop/scripts", category: "desktop-source" },
+  { root: "apps/desktop/resources/voice-tools", category: "desktop-source" },
+  { root: "plugins/mochi-lan/test", category: "desktop-test-source" },
+  { root: "plugins/mochi-knowledge/test", category: "desktop-test-source" },
+  { root: "plugins/mochi-knowledge/scripts", category: "desktop-source" },
+  { root: "plugins/mochi-knowledge/vendor/book-to-skill", category: "desktop-source" },
+  { root: "plugins/mochi-llm-mimo/test", category: "desktop-test-source" },
 ]);
 
 /** 从打包白名单源码里反解出 [{ id, source, files }]。 */
@@ -111,7 +135,7 @@ const SKIP_FILE_NAMES = new Set([".DS_Store", "Thumbs.db", "desktop.ini"]);
 function walkFiles(root, prefix = "") {
   const out = [];
   for (const entry of readdirSync(root, { withFileTypes: true })) {
-    if (SKIP_FILE_NAMES.has(entry.name)) continue;
+    if (SKIP_FILE_NAMES.has(entry.name) || entry.name.endsWith(".bak")) continue;
     const relative = prefix ? `${prefix}/${entry.name}` : entry.name;
     if (entry.isSymbolicLink()) continue; // 快照不收符号链接，CI 也会拒绝 reparse point
     if (entry.isDirectory()) out.push(...walkFiles(join(root, entry.name), relative));
@@ -132,7 +156,35 @@ function main() {
   const byPath = new Map(entries.map((entry) => [entry.path, entry]));
 
   const whitelist = readPluginWhitelist();
-  const expected = new Map();
+  const expected = new Map([
+    "apps/desktop/resources/browser-on-demand.cjs",
+    "apps/desktop/resources/mochi-web/modern-models.cjs",
+    "apps/desktop/resources/mochi-web/modern-presets.cjs",
+    "apps/desktop/resources/mochi-web/modern-settings.cjs",
+    "apps/desktop/resources/mochi-web/modern-sidebar.cjs",
+    "apps/desktop/runtime-modern/package.json",
+    "apps/desktop/runtime-modern/package-lock.json",
+    // Exact build inputs for the shared sidebar action; never copy plugin node_modules.
+    "client-plugins/mochi-memory/build.mjs",
+    "client-plugins/mochi-memory/client-entry.mjs",
+    "client-plugins/mochi-memory/journal-ui.mjs",
+    "client-plugins/mochi-memory/journal-view.mjs",
+    "client-plugins/mochi-classroom-planner/build.mjs",
+    "client-plugins/mochi-classroom-planner/client-entry.mjs",
+    "client-plugins/mochi-onboarding/build.mjs",
+    "client-plugins/mochi-onboarding/client-entry.mjs",
+    "client-plugins/mochi-onboarding/navigation.mjs",
+    "client-plugins/mochi-onboarding/sidebar-action.mjs",
+    "client-plugins/mochi-voice-chat/build.mjs",
+    "client-plugins/mochi-voice-chat/client-entry.mjs",
+    "client-plugins/mochi-voice-chat/controller.mjs",
+    "client-plugins/mochi-voice-chat/session-reply.mjs",
+    "client-plugins/mochi-voice-chat/reply-reader.mjs",
+    "client-plugins/mochi-voice-chat/entry-controls.mjs",
+    "client-plugins/mochi-classroom-assistant/build.mjs",
+    "client-plugins/mochi-classroom-assistant/client-entry.mjs",
+    "client-plugins/mochi-classroom-assistant/recorder.mjs",
+  ].map(path => [path, "desktop-source"]));
   for (const plugin of whitelist) {
     for (const file of plugin.files) {
       const relative = `${plugin.source}/${file}`;
@@ -185,13 +237,15 @@ function main() {
   //   - 清单里有、已不再被引用、但磁盘上还在   → 保留 + 提醒（可能是别人正在换版本）
   const vendorDir = join(repoRoot, "vendor", "local-plugins");
   const referencedTarballs = new Set();
-  const desktopManifestPath = join(repoRoot, "apps", "desktop", "package.json");
-  const desktopManifest = JSON.parse(readFileSync(desktopManifestPath, "utf8"));
-  for (const value of Object.values(desktopManifest.dependencies ?? {})) {
-    if (typeof value !== "string" || !value.startsWith("file:")) continue;
-    const target = resolve(dirname(desktopManifestPath), value.slice("file:".length));
-    if (dirname(target) !== vendorDir) continue;
-    referencedTarballs.add(target);
+  for (const relativeManifest of ["apps/desktop/package.json", "apps/desktop/runtime-modern/package.json"]) {
+    const manifestPath = join(repoRoot, relativeManifest);
+    const metadata = JSON.parse(readFileSync(manifestPath, "utf8"));
+    for (const value of Object.values(metadata.dependencies ?? {})) {
+      if (typeof value !== "string" || !value.startsWith("file:")) continue;
+      const target = resolve(dirname(manifestPath), value.slice("file:".length));
+      if (dirname(target) !== vendorDir) continue;
+      referencedTarballs.add(target);
+    }
   }
 
   const vendoredAdded = [];

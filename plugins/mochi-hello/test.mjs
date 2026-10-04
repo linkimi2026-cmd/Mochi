@@ -155,6 +155,13 @@ async function createHost(provider) {
   const routes = []
   ctx.provide('credentials', credentials)
   ctx.provide('webServer', webServer(routes))
+  // The provider requires the real settings lifecycle to become injectable.
+  ctx.provide('settings', {
+    installSection(_ctx, _name, _schema, config, options) {
+      options.setSource(() => config)
+      return () => {}
+    },
+  })
 
   const llm = ctx.plugin(LlmRuntime)
   await llm.await()

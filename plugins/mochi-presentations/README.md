@@ -2,30 +2,47 @@
 
 `mochi-presentations` turns an already authorized structured lesson plan into a real, editable `.pptx`. The primary artifact is PowerPoint: text is a text object, tables use `a:tbl`, and charts use native Office chart OOXML plus an embedded editable worksheet. It never substitutes a page screenshot or HTML page for a PowerPoint file.
 
-The companion PDF is drawn from the same structured input as a searchable handout. For chart slides it preserves a textual data summary, not a visual chart preview. It is supplementary evidence, not a replacement for the PPTX or a generic PPTX-to-PDF converter; open the PPTX to review and edit the native chart.
+`presentation.pdf` is a searchable handout laid out separately from the same structured input. For chart slides it preserves a textual data summary, not a visual chart preview. When LibreOffice is available, `presentation-preview.pdf` is converted from the final PPTX and returned separately so teachers can review the actual slide layout in the built-in PDF viewer. The manifest records `preview.previewOfPptxSha256`, renderer, status, and preview file metadata. If conversion is unavailable or fails, `previewPdf` is null and the handout is never presented as a PPTX preview.
+
+In teacher chat, successful `mochi_ppt_create` and `mochi_ppt_revise` results show buttons to open the converted preview PDF (when present) and editable PPTX through the DSH tool-view `openFile` callback. The callback keeps the Host's workspace access rules; the card does not grant broader filesystem access. A preview button only means a converted PDF is available, not that PowerPoint/WPS rendering has been verified.
 
 ## Lesson-plan contract
 
-`mochi-lesson-presentation-v1` accepts 1–40 source-attributed slides. A slide is one of:
+`mochi-lesson-presentation-v1` accepts 1–40 slides with optional source declarations. A slide is one of:
 
 - `title-body`: a title and 1–6 projection-readable bullets.
 - `title-table`: a title, short context bullets, and an editable 2–5 column table.
 - `title-chart`: a title, short context bullets, and an editable `bar`, `line`, or `pie` chart with 2–8 labels and 1–3 series (pie has one series).
+- `title-compare`: optional short context and two titled columns containing 2–4 aligned row pairs. Each cell is limited to two projection lines and uses a native editable text object in a bounded card; it is intended for direct comparisons such as two concepts, conditions, or before/after states.
+
+Classroom decks may also declare an optional `teachingPlan` in source JSON:
+
+```js
+{
+  objectives: [{ id: 'observe', statement: '用观察记录描述水的状态变化' }],
+  slideMappings: [{
+    slideId: 'slide-1', objectiveIds: ['observe'], role: '探究练习',
+    studentAction: '标记现象发生的位置', understandingCheck: '学生能用记录指出变化前后的状态',
+  }],
+}
+```
+
+The chat tool returns a `quality.teachingCoverage` declaration report with `not-declared`, `incomplete`, or `mapped` status and concrete hints. A complete status means only that every declared objective is referenced by a page and has an associated understanding check, the plan declares at least one student action, and every explicitly mapped page has a role. Unmapped pages such as covers or section dividers remain listed as informational hints and do not make coverage incomplete. The report does not evaluate pedagogical quality, academic accuracy, or learning outcomes. Generic decks can omit the plan. Mapped pages also place the declared objective statements, page role, student action, and understanding check in the PPTX speaker notes; these declarations are labeled unverified. Revising visible content on a mapped slide retains the plan but marks its speaker notes as requiring review; `newTeachingPlan` replaces the full declaration and clears those review markers. Unmapped and generic pages retain their existing source notes.
 
 Generation computes a deterministic layout budget before writing OOXML: titles may occupy at most two lines; ordinary bullet pages have at most 14 estimated projection lines; table and chart pages have at most three bullet lines; column and axis labels have fixed width budgets. Inputs outside those bounds fail before an output directory is published. This does not rely on PptxGenJS `fit` behavior, which PowerPoint applies dynamically after opening the file.
 
 PPTX text requests `Noto Sans SC`. The macOS/Windows Office application may substitute a locally available CJK font if that face is absent; the direct PDF embeds the bundled Noto Sans SC subset. Font embedding in Office files is not provided by this writer, so a final target-machine Office check remains required for pixel-identical typography.
 
-`revisePresentationBundle` creates a new bundle from `source.json`, updates exactly one named slide, and increments only that slide’s version. Unmodified slide XML is intended to be preserved byte-for-byte. ⚠️ 2026-09-12 audit: `revisePresentationBundle` re-generates the bundle from `source.json` (`index.mjs:657-667`), so this claim is **not currently verified by any test** — treat it as intent, not a guarantee. A chart-only update can legitimately leave its slide XML relationship unchanged; in that case the verifier checks the target `ppt/charts/chart*.xml` instead.
+`revisePresentationBundle` creates a new bundle from `source.json`, updates exactly one named slide, and increments only that slide’s version. It preserves the optional teaching plan by default, recalculates its coverage report, and marks a retained mapping for the revised slide as review-needed when visible content changes. The plugin verifies untouched slide XML against the prior PPTX byte-for-byte. A chart-only update can legitimately leave its slide XML relationship unchanged; in that case the verifier checks the target `ppt/charts/chart*.xml` instead. Each revision renders its own final PPTX preview when LibreOffice is available; it never copies an older preview.
 
 `plugin.mjs` registers:
 
-- `mochi_ppt_create` for new decks, with optional `table` or `chart` per slide.
-- `mochi_ppt_revise` for a specified page, using the returned `sourcePath` and optional `newTitle`, `newBody`, `newTable`, or `newChart`.
+- `mochi_ppt_create` for new decks, with optional `teachingPlan`, `table`, or `chart` per slide.
+- `mochi_ppt_revise` for a specified page, using the returned `sourcePath` and optional `newTitle`, `newBody`, `newTable`, `newChart`, or whole-plan replacement via `newTeachingPlan`.
 - `ppt_inspect` to read an existing `.pptx` back as a structured page model (read-only).
 - `mochi_ppt_render` to render a generated `.pptx` back to PNG (via LibreOffice → PDF → pdfjs) so the deck can be **visually** checked before delivery. **This is a mandatory step in `mochi_ppt_create`'s tool description**, not an optional extra.
 
-The plugin uses the alpha runtime’s normal root dependency `@deepseek-ai/dsh-tools@0.1.3-alpha.1`; it never imports that API through a sibling plugin’s `node_modules`. `jszip` is a runtime dependency because revision verification and `ppt_inspect` open the PPTX after generation. `@mochi/pdf-layout` (workspace package `packages/mochi-pdf-layout`) is also a **hard runtime dependency** — `index.mjs` imports `drawTextLine` and friends from it; `pdfjs-dist` / `@napi-rs/canvas` are needed by `mochi_ppt_render`. ⚠️ 2026-09-12: the pinned tgz `mochi-pdf-layout-0.1.0-a3f9ed33.tgz` in `vendor/local-plugins/` **does not export `drawTextLine`**, which is why `test-package-resources` currently fails — the tgz must be repacked.
+The plugin uses the alpha runtime’s normal root dependency `@deepseek-ai/dsh-tools@0.1.3-alpha.1`; it never imports that API through a sibling plugin’s `node_modules`. `jszip` is a runtime dependency because revision verification and `ppt_inspect` open the PPTX after generation. `@mochi/pdf-layout` (workspace package `packages/mochi-pdf-layout`) is also a **hard runtime dependency** — `index.mjs` imports `drawTextLine` and friends from it; `pdfjs-dist` / `@napi-rs/canvas` are needed by `mochi_ppt_render`. The desktop currently pins `mochi-pdf-layout-0.1.0-c4a3d2c2.tgz`; its installed module exports `drawTextLine`, and the latest resource packaging check passed.
 
 ## Reading a deck back (`ppt_inspect`)
 
@@ -42,7 +59,7 @@ Honesty guarantees:
 
 ## Teaching sample and checks
 
-`fixtures/teacher-lesson.mjs` provides a six-slide, editable Grade 7 water-cycle and water-conservation lesson. Its poll values are explicitly marked as classroom discussion example data, not records about a real class.
+`fixtures/teacher-lesson.mjs` provides a seven-slide, editable Grade 7 water-cycle and water-conservation lesson. It declares two learning objectives and six mapped teaching pages, leaving the cover unmapped. It uses paired activity rows for observation clues and recording methods, a native process diagram, a table, a chart, paired action-design and completion criteria, and a closing question. Its poll values are explicitly marked as classroom discussion example data, not records about a real class; the observation activity refers to the following simplified path diagram rather than an absent figure.
 
 ```sh
 node fixtures/generate-teacher-sample.mjs /absolute/new-output-directory
@@ -50,7 +67,9 @@ npm test
 MOCHI_PRESENTATIONS_PLUGIN_URL=/absolute/Resources/mochi/plugins/mochi-presentations/plugin.mjs node test-plugin.mjs
 ```
 
-The first command emits `presentation.pptx`, `presentation.pdf`, `source.json`, and `manifest.json`. The unit suite opens the PPTX with JSZip, checks native editable table/chart OOXML and the embedded chart workbook, validates bounded layout rejection, and proves targeted revision preserves untouched slides. The staged-plugin command is intentionally run from the packaged resource path so the bare `@deepseek-ai/dsh-tools` import resolves through the alpha runtime root `Resources/mochi/node_modules`.
+The first command emits `presentation.pptx`, `presentation.pdf`, `source.json`, and `manifest.json`; it also emits `presentation-preview.pdf` when LibreOffice successfully converts the final PPTX. The unit suite opens the PPTX with JSZip, checks native editable table/chart OOXML and the embedded chart workbook, validates bounded layout rejection, and proves targeted revision preserves untouched slides. When LibreOffice is installed, it also checks preview PDF page count, visible revised text, and source/preview hashes. The staged-plugin command is intentionally run from the packaged resource path so the bare `@deepseek-ai/dsh-tools` import resolves through the alpha runtime root `Resources/mochi/node_modules`.
+
+`manifest.quality` records an objective structure check against the final PPTX bytes and SHA-256. It blocks page-count and clearly undersized text-shape failures and hints when three consecutive pages use `title-body`. When present, `quality.teachingCoverage` audits only declared plan fields and reference completeness; it does not certify lesson quality. The inspector reports each shape's largest run size; a passing font check cannot prove that every run is large enough. `quality.status: needs-visual-review` remains until someone actually views the latest rendered deck. A generated preview and a passing structure check do not certify visual quality or subject accuracy.
 
 ## Reuse decision (2026-09-08)
 

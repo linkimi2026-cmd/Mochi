@@ -5,15 +5,17 @@
   "verification": {
     "manifestPath": ".github/windows-native-package-inputs.json",
     "manifestIsTheOnlyUnhashedSnapshotFile": true,
-    "expectedFileCount": 505,
-    "expectedFileBytes": 92001632
+    "expectedFileCount": 810,
+    "expectedFileBytes": 95011158
   },
   "externalBuildInputs": [
     {
       "name": "campus-static-client",
-      "source": "private campus branch root built by pnpm 11.22.0",
-      "requiredRelativePath": "mochi-dist/client/assets/embed.js",
-      "includedInSnapshot": false
+      "source": "Reviewed static release input shared with the verified Mac installer; private build branch sibling mochi-campus-release-input/",
+      "requiredRelativePath": "mochi-campus-release-input/campus-static/client/assets/embed.js",
+      "includedInSnapshot": false,
+      "expectedManifestSha256": "0d7a81bef332dd9a82a3f2d650d9f6e50c6c31303391ba13a5ea6024c21ca38a",
+      "reason": "The campus working tree contains uncommitted UI changes; rebuilding remote main would produce different interfaces. Keep this static-only input outside the public Mochi source snapshot."
     },
     {
       "name": "playwright-chromium-win32-x64",
@@ -59,32 +61,32 @@
     },
     {
       "path": "apps/desktop/build/ICON-SOURCE.md",
-      "sha256": "72dcf04b854c4a00c9a6829ac42051c92143e33dc21ed54485ab799b9fa68f65",
-      "bytes": 439,
+      "sha256": "cfdc9810b21953a1cb63e5485f20cf6fc854f1d913827c5f969bcdb0f8a2f035",
+      "bytes": 1442,
       "categories": [
         "desktop-source"
       ]
     },
     {
       "path": "apps/desktop/build/icon.icns",
-      "sha256": "58c4fb90316fc7eda4d2c54a643e34bc270cf6b1b509923e7c0227298231f5af",
-      "bytes": 1436570,
+      "sha256": "d239ed196af64996f60576375573473247055fb041959192da25b042fb6ec71f",
+      "bytes": 138506,
       "categories": [
         "desktop-source"
       ]
     },
     {
       "path": "apps/desktop/build/icon.ico",
-      "sha256": "4e16a84b3f2cade227c72312bf45870568d51e179cfa69a9e1974efba415a8c1",
-      "bytes": 115739,
+      "sha256": "3c65842e9f3f7095668f953613e82991a069dcb59eeb906d5ad55bad402b20b0",
+      "bytes": 17290,
       "categories": [
         "desktop-source"
       ]
     },
     {
       "path": "apps/desktop/build/icon.png",
-      "sha256": "7a99a8712390833c95bce4282584cbfa38cadfdf0d486c7091c91395d5e6ecc8",
-      "bytes": 728893,
+      "sha256": "b9d3b028323f43c5ec58b50ad1f2d77a6eb7390891645acc1ee450182774a0e1",
+      "bytes": 35226,
       "categories": [
         "desktop-source"
       ]
@@ -93,14 +95,6 @@
       "path": "apps/desktop/electron/db/index.ts",
       "sha256": "ea4bc97fefb882a9ad105005344dc155f42037dce6b0307cfb325018158361ae",
       "bytes": 1021,
-      "categories": [
-        "desktop-source"
-      ]
-    },
-    {
-      "path": "apps/desktop/electron/db/migrations/.nosync",
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "bytes": 0,
       "categories": [
         "desktop-source"
       ]
@@ -323,16 +317,16 @@
     },
     {
       "path": "apps/desktop/electron/dsh/doctor-window.ts",
-      "sha256": "bb3dec0887ac806e93fc6ff8171e43f8dfe0186ee2890463c6f141e748dfdc3d",
-      "bytes": 14314,
+      "sha256": "e5d5bc4956d5fa30110d4bf66599b678ca6767cbe18300bb193fdbe338ca1359",
+      "bytes": 18958,
       "categories": [
         "desktop-source"
       ]
     },
     {
       "path": "apps/desktop/electron/dsh/doctor.ts",
-      "sha256": "d5191977e908e7a0d7ff0db0110ce332d0f2cc78ee4cea18485c250a01e7ce6f",
-      "bytes": 29389,
+      "sha256": "f4958c197152781fa1536df44f1cdf2e15e99f05033813e25e47a16b2e175f40",
+      "bytes": 29902,
       "categories": [
         "desktop-source"
       ]
@@ -381,16 +375,16 @@
     },
     {
       "path": "apps/desktop/electron/dsh/profile.ts",
-      "sha256": "a77838335ce9c8241cde5182f3abc40ffa857853d14a1d0ca268f8e68129cc79",
-      "bytes": 5035,
+      "sha256": "517354d5689b6b156427579bd8b8ceeae797b3e06c40695323e5811f86d48ac0",
+      "bytes": 5208,
       "categories": [
         "desktop-source"
       ]
     },
     {
       "path": "apps/desktop/electron/dsh/protocol.ts",
-      "sha256": "95a552c3707a309de43574c9db93f4ad7a886ddc862c728a958a65cd383c818e",
-      "bytes": 10507,
+      "sha256": "42fa91f5837d52b64ae2f294a902cc68243f286d0a57a91622e3d4d3ebcb0dda",
+      "bytes": 13085,
       "categories": [
         "desktop-source"
       ]
@@ -405,8 +399,8 @@
     },
     {
       "path": "apps/desktop/electron/dsh/seed.ts",
-      "sha256": "359564b2407bab3a374520d236bf1583d7480c2c3fad6f796edddca2e539d295",
-      "bytes": 13210,
+      "sha256": "fa56c6b23c2a2b2627dc18dc14cdff3ebf77a4d55c92ff6c8a3d3a7685d4d983",
+      "bytes": 13966,
       "categories": [
         "desktop-source"
       ]
@@ -421,16 +415,16 @@
     },
     {
       "path": "apps/desktop/electron/dsh/web-host.ts",
-      "sha256": "308e66977e922a746e3698ae64d0b152ed0fd2c9264b71628661688b98abcd59",
-      "bytes": 8506,
+      "sha256": "d29dcd0e0be01595190a84b7678d8aea237fa491d402b76c8dd96891c8c246b1",
+      "bytes": 9904,
       "categories": [
         "desktop-source"
       ]
     },
     {
       "path": "apps/desktop/electron/lan-attention-preload.ts",
-      "sha256": "b5a985d235b1ad61e5e9726181653c464b3b7e255071c850b3fa9e31f21d32c4",
-      "bytes": 1759,
+      "sha256": "7130e442699059e9ea8d15cfe08048221d44bd74fe4165f2d653d42924491e41",
+      "bytes": 8351,
       "categories": [
         "desktop-source"
       ]
@@ -445,8 +439,8 @@
     },
     {
       "path": "apps/desktop/electron/main.ts",
-      "sha256": "b70a652e71702cce5d5cd43eac0c4047a82788ee11eb9a637c744af36feff3e4",
-      "bytes": 39003,
+      "sha256": "8458e3c9f5deb7c5eb4c4ff0592393ce0782ae0288966b79fb53b5b3da66a86a",
+      "bytes": 59178,
       "categories": [
         "desktop-source"
       ]
@@ -485,24 +479,24 @@
     },
     {
       "path": "apps/desktop/package-lock.json",
-      "sha256": "22d3ebd55cb0f15031e8c7ae62eb2458a8bd03f2596f5dc1051163bb5dbb6dbf",
-      "bytes": 793331,
+      "sha256": "9680951376135e2f19bd1094bc681ba6ea384d7db47192cb67dd684150f1da78",
+      "bytes": 797325,
       "categories": [
         "desktop-source"
       ]
     },
     {
       "path": "apps/desktop/package.json",
-      "sha256": "762ccc780d90b0735b550721a5e07b4c52cf5f221f1a8c15bd86050ac9711a99",
-      "bytes": 34739,
+      "sha256": "457ccbd9ccf7eb07fa475b509ed0bfc8512309251ebaed0ec2911b02dd4466a8",
+      "bytes": 36870,
       "categories": [
         "desktop-source"
       ]
     },
     {
       "path": "apps/desktop/resources/mochi-web/classroom-agent-presets/classroom/agent.cordis.yml",
-      "sha256": "40a4a149e28adaf3d89f1484a783e1bc5213987347362c203a8ab4defc96b910",
-      "bytes": 2258,
+      "sha256": "9e2763c11a81776c9c1001292c59145cdd687286ae3158178b04e69df1f5fa9e",
+      "bytes": 3375,
       "categories": [
         "desktop-source"
       ]
@@ -517,8 +511,8 @@
     },
     {
       "path": "apps/desktop/resources/mochi-web/patches/core.patch.yml",
-      "sha256": "3d598b97c12b0c8996e4bb1e829405bab14687dbfe39e1ebc2400a398c5323dd",
-      "bytes": 5349,
+      "sha256": "fb191158a51000ec5232f8de662e0a4d6c05dfe9e9e6daf2f208557349917c49",
+      "bytes": 5633,
       "categories": [
         "desktop-source"
       ]
@@ -541,16 +535,16 @@
     },
     {
       "path": "apps/desktop/resources/mochi-web/runtime-profile.cjs",
-      "sha256": "572b976829ba2c55e7eb62244c98f1f37835bcc83f73511cf724257964eeed8b",
-      "bytes": 31007,
+      "sha256": "2721045392ce2a8e9b890e84fc6bdbfe7d8d0ad0808a33a37b5aec495d36903e",
+      "bytes": 37119,
       "categories": [
         "desktop-source"
       ]
     },
     {
       "path": "apps/desktop/resources/mochi-web/runtime-profile.json",
-      "sha256": "19b8ab0d9fb0ef0ad71cc673251b3b6415f5c3ec06b778ec746633737297d432",
-      "bytes": 7300,
+      "sha256": "80d788b082fc084cca2a3232d00b5d26dc4f7c12ed2746d2104dbad45843358a",
+      "bytes": 8801,
       "categories": [
         "desktop-source"
       ]
@@ -573,24 +567,24 @@
     },
     {
       "path": "apps/desktop/scripts/dev.mjs",
-      "sha256": "a5d56953ebcc921a2741a78552fbf74b2df413eb36695ee980efa755ccf85c12",
-      "bytes": 3358,
+      "sha256": "bacc6debdf0aa272d14f3fa42deaba0e1edc9b05665720f5de498a33ca133592",
+      "bytes": 4977,
       "categories": [
         "desktop-source"
       ]
     },
     {
       "path": "apps/desktop/scripts/package-desktop.cjs",
-      "sha256": "520e64932c1741feb6dc37428de2ecb1d16c374f616732eb2861d95cfb50585e",
-      "bytes": 8186,
+      "sha256": "c02a263d44168efe87a723bd4e0d8b3957c8b19c9ad0122d511bbab75374cbd2",
+      "bytes": 10415,
       "categories": [
         "desktop-source"
       ]
     },
     {
       "path": "apps/desktop/scripts/prepare-mochi-resources.cjs",
-      "sha256": "c92e0ac7ca293c0f41334aa6228767365dd41b4489aecf6cf01ae13cf13f085f",
-      "bytes": 38886,
+      "sha256": "deb231599ce833f97bfe0fb4e416510a7e7f808743f51f8a607ce29dfdd5df41",
+      "bytes": 43854,
       "categories": [
         "desktop-source"
       ]
@@ -605,32 +599,32 @@
     },
     {
       "path": "apps/desktop/scripts/seed-packaging-keys.cjs",
-      "sha256": "fa1443bae2c47149d6d7769c6379ca5e057072da041b5f02f7f55250bbbb106f",
-      "bytes": 11930,
+      "sha256": "875c54edd74e92deeaaaf92224dd12f672ed632a7e0ad0054c4a08b3343f8959",
+      "bytes": 12313,
       "categories": [
         "desktop-source"
       ]
     },
     {
       "path": "apps/desktop/scripts/test-classroom-role-runtime.mjs",
-      "sha256": "84bfdd36530124ccd8779995c95a281192693793a3fd34b16941cf8fd611c805",
-      "bytes": 11443,
+      "sha256": "d93d4bb61292242d3c6451e4009b9ba4a2ab40e04813c347e77b5c20cb62d106",
+      "bytes": 15226,
       "categories": [
         "desktop-source"
       ]
     },
     {
       "path": "apps/desktop/scripts/test-doctor-window.mjs",
-      "sha256": "cc60b0e2fcc4720cad7b3ffcb33fe6ab66d8e7e641fb2585ea6c44462eb21887",
-      "bytes": 14130,
+      "sha256": "a222c088d7c4b47d30ebc9cdaf610e792054dc014e31fb156b9a26c25dfe03b4",
+      "bytes": 17146,
       "categories": [
         "desktop-source"
       ]
     },
     {
       "path": "apps/desktop/scripts/test-doctor.mjs",
-      "sha256": "83a748fcdd34219810b978138b37f2c2302520cb5c41847e3896d9ed4c9c58fc",
-      "bytes": 9826,
+      "sha256": "bdd00db0e4f6e1c06121038c7d8a5226ee77269d0c9705be4a0be8f6c512505c",
+      "bytes": 10831,
       "categories": [
         "desktop-source"
       ]
@@ -653,8 +647,8 @@
     },
     {
       "path": "apps/desktop/scripts/test-installer-config.mjs",
-      "sha256": "a24df09f7c8de60f8684167e020f74be5ccce701ac35a95a0230e6eeab4402f4",
-      "bytes": 15386,
+      "sha256": "5f5deed0d1abe6670eab97ad2660e345a7bc85eb9aee487543029cd660ff2148",
+      "bytes": 18653,
       "categories": [
         "desktop-source"
       ]
@@ -669,8 +663,8 @@
     },
     {
       "path": "apps/desktop/scripts/test-package-resources.mjs",
-      "sha256": "232703e960afd69f84e77b0cf738e4209ce41e871a8430d137e7bec32447af8d",
-      "bytes": 35333,
+      "sha256": "1fb3aa8a62aed1a7744609642df8ea62aa3abb7be58a661f884c39772c38b395",
+      "bytes": 38135,
       "categories": [
         "desktop-source"
       ]
@@ -693,8 +687,8 @@
     },
     {
       "path": "apps/desktop/scripts/test-runtime-profile.mjs",
-      "sha256": "bdcf4e472a71fda5c8448c1b839bdf79cb5e41330b331a8bc0f1069c73d49d54",
-      "bytes": 31540,
+      "sha256": "9024aaffd56a9eca456b7704d81233931ed841de4af474cae3dcbd004210afb8",
+      "bytes": 31995,
       "categories": [
         "desktop-source"
       ]
@@ -733,16 +727,16 @@
     },
     {
       "path": "apps/desktop/scripts/test-web-host-runtime.mjs",
-      "sha256": "99719566096d95f56c8e0ddc8d0bfb48f70e07adf0beb0d12ade3f9256f6f534",
-      "bytes": 3837,
+      "sha256": "6f38849b31e4b3937232f603e897fcda972b8bc4e5e6dc66d57ac187baf497cc",
+      "bytes": 6033,
       "categories": [
         "desktop-source"
       ]
     },
     {
       "path": "apps/desktop/tsconfig.json",
-      "sha256": "59ce7588733dc6f0fca960a92e5201bdf7b085082d3cccb28b44b8c9a0858c13",
-      "bytes": 497,
+      "sha256": "6450920fb819f35bd04d00d350a95636c2c8f01a369c4eb22e354aa1e9af82e6",
+      "bytes": 694,
       "categories": [
         "desktop-source"
       ]
@@ -757,8 +751,8 @@
     },
     {
       "path": "client-plugins/jxl-brand/client.js",
-      "sha256": "2147f79865573108ab0bf393148655e18ac8938773f2290f1eff68e41e1ed86d",
-      "bytes": 47444,
+      "sha256": "0b28afd66d6d74f7850f268e0662a241fc882c96db284f7826ed3ecc121da52e",
+      "bytes": 678852,
       "categories": [
         "staged-plugin:jxl-brand"
       ]
@@ -773,16 +767,16 @@
     },
     {
       "path": "client-plugins/jxl-brand/package.json",
-      "sha256": "7fa66b72a76dcfd5f570fe7a806d425a22d82332d0c27833672892c5c12e44b0",
-      "bytes": 615,
+      "sha256": "c22878e83d170ab6246c221f321722594e7806537fe3c5a8333eb3806d70b22c",
+      "bytes": 699,
       "categories": [
         "staged-plugin:jxl-brand"
       ]
     },
     {
       "path": "client-plugins/jxl-campus/client.js",
-      "sha256": "e598c2d3251f0018993434d4808636656c1a10c16f7e922d079b6f0bc13cb642",
-      "bytes": 28441,
+      "sha256": "f3451fb787d44f050d9659b0350b970731bdee09184423d7b790993ab11a4fcd",
+      "bytes": 33895,
       "categories": [
         "staged-plugin:jxl-campus"
       ]
@@ -829,48 +823,48 @@
     },
     {
       "path": "client-plugins/jxl-theme/assets/icons/icon.svg",
-      "sha256": "888cca3ad903bfd5480d9726875f0e70e8cadc266b2d5d3d17c794522775f50b",
-      "bytes": 544,
+      "sha256": "af1785551d83a33cbfb2a3ce6869973dde0d9f6e406e84f4656c4f182184f18c",
+      "bytes": 3903,
       "categories": [
         "staged-plugin:jxl-theme"
       ]
     },
     {
       "path": "client-plugins/jxl-theme/assets/mochi-loading.json",
-      "sha256": "b0f786f7c6da5f7773b59e9fdab718cc9f5abcbd1c2313d5ddfe42dfefe928c1",
-      "bytes": 12465,
+      "sha256": "f4380666bf94aac24139a069b503eb702751bb71696587c5e4f43ea5d28a6e16",
+      "bytes": 35228,
       "categories": [
         "staged-plugin:jxl-theme"
       ]
     },
     {
       "path": "client-plugins/jxl-theme/client.js",
-      "sha256": "ffe98c4d0b989619d55fa54aad5b3e895644ad5bf530095a30841876ed7c543a",
-      "bytes": 27368,
+      "sha256": "aaa9164dd55fbf39acc03061e6a16a7838cc6c751ea2e788e7df9177d52ef639",
+      "bytes": 89766,
       "categories": [
         "staged-plugin:jxl-theme"
       ]
     },
     {
       "path": "client-plugins/jxl-theme/index.mjs",
-      "sha256": "d9e499a9d45d3455e56d4a82ffb066829d35795934fa2489d6f79bd049f8043e",
-      "bytes": 3767,
+      "sha256": "b73379baa6579e4f39af9b0e152a39a6602adba78b751afcc9eb738d3de67229",
+      "bytes": 9121,
       "categories": [
         "staged-plugin:jxl-theme"
       ]
     },
     {
       "path": "client-plugins/jxl-theme/package.json",
-      "sha256": "1e2de330a6c13c7fea899a14ac1109c6cb32d9610fe7695a8ea9b63cafa6f48d",
-      "bytes": 361,
+      "sha256": "4dab8d0da6b64e6fdd0b7904d55195258584f0faa79b68224492fbad1cb5f9e4",
+      "bytes": 654,
       "categories": [
         "staged-plugin:jxl-theme"
       ]
     },
     {
       "path": "client-plugins/mochi-lan/client.js",
-      "sha256": "e8c7b2b37c8d31eb09d99a212af76fb1d1d860041da675301a052f70cc6d4e22",
-      "bytes": 74911,
+      "sha256": "fd46c7b06c7d6a663f831cf9c0cb332aedd9e9f6cac405a9d5c69dcb1a794e1e",
+      "bytes": 117408,
       "categories": [
         "staged-plugin:mochi-lan-client"
       ]
@@ -893,32 +887,32 @@
     },
     {
       "path": "client-plugins/mochi-model-presets/client.js",
-      "sha256": "c9f4797df9975caa5625d9ce589207c664ba709571f9fecec59bd81fd5361dce",
-      "bytes": 21893,
+      "sha256": "a7fe9fee26ac45e3b90b0ddd01a64c9c7461d236938b235a11eb37da2ae624a5",
+      "bytes": 53432,
       "categories": [
         "staged-plugin:mochi-model-presets"
       ]
     },
     {
       "path": "client-plugins/mochi-model-presets/index.mjs",
-      "sha256": "149dcf0546d29ea1ceec76721ecf7e86c450532b3396f66c49b747bb2f490d7c",
-      "bytes": 431,
+      "sha256": "cf28361c83c959dd7fd6b08fafe9ea32877af97b002a2f7d4bbe9a75c491396f",
+      "bytes": 765,
       "categories": [
         "staged-plugin:mochi-model-presets"
       ]
     },
     {
       "path": "client-plugins/mochi-model-presets/package.json",
-      "sha256": "5b85db2ae5b4e48bceb23e34bbdc9303b2337995e14c6c03537076aeb60f8a4a",
-      "bytes": 630,
+      "sha256": "5b8f2e266c0eca2573ef9871b85c981c5f42913b6a8012865b9f7a29dbfa59a2",
+      "bytes": 679,
       "categories": [
         "staged-plugin:mochi-model-presets"
       ]
     },
     {
       "path": "client-plugins/teacher-agent-presets/classroom-coordination/agent.cordis.yml",
-      "sha256": "14eaf9beb8a7c7d63ac520e2711e6d347076b52132a2ac02122abf8d727bdde5",
-      "bytes": 4494,
+      "sha256": "bab9bf85d04251d4359c40a4133e3052f89dc576f9d78ea045ea498fb9abbc9b",
+      "bytes": 5503,
       "categories": [
         "teacher-preset"
       ]
@@ -949,8 +943,8 @@
     },
     {
       "path": "client-plugins/teacher-agent-presets/lesson-planning/agent.cordis.yml",
-      "sha256": "99773592f43b180361c9744e02feebcaecaccc804a52cdc3ed27d5788994ca34",
-      "bytes": 4982,
+      "sha256": "1b500a075c04107701e280cf9ab78ef4a1f7eef569c962599944ec2a57654074",
+      "bytes": 5623,
       "categories": [
         "teacher-preset"
       ]
@@ -981,8 +975,8 @@
     },
     {
       "path": "client-plugins/teacher-agent-presets/README.md",
-      "sha256": "1f0974ef8ffd2fdc48e87c069266a8b011b6d3842b8c7e91e141f5022657d93f",
-      "bytes": 4031,
+      "sha256": "e50145ba58e0f2930cdb7bf6ac6bd737355a518109408d55bbd0eb65af1915bf",
+      "bytes": 4021,
       "categories": [
         "desktop-source"
       ]
@@ -1189,8 +1183,8 @@
     },
     {
       "path": "plugins/mochi-campus/connection.mjs",
-      "sha256": "a5385df41b987630e0e402790700ca3cfacf42eddc17289004ddb276dc0056bd",
-      "bytes": 10773,
+      "sha256": "90b322b405b5c71cad7939fc54dd64a7c3de52fb59ea1fe51c485229d5375ebd",
+      "bytes": 10794,
       "categories": [
         "staged-plugin:mochi-campus"
       ]
@@ -1205,32 +1199,32 @@
     },
     {
       "path": "plugins/mochi-campus/package.json",
-      "sha256": "5d3aea9710d1e9087393b9749977a7ba990ffdc08bf17ffff238d17ab589a7af",
-      "bytes": 382,
+      "sha256": "4937e573e2fc8cf7adb7e4c50f35c14a3cae3b424c389c1c90e8dccaba55f757",
+      "bytes": 400,
       "categories": [
         "staged-plugin:mochi-campus"
       ]
     },
     {
       "path": "plugins/mochi-dispatch/index.mjs",
-      "sha256": "d050dfe165637811d17fa0967bf86d2b290bc1268227be74ef25f15f151667ea",
-      "bytes": 35625,
+      "sha256": "2b7e5d918b3c3ef08296f200b4d2beaaf17fd6d37d29a99947185d820eb9b3cb",
+      "bytes": 37457,
       "categories": [
         "staged-plugin:mochi-dispatch"
       ]
     },
     {
       "path": "plugins/mochi-dispatch/lan-transport.mjs",
-      "sha256": "539040055ff0d0399f63276eeac5c4255fdb4f9e3f208e30253b4d0f3b9987de",
-      "bytes": 22541,
+      "sha256": "06d03534dd690c34089f005f4740ba5eb336551e7a9b1f19f1a5a38a16a9d4c2",
+      "bytes": 23866,
       "categories": [
         "staged-plugin:mochi-dispatch"
       ]
     },
     {
       "path": "plugins/mochi-dispatch/package.json",
-      "sha256": "ae41c78a1291ddbf461b0d0aba8c68b01d5efa3473110f5b0000989e83046ac6",
-      "bytes": 422,
+      "sha256": "398aed8e3848c370287ee7d66d81aa8aeec4c719960a3e58b9638d7014fd00ff",
+      "bytes": 440,
       "categories": [
         "staged-plugin:mochi-dispatch"
       ]
@@ -1261,8 +1255,8 @@
     },
     {
       "path": "plugins/mochi-documents/package.json",
-      "sha256": "cca5f7b29c91dfbdefb8c10b1b0628465b8fd3f81dc5567b5838961829bc5caa",
-      "bytes": 621,
+      "sha256": "611eaf64874a18d716d1d68d6a1b555e2368b10a202e3c6ee402e253abe61cd6",
+      "bytes": 663,
       "categories": [
         "staged-plugin:mochi-documents"
       ]
@@ -1285,8 +1279,8 @@
     },
     {
       "path": "plugins/mochi-grades/package.json",
-      "sha256": "906dbdb816c793dc3bdfeacb42ab6bb3ce3261e47719990ece0e3e55d1fa9331",
-      "bytes": 515,
+      "sha256": "469b0845c041167cd2fb036b6a0c7686609ef84cbd4ea13c5540f3bbeecfd776",
+      "bytes": 557,
       "categories": [
         "staged-plugin:mochi-grades"
       ]
@@ -1317,16 +1311,16 @@
     },
     {
       "path": "plugins/mochi-hello/index.mjs",
-      "sha256": "928519efa3fbf8b0737174dfed69b697419cec5070aa428a1b227b0094872932",
-      "bytes": 2550,
+      "sha256": "fd517c2998fc0915173be56ec5c66f2bdf0a43477e4a7a3dbe994bb61fc86ebf",
+      "bytes": 4975,
       "categories": [
         "staged-plugin:mochi-hello"
       ]
     },
     {
       "path": "plugins/mochi-hello/package.json",
-      "sha256": "f18eaf8e2db94ce35c6d417d453ecb171ed394d5c3796a10495a2945aff0e37d",
-      "bytes": 448,
+      "sha256": "7473ff5889a6b95b7a835671ac0986de42b090b592aff41c1966ffb633d2b5d2",
+      "bytes": 466,
       "categories": [
         "staged-plugin:mochi-hello"
       ]
@@ -1365,8 +1359,8 @@
     },
     {
       "path": "plugins/mochi-knowledge/package.json",
-      "sha256": "6e97eee0ff2ca43df2374cd7100a18f8a4e1a2ea721204fb477986838b4c9126",
-      "bytes": 960,
+      "sha256": "dbff04d11972d76b2ce51dcd2f001fa008bdaa21919eef3e8f5d58cfd62ce71d",
+      "bytes": 1071,
       "categories": [
         "staged-plugin:mochi-knowledge"
       ]
@@ -1381,88 +1375,88 @@
     },
     {
       "path": "plugins/mochi-lan/host-bridge.mjs",
-      "sha256": "4567ed160989a03214fb7dee6c39f52a3aa54c5b801bb412a113cb40dfd6b372",
-      "bytes": 12166,
+      "sha256": "bef55f8e5c3268b8d63b644908378d5b57868cd0b35ebc599c84ba7152cf0147",
+      "bytes": 16666,
       "categories": [
         "staged-plugin:mochi-lan"
       ]
     },
     {
       "path": "plugins/mochi-lan/index.mjs",
-      "sha256": "ea134d30a8755b63ad5fc0eadf6fa7f35ab40de747b5124231ee794c6ea5a864",
-      "bytes": 1893,
+      "sha256": "d6d2b1a8dc43bbb8a0f0a002657bea7650065643e3f4c3a1fecd8aebaf1fa56f",
+      "bytes": 1922,
       "categories": [
         "staged-plugin:mochi-lan"
       ]
     },
     {
       "path": "plugins/mochi-lan/lan-service.mjs",
-      "sha256": "128488a8a5614a2f573478e6e113df4c1d08c300b20e2f150a0535cdcbed4273",
-      "bytes": 126441,
+      "sha256": "9467eba5513f71162c874516e8b57caf04639fb9ba576f2282baf76bd9cdcaf7",
+      "bytes": 170791,
       "categories": [
         "staged-plugin:mochi-lan"
       ]
     },
     {
       "path": "plugins/mochi-lan/package.json",
-      "sha256": "a03b090bd9073bb46e6e21371ba9e35564d6d9565317cad5ae9ed1354c78cdc1",
-      "bytes": 365,
+      "sha256": "27f9ee025517a603a75a310ad043c453686f24133a518e4070d1b73e195bfb34",
+      "bytes": 591,
       "categories": [
         "staged-plugin:mochi-lan"
       ]
     },
     {
       "path": "plugins/mochi-llm-mimo/index.mjs",
-      "sha256": "c22ece14bf801a43d65711f0c4bce2dfff6b14d6dda5f509a88f45c42c1ae1ca",
-      "bytes": 4903,
+      "sha256": "73420a78f358af9943bd489fcf68d9774c07ab5d30d82d3e1405a9bacc64240a",
+      "bytes": 9542,
       "categories": [
         "staged-plugin:mochi-llm-mimo"
       ]
     },
     {
       "path": "plugins/mochi-llm-mimo/package.json",
-      "sha256": "f37da0cedeff86ba4b02e5d6cd58b49310f7b7795c1a3876e218038aa93eadb8",
-      "bytes": 283,
+      "sha256": "17cde53bbc2385c1564104d8dd596b0505756cc886822dc2215bacbc5e422b84",
+      "bytes": 958,
       "categories": [
         "staged-plugin:mochi-llm-mimo"
       ]
     },
     {
       "path": "plugins/mochi-memory/active-context.mjs",
-      "sha256": "1e9b3984d21052fd623252611b8d7ebd205e653589a5b082ebc8f29b4c3a23a3",
-      "bytes": 9745,
+      "sha256": "9b6a7f503f1c7ca7bfc47a11b5ff2c9c23b8b4513ac2442d5642c17b77abb92e",
+      "bytes": 13486,
       "categories": [
         "staged-plugin:mochi-memory"
       ]
     },
     {
       "path": "plugins/mochi-memory/index.mjs",
-      "sha256": "610b0c23a85c2cdcdfb25cc78d183def511ba46d4327b2aed15332cdf76a822e",
-      "bytes": 11809,
+      "sha256": "85d8cc85819fbcac446ff2161e15055ffa2205acf6094f12c3c4eee29804f182",
+      "bytes": 17412,
       "categories": [
         "staged-plugin:mochi-memory"
       ]
     },
     {
       "path": "plugins/mochi-memory/mem-store.mjs",
-      "sha256": "e77c2e07bae0fbada886f76e6d7b3887dffbdcb6a54c0544c4c481f62aaefb9f",
-      "bytes": 20361,
+      "sha256": "909eacf23e7820180760ef3830135db716abfe0338f4c7d7cec9da89bdf9a57d",
+      "bytes": 20413,
       "categories": [
         "staged-plugin:mochi-memory"
       ]
     },
     {
       "path": "plugins/mochi-memory/package.json",
-      "sha256": "d34e0757293fc9cde6c0375716546df4f0d9fea13f0ccd965d8033d4448f8b11",
-      "bytes": 518,
+      "sha256": "715ee58aa62e7b6001f17a49361e27742cbb1af414b9cd4507a83cdd3f208e90",
+      "bytes": 764,
       "categories": [
         "staged-plugin:mochi-memory"
       ]
     },
     {
       "path": "plugins/mochi-memory/world-state.mjs",
-      "sha256": "121dd26d5b43db889d79d3c5fa4b52b760ba461f5416cbb33219ee8ab120d6bf",
-      "bytes": 9087,
+      "sha256": "0a8a4ab7188dfd20310181be62c38ed02811713331190777b6f82e1e368e1dd3",
+      "bytes": 9489,
       "categories": [
         "staged-plugin:mochi-memory"
       ]
@@ -1517,8 +1511,8 @@
     },
     {
       "path": "plugins/mochi-modeling/package.json",
-      "sha256": "8bb2daa29745dfaaca5726cb5e570087b2970c852454bd76888affee0a5b4131",
-      "bytes": 413,
+      "sha256": "4f09e0e4959b319e6fe332a9b87b9c371609653ab2f74e90e5564978b57cf6a9",
+      "bytes": 431,
       "categories": [
         "staged-plugin:mochi-modeling"
       ]
@@ -1533,24 +1527,24 @@
     },
     {
       "path": "plugins/mochi-presentations/index.mjs",
-      "sha256": "a592dc2e5a980ebef9a08b0a7a1782ebde0f031fc96583fe7938de0e37428a43",
-      "bytes": 96509,
+      "sha256": "361847f80377003e70ef1d5ba61e1c155ebe2898c3187ec7576abad96e615a3a",
+      "bytes": 119034,
       "categories": [
         "staged-plugin:mochi-presentations"
       ]
     },
     {
       "path": "plugins/mochi-presentations/package.json",
-      "sha256": "def0c4d35cbb1b957a5b63a56a261ae49242c7ffaeb2560ab4711712e0f2b20f",
-      "bytes": 550,
+      "sha256": "6941fc06c2e26527ca1770f868c25dbfaeddb4eeb66d2774dbebf3a9fbfd8ae1",
+      "bytes": 798,
       "categories": [
         "staged-plugin:mochi-presentations"
       ]
     },
     {
       "path": "plugins/mochi-presentations/plugin.mjs",
-      "sha256": "bc8b469cbe7d03e596244992ccca5d713e56eba0299e1b0f93fc2b45fed7006b",
-      "bytes": 27075,
+      "sha256": "a0435583b6bac60e03fd771cbef9859a57655e7c6a7baff134bf3aae09cf01d3",
+      "bytes": 37274,
       "categories": [
         "staged-plugin:mochi-presentations"
       ]
@@ -3677,8 +3671,8 @@
     },
     {
       "path": "plugins/mochi-task-scheduler/scheduler.mjs",
-      "sha256": "48cca41498bac7190451b3f1be5bb0eb6a7f5e7b624bc9ad80765cafd1b469ab",
-      "bytes": 5696,
+      "sha256": "ae7feaeedce2238f642a1f90351c9293a5041b734a957de0028ec5b4a755949f",
+      "bytes": 6138,
       "categories": [
         "staged-plugin:mochi-task-scheduler"
       ]
@@ -3701,8 +3695,8 @@
     },
     {
       "path": "plugins/mochi-task-scheduler/package.json",
-      "sha256": "812ecb4447cc334cb51159f183b0ae59757ada026002e4d64ee9ec6f033fdbeb",
-      "bytes": 544,
+      "sha256": "8589668986588b18810f022db4cc8ca262d66245fb35e1ec9bca1b409bdbcb78",
+      "bytes": 621,
       "categories": [
         "staged-plugin:mochi-task-scheduler"
       ]
@@ -3741,16 +3735,16 @@
     },
     {
       "path": "plugins/mochi-files/package.json",
-      "sha256": "2a4e380a6f61a14c38e029d42c58c8325b7454715c734538b475b82569812932",
-      "bytes": 488,
+      "sha256": "fe9f992752c59432e26fde78a8d2ee13ae362f62be03a473fed0124ff23501d7",
+      "bytes": 506,
       "categories": [
         "staged-plugin:mochi-files"
       ]
     },
     {
       "path": "plugins/mochi-sheets/index.mjs",
-      "sha256": "4a3debbec9f27ecc9555aadbf9526cdf2027a433f045aa4e6e2e33657be2c5e2",
-      "bytes": 8828,
+      "sha256": "a0771bd8666626a37ac4a0d359d3ea51d203880eb883e2be150fa87452458b4d",
+      "bytes": 8845,
       "categories": [
         "staged-plugin:mochi-sheets"
       ]
@@ -3813,8 +3807,8 @@
     },
     {
       "path": "plugins/mochi-sheets/package.json",
-      "sha256": "684bafe04f35b6698ebb332d03d8cbc70aa0c8cbb9ffa0b27ac29f633b5432df",
-      "bytes": 569,
+      "sha256": "dfc25e7995fe0a798625d90b69904f4b59d93599ad543d30d57ea8a08990a60c",
+      "bytes": 611,
       "categories": [
         "staged-plugin:mochi-sheets"
       ]
@@ -3893,64 +3887,64 @@
     },
     {
       "path": "plugins/mochi-visuals/package.json",
-      "sha256": "574b0dd7d668632a789d3dd67a97e32ec87fd87a388940b86567788d7c4afde7",
-      "bytes": 636,
+      "sha256": "039e8cf591c6142d2fdde480205548344e17a8d2082f0976ea284fa9adf074da",
+      "bytes": 678,
       "categories": [
         "staged-plugin:mochi-visuals"
       ]
     },
     {
       "path": "plugins/mochi-modes/index.mjs",
-      "sha256": "724c1789da548a53e7023dbb69dc73dbe8222ddfe85ab0149980c59aa2b87cc9",
-      "bytes": 9058,
+      "sha256": "bfcbc17fd9477a9f2ce58970bf397baa453620520781607265489b6d6276db8f",
+      "bytes": 1740,
       "categories": [
         "staged-plugin:mochi-modes"
       ]
     },
     {
       "path": "plugins/mochi-modes/modes.mjs",
-      "sha256": "58b83a7670c48f701eb1c574612751cfc58a35a585c2a4e4d517c2f08740a82d",
-      "bytes": 11854,
+      "sha256": "c25e687f12ec735a0dedc56949aac724ebce62bbe4714924fb2434359b574366",
+      "bytes": 7594,
       "categories": [
         "staged-plugin:mochi-modes"
       ]
     },
     {
       "path": "plugins/mochi-modes/package.json",
-      "sha256": "a3de3928a94d2999cc761ab52f4bb34b109d9c8a5101ab25bec094c901005b14",
-      "bytes": 465,
+      "sha256": "d9fc9a09ffef3fcb6340b4f099c4ce40ef57c5f34a038e5596fc84468ab4b397",
+      "bytes": 479,
       "categories": [
         "staged-plugin:mochi-modes"
       ]
     },
     {
       "path": "client-plugins/mochi-modes/index.mjs",
-      "sha256": "bc931d63a9df9ba4d1e7da0a49fab2872588748a65f965520c95ec66d007ea6f",
-      "bytes": 803,
+      "sha256": "a433d568aa73bea173e1ba8d82f08a4cfbf582cffd425d9586d972522b176ee3",
+      "bytes": 235,
       "categories": [
         "staged-plugin:mochi-modes-client"
       ]
     },
     {
       "path": "client-plugins/mochi-modes/client.js",
-      "sha256": "d4b567c8f4f5c864a1a27246df76afb35803be842db9a1d25770d889d92747c8",
-      "bytes": 9776,
+      "sha256": "8a9deb178f7f2f11352854884dc58c2f0c204410f89fa0c965c78cdcd86002fb",
+      "bytes": 16596,
       "categories": [
         "staged-plugin:mochi-modes-client"
       ]
     },
     {
       "path": "client-plugins/mochi-modes/package.json",
-      "sha256": "21c59aa67892cb98a1fad74a06b77dc0314e1430f7ef01df9d639a40edbc04bc",
-      "bytes": 702,
+      "sha256": "5d1e96a4e26c6c6059dbfec3d605e1c196faa2b3364f93682d8fbbb56b585cb5",
+      "bytes": 760,
       "categories": [
         "staged-plugin:mochi-modes-client"
       ]
     },
     {
       "path": "plugins/mochi-presentations/render.mjs",
-      "sha256": "b4e09e1ef8425349b46372da10854276ed9ed2d2b368c175a90b53bb9efd7bce",
-      "bytes": 25222,
+      "sha256": "6929a2fb715e3892f862e84c8ddaaa7c4ba578ccda0ffe2b155ffb480f78b578",
+      "bytes": 25474,
       "categories": [
         "staged-plugin:mochi-presentations"
       ]
@@ -3965,8 +3959,8 @@
     },
     {
       "path": "plugins/mochi-presentations/references/design-principle.md",
-      "sha256": "624fadad12bc6ba2db38d8d046f0785d4d9312051e051cad182bdbe45e62c37a",
-      "bytes": 4750,
+      "sha256": "06eb4ae9827a760f9579dfe0e76803b30ed096e5349128846f6aa760f3f3ed28",
+      "bytes": 4832,
       "categories": [
         "staged-plugin:mochi-presentations"
       ]
@@ -4021,40 +4015,40 @@
     },
     {
       "path": "apps/desktop/electron/dsh/rail.ts",
-      "sha256": "845e58903e95e30a20c0b8e7d6d0f79ce43c010837f7de42c448321c47f4508b",
-      "bytes": 17233,
+      "sha256": "0d2e93ce957608f3c0fb8909c4d12e91933bb7b6563c0dae468ef168427a8df0",
+      "bytes": 33638,
       "categories": [
         "desktop-source"
       ]
     },
     {
       "path": "apps/desktop/electron/dsh/rail-model.ts",
-      "sha256": "cb8a5dd9f4aac9a098df2e2729e1613c41cb995ca2751ef130a25547a51ac49c",
-      "bytes": 16170,
+      "sha256": "ac793ee1bb1e0d8bccc77525367d048534917abf6d1b71c1c32db68feb2f4661",
+      "bytes": 37923,
       "categories": [
         "desktop-source"
       ]
     },
     {
       "path": "apps/desktop/electron/dsh/rail-store.ts",
-      "sha256": "d8695239d7584b88cf86ffcfae0a76859f7aef71db69ef899a84f34db3b17c7d",
-      "bytes": 3684,
+      "sha256": "12dea1ebad1ea1e6c1359839772e8673d26b27b0e2c105038c2354e9947e0d66",
+      "bytes": 5593,
       "categories": [
         "desktop-source"
       ]
     },
     {
       "path": "apps/desktop/electron/dsh/rail-pages.ts",
-      "sha256": "782e25f1728850ef65b877bb59f72d06724ff36a4033daed0f9d8b013cbfa2b4",
-      "bytes": 11639,
+      "sha256": "8b0c4206449f2086f2d90bf9d1cd8ea9cf9819688e495d7fc98b52ecfcfa73c9",
+      "bytes": 46742,
       "categories": [
         "desktop-source"
       ]
     },
     {
       "path": "skills/classroom-deck/SKILL.md",
-      "sha256": "1852bc400031485daffe070a446548cde0fa491129b91d552df8d11906d3f133",
-      "bytes": 8336,
+      "sha256": "1d20417ca0619fd5771252ce3c19b0c9ee28c26be6ced007314d4c79fddb9339",
+      "bytes": 11931,
       "categories": [
         "desktop-source"
       ]
@@ -4085,8 +4079,2456 @@
     },
     {
       "path": "apps/desktop/electron/rail-preload.ts",
-      "sha256": "39c16637d7a6304bbddd7748e98c3c0a31b72cb30b67bda76d0271b338a89812",
-      "bytes": 2027,
+      "sha256": "22450df81cae6202395776e2bd4e278777d148a9ec54998e4d0be94ffa923b35",
+      "bytes": 3446,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "plugins/mochi-presentations/client.js",
+      "sha256": "580deb219f6f2d870a953d15ac1a194fef1f822b0704482d042cc138adc8eae7",
+      "bytes": 4304,
+      "categories": [
+        "staged-plugin:mochi-presentations"
+      ]
+    },
+    {
+      "path": "plugins/mochi-presentations/comparison-layout.mjs",
+      "sha256": "35ac9b1743c8b42d70ddc8e732c0df3cca94a47f7063755d8cdebf360057a59c",
+      "bytes": 5809,
+      "categories": [
+        "staged-plugin:mochi-presentations"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/probe-agent-live.mjs",
+      "sha256": "74b044f9777799625fa1432977611b2a10b881de73d5ae5a89cc8b886d77fb03",
+      "bytes": 9905,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/probe-policy-live.mjs",
+      "sha256": "4b82baed8eea4c0a51759199a7c8f769f2080666e7da01dd896b86c1cb6a2546",
+      "bytes": 8176,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/smoke-packaged.cjs",
+      "sha256": "0ed30f08dc185ad44abfe95fa2964b8d090593f80182c7b2c412e07611f543a5",
+      "bytes": 6358,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-classroom-model-credentials.mjs",
+      "sha256": "91d4496ed580606b75239927a5a321059072b0dc07616bd1d123e034918fe528",
+      "bytes": 4953,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-classroom-model-live-ui.mjs",
+      "sha256": "272fbcde1b331f4258af46d64a22506db2144c69d18aff900a3052a3e1b89ef9",
+      "bytes": 23991,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-compaction.mjs",
+      "sha256": "feacca6c309a0a8533f2b11d7c101abe5b853439982c8e5072a9af59dc3517e3",
+      "bytes": 6441,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-llm-cache-observability.mjs",
+      "sha256": "722bfc89ca6a4b06ea2c74c7a317caa4a76283a4b8f43a0bb1ffbbc0a2b8da42",
+      "bytes": 4887,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-model-transport.mjs",
+      "sha256": "051bf35215f7a25ffc59114822fe578502655df46a55e6e61a2cad3603a7d245",
+      "bytes": 4653,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-rail-logic.mjs",
+      "sha256": "9b0638b8f9507e1abd00213d6eac2b1491be3a0f3a9d863352108486cae1f46b",
+      "bytes": 35905,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-rail-model.mjs",
+      "sha256": "24528b1eefeff7d7abd294362153e73642abd5023a5bfc5cd4f0fe022ef078db",
+      "bytes": 53665,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-rail-preload-seen.mjs",
+      "sha256": "3b83abd940ec718359ab115e912add57b73f3e0c05ea797ac48dc80b5857965f",
+      "bytes": 7472,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-rail-runtime.mjs",
+      "sha256": "ee55d441fa2fe9c48a48ee44d833171d92acd0a7b19d7415f7cb1b51fcbd172f",
+      "bytes": 67574,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-work-quality.mjs",
+      "sha256": "7f29e37c7575ba4fd1c749c38911b18c89066fe6228b045874b3e86599be0c1b",
+      "bytes": 5780,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/wo7-dialog-injector.cjs",
+      "sha256": "21cf199973bd5a4556bfa401d2a578fdce7a2a91ebff78bdab1cddfb33ed8f29",
+      "bytes": 1866,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/wo7-e2e.mjs",
+      "sha256": "fbd585b601fcc67b7f139a9731e5db9e3f42ca98fa7ee6695e9db6c83726a82c",
+      "bytes": 13941,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/wo7-evidence.mjs",
+      "sha256": "d64c185db08214be958e835331bdff0857f8634d7e807dea03c0848a957a20ca",
+      "bytes": 9541,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/wo7-switch-e2e.mjs",
+      "sha256": "27467f6c40aba7f610d4c80511f949f3560fb4b13aa885715ec96c5924230a29",
+      "bytes": 8236,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-main-close-pet.mjs",
+      "sha256": "6a8647d57801aa306628d76b2cf1a2660ef4254b7bb3905e71b78d0ad80b8f78",
+      "bytes": 8917,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-pi-ai-quota-classification.mjs",
+      "sha256": "6b910b6f686006cff5365e2ca0e4dd32f35cbf533cb9ccca20ed54ebdd900a8a",
+      "bytes": 4715,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-teacher-model-live-ui.mjs",
+      "sha256": "c9741e717774531d1919e1fb5fa6d63a2fd2e234dfeff750485010125a2ae58b",
+      "bytes": 28577,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "vendor/local-plugins/deepseek-ai-dsh-llm-pi-ai-0.1.3-alpha.1-mochi-quota-fix.tgz",
+      "sha256": "c20e67bffc13fd4044c553dbc89c3a7f2242068e53e9ac54741ed7eea99bb5e9",
+      "bytes": 67746,
+      "categories": [
+        "vendored-tarball"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-theme/assets/campus/background-manifest.json",
+      "sha256": "9c41a89c8480e5b3c2f1579ac0de45bc3f27c427bb4e6fffdcc1f84ab7a4aa34",
+      "bytes": 2435,
+      "categories": [
+        "staged-plugin:jxl-theme"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-theme/assets/campus/jxl-campus-ginkgo-walkway-v2.webp",
+      "sha256": "535a3bdc3ce39977d74a1673059ed172f3c143ef7117e205ecee25c9e02c5872",
+      "bytes": 161566,
+      "categories": [
+        "staged-plugin:jxl-theme"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-theme/assets/campus/jxl-campus-route-world-v2.webp",
+      "sha256": "afb856a5817570e230bf29a432fb6ad6ca2498a5cfc098c17c3711fb9b260791",
+      "bytes": 155538,
+      "categories": [
+        "staged-plugin:jxl-theme"
+      ]
+    },
+    {
+      "path": "plugins/mochi-lan/chat-tools.mjs",
+      "sha256": "e93cab7f7d72c7a3ac6be4d9e7fe8703a1ae30b56138295ab0e8622b1fd71326",
+      "bytes": 28224,
+      "categories": [
+        "staged-plugin:mochi-lan"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/dsh/voice-call.ts",
+      "sha256": "a679f5eab7790ff024a998976dd70ec1d66389ec688303609a3ba62304832b2d",
+      "bytes": 15660,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/dsh/voice-pack.ts",
+      "sha256": "c55804fd500625dc0c109c7550a9b6130e597693e59c9bae128a239ccb8efaa7",
+      "bytes": 23820,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/dsh/voice-synthesis.ts",
+      "sha256": "8f1526742dd1d3c8f874b0831bc5e99fcb8155049438d8650dcd38bb9c6227bf",
+      "bytes": 12993,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-voice-call.mjs",
+      "sha256": "7610a1e4211c53962fd4f5dd95f54f36c5fbd2ccdc6b0a53cba7d40f676c3e71",
+      "bytes": 15038,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-voice-pack.mjs",
+      "sha256": "5543ca7deb038d96f9271541694e84b8dbae2c3d94c6dff6f162ffadbeabce7d",
+      "bytes": 11730,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-chat-lan-live-ui.mjs",
+      "sha256": "a3fcb05ec025690a3009edfea8928198e27ceb2a3f66059cc30860cd9aae10b1",
+      "bytes": 19625,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-chat-appointment-live-ui.mjs",
+      "sha256": "69470ad3fe67c5ad27ad8484af52f58df55c33b4b4ffc91ddf54abb95fcb2b08",
+      "bytes": 38692,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-voice-native-win.mjs",
+      "sha256": "bfb38157771229e07931e1e33f08913eb11537626693e289c7a68627eecf0e1f",
+      "bytes": 3530,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-voice-wave.mjs",
+      "sha256": "423130aeaca0af6c1220199c2d3e23b46a67378a40ab092f22d223333de28ce3",
+      "bytes": 4078,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/resources/voice-tools/LICENSE-7zip.txt",
+      "sha256": "e680c30c27e401c7599e6616af0bcd03d7336242b6a607e00dc988c6db90ee2f",
+      "bytes": 5880,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/dsh/rail-spring.ts",
+      "sha256": "2e352ad25956a7ce6a2a59dfc4eee8cafbb874bf0eb3ad5f96078e06b7415795",
+      "bytes": 1160,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "plugins/mochi-llm-mimo/test/error-classification.test.mjs",
+      "sha256": "e5f128b2c8024d250f7fa05b652df882a7d63f6293fd4ce4e70fa9c88de609d0",
+      "bytes": 4534,
+      "categories": [
+        "desktop-test-source"
+      ]
+    },
+    {
+      "path": "plugins/mochi-lan/test/node.mjs",
+      "sha256": "fdb633e17da557a2129566ef388fbec4f3aaf38b4bd633e56990e15ad75620fc",
+      "bytes": 11608,
+      "categories": [
+        "desktop-test-source"
+      ]
+    },
+    {
+      "path": "plugins/mochi-lan/test/test-pair-code-search.mjs",
+      "sha256": "a883156b0117b6bc9d8ef23c1bdbf280d92a12ece57bd6cc130f0e3fa5e09f57",
+      "bytes": 12285,
+      "categories": [
+        "desktop-test-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-presentation-chat-live-ui.mjs",
+      "sha256": "aefa65418b910d4ee7446b25c0c1bcf286b19713d17f582ca1bad2bcb2c7954d",
+      "bytes": 22186,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "plugins/mochi-lan/test/test-plugin-apply.mjs",
+      "sha256": "d9129a475ec37f53fde32f6721e548cd1401680b0d7961ddd4c6bfba831af9ec",
+      "bytes": 2815,
+      "categories": [
+        "desktop-test-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/dsh/bloub-motion.generated.ts",
+      "sha256": "9f36e09886229aeefca3940cfadb9a325f7b44d5897025e860c18b0d4aa20b49",
+      "bytes": 31656,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/dsh/mechanical-audio.generated.ts",
+      "sha256": "73c9a8166f0e12918bffd3f8868746de3f3f2e8e8aa0c46fab941ccb8f2d1dd3",
+      "bytes": 4630,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/dsh/window-theme.ts",
+      "sha256": "3a50b5e261fff680ce7d3a4035debafca3269053d43862adae168087f37782c2",
+      "bytes": 961,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/paper-host-surfaces.mjs",
+      "sha256": "e7d85c0e39808da05c8c167e6643bb853cb3e64a07a701a83a9c99445c8c6d00",
+      "bytes": 8270,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/paper-ui-checks.mjs",
+      "sha256": "34afc501eedef659bc01e79b92908a086ba19b3608435a4c60865f9fb7faa56e",
+      "bytes": 3138,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-bloub-ui.mjs",
+      "sha256": "41a8178a8212adb06ab7ad7c3541a9f79b1211d45b8db2b60009ba71d948b432",
+      "bytes": 5941,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-first-run-seeds.mjs",
+      "sha256": "335592289700f9a21fc854dcf4f6e063fd27509c5a509e0811a86175a31d521e",
+      "bytes": 4736,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-paper-ui.mjs",
+      "sha256": "7a491ce327dcd7702774bb73ed590613e8f8aac86383c4d4d0e3753de21d2e25",
+      "bytes": 15892,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/check-packaged-browser.mjs",
+      "sha256": "12e1e16332f06c9f435faec4c811568b162c8467eefd15062de2ba890b61f7cf",
+      "bytes": 2648,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/resources/browser-on-demand.cjs",
+      "sha256": "25bc24701a248c1cad4ca5de64910eec19217aeef6506ba95f0fda88f8bec632",
+      "bytes": 2820,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-brand/src/ExpressiveOrb.css",
+      "sha256": "dd8ac52d109e33efc941d7f801d3b43ac2ead417c7a9bff2e0f527ba2167e99c",
+      "bytes": 244,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-brand/src/ExpressiveOrb.tsx",
+      "sha256": "03218956a4a2c3b67a874017e53fa436618903df57666111ef602c7ed944435b",
+      "bytes": 1923,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-brand/src/MochiLoading.css",
+      "sha256": "de02ed6ca1b86e50478217037ebb0ffcaf2644cdb5660504f58aa043a0a1046c",
+      "bytes": 724,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-brand/src/MochiLoading.tsx",
+      "sha256": "fa19ef40df8c1e17f1e1e0b4cf8fe51970f3279224e6f0f2a2530ba33876ba9c",
+      "bytes": 624,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-brand/src/OrbCompanion.css",
+      "sha256": "b58bf2219447bfea3e59c5b69f742db76c99bf8c2f72f4968906ece94014266e",
+      "bytes": 771,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-brand/src/OrbCompanion.tsx",
+      "sha256": "dbc2502ea13b4eaf008584f286f654e5f02b272728e51d58bf549f3d1de148be",
+      "bytes": 1904,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-brand/src/bloub-motion.ts",
+      "sha256": "fe8b1f5d607e8de20e39ad6170a1c578c7652600a8dba2325f82364c413c2f50",
+      "bytes": 11673,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-brand/src/hero.tsx",
+      "sha256": "2d47856a09f393960825d484e3cce1e9f748339efc735362fbf79d7c3b1fd162",
+      "bytes": 13613,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-brand/src/holiday-greeting.mjs",
+      "sha256": "74fa041b1837893976fe2dcad26607265cc83bb9e42ff6b2622520b3fab19ad5",
+      "bytes": 4701,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-brand/src/shims/motion-react.ts",
+      "sha256": "743bb4f371e3133c629fdddc32d5802094a42719c9d805af04be428831cbca38",
+      "bytes": 816,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-brand/src/vendor/bloub/LICENSE",
+      "sha256": "d43fe2742faaf4a86210ec33bb155f101f64883e3994be9193099367940736b4",
+      "bytes": 1072,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-brand/src/vendor/bloub/SOURCE.json",
+      "sha256": "53ed6fa221f14a7e0cb8aadbe1918fb50764519a8679b0980ad234a49e68cc30",
+      "bytes": 1053,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-brand/src/vendor/bloub/decor.ts",
+      "sha256": "6c300f8aaa7d2f95c13b35993753b0542779528d16bd8e1d01507e467fe52d04",
+      "bytes": 8652,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-brand/src/vendor/bloub/engine.ts",
+      "sha256": "d824c715b6ec38b241fc61ae2ac516d7c1623f9603f88942b4585cdd9307e638",
+      "bytes": 22227,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-brand/src/vendor/bloub/expressions.ts",
+      "sha256": "66c5562afcf376c7fde0c83b6c9cc953f1313d9e2f910e2b94fd24098aa52ae5",
+      "bytes": 5539,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-brand/src/vendor/bloub/eyefit.ts",
+      "sha256": "8da411d7643c24f383d2d994a4668e43292c9810a6f63c257dbfd13f61284e9b",
+      "bytes": 18589,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-brand/src/vendor/bloub/face.ts",
+      "sha256": "f9ddf7f750b101dbf6fa29acc95fe5fbdeec41c96b2873b1a844df2b5c1bd8c8",
+      "bytes": 5832,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-brand/src/vendor/bloub/math.ts",
+      "sha256": "736be559b961109c3ca2a4c88d7992e99ceaff46450a522d47e596c1def99c0f",
+      "bytes": 1566,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-brand/src/vendor/bloub/profiles.ts",
+      "sha256": "62dc55bc860b9e2b1f7a43168cee8738b68b42bf4d07f668d32984ee886f02d3",
+      "bytes": 2077,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-brand/src/vendor/bloub/shape.ts",
+      "sha256": "72020197e3ff117487ed670d915dfb3297b8034f7e9a803f573f15b3dd41d44e",
+      "bytes": 10222,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-brand/src/vendor/bloub/skins.ts",
+      "sha256": "2fa0f296e8a49b7b81458eebb98b6ecb44d1073bdc815a46e7846819b743b3c3",
+      "bytes": 4785,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-brand/src/vendor/bloub/states.ts",
+      "sha256": "7b67bfc4ee95011225a2cef542866dacde0a1c044a56f174bee4173b82cec207",
+      "bytes": 17031,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-brand/src/vendor/lunar/LICENSE",
+      "sha256": "d9210caf1844dcf410095cea464b79800aad30dbd49df092076b9f0ddc015404",
+      "bytes": 1061,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-brand/src/vendor/lunar/SOURCE.json",
+      "sha256": "7bbd79c68fa243b89d93a4d3daee81609a027d1c3fb762d79205b00a2ff6b3eb",
+      "bytes": 252,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-brand/src/vendor/lunar/lunar.cjs",
+      "sha256": "9750324bfe1aa63c146f8c72b1143df924466c11c8a5277d7d9225c541a18aaa",
+      "bytes": 435942,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-brand/scripts/avatar-lifecycle.test.mjs",
+      "sha256": "af985b0a4fb18ae3101398011f612e74e86346b83f47491319e3a9feb6b91327",
+      "bytes": 20505,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-brand/scripts/bloub-motion.test.mjs",
+      "sha256": "716e3759c70e766ef7550cd1384e75ac03943ed0473614c62decc2b447a646ee",
+      "bytes": 3056,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-brand/scripts/build-loading.mjs",
+      "sha256": "74c942ad44857699b7d3c1305d787c8ebfffd55cfb0865c6c740388bef378184",
+      "bytes": 1737,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-brand/scripts/build-motion.mjs",
+      "sha256": "970d25fae91d74e7f969bf4b4904f8152c0e1a48b7a5a78a5dbf1ec285ff0257",
+      "bytes": 841,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-brand/scripts/build.mjs",
+      "sha256": "e1a003c49007aee5ee2ad3de31bef7420eef34955b0dd9ffb8b3f1a438595f23",
+      "bytes": 15419,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-brand/scripts/holiday-greeting.test.mjs",
+      "sha256": "99f0df6366b173d5a5f9306fffd80fe54ee447d627e903dd6f76c26921cf0fcd",
+      "bytes": 5157,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-theme/styles/jxl-paper.css",
+      "sha256": "1e5d500a5a1a2a884d93e8788123e7afa20cd0d099a742f52175ea6912c4fe53",
+      "bytes": 33502,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-theme/styles/jxl-theme-bridge.css",
+      "sha256": "7de57179fbee7f370e12d6779e4031b3be22cbf6e10de95a79395c41216b6258",
+      "bytes": 14951,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-theme/styles/jxl-workspace.css",
+      "sha256": "9d365b7b422f69c3f835a5b0fd023d8263bbd74aeedea7d7b9984c68590289fd",
+      "bytes": 9547,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-theme/scripts/build-client.mjs",
+      "sha256": "1d1482a0b6a7fcca839ac5f2abe9de19948acb17e05272b86e0125fb5692a756",
+      "bytes": 6980,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-theme/scripts/mechanical-audio.mjs",
+      "sha256": "d0f4dc42a3a2333c70cf47e1d2d771735ac9ffe277c756e182219bbb651bd7a3",
+      "bytes": 4499,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-theme/scripts/paper-runtime.mjs",
+      "sha256": "07162af04350d88ef12e2ce6ec8903885138daba9cf71e5965501ed297f92a9f",
+      "bytes": 10330,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-theme/scripts/render-sound-preview.mjs",
+      "sha256": "f7984f9d77d0ab5fc872d8570aa388a08f05960472f5f1564b84e3da8a15cadf",
+      "bytes": 1896,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-theme/test/background.test.mjs",
+      "sha256": "f6898e11e6c92fc8896f5950b098ef589e09a35b34116c6553c91a1715afac08",
+      "bytes": 8755,
+      "categories": [
+        "desktop-test-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-theme/test/mechanical-audio.test.mjs",
+      "sha256": "d1f0152e326f4b876b7c9b54e1b538d75412ba15aeb598ceee00296ac6fb27f9",
+      "bytes": 3714,
+      "categories": [
+        "desktop-test-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-theme/test/paper-runtime.test.mjs",
+      "sha256": "598979c7243f81b802c0b617dbec151e20de144bb343ecdf298bb994fbaac316",
+      "bytes": 8532,
+      "categories": [
+        "desktop-test-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/dsh/role-verification.ts",
+      "sha256": "2627398c889d22be791713ececa7856d2634d6fec7e2353bc9b599c831f27b33",
+      "bytes": 3468,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-role-verification.mjs",
+      "sha256": "28adab742317d3b60d447bdd2c29fce5d160a492251d9bf567488b0fb028c29d",
+      "bytes": 4001,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/build/MochiTemplate.png",
+      "sha256": "f8c59ab146d5e7452ef852a01d5fc74e0df14dacc2345fb9774c7bd4080e72b9",
+      "bytes": 366,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/build/MochiTemplate@2x.png",
+      "sha256": "16917ab895614fb229e263966a51fcdd0c3c9cb822baeab1cd0d2e453cc33ecb",
+      "bytes": 704,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/build/icon-source.svg",
+      "sha256": "ec84410e8dc043de566f568228c7f5812f1be3ea01c3f698e1bb54a34cbd1587",
+      "bytes": 4681,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/dsh/sidebar-defaults.ts",
+      "sha256": "8ca8c5954ea15adedf1be511e4fbe05b7d40c7c35dfb690969328fdc88cee751",
+      "bytes": 1605,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "plugins/mochi-lan/wps.mjs",
+      "sha256": "8d0b973b59ce948ef6947a889acf29ddb4497b18d3becd8f0ad780c6de3f1fbe",
+      "bytes": 2822,
+      "categories": [
+        "staged-plugin:mochi-lan"
+      ]
+    },
+    {
+      "path": "plugins/mochi-lan/test-files.mjs",
+      "sha256": "810c70c0879b75049ba622d4e498b5b84e47bdc29b97a1810188700abf886ef8",
+      "bytes": 23213,
+      "categories": [
+        "desktop-test-source"
+      ]
+    },
+    {
+      "path": "plugins/mochi-lan/test-chat-tools.mjs",
+      "sha256": "db6ce9c94b4dec53a5e4398698dbcb56a741461724a4d3d5bc69816d209321d1",
+      "bytes": 20817,
+      "categories": [
+        "desktop-test-source"
+      ]
+    },
+    {
+      "path": "plugins/mochi-presentations/fixtures/teacher-lesson.mjs",
+      "sha256": "c9b0376ddb542e2c0ead65a9a9a86fd9a10ad77f1385b7f16e678c09c1339420",
+      "bytes": 5959,
+      "categories": [
+        "desktop-test-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-theme/scripts/sidebar-runtime.mjs",
+      "sha256": "e7fbc92589e70197565603c832a37483f10cec399526d868e5f0f1dcece140f3",
+      "bytes": 1397,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-theme/test/sidebar-runtime.test.mjs",
+      "sha256": "53fb37dd98e21605ab8c9899878599af3cb47afd0b70f02db10191d0aad1201e",
+      "bytes": 1924,
+      "categories": [
+        "desktop-test-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/resources/mochi-web/modern-models.cjs",
+      "sha256": "2137e2db576b6cb12763341669d3e8c7481ab11a9ed8005c35eeb35196a0fae5",
+      "bytes": 8459,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/resources/mochi-web/modern-presets.cjs",
+      "sha256": "dce06d95f5044545f2f827c2f444591994ac66d66983401721e5ef750e772a14",
+      "bytes": 5248,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/resources/mochi-web/modern-settings.cjs",
+      "sha256": "0d53ec983925976d3a46b403e9796323975f15679f1abfb91275dfef59fa882c",
+      "bytes": 12127,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/resources/mochi-web/modern-sidebar.cjs",
+      "sha256": "d408c453da31ba7ea94f6fad7b5ccf87f2a94f320ecaaf0257c2723c16191c0a",
+      "bytes": 3072,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/runtime-modern/package.json",
+      "sha256": "5a2c7c5cd9d89d3208bcf49a7d68468f582928fafc10550767ecc486c3436d9d",
+      "bytes": 651,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/runtime-modern/package-lock.json",
+      "sha256": "1c1064e5606fd46de938a0df4b67ad495d3274888fc85583a19cb52d5c71ff44",
+      "bytes": 497267,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-theme/assets/mochi-palettes.json",
+      "sha256": "ca17020d8d51dfb34a73ed184973a202f2e820403a7c2c12e18ad6847a689275",
+      "bytes": 660,
+      "categories": [
+        "staged-plugin:jxl-theme"
+      ]
+    },
+    {
+      "path": "plugins/mochi-llm-mimo/openai-adapter.mjs",
+      "sha256": "b8c5c820b4b1bf73ee00c03557beb27f8d6001c8ceba5a45d86e0938ddca687e",
+      "bytes": 8397,
+      "categories": [
+        "staged-plugin:mochi-llm-mimo"
+      ]
+    },
+    {
+      "path": "plugins/mochi-memory/management.mjs",
+      "sha256": "e15834a13e10ab8a6c0339a0dae6ee1f0fdbae5a59bc534c4b7eb6c26b1b45ac",
+      "bytes": 3218,
+      "categories": [
+        "staged-plugin:mochi-memory"
+      ]
+    },
+    {
+      "path": "plugins/mochi-memory/proactive.mjs",
+      "sha256": "a8f683a7e7d3db996b873ad62c2801e36dda805d3ff0b792f22f5f4c85260712",
+      "bytes": 8699,
+      "categories": [
+        "staged-plugin:mochi-memory"
+      ]
+    },
+    {
+      "path": "plugins/mochi-memory/role-policy.mjs",
+      "sha256": "065768f1bac29804b50f8fb53c3d9cd8d39d9ffd537026481dc1db3e7ab985ec",
+      "bytes": 2219,
+      "categories": [
+        "staged-plugin:mochi-memory"
+      ]
+    },
+    {
+      "path": "plugins/mochi-memory/companion.mjs",
+      "sha256": "e832579cfac0c3f9e2f0ea08f979b4de38106a074a9fa30fcb63c7c91a6cfe6a",
+      "bytes": 14591,
+      "categories": [
+        "staged-plugin:mochi-memory"
+      ]
+    },
+    {
+      "path": "plugins/mochi-memory/journal-store.mjs",
+      "sha256": "4143067e7878bfddb2441e7c435eaf83010e1b8c0b244212014f9b80934fd975",
+      "bytes": 14861,
+      "categories": [
+        "staged-plugin:mochi-memory"
+      ]
+    },
+    {
+      "path": "plugins/mochi-memory/journal-management.mjs",
+      "sha256": "87d294a38bb51a298a3e45ac52f7e766b2957c983417746ee09ab0287e42d8c9",
+      "bytes": 2500,
+      "categories": [
+        "staged-plugin:mochi-memory"
+      ]
+    },
+    {
+      "path": "plugins/mochi-memory/journal-activity.mjs",
+      "sha256": "ee1a90f053c4d12a6db75fda22809de2f9ffc302bcda2286037cdc2957936bff",
+      "bytes": 3480,
+      "categories": [
+        "staged-plugin:mochi-memory"
+      ]
+    },
+    {
+      "path": "plugins/mochi-memory/journal-writer.mjs",
+      "sha256": "b0fac0323a51041a703a493f59b483c514b0d92d90175baee497c04445fea3f0",
+      "bytes": 4037,
+      "categories": [
+        "staged-plugin:mochi-memory"
+      ]
+    },
+    {
+      "path": "plugins/mochi-memory/journal-context.mjs",
+      "sha256": "8733a4a6dea7365a2ab07fb00e16e229016fcf8ce57d0af222b688381da5a0f9",
+      "bytes": 1502,
+      "categories": [
+        "staged-plugin:mochi-memory"
+      ]
+    },
+    {
+      "path": "plugins/mochi-memory/journal-scheduler.mjs",
+      "sha256": "a4783cd22a6fcc0e37fe485f015ec2d4e56de0442803b45eac4bacf0fefbc001",
+      "bytes": 8753,
+      "categories": [
+        "staged-plugin:mochi-memory"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-memory/index.mjs",
+      "sha256": "dcd6b60c88ab326cfc09050982fc91fd21142bb8b4c01c6817f4a8dee90a0c1a",
+      "bytes": 70,
+      "categories": [
+        "staged-plugin:mochi-memory-client"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-memory/client.js",
+      "sha256": "3485cd5406fb93d5d92f4fa4d8b629a22d19592bf04757fd5b5aa9f10b3b1d01",
+      "bytes": 39343,
+      "categories": [
+        "staged-plugin:mochi-memory-client"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-memory/package.json",
+      "sha256": "d40f841a9d7a531195c131ad3f88efb81690df2bea52f541709f40976d9ff285",
+      "bytes": 512,
+      "categories": [
+        "staged-plugin:mochi-memory-client"
+      ]
+    },
+    {
+      "path": "plugins/mochi-user-profile/index.mjs",
+      "sha256": "14f5c8aaa3b23b00beedd329037467a081e7853fc7462023f757a719ccbc8997",
+      "bytes": 1997,
+      "categories": [
+        "staged-plugin:mochi-user-profile"
+      ]
+    },
+    {
+      "path": "plugins/mochi-user-profile/store.mjs",
+      "sha256": "c1f338a9f961fb24159ceafeb3efe243d0dad6e0655cfb2f44e8222ec02e996e",
+      "bytes": 5080,
+      "categories": [
+        "staged-plugin:mochi-user-profile"
+      ]
+    },
+    {
+      "path": "plugins/mochi-user-profile/package.json",
+      "sha256": "889d4c4be830ec7a26567616b4be150dcd15cd63391ff3845d69bfb36427ad7d",
+      "bytes": 147,
+      "categories": [
+        "staged-plugin:mochi-user-profile"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-onboarding/index.mjs",
+      "sha256": "e5162af89ceff40c0806874b5d90c686987f16f1e3037ed118b33a60ef6110a4",
+      "bytes": 566,
+      "categories": [
+        "staged-plugin:mochi-onboarding"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-onboarding/steps.mjs",
+      "sha256": "9417ef60ce8c3301db156facba9dd92e27db6ad8e6a63cdaa280e858d8be9083",
+      "bytes": 5198,
+      "categories": [
+        "staged-plugin:mochi-onboarding"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-onboarding/client.js",
+      "sha256": "c906dbf6b2ed9da2e81e459e18a7594f14330e17104afea0d5d3f8241f8fe30f",
+      "bytes": 34038,
+      "categories": [
+        "staged-plugin:mochi-onboarding"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-onboarding/package.json",
+      "sha256": "24a4e2ea55812cb09674bf9b3f660abe60c0444597679755c08ff9afeb3e6a31",
+      "bytes": 835,
+      "categories": [
+        "staged-plugin:mochi-onboarding"
+      ]
+    },
+    {
+      "path": "plugins/mochi-camera/index.mjs",
+      "sha256": "e589977913276bf7ac583898a26c2a5fc88a30dc6752ac6511ec45863ca2f1a3",
+      "bytes": 1436,
+      "categories": [
+        "staged-plugin:mochi-camera"
+      ]
+    },
+    {
+      "path": "plugins/mochi-camera/projection.mjs",
+      "sha256": "fd702d49027c0d883d5f8b0705f068cef2ef2dc62b1b15035641244fc19849c6",
+      "bytes": 1681,
+      "categories": [
+        "staged-plugin:mochi-camera"
+      ]
+    },
+    {
+      "path": "plugins/mochi-camera/package.json",
+      "sha256": "2c8b87271fdace5a7fe87a6a059144837720b3f1a9b360bf75a21b0de3c37f9d",
+      "bytes": 390,
+      "categories": [
+        "staged-plugin:mochi-camera"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-camera/index.mjs",
+      "sha256": "32ec6fb8c1b6fada4432140ebfc97c8f935a42eab98075b1699ebbd0fd26d636",
+      "bytes": 156,
+      "categories": [
+        "staged-plugin:mochi-camera-client"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-camera/client.js",
+      "sha256": "fccb5a20a8cc86574adf536d53bc468c363214bf97fa1e95d4e8c937b62c967e",
+      "bytes": 13207,
+      "categories": [
+        "staged-plugin:mochi-camera-client"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-camera/package.json",
+      "sha256": "ff10f00e4d33941dda6a73183ee2141a9b985e55bc92c5333f596a3235a55e94",
+      "bytes": 559,
+      "categories": [
+        "staged-plugin:mochi-camera-client"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-voice-chat/index.mjs",
+      "sha256": "570e0216cad3cdf19042c2e33bb4c1c535cfe3b2998a4bfc089447b88b159d6b",
+      "bytes": 67,
+      "categories": [
+        "staged-plugin:mochi-voice-chat"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-voice-chat/client.js",
+      "sha256": "a30739e5080ef94c17a61ec0e0dde5ee54577d451d7b6007da4ad520f20ac187",
+      "bytes": 10260,
+      "categories": [
+        "staged-plugin:mochi-voice-chat"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-voice-chat/NOTICE",
+      "sha256": "7894b01fb4d8fe40050e7d959d493c14c41094219a540ff074237bf21d11ceef",
+      "bytes": 1269,
+      "categories": [
+        "staged-plugin:mochi-voice-chat"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-voice-chat/package.json",
+      "sha256": "6ae818562f326d4f7ca1b0b5f3d7a055ee1a92a36ce733f764d0d4d96f2000d0",
+      "bytes": 625,
+      "categories": [
+        "staged-plugin:mochi-voice-chat"
+      ]
+    },
+    {
+      "path": "plugins/mochi-classroom-assistant/index.mjs",
+      "sha256": "023616dbf47bd5d1c3e60c63a1b199933689641373e099283fb8a4eb7122ca3d",
+      "bytes": 790,
+      "categories": [
+        "staged-plugin:mochi-classroom-assistant"
+      ]
+    },
+    {
+      "path": "plugins/mochi-classroom-assistant/host-bridge.mjs",
+      "sha256": "401faf00cf8e4aa4df14d19d168861e7fc72c59b294c863214b7ff79ea6900f1",
+      "bytes": 4912,
+      "categories": [
+        "staged-plugin:mochi-classroom-assistant"
+      ]
+    },
+    {
+      "path": "plugins/mochi-classroom-assistant/homework-store.mjs",
+      "sha256": "d4d6dd0397166a1641ec7f1af6954f7ff22b81792e44fb8bf401ad24e587c2c4",
+      "bytes": 3795,
+      "categories": [
+        "staged-plugin:mochi-classroom-assistant"
+      ]
+    },
+    {
+      "path": "plugins/mochi-classroom-assistant/lesson-notes.mjs",
+      "sha256": "fb5887725b04f7d8eb6a0107543820c58590bd9cc8966c0d7d64cb4b25a67af6",
+      "bytes": 9141,
+      "categories": [
+        "staged-plugin:mochi-classroom-assistant"
+      ]
+    },
+    {
+      "path": "plugins/mochi-classroom-assistant/listening.mjs",
+      "sha256": "a9189d69e432a94f3bc68b12ed41a0519b5dcebb1294ad1887425f93ac9d7d4f",
+      "bytes": 3649,
+      "categories": [
+        "staged-plugin:mochi-classroom-assistant"
+      ]
+    },
+    {
+      "path": "plugins/mochi-classroom-assistant/intents.mjs",
+      "sha256": "8c69bb71028bedd5bbbeab93c8cf14ab793375168087b0ee166bc58a480499d8",
+      "bytes": 935,
+      "categories": [
+        "staged-plugin:mochi-classroom-assistant"
+      ]
+    },
+    {
+      "path": "plugins/mochi-classroom-assistant/package.json",
+      "sha256": "ec914ed7b0d0b376f785f83ffc4e5b65989a60baa41bdf79e6d2f8ea9cdd5d81",
+      "bytes": 235,
+      "categories": [
+        "staged-plugin:mochi-classroom-assistant"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-classroom-assistant/index.mjs",
+      "sha256": "61d8f8c67a19d61c45dec96412a734084eb3bcc243b817f6daacb2756ab7963b",
+      "bytes": 83,
+      "categories": [
+        "staged-plugin:mochi-classroom-assistant-client"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-classroom-assistant/client.js",
+      "sha256": "2df7018eb7c8a2b0fe6127cc7a6adbec6f50a5885c69cdf01ba008a0a907a314",
+      "bytes": 32026,
+      "categories": [
+        "staged-plugin:mochi-classroom-assistant-client"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-classroom-assistant/NOTICE",
+      "sha256": "7894b01fb4d8fe40050e7d959d493c14c41094219a540ff074237bf21d11ceef",
+      "bytes": 1269,
+      "categories": [
+        "staged-plugin:mochi-classroom-assistant-client"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-classroom-assistant/package.json",
+      "sha256": "7573a0f87fac6199ead1b865ee885042c292efcdc2bc63dad976bc3c60b003ee",
+      "bytes": 525,
+      "categories": [
+        "staged-plugin:mochi-classroom-assistant-client"
+      ]
+    },
+    {
+      "path": "plugins/mochi-classroom-planner/index.mjs",
+      "sha256": "1a0ba67a48326d9e8716a0aa9724c97610e932d823014b9fbbf38e8c527b1938",
+      "bytes": 6976,
+      "categories": [
+        "staged-plugin:mochi-classroom-planner"
+      ]
+    },
+    {
+      "path": "plugins/mochi-classroom-planner/planner.mjs",
+      "sha256": "b9d6ad37303fbe608cc4748d4e37aea96d9e28fd902890604cd6c08f5bda38b1",
+      "bytes": 6504,
+      "categories": [
+        "staged-plugin:mochi-classroom-planner"
+      ]
+    },
+    {
+      "path": "plugins/mochi-classroom-planner/timetable.mjs",
+      "sha256": "a7cab52c6d4be1d3dfa1ad0927d177ad3099981665245bc51cad678d14f89516",
+      "bytes": 5153,
+      "categories": [
+        "staged-plugin:mochi-classroom-planner"
+      ]
+    },
+    {
+      "path": "plugins/mochi-classroom-planner/import-file.mjs",
+      "sha256": "6721551025135a6178ce50199377a4bcea4f00fdf0f290fd9cbf815a55ce79f7",
+      "bytes": 1242,
+      "categories": [
+        "staged-plugin:mochi-classroom-planner"
+      ]
+    },
+    {
+      "path": "plugins/mochi-classroom-planner/package.json",
+      "sha256": "ff6f6147090ebee8e1ff97d0f82c6c33ec062dcc726709651740dfd61ab286c7",
+      "bytes": 246,
+      "categories": [
+        "staged-plugin:mochi-classroom-planner"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-classroom-planner/index.mjs",
+      "sha256": "7dc05e36e7b3a684a3ca2344d6ae3d3d2576c9db7cca36e5ae7df678441a05f9",
+      "bytes": 81,
+      "categories": [
+        "staged-plugin:mochi-classroom-planner-client"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-classroom-planner/client.js",
+      "sha256": "480ef9b130f0d9c73cc1231d89f87003a3a147a26be0a71b225e7fcd75f865bb",
+      "bytes": 20429,
+      "categories": [
+        "staged-plugin:mochi-classroom-planner-client"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-classroom-planner/package.json",
+      "sha256": "5717d1354650d11fbe63dc1453e2f1ba8bbc99ec29bf01b60a32c75b2f94c977",
+      "bytes": 523,
+      "categories": [
+        "staged-plugin:mochi-classroom-planner-client"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-brand/src/MochiTeam.css",
+      "sha256": "38215a4a6b5a3dfc9f18ac384f05f291179d87418eef5ca86bc28860c1f0aeee",
+      "bytes": 1259,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-brand/src/MochiTeam.tsx",
+      "sha256": "aaff781cf54eba0892f081a95613b1d0344a1ac6662d15c92167ccd3332e80ea",
+      "bytes": 4199,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-brand/src/team-conversation-palette.mjs",
+      "sha256": "b23ccfe682cbc1d6283026697a3f785cbda8cb03b77a3abdfdb2c07cc1f284c8",
+      "bytes": 841,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-brand/src/team-palette.mjs",
+      "sha256": "192b5a915908c23de583c42d59977818ecc9023d03b5918b8feeb94fbee49b74",
+      "bytes": 907,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-brand/scripts/team-conversation-palette.test.mjs",
+      "sha256": "df53fcdb84ae2a88b7c44048d11d7a4c8b7cd379623bf49d213e55a095fd5551",
+      "bytes": 1974,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-brand/scripts/team-palette.test.mjs",
+      "sha256": "43075d14733f0feebf7579c34d81095e29368138ac8c36672731853a9bf7f59e",
+      "bytes": 1411,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-theme/styles/mochi-controls.css",
+      "sha256": "c3f1ea274c84970906a7b5bd8e7fb34ee4e806d894e38809f88231d49d0f0189",
+      "bytes": 1607,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-theme/scripts/pet-palettes.mjs",
+      "sha256": "82449f66c5a7ba9faf37afe4bc235cd487efa7248ebf088cdeb45b991ff47052",
+      "bytes": 1909,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-theme/scripts/settings-bridge.mjs",
+      "sha256": "96105bd87588a58f2248bacd9285589fdbb1fcc133c55a6b6f40c4458a0e31b6",
+      "bytes": 690,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-theme/test/settings-bridge.test.mjs",
+      "sha256": "be3f6ae99af85fc1504b13ee915946417944796e533637faf938a897c6f91cbc",
+      "bytes": 1881,
+      "categories": [
+        "desktop-test-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/dsh/classroom-startup.ts",
+      "sha256": "4de7f0efaf9e28f4d89432c13844aacd570ac1aceb669b55fce621673a0f2c90",
+      "bytes": 2061,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/dsh/controls.generated.ts",
+      "sha256": "0bca4cee3ca91a2d57b2551d08e7e45c1e23d5a212cade893e817576197c52e5",
+      "bytes": 1773,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/dsh/microphone-permissions.ts",
+      "sha256": "7055580acb717a32c06b6410bc884c5196a2b5506c1c176eb369b119b073c870",
+      "bytes": 1857,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/dsh/pet-palettes.generated.ts",
+      "sha256": "f1c654a3ba42b43e1bc4ea2e217346e8655d049da1501bb77ac3df9fa717026c",
+      "bytes": 3376,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/dsh/runtime-paths.ts",
+      "sha256": "ac728b822d05afcf5987a10e3243a1403eaaa7636dc11c5d787adee4f7856b79",
+      "bytes": 1495,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/electron/dsh/voice-reply.ts",
+      "sha256": "199b112a52fda02f960ee4780bfdb7c7504379b99532496540eb5f6e6b77e9bf",
+      "bytes": 3290,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/modern-runtime-resources.cjs",
+      "sha256": "ce658882146ec5580ac1ed437d3991519fa6f2f7530363a7e2a9c3dc28163900",
+      "bytes": 4404,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/prepare-modern-app.cjs",
+      "sha256": "2ee840dbbe118790b052155c153a74d8c20006b2ce37aaaaec570626afec4263",
+      "bytes": 1654,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-classroom-listening-ui.mjs",
+      "sha256": "e5e7bb9f5a0084d07607bbc5694218b61b42ef2bc566b266502533f5e7fb7035",
+      "bytes": 7009,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-classroom-planner-ui.mjs",
+      "sha256": "a8fbfae0e104445abd9cb2b6d6d06e01e3ed4b9e4ecba00ab135aac46c011a6f",
+      "bytes": 8622,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-classroom-preload.mjs",
+      "sha256": "5037e4c88df5dfbcba4deb4156e849ccb48c1727d4c88dc1fc5de30450b8f03a",
+      "bytes": 1952,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-classroom-startup.mjs",
+      "sha256": "96bec0d61aaecc817bc9960f1b861f96145afeb7c41f0906b0cf97439c0b8443",
+      "bytes": 2497,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-controls-ui.mjs",
+      "sha256": "129cfe83569b7f9eba26f05e211dd6c8be4617fd1ee33c6b5f965a7630bdde23",
+      "bytes": 4781,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-microphone-permissions.mjs",
+      "sha256": "04057722977ccb1d7a080806ee45dfc8ea3b8360d44e5901d0faba275801a1d4",
+      "bytes": 2330,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-modern-envelope-ui.cjs",
+      "sha256": "0160aef6bed97e857568e659ca5c47ce968d11d2045c745fd9d94902f3f77ef1",
+      "bytes": 8860,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-modern-memory-role-runtime.mjs",
+      "sha256": "8eefd1274a173c8a11fdc12ce4fa6dabfdbd4022ddfb733c69bed2ac43122996",
+      "bytes": 7734,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-modern-memory-runtime.mjs",
+      "sha256": "5ab3047f4fab7f92714fa22024c928d645acc4b4bf17178d6762bb7be911661b",
+      "bytes": 11148,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-modern-mimo.mjs",
+      "sha256": "0abc465ea55259df66076f5788cc4334e4985890d5a080ebd0a5b9064e0caa26",
+      "bytes": 3741,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-modern-native-runtime.mjs",
+      "sha256": "35a50aebfd97e34bcb5aa8c1caa8b0b91ba96fa0a14fad44f72c3b6bd0e64443",
+      "bytes": 2467,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-modern-runtime-profile.mjs",
+      "sha256": "0fb9452eebb25d954f86b9e6892239218467b43f6f359ef739f08f72f433a9da",
+      "bytes": 5592,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-modern-runtime-resources.mjs",
+      "sha256": "1b68f964e153c848b8872a1b500c2223ac6e3fd4b40af2fa2eac10ac8f35b430",
+      "bytes": 3426,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-modern-schedule-runtime.mjs",
+      "sha256": "f32d1b6d29cea22e5075a019184ff1f11f5862d4df3fb1ff0df536e72244c91e",
+      "bytes": 6677,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-modern-settings.mjs",
+      "sha256": "e3079742387a4c4a5771a7f88a2f11a835365f2f2b47b2f5520ac6d201c9f96c",
+      "bytes": 7296,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-modern-sidebar.mjs",
+      "sha256": "fbc363088ce5b3bf759e22d998e3a44e6705ceed213ed51c5f3c53f9332fd3ec",
+      "bytes": 2858,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-modern-teacher-runtime.mjs",
+      "sha256": "93118e4ffcf0e4a791bb18a49a9f6597f9108458680037f5dad73a7045f411a4",
+      "bytes": 6893,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-modern-teacher-ui.cjs",
+      "sha256": "ed24b92e8bd3d8db10301cec6eac84c0e81b520d3075c2ff5e480dbc537ef6e4",
+      "bytes": 9188,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-modern-user-profile-runtime.mjs",
+      "sha256": "eb71d24c7a7d3952decadc6066eeecdbab18b0fa12e4acff58c8b2bea23a8b14",
+      "bytes": 8859,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-modern-user-profile-ui.cjs",
+      "sha256": "f9d01a9d43625532b4760ced26327aa546ea82c55f4037ee5f2b4a23a006d622",
+      "bytes": 6314,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-modern-voice-input-ui.mjs",
+      "sha256": "e70760039db738e597b9ebec3917241754feb7d5f0cbb3f03b24f186868a7e9d",
+      "bytes": 8024,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-packaged-modern-ui.cjs",
+      "sha256": "ea8dda5cab7d351e52fbbda48f8d37c9b9fab61cbe50ca146845dd256e43809b",
+      "bytes": 11872,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-packaged-voice-input-ui.mjs",
+      "sha256": "0cc991bf8ddbd0268be5d7e2ad8fa2013f8fd42012ae0972006c6445bd253d74",
+      "bytes": 10977,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-prepare-modern-app.mjs",
+      "sha256": "7ad8d5708b7fe81134056d004c272a526d56d2afcba601c5a25a8a9f5ba67fdb",
+      "bytes": 1504,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-voice-reply.mjs",
+      "sha256": "fa4a941390d7e03a66653b438c2ce9ea2da6ef53ed86ef1a59a01b8cab61a19a",
+      "bytes": 3460,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "plugins/mochi-llm-mimo/test/runtime.test.mjs",
+      "sha256": "15f3b9d6d2ba9164326b45d47202ad94191209bddd5cb65379222761a40ce3b9",
+      "bytes": 6940,
+      "categories": [
+        "desktop-test-source"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-memory/build.mjs",
+      "sha256": "a8ea4fe2144fc946b527964ce7da45695ade1e2c76c8191c6b0e1e6e085e972b",
+      "bytes": 727,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-memory/client-entry.mjs",
+      "sha256": "a3789653355bc4ea274d646aac30cba7f07a12a51e57303cb6402cfc20ac9c43",
+      "bytes": 10111,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-memory/journal-ui.mjs",
+      "sha256": "b7d8d213feb5a95d57faf78134ed14dd32a96dae5ce5eb729db969218278c9b7",
+      "bytes": 15703,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-memory/journal-view.mjs",
+      "sha256": "7cc145f4bcb4b3ab74ee65c4369bc055c7efd016ea7a83b681d1121dd5871a05",
+      "bytes": 2133,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-classroom-planner/build.mjs",
+      "sha256": "051525b2a5f72d0c46e4c15ce28d8439216f7d55a46195461ae324b10d96377d",
+      "bytes": 738,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-classroom-planner/client-entry.mjs",
+      "sha256": "5cf0b3628fd686d3f6d9365815d39ae72441fdb0374b6d6db7e380a387d83766",
+      "bytes": 13363,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-onboarding/build.mjs",
+      "sha256": "533a428cd2190951e730a1bb11fdecd141dadd608bd67bfadb289036b76e796d",
+      "bytes": 714,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-onboarding/client-entry.mjs",
+      "sha256": "b6a8fad8f8f1c920429809df238c7fe481139f5fe3e825b46054b18c07955b0b",
+      "bytes": 17104,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-onboarding/navigation.mjs",
+      "sha256": "9fd1ded74d867657151427145c1de57af672346ff5ee7bab12be685e9c121848",
+      "bytes": 2563,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-onboarding/sidebar-action.mjs",
+      "sha256": "6fea1d466b51213b103528f308401c9d9874dd3d1dab2aad9ea60ed0b53e0081",
+      "bytes": 1264,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-modern-lan-host.mjs",
+      "sha256": "60e450c1ef28cd98a8b2e0d0cbd3f98b0ffbbe218a6ac53cf7d4f17b0c95cb22",
+      "bytes": 17962,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-modern-session-migration.mjs",
+      "sha256": "8fdde6f336f59af49efa462a6e50a6a6a20e63d69ecf43a80ba17cb2fd1c4639",
+      "bytes": 15156,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-packaged-camera-ui.mjs",
+      "sha256": "29f0f8b258eba6c8891239868622d7945d652d7fba38f0af8b5182e5aa94996f",
+      "bytes": 10205,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-packaged-classroom-listening-ui.mjs",
+      "sha256": "44dbcfac3d9f27e18fb43cb35668d52b164db7731e8f50e3164b9d9b333ebdea",
+      "bytes": 13258,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-packaged-voice-chat-ui.mjs",
+      "sha256": "f9706d1634c8d45af357c0a43738f635edd52a49df8015a72839a1161f7c085a",
+      "bytes": 9584,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-sidebar-footer-ui.cjs",
+      "sha256": "c13e871a2819931629d32b7c2bb4f2cb7c48cd5ca316a3d0c0eb71962032ba89",
+      "bytes": 5851,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "plugins/mochi-lan/test/test-shared-discovery-port.mjs",
+      "sha256": "43e4e39435e37cc284ae95bcbf5b24e14e9a25f2e8b95a47df6841bc96c61cb4",
+      "bytes": 4128,
+      "categories": [
+        "desktop-test-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-packaged-sidebar-footer-ui.cjs",
+      "sha256": "9f090ded84e59a9fe95642962160aadd2cda32545936932dd00bc75f4afddd56",
+      "bytes": 9722,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-voice-chat/build.mjs",
+      "sha256": "1fa39a2168b04de839e637b09b8d2e43fe5efaa74034b57ff21c30a61f05b8ed",
+      "bytes": 713,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-voice-chat/client-entry.mjs",
+      "sha256": "d5d4b4dce65b68c8e794d8cb771437f19212e7226e38fb9d2f1ac2b46dec74f9",
+      "bytes": 3247,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-voice-chat/controller.mjs",
+      "sha256": "cf8380813dde02688d8413f1d1e4421f03111aa1b1f101e23f8603126cbcacde",
+      "bytes": 5704,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-voice-chat/session-reply.mjs",
+      "sha256": "f6a5576aa5eb7071eb098cf59e5265d29241e03dfca904986e98fea92469dbcc",
+      "bytes": 3585,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-voice-chat/entry-controls.mjs",
+      "sha256": "232f214b71f51df2ced3c426515c064c3dceabdc9adf6bdb9db187d69b09e4a1",
+      "bytes": 2347,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-classroom-assistant/build.mjs",
+      "sha256": "3cada92b0a752d04ce486595d3c535c89bd87a17c892f7e37ab7e621e91c2333",
+      "bytes": 739,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-classroom-assistant/client-entry.mjs",
+      "sha256": "bd99fa0daee0fa97d59f37018c7821ad04194d0fd16cda516a6c80cf91460127",
+      "bytes": 14913,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-classroom-assistant/recorder.mjs",
+      "sha256": "6fa5256178fb493a1b9b5830ea6889230dd1f0b9031a324e940527b38e36c4b8",
+      "bytes": 8183,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-packaged-media-entries-ui.mjs",
+      "sha256": "d6d2c953928b2a05c9c50481c1e46f2ed3c445685934df27f1a2ab59f9a8e0f5",
+      "bytes": 12441,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-packaged-team-ui.mjs",
+      "sha256": "fdcc07f714a0be3c0485600294140d4e8f5248fba4f947f65f03e06492c408d8",
+      "bytes": 11337,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-model-presets/reasoning.mjs",
+      "sha256": "2b09faa9f0f284c8f72125ff1bc988c5f7b2c69705e07b2a7175c829b4f78577",
+      "bytes": 11558,
+      "categories": [
+        "staged-plugin:mochi-model-presets"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-model-presets/src/client.template.js",
+      "sha256": "7ff35961bce2dd2d61c40baa08e0327546b027389e27766a4da4741a18b6e8f4",
+      "bytes": 48135,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-model-presets/scripts/build.mjs",
+      "sha256": "21a0f16df7ea069f9289059645001ffd9b9509d7a135efbfed73b771b0533e6c",
+      "bytes": 7007,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-model-presets/test/client.test.mjs",
+      "sha256": "47151ce295b14a48f748e1d25b965903a8a5c1f8153dbd44f82ea21c257d6fd4",
+      "bytes": 36393,
+      "categories": [
+        "desktop-test-source"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-model-presets/test/reasoning.test.mjs",
+      "sha256": "a552055ff0abeaee13bc6da2498947329222024aa3ed25293c1c195fbff87c56",
+      "bytes": 11194,
+      "categories": [
+        "desktop-test-source"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-modes/test/client.test.mjs",
+      "sha256": "347337b02b92da8d7fef542fe30c79f36e44706dd18a1ff9fb06b04730b325bf",
+      "bytes": 4895,
+      "categories": [
+        "desktop-test-source"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-modes/test/scenes.test.mjs",
+      "sha256": "21c957f700d00dea55b958418749753587287eb4a0fec054d6580a47ff20eda8",
+      "bytes": 14661,
+      "categories": [
+        "desktop-test-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-doctor-window-state.mjs",
+      "sha256": "8516b7e7c173f3f5df801515fc17a407cd7e0865d25c0ecb4f9b2c522c4fa6ab",
+      "bytes": 8528,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-modern-models.mjs",
+      "sha256": "7ec9013735a7be3690398afeaed2a97044ba7b5b3329416cd36b2a183e658033",
+      "bytes": 4659,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-modern-settings-gateway-runtime.mjs",
+      "sha256": "ad605a1b4597824ab62fe251ba4588493e0310f840be810443b4635049a7bc8d",
+      "bytes": 9413,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-startup-page-ui.mjs",
+      "sha256": "b41edaab5dbc344c0ce77d464386794d388851514e2601a9b768acfc1d9b5420",
+      "bytes": 4971,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-automatic-reasoning-runtime.mjs",
+      "sha256": "7ab45f68c0ffe7a0681aef5427abf4544c8a5dbc37ae799efea2c875dd76dcd6",
+      "bytes": 17460,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-voice-chat/reply-reader.mjs",
+      "sha256": "4643456bf7f7be8cb182b772d05b8a00e7cab677dee3b696f99a311b93667ab1",
+      "bytes": 3572,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-voice-chat/test/controller.test.mjs",
+      "sha256": "e1945a326df4c8e01971c9232d25183fd71dffd825828dc33686345923e2a46d",
+      "bytes": 9699,
+      "categories": [
+        "desktop-test-source"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-voice-chat/test/entry-controls.test.mjs",
+      "sha256": "3c10775546524aace115edf1794fc853f2afd70f857ba8bd6c9a56a355e4a7f6",
+      "bytes": 5049,
+      "categories": [
+        "desktop-test-source"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-voice-chat/test/host-ui.mjs",
+      "sha256": "0ab89320e78aac069a959a3624767f654646562cd99270ec3b62a62fa6598c45",
+      "bytes": 12267,
+      "categories": [
+        "desktop-test-source"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-voice-chat/test/prepare-session.mjs",
+      "sha256": "f93a7f93421e55cf12bd7c79367d35c2828479eee427bd243e7fa427babc01b5",
+      "bytes": 1443,
+      "categories": [
+        "desktop-test-source"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-voice-chat/test/reply-reader.test.mjs",
+      "sha256": "a50447ab7e96d58b1cd3463b8daf43fcf68712671984b427aa4034282df50bc8",
+      "bytes": 3106,
+      "categories": [
+        "desktop-test-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-reply-reader-runtime.mjs",
+      "sha256": "192a516efda4fa3f968c478d3b232bc8019fa10c269dc7c2869dbe74416ff572",
+      "bytes": 7598,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-voice-chat/test/header-layout.mjs",
+      "sha256": "b084a4740abe000cec0a0fd1f64c339a408b313ade4dbf1fad5034dd6d4ec485",
+      "bytes": 4055,
+      "categories": [
+        "desktop-test-source"
+      ]
+    },
+    {
+      "path": "client-plugins/jxl-brand/scripts/running-status.test.mjs",
+      "sha256": "ae7f2b5e6e068370f670d4654632005b99d2a6d4a0acc7ac191580187db2d23b",
+      "bytes": 1996,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-product-identity-wire.mjs",
+      "sha256": "92c4b2a686311638f496514d6e50692a0a741bdfccd6e682bed48c33b8d7fc29",
+      "bytes": 2933,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "plugins/mochi-llm-mimo/empty-reply-guard.mjs",
+      "sha256": "0c5ec13bfd7fb9e2505fa354f2d209c6dc5a0ec70d41d13c1ad8e7464ec76e36",
+      "bytes": 3853,
+      "categories": [
+        "staged-plugin:mochi-llm-mimo"
+      ]
+    },
+    {
+      "path": "client-plugins/mochi-modes/test/empty-reply.test.mjs",
+      "sha256": "343c44284e031876a79f9cee86bc4e722c9b2889d626df2b5293928ca3d487fa",
+      "bytes": 9558,
+      "categories": [
+        "desktop-test-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-mimo-empty-reply-runtime.mjs",
+      "sha256": "8d2a5a281196192ff06946d25af507cf05d3bf20c4d734a43d166aacfc505313",
+      "bytes": 10763,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "plugins/mochi-llm-mimo/test/empty-reply-guard.test.mjs",
+      "sha256": "d8f415e370ab8a6cf897ac0918d3d2ef2de727d86860e0207a9401c65c92b204",
+      "bytes": 5087,
+      "categories": [
+        "desktop-test-source"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/scripts/build-textbook-skills.mjs",
+      "sha256": "0b2d7bb99b961d0acc20c653404d57d26b774423e9c60989a401ff01f04b18a7",
+      "bytes": 15102,
+      "categories": [
+        "staged-plugin:mochi-knowledge"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/vendor/book-to-skill/LICENSE.md",
+      "sha256": "be9b04bccfb4bdab63de13663307c229c0aa5ca69b692e9c351ff7053da9faca",
+      "bytes": 1068,
+      "categories": [
+        "staged-plugin:mochi-knowledge"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/vendor/book-to-skill/README.md",
+      "sha256": "59b499d845479456ba9afa7487457d62e6fbbdbcad9e9ae5e0e2ed4cc2961c0b",
+      "bytes": 1075,
+      "categories": [
+        "staged-plugin:mochi-knowledge"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/vendor/book-to-skill/UPSTREAM.json",
+      "sha256": "853acaa8d110f19e221b909966070dda7009850fde866c71b8bd92178acb7948",
+      "bytes": 2235,
+      "categories": [
+        "staged-plugin:mochi-knowledge"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/vendor/book-to-skill/book_to_skill/__init__.py",
+      "sha256": "9d18b99b2c417557244634073c6bb3fa52dcc58aad8fb1fc5f658599f0c3ab77",
+      "bytes": 217,
+      "categories": [
+        "staged-plugin:mochi-knowledge"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/vendor/book-to-skill/book_to_skill/__main__.py",
+      "sha256": "2207592e7bad6433302d258a4cfc9384a406373f59e49392a56d8389d08803ea",
+      "bytes": 74,
+      "categories": [
+        "staged-plugin:mochi-knowledge"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/vendor/book-to-skill/book_to_skill/cli.py",
+      "sha256": "2fe257d1c089ca5ecc68c6dde377087766b83d3e9c5393810c6bb5401dc97a91",
+      "bytes": 1336,
+      "categories": [
+        "staged-plugin:mochi-knowledge"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/vendor/book-to-skill/book_to_skill/config.py",
+      "sha256": "e92a487f632db762f4dafff3188f6441809b4cba3bb88b0c6821a14e6a21ff2f",
+      "bytes": 2400,
+      "categories": [
+        "staged-plugin:mochi-knowledge"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/vendor/book-to-skill/book_to_skill/dependencies.py",
+      "sha256": "42ada779fd8d8eed961790f4d49cadd1c824ec7a9cb7fbfd36f02a26c9b12988",
+      "bytes": 12494,
+      "categories": [
+        "staged-plugin:mochi-knowledge"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/vendor/book-to-skill/book_to_skill/exceptions.py",
+      "sha256": "bf9417993e577cea5130bc34f4241cafccd1dda1f2f1ac22a9e8a198cc9dedc8",
+      "bytes": 117,
+      "categories": [
+        "staged-plugin:mochi-knowledge"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/vendor/book-to-skill/book_to_skill/parsers/__init__.py",
+      "sha256": "a8f740712820f8729cd3b6adca799d17a23e0b80205a29e511791aafc97723f0",
+      "bytes": 18,
+      "categories": [
+        "staged-plugin:mochi-knowledge"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/vendor/book-to-skill/book_to_skill/parsers/calibre.py",
+      "sha256": "ed2589e86408cb5e82f795a20ce3cf8e32a9f8307fd3e838ba3a7c466f200d42",
+      "bytes": 2409,
+      "categories": [
+        "staged-plugin:mochi-knowledge"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/vendor/book-to-skill/book_to_skill/parsers/docx.py",
+      "sha256": "8a2f2ec693b3c24be987bd3f419a0ed82b8d2dc9d7a3783f5a880288617fedf3",
+      "bytes": 6909,
+      "categories": [
+        "staged-plugin:mochi-knowledge"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/vendor/book-to-skill/book_to_skill/parsers/epub.py",
+      "sha256": "31b8a9a873a0b7ed9338e9f4256096b06ec5bc6c836343f0ff4176606f173544",
+      "bytes": 6868,
+      "categories": [
+        "staged-plugin:mochi-knowledge"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/vendor/book-to-skill/book_to_skill/parsers/html.py",
+      "sha256": "dec7b3b84dc514469c050fa71bafcc8109956d2f296198e05d1bb20fce1bc2e6",
+      "bytes": 5757,
+      "categories": [
+        "staged-plugin:mochi-knowledge"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/vendor/book-to-skill/book_to_skill/parsers/pdf.py",
+      "sha256": "25c83c7e11941a62f7af54b61b435a51d6c74be5c4896062d95509230a5053c2",
+      "bytes": 8570,
+      "categories": [
+        "staged-plugin:mochi-knowledge"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/vendor/book-to-skill/book_to_skill/parsers/rtf.py",
+      "sha256": "a1097455129d69249825fbd9a9acf3805cec3fcfab5ba5929f128f2c860dce49",
+      "bytes": 6837,
+      "categories": [
+        "staged-plugin:mochi-knowledge"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/vendor/book-to-skill/book_to_skill/parsers/text.py",
+      "sha256": "d355f499d3184f2b96aa84ea8e55d72b2127c6b91ff9f90d43131c8039e1ee13",
+      "bytes": 1201,
+      "categories": [
+        "staged-plugin:mochi-knowledge"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/vendor/book-to-skill/book_to_skill/pdf_inspector_integration.py",
+      "sha256": "e1f6790be272068a9d82ab2b2fe78cd1510dba12748bf9f9931514b759c6d1c2",
+      "bytes": 10087,
+      "categories": [
+        "staged-plugin:mochi-knowledge"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/vendor/book-to-skill/book_to_skill/sanitize.py",
+      "sha256": "b2e251402d1a5f95cf6f7c9cc293b4c977612d9b0a96b77a234741d626404627",
+      "bytes": 6357,
+      "categories": [
+        "staged-plugin:mochi-knowledge"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/vendor/book-to-skill/book_to_skill/utils.py",
+      "sha256": "547f49d836192d9a3dd3960f2d4cffa2031c1cc59bff89e49013ba4e48c9054d",
+      "bytes": 65957,
+      "categories": [
+        "staged-plugin:mochi-knowledge"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/vendor/book-to-skill/scripts/extract.py",
+      "sha256": "f0641dc486c0d8323ebdde449dc80b49d1cd94a4aa2320058a2a13a2b48582ac",
+      "bytes": 1333,
+      "categories": [
+        "staged-plugin:mochi-knowledge"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/vendor/book-to-skill/tools/scan_generated_skill.py",
+      "sha256": "2566b9dfb1ff3b473f4daebea9a0dffc36f22bd8888b7e267c256ad5f1b87be3",
+      "bytes": 14278,
+      "categories": [
+        "staged-plugin:mochi-knowledge"
+      ]
+    },
+    {
+      "path": "plugins/mochi-user-profile/holiday-greeting.mjs",
+      "sha256": "72786b528cf41654671e49f28eba26624859a2daf19b9cd1441dc7b7a05adeaa",
+      "bytes": 9920,
+      "categories": [
+        "staged-plugin:mochi-user-profile"
+      ]
+    },
+    {
+      "path": "plugins/mochi-user-profile/vendor/lunar/lunar.cjs",
+      "sha256": "9750324bfe1aa63c146f8c72b1143df924466c11c8a5277d7d9225c541a18aaa",
+      "bytes": 435942,
+      "categories": [
+        "staged-plugin:mochi-user-profile"
+      ]
+    },
+    {
+      "path": "plugins/mochi-user-profile/vendor/lunar/LICENSE",
+      "sha256": "d9210caf1844dcf410095cea464b79800aad30dbd49df092076b9f0ddc015404",
+      "bytes": 1061,
+      "categories": [
+        "staged-plugin:mochi-user-profile"
+      ]
+    },
+    {
+      "path": "plugins/mochi-user-profile/vendor/lunar/SOURCE.json",
+      "sha256": "7bbd79c68fa243b89d93a4d3daee81609a027d1c3fb762d79205b00a2ff6b3eb",
+      "bytes": 252,
+      "categories": [
+        "staged-plugin:mochi-user-profile"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-book-skill-profile.mjs",
+      "sha256": "c9bd602da884cc7a9d5255d15741ddd9b5ff7ffda2a4b49148c4e2db7579b668",
+      "bytes": 6151,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-holiday-greeting-runtime.mjs",
+      "sha256": "d33f657681c08ee14715e145adf03b6604446b3198ec7bdb0ac6ea9b2dfb1cb8",
+      "bytes": 8295,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/test/knowledge-store.test.mjs",
+      "sha256": "ba7b110a7e17f61336dfc7dc28cf3c6426acb2538d15a412b585b56947e7a221",
+      "bytes": 8811,
+      "categories": [
+        "desktop-test-source"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/test/page-image.test.mjs",
+      "sha256": "3601a00366023fcc9b81bbd107e70f96aa835d56f15dd06daaf21ca811658148",
+      "bytes": 9301,
+      "categories": [
+        "desktop-test-source"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/test/plugin.test.mjs",
+      "sha256": "8bc1611ac2403d08749c6d80a44d44ec087835e3b07ee7211150867572bb358a",
+      "bytes": 5135,
+      "categories": [
+        "desktop-test-source"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/test/textbook-skills.test.mjs",
+      "sha256": "b8b00c4558e74605a4a7905caba4a814317f81859845f46feadc73f85fa66f7a",
+      "bytes": 8673,
+      "categories": [
+        "desktop-test-source"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/test/verify-alpha-optional-connection.mjs",
+      "sha256": "dfb5f77bda150407a5e4567b1074cbf013e4e248465ed5363c34dc7315b68591",
+      "bytes": 3774,
+      "categories": [
+        "desktop-test-source"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/test/verify-alpha-page-image.mjs",
+      "sha256": "ae07ec0b6f31b83dc35b12adc402481579815d9bde0db50024986d853cf8fa2f",
+      "bytes": 4965,
+      "categories": [
+        "desktop-test-source"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/test/verify-alpha-profile-empty-search.mjs",
+      "sha256": "64a8c45d6604ee39ec161c2465c449e4d93f59e5f5ac464b2191bc4346be0d9e",
+      "bytes": 5547,
+      "categories": [
+        "desktop-test-source"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/scripts/build-catalog-from-audit.mjs",
+      "sha256": "e02250f71dfd19cf772f110f3c998befddcf93666deeb8f0fa217c35ed7b6995",
+      "bytes": 5091,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/scripts/build-private-textbook-snapshot.mjs",
+      "sha256": "dff142d6f1f59303c0fcd28edf299aaa3e91466a79a737636e6279bf8a113ad6",
+      "bytes": 8518,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/scripts/import-textbooks.mjs",
+      "sha256": "9ae97657add37c08d82b065df99c159a795a69594f81a3eaa6dec89317bfd7c0",
+      "bytes": 4875,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/scripts/ocr-scanned-books.mjs",
+      "sha256": "3a834ed0ab0ecdb603fe6080ba26b9754ba333192745cb5ef251d11509e9896b",
+      "bytes": 7700,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/scripts/render-pdf-page.py",
+      "sha256": "13d14d9a9b1d045afd882948b40c8d49211fd6a0de277febe9726ae52182b4ae",
+      "bytes": 1234,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "plugins/mochi-knowledge/scripts/test-install-textbook-snapshot.mjs",
+      "sha256": "57d6066afd5140ada43aa20be4077ab27d41c0101f00fbee6e1504eabc622af3",
+      "bytes": 9738,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/verify-personalized-delivery.mjs",
+      "sha256": "577ce8c62065eec3dadbd1e8a808e8b42fcce219018445b9648b0a45fe943e96",
+      "bytes": 5650,
+      "categories": [
+        "desktop-source"
+      ]
+    },
+    {
+      "path": "plugins/mochi-user-profile/greeting-policy.mjs",
+      "sha256": "848fa3c95ba3f7e8e1bcb5d514d8e8b34deae8e35659564cef6968d6306525c7",
+      "bytes": 505,
+      "categories": [
+        "staged-plugin:mochi-user-profile"
+      ]
+    },
+    {
+      "path": "apps/desktop/scripts/test-user-profile-package-closure.mjs",
+      "sha256": "fbc3c6eb306bae6e5679d99112e75b58bbd3e5e822991d8b66bdc1aa37be8f73",
+      "bytes": 3179,
       "categories": [
         "desktop-source"
       ]

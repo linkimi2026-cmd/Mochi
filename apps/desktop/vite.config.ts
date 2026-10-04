@@ -15,6 +15,7 @@ export default defineConfig({
   root: resolve(here, "renderer"),
   base: "./",
   plugins: [react()],
+  resolve: { alias: { react: resolve(here, "node_modules/react"), "react-dom": resolve(here, "node_modules/react-dom") } },
   server: {
     port: 5178,
     strictPort: true,

@@ -4,6 +4,8 @@ import { homedir } from "node:os";
 import { join, resolve } from "node:path";
 import { app } from "electron";
 import { seedRuntimeHome } from "./seed";
+import { seedSidebarDefaults } from "./sidebar-defaults";
+import { managedRuntimeNodeModulesPath } from "./runtime-paths";
 
 type RuntimeProfileOptions = {
   homeDir: string;
@@ -56,9 +58,7 @@ function resolveRuntimeResourceRoot(): string {
 }
 
 function resolveRuntimeNodeModulesRoot(): string {
-  if (process.env.MOCHI_RUNTIME_NODE_MODULES) return resolve(process.env.MOCHI_RUNTIME_NODE_MODULES);
-  if (app.isPackaged) return join(process.resourcesPath, "app.asar.unpacked", "node_modules");
-  return join(app.getAppPath(), "node_modules");
+  return managedRuntimeNodeModulesPath(app.isPackaged,app.getAppPath(),process.resourcesPath);
 }
 
 function loadRuntimeProfileModule(resourceRoot: string): RuntimeProfileModule {
@@ -108,7 +108,7 @@ export function prepareDshHome(role: MochiRuntimeRole): string {
   }
 
   loadRuntimeProfileModule(resourceRoot).provisionMochiProfiles(options);
-  // 首启模型种子（WO-3）：teacher 角色把打包内置的凭据 refs 与默认模型链
+  // 首启模型种子：按角色把打包内置凭据补入独立 home，教师另补默认模型链
   // 幂等补进运行时 home；已有配置一律不覆盖。失败不阻塞宿主启动。
   try {
     const seedSummary = seedRuntimeHome({ homeDir: dshHome, resourceRoot, role });
@@ -117,6 +117,10 @@ export function prepareDshHome(role: MochiRuntimeRole): string {
     }
   } catch (error) {
     console.error(`[mochi] 模型种子写入失败（可继续在设置页配置）：${error instanceof Error ? error.message : String(error)}`);
+  }
+  if (role === "teacher") {
+    try { seedSidebarDefaults(dshHome); }
+    catch { console.error("[mochi] 侧边栏默认设置未写入；可在设置中开启模型打开文件与网页"); }
   }
   return dshHome;
 }

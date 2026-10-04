@@ -7,10 +7,14 @@
 import { spawn } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { createRequire } from "node:module";
 
 // 本文件在 scripts/ 下，项目根是上一层
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const NODE = process.execPath;
+const require = createRequire(import.meta.url);
+const legacy = process.argv.includes("--legacy-runtime");
+const launchArgs = process.argv.slice(2).filter(arg => arg !== "--legacy-runtime");
 
 const bin = (rel) => join(ROOT, "node_modules", ...rel.split("/"));
 
@@ -75,8 +79,35 @@ for (const key of Object.keys(cleanEnv)) {
   }
 }
 
-console.log("[mochi] 拉起 Electron + mochi-web …");
-const electron = run(bin(".bin/electron"), [".", ...extraArgs], { env: cleanEnv });
+if (!legacy && !cleanEnv.MOCHI_RUNTIME_NODE_MODULES) {
+  const { inspectModernRuntime } = require("./modern-runtime-resources.cjs");
+  try {
+    const runtime = inspectModernRuntime(join(ROOT, "runtime-modern"));
+    const { stageMochiResources } = require("./prepare-mochi-resources.cjs");
+    const staged = stageMochiResources({
+      outputRoot: join(ROOT, ".mochi-dev-resources-v1.nosync"), modernRuntimeRoot: runtime.root,
+      env: { ...cleanEnv, MOCHI_WITHOUT_KEY_SEEDS: "1" },
+    }).outputRoot;
+    cleanEnv.MOCHI_RUNTIME_NODE_MODULES = join(staged, "node_modules");
+    cleanEnv.MOCHI_PLUGIN_ROOT ??= join(staged, "plugins");
+    cleanEnv.MOCHI_RUNTIME_RESOURCES ??= join(staged, "profile");
+  } catch (error) {
+    console.error(`[mochi] 新版运行依赖不可用，请先运行 npm run runtime:install。${error.message}`);
+    process.exit(1);
+  }
+}
+const electronPackage = legacy ? "electron" : "electron-modern";
+let executable;
+try {
+  delete process.env.ELECTRON_OVERRIDE_DIST_PATH;
+  if (!legacy && require(`${electronPackage}/package.json`).version !== "44.0.0") throw new Error("新版 Electron 必须为 44.0.0");
+  executable = require(electronPackage);
+} catch (error) {
+  console.error(`[mochi] Electron 开发依赖不可用，请先在 apps/desktop 执行 npm install。${error.message}`);
+  process.exit(1);
+}
+console.log(`[mochi] 拉起 ${legacy ? "旧版回归" : "新版"} Electron + mochi-web …`);
+const electron = run(executable, [".", ...extraArgs, ...launchArgs], { env: cleanEnv });
 
 electron.on("exit", (code) => {
   console.log(`[mochi] Electron 退出（code=${code}）`);

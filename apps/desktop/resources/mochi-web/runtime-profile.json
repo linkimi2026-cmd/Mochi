@@ -94,7 +94,8 @@
         "mochi-model-presets",
         "dsh-better-sidebar",
         "mochi-lan",
-        "mochi-lan-client"
+        "mochi-lan-client",
+        "mochi-approval"
       ]
     }
   },
@@ -133,13 +134,35 @@
           "mochi-knowledge",
           "jxl-theme",
           "jxl-brand",
+          "mochi-model-presets",
           "mochi-lan",
-          "mochi-lan-client"
+          "mochi-lan-client",
+          "mochi-approval"
         ]
       }
     }
   },
   "plugins": {
+    "mochi-voice-chat": {
+      "workspacePath": "client-plugins/mochi-voice-chat",
+      "resourcePath": "mochi-voice-chat"
+    },
+    "mochi-camera": {
+      "workspacePath": "plugins/mochi-camera",
+      "resourcePath": "mochi-camera"
+    },
+    "mochi-camera-client": {
+      "workspacePath": "client-plugins/mochi-camera",
+      "resourcePath": "mochi-camera-client"
+    },
+    "mochi-classroom-assistant": {
+      "workspacePath": "plugins/mochi-classroom-assistant",
+      "resourcePath": "mochi-classroom-assistant"
+    },
+    "mochi-classroom-assistant-client": {
+      "workspacePath": "client-plugins/mochi-classroom-assistant",
+      "resourcePath": "mochi-classroom-assistant-client"
+    },
     "mochi-hello": {
       "workspacePath": "plugins/mochi-hello",
       "resourcePath": "mochi-hello"
@@ -276,6 +299,26 @@
     "dsh-better-sidebar": {
       "workspacePath": "plugins/dsh-better-sidebar",
       "resourcePath": "dsh-better-sidebar"
+    },
+    "mochi-classroom-planner": {
+      "workspacePath": "plugins/mochi-classroom-planner",
+      "resourcePath": "mochi-classroom-planner"
+    },
+    "mochi-classroom-planner-client": {
+      "workspacePath": "client-plugins/mochi-classroom-planner",
+      "resourcePath": "mochi-classroom-planner-client"
+    },
+    "mochi-user-profile": {
+      "workspacePath": "plugins/mochi-user-profile",
+      "resourcePath": "mochi-user-profile"
+    },
+    "mochi-onboarding": {
+      "workspacePath": "client-plugins/mochi-onboarding",
+      "resourcePath": "mochi-onboarding"
+    },
+    "mochi-memory-client": {
+      "workspacePath": "client-plugins/mochi-memory",
+      "resourcePath": "mochi-memory-client"
     }
   }
 }

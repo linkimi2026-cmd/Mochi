@@ -1,0 +1,10 @@
+import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
+import {execFileSync} from 'node:child_process';
+import {resolve} from 'node:path';
+const out=resolve('promo/v11/evidence-private.nosync/campus');mkdirSync(out,{recursive:true});
+let source=readFileSync('promo/v9/record-window.swift','utf8');
+const title='$0.title == "Mochi"',guard='window.owningApplication?.applicationName == "Mochi" || window.owningApplication?.applicationName == "Mochi Classroom"';
+if(!source.includes(title)||!source.includes(guard))throw Error('Recorder source changed; review guards before reuse.');
+source=source.replace(title,'$0.title?.hasPrefix("嘉行联 · 校园学生跨区域协同与安全闭环平台") == true').replace(guard,'window.owningApplication?.applicationName == "Google Chrome"');
+writeFileSync(resolve(out,'record-campus.swift'),source);
+execFileSync('swiftc',[resolve(out,'record-campus.swift'),'-o',resolve(out,'record-campus')],{stdio:'inherit'});

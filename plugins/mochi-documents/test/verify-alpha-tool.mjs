@@ -49,8 +49,8 @@ try {
     copyFile(new URL('index.mjs', documentsRoot), join(moduleRoot, 'index.mjs')),
     copyFile(new URL('plugin.mjs', documentsRoot), join(moduleRoot, 'plugin.mjs')),
     symlink(join(runtimeNodeModules, '@deepseek-ai'), join(nodeModules, '@deepseek-ai'), 'dir'),
-    symlink(join(repositoryRoot, 'plugins', 'mochi-documents', 'node_modules.nosync', 'docx'), join(nodeModules, 'docx'), 'dir'),
-    symlink(join(repositoryRoot, 'plugins', 'mochi-documents', 'node_modules.nosync', 'pdf-lib'), join(nodeModules, 'pdf-lib'), 'dir'),
+    symlink(join(repositoryRoot, 'node_modules', 'docx'), join(nodeModules, 'docx'), 'dir'),
+    symlink(join(repositoryRoot, 'node_modules', 'pdf-lib'), join(nodeModules, 'pdf-lib'), 'dir'),
     symlink(join(repositoryRoot, 'packages', 'mochi-pdf-layout'), join(nodeModules, '@mochi', 'pdf-layout'), 'dir'),
   ]);
 

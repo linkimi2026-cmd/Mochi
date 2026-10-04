@@ -12,7 +12,13 @@
 - 已有 profile、只读设置和 revision 冲突都不会被覆盖。状态只读取设置的脱敏视图及 credential 的 `configured` 布尔值。
 - “模型目录”只表示本机 pi-ai 目录已存在。`密钥已保存；尚未实测连接` 与“已连接/实测可用”严格不同。
 
-官方 `llm-pi-ai` 的 `discoverModels({ provider })` 对已安装 catalog route 会直接返回本机目录，设计上不会访问云端。因此它不能诚实地充当 API Key 或网络的“测试连接”。当前官方浏览器接口没有一个可读取已保存密钥、又能发出有界真实探针的独立接口；本插件不会伪造该测试，也不会额外要求用户重复输入密钥或发送付费提示词。
+MiMo 卡片从 `mochi-llm-mimo` 的 `baseURL` 显示当前有效服务地址的 origin（scheme、hostname、port），标注路由 `mochi-mimo`。路径、查询、片段和 URL 用户信息不会渲染；配置缺失、无效或读取失败时显示固定不可读提示，不猜测默认地址。服务地址 override 仍由原生模型编辑卡修改；本卡的空白占位不代表实际地址。
+
+MiMo 卡片提供“测试 MiMo 连接”，复用 Host 已认证的 `POST /api/mochi-doctor/check-model`。浏览器只发送固定空 JSON `{}`，请求使用当前教室会话凭据；密钥仍由 Host 从本机凭据库读取，客户端不接触密钥。此端点只对内置 MiMo 路线的首个目录模型发送最多 1 个 token 的探针，不代表每个已选模型。每次手动测试都会发出一次真实请求，可能产生少量费用。请先保存新密钥再测试；输入框有未保存草稿时测试按钮禁用。
+
+MiMo Key 配置后可显式点击“设为新对话默认模型”。卡片展示原生 `agent-default-model` 当前的 provider/model；写入前重新读取并以 revision fence 更新 provider、model，并清除旧的 `reasoningEffort`。保存 Key 或测试连接都不会改变默认模型。DSH `0.1.3-alpha.1` 的该原生服务用于之后新建的 Agent；当前会话的模型选择可能不同，也不会因这里的操作切换。
+
+结果只映射 Host 固定版本/范围和白名单状态码，界面不显示密钥、上游响应正文或服务商原始错误。已保存仅表示凭据落盘；测试成功才表示本次内置 MiMo 探针成功。未登录、缺少密钥、认证失败、账号额度、上游/网络故障、超时和并发检查分别显示固定提示。
 
 ## 目录来源与维护
 
@@ -43,4 +49,12 @@ cd client-plugins/mochi-model-presets
 pnpm test
 ```
 
-测试会重建 bundle，并验证：目录事实来自本机 pi-ai、没有 model ID 副本、只在显式点击后执行 revision-fenced `{}` mutation、已有 profile 不覆盖、只读/失败状态正确、官方 `settings.models.footer` 与 `settings.models.provider-card` 槽为追加注册。
+测试会重建 bundle，并验证：目录事实来自本机 pi-ai、没有 model ID 副本、只在显式点击后执行 revision-fenced mutation、已有 profile 不覆盖、MiMo 默认模型只在显式动作且 Key 已配置后写入、只读/冲突状态正确、官方 `settings.models.footer` 与 `settings.models.provider-card` 槽为追加注册。
+
+## 自动思考档位（现代运行时）
+
+对话输入框的“思考·自动”按当前任务与模型公开支持的档位在本机选取；可显式改为模型支持的手动档位。简短任务倾向低，常规中，推导/排查/多步或长输入高；属于本地规则，不调用额外分类模型。最近实际档位与依据可展开查看。未知能力使用提供方默认，永不发送 `auto`。原生模型选择器继续负责模型选择，档位移到这一独立入口，避免原生 pending 显示与自动实际档位冲突。
+
+策略只保存当前角色的 `DSH_HOME/mochi-reasoning/policy.json`，不写未知 Session 事件，不保留任务原文。旧会话原生手动选择保持；恢复自动后，后续原生手动选择再次优先。教师/教室的数据目录保持独立。
+
+构建默认读取 `apps/desktop/runtime-modern/node_modules` 的 pi-ai0.87.1，可显式以 `MOCHI_RUNTIME_NODE_MODULES_ROOT` 选择其他已安装树。真实 Host、冷恢复、已迁移 MiMo 能力补偿与 UI验证边界见 [automatic-reasoning-notes.md](../../docs/evidence/harness-upgrade-2026-09-30/automatic-reasoning-notes.md)。

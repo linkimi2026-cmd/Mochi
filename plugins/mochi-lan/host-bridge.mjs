@@ -19,13 +19,17 @@ export const LAN_HOST_ROUTES = Object.freeze({
   pairRequest: `${LAN_HOST_API_BASE}/pair/request`,
   // [Mochi 2026-09-09] WO-6 一键信任路由：教师端一次受控调用完成「指纹复核+发起相识」。
   pairTrust: `${LAN_HOST_API_BASE}/pair/trust`,
+  pairCodeSearch: `${LAN_HOST_API_BASE}/pair/code/search`,
   pairAccept: `${LAN_HOST_API_BASE}/pair/accept`,
   pairReject: `${LAN_HOST_API_BASE}/pair/reject`,
   peerUnpair: `${LAN_HOST_API_BASE}/peer/unpair`,
+  peerRecoverAddress: `${LAN_HOST_API_BASE}/peer/address/recover`,
   peerBlock: `${LAN_HOST_API_BASE}/peer/block`,
+  peerUnblock: `${LAN_HOST_API_BASE}/peer/unblock`,
   messageSeen: `${LAN_HOST_API_BASE}/message-seen`,
   // [Mochi 2026-09-18] 反向通道：教室端唯一的外发动作——学生预约。
   requestSend: `${LAN_HOST_API_BASE}/request/send`,
+  responseSend: `${LAN_HOST_API_BASE}/response/send`,
 });
 
 const MAX_HOST_BODY_BYTES = 16 * 1024;
@@ -81,6 +85,27 @@ function copyCandidate(value) {
   };
 }
 
+function copyExpectedIdentity(value, role, targetEndpointId = undefined) {
+  exactObject(value, ['endpointId', 'role', 'schoolId', 'classId', 'displayName', 'fingerprint'],
+    ['endpointId', 'role', 'schoolId', 'displayName', 'fingerprint', ...(role === 'classroom' ? ['classId'] : [])]);
+  if (value.role !== role || (targetEndpointId !== undefined && value.endpointId !== targetEndpointId)
+    || typeof value.endpointId !== 'string' || !/^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,79}$/u.test(value.endpointId)
+    || typeof value.schoolId !== 'string' || !value.schoolId.trim()
+    || typeof value.displayName !== 'string' || !value.displayName.trim()
+    || !/^sha256:[0-9a-f]{32}$/u.test(value.fingerprint)
+    || (value.classId !== undefined && (typeof value.classId !== 'string' || !value.classId.trim()))) {
+    invalid('预期设备身份无效。');
+  }
+  return {
+    endpointId: value.endpointId,
+    role: value.role,
+    schoolId: value.schoolId,
+    ...(value.classId === undefined ? {} : { classId: value.classId }),
+    displayName: value.displayName,
+    fingerprint: value.fingerprint,
+  };
+}
+
 async function body(request, allowed, required = []) {
   if (request.headers.get('content-type')?.split(';', 1)[0].trim().toLowerCase() !== 'application/json') invalid('请求必须是 JSON。');
   const raw = await request.text();
@@ -126,6 +151,12 @@ export function installLanHostBridge(ctx, lan) {
       if (request.method !== 'GET') return json({ code: 'NOT_FOUND' }, 404);
       return json({ candidates: lan.listDiscovered() });
     })),
+    register(LAN_HOST_ROUTES.pairCodeSearch, ['POST'], (request) => invoke(async () => {
+      if (request.method !== 'POST') return json({ code: 'NOT_FOUND' }, 404);
+      const input = await body(request, ['code'], ['code']);
+      if (typeof input.code !== 'string' || !/^\d{6}$/u.test(input.code)) invalid('code 必须是 6 位数字。');
+      return json({ candidates: await lan.findByPairingCode(input.code, { signal: request.signal }) });
+    })),
     register(LAN_HOST_ROUTES.events, ['GET'], (request) => invoke(async () => {
       if (request.method !== 'GET') return json({ code: 'NOT_FOUND' }, 404);
       const url = new URL(request.url, 'http://mochi-lan.local');
@@ -146,8 +177,9 @@ export function installLanHostBridge(ctx, lan) {
     })),
     register(LAN_HOST_ROUTES.pairRequest, ['POST'], (request) => invoke(async () => {
       if (request.method !== 'POST') return json({ code: 'NOT_FOUND' }, 404);
-      const input = await body(request, ['candidate', 'address'], ['candidate', 'address']);
-      return json(await lan.requestPairing({ candidate: copyCandidate(input.candidate), address: copyAddress(input.address), authorization: connectionAuthorization(lan, 'request-pairing'), signal: request.signal }));
+      const input = await body(request, ['candidate', 'address', 'pairingCode'], ['candidate', 'address']);
+      if (input.pairingCode !== undefined && typeof input.pairingCode !== 'string') invalid('pairingCode 必须是文本。');
+      return json(await lan.requestPairing({ candidate: copyCandidate(input.candidate), address: copyAddress(input.address), ...(input.pairingCode === undefined ? {} : { pairingCode: input.pairingCode }), authorization: connectionAuthorization(lan, 'request-pairing'), signal: request.signal }));
     })),
     // [Mochi 2026-09-09] WO-6 一键信任：目标只取自动发现表中的 endpointId，
     // 地址与指纹由服务端从发现结果取得，浏览器无法指定任意 IP 或指纹。
@@ -175,11 +207,28 @@ export function installLanHostBridge(ctx, lan) {
       if (typeof input.endpointId !== 'string') invalid('endpointId 必须是文本。');
       return json(await lan.blockPeer({ endpointId: input.endpointId, authorization: connectionAuthorization(lan, 'block-peer') }));
     })),
+    register(LAN_HOST_ROUTES.peerUnblock, ['POST'], (request) => invoke(async () => {
+      if (request.method !== 'POST') return json({ code: 'NOT_FOUND' }, 404);
+      const input = await body(request, ['endpointId'], ['endpointId']);
+      if (typeof input.endpointId !== 'string') invalid('endpointId 必须是文本。');
+      return json(await lan.unblockPeer({ endpointId: input.endpointId, authorization: connectionAuthorization(lan, 'unblock-peer') }));
+    })),
     register(LAN_HOST_ROUTES.peerUnpair, ['POST'], (request) => invoke(async () => {
       if (request.method !== 'POST') return json({ code: 'NOT_FOUND' }, 404);
       const input = await body(request, ['endpointId'], ['endpointId']);
       if (typeof input.endpointId !== 'string') invalid('endpointId 必须是文本。');
       return json(await lan.unpairPeer({ endpointId: input.endpointId, authorization: connectionAuthorization(lan, 'unpair-peer') }));
+    })),
+    register(LAN_HOST_ROUTES.peerRecoverAddress, ['POST'], (request) => invoke(async () => {
+      if (request.method !== 'POST') return json({ code: 'NOT_FOUND' }, 404);
+      const input = await body(request, ['endpointId', 'address'], ['endpointId', 'address']);
+      if (typeof input.endpointId !== 'string') invalid('endpointId 必须是文本。');
+      return json(await lan.recoverPairedAddress({
+        endpointId: input.endpointId,
+        address: copyAddress(input.address),
+        authorization: connectionAuthorization(lan, 'recover-peer-address'),
+        signal: request.signal,
+      }));
     })),
     // Connection's register API has exact paths. A fixed body field keeps
     // `messageId` out of a client-built dynamic route while preserving the
@@ -202,15 +251,35 @@ export function installLanHostBridge(ctx, lan) {
      */
     register(LAN_HOST_ROUTES.requestSend, ['POST'], (request) => invoke(async () => {
       if (request.method !== 'POST') return json({ code: 'NOT_FOUND' }, 404);
-      const input = await body(request, ['targetEndpointId', 'body', 'request', 'messageId'], ['targetEndpointId', 'body', 'request']);
+      const input = await body(request, ['targetEndpointId', 'body', 'request', 'messageId', 'expectedSender', 'expectedPeer'],
+        ['targetEndpointId', 'body', 'request', 'expectedSender', 'expectedPeer']);
       if (typeof input.targetEndpointId !== 'string') invalid('targetEndpointId 必须是文本。');
       if (input.messageId !== undefined && typeof input.messageId !== 'string') invalid('messageId 必须是文本。');
       return json(await lan.sendRequest({
         targetEndpointId: input.targetEndpointId,
         body: input.body,
         request: input.request,
+        expectedSender: copyExpectedIdentity(input.expectedSender, 'classroom'),
+        expectedPeer: copyExpectedIdentity(input.expectedPeer, 'teacher', input.targetEndpointId),
         ...(input.messageId === undefined ? {} : { messageId: input.messageId }),
         authorization: connectionAuthorization(lan, 'send-request'),
+        signal: request.signal,
+      }));
+    })),
+    register(LAN_HOST_ROUTES.responseSend, ['POST'], (request) => invoke(async () => {
+      if (request.method !== 'POST') return json({ code: 'NOT_FOUND' }, 404);
+      const input = await body(request, ['targetEndpointId', 'body', 'response', 'messageId', 'expectedSender', 'expectedPeer'],
+        ['targetEndpointId', 'body', 'response', 'expectedSender', 'expectedPeer']);
+      if (typeof input.targetEndpointId !== 'string') invalid('targetEndpointId 必须是文本。');
+      if (input.messageId !== undefined && typeof input.messageId !== 'string') invalid('messageId 必须是文本。');
+      return json(await lan.sendResponse({
+        targetEndpointId: input.targetEndpointId,
+        body: input.body,
+        response: input.response,
+        expectedSender: copyExpectedIdentity(input.expectedSender, 'teacher'),
+        expectedPeer: copyExpectedIdentity(input.expectedPeer, 'classroom', input.targetEndpointId),
+        ...(input.messageId === undefined ? {} : { messageId: input.messageId }),
+        authorization: connectionAuthorization(lan, 'send-response'),
         signal: request.signal,
       }));
     })),

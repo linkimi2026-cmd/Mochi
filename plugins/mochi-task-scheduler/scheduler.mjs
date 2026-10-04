@@ -34,6 +34,8 @@ export function createScheduler({
   let running = false;
   let stopped = false;
   let ticking = Promise.resolve();
+  let retryAfter = 0;
+  let activeRun = Promise.resolve();
 
   function clearTimer() {
     if (timer === null) return;
@@ -47,11 +49,12 @@ export function createScheduler({
     clearTimer();
     const current = now();
     const wakeAt = store.nextWakeAt();
-    const target = wakeAt === null ? current + tickMs : Date.parse(wakeAt);
+    const due = wakeAt === null ? current + tickMs : Date.parse(wakeAt);
+    const target = due <= current ? Math.max(due, retryAfter) : due;
     const delay = Math.min(Math.max(target - current, 0), tickMs, MAX_TIMER_DELAY_MS);
     timer = setTimeout(() => {
       timer = null;
-      void runDue();
+      activeRun = runDue();
     }, delay);
     timer?.unref?.();
   }
@@ -85,6 +88,8 @@ export function createScheduler({
       for (const entry of processDue()) {
         if (stopped) break;
         const { row, plannedAt, spec, firedAt } = entry;
+        const current = store.getSchedule?.(row.id);
+        if (current && (current.state !== 'scheduled' || current.next_run_at !== plannedAt)) continue;
         let outcome;
         try {
           outcome = await deliver(row, { plannedAt, firedAt });
@@ -97,7 +102,7 @@ export function createScheduler({
           let nextRunAt = null;
           if (row.frequency !== 'once') {
             try {
-              nextRunAt = nextOccurrence({ ...spec, frequency: row.frequency }, Date.now(), timeZone).nextRunAt;
+              nextRunAt = nextOccurrence({ ...spec, frequency: row.frequency }, now(), timeZone).nextRunAt;
             } catch (error) {
               // 库里存着算不出来的重复规则（数据损坏）时，不能让任务永远卡在逾期空转。
               // 停掉它，并把失败原因留在 mochi_schedule_runs 里。
@@ -115,6 +120,8 @@ export function createScheduler({
       }
     } finally {
       running = false;
+      // A retained overdue row must wait before retrying, rather than spin at 0 ms.
+      retryAfter = now() + tickMs;
       refresh();
     }
   }
@@ -139,6 +146,7 @@ export function createScheduler({
       stopped = true;
       clearTimer();
       await ticking.catch(() => {});
+      await activeRun.catch(() => {});
     },
   };
 }

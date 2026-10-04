@@ -1,3 +1,4 @@
+import { PAPER_WINDOW_CSS } from "./window-theme";
 import { app, BrowserWindow, clipboard, dialog, Menu, type MenuItemConstructorOptions } from "electron";
 import { promises as fs } from "node:fs";
 import { join } from "node:path";
@@ -13,6 +14,7 @@ import {
 const DOCTOR_RERUN_URL = "mochi-doctor://rerun";
 const DOCTOR_COPY_URL = "mochi-doctor://copy";
 const DOCTOR_SAVE_URL = "mochi-doctor://save";
+const DOCTOR_CLOSE_URL = "mochi-doctor://close";
 const DOCTOR_FILE_NAME = "Mochi-环境诊断.json";
 
 type DoctorRunner = (config: DoctorConfig, signal?: AbortSignal) => Promise<DoctorRunResult>;
@@ -110,7 +112,10 @@ function statusLabel(status: DoctorStatus): string {
   }[status];
 }
 
-function doctorPage(result: DoctorRunResult | undefined, notice: string | undefined, running: boolean): string {
+type DoctorNotice = { text: string; error?: boolean };
+type ReportAction = "copy" | "save";
+
+function doctorPage(result: DoctorRunResult | undefined, notice: DoctorNotice | undefined, running: boolean, exporting?: ReportAction): string {
   const rows = result?.checks.map((check) => `
     <article class="check" data-check-id="${escapeHtml(check.id)}">
       <div class="check-title"><h2>${escapeHtml(check.label)}</h2><span class="status ${escapeHtml(check.status)}">${escapeHtml(statusLabel(check.status))}</span></div>
@@ -118,27 +123,26 @@ function doctorPage(result: DoctorRunResult | undefined, notice: string | undefi
       <p class="action">建议：${escapeHtml(check.action)}</p>
       <small>耗时 ${Math.max(0, Math.round(check.durationMs))} ms</small>
     </article>`).join("") ?? "";
-  const diagnostics = result?.recentDiagnostics.length
-    ? `<p class="diagnostics">最近本地启动诊断：${result.recentDiagnostics.map((event) => escapeHtml(event.code)).join("、")}</p>`
-    : "";
-  const overview = running
-    ? "正在进行环境检测…"
-    : result
-      ? `本次检测 ${statusLabel(result.overallStatus)}，总耗时 ${Math.max(0, Math.round(result.totalDurationMs))} ms。`
-      : "环境检测尚未开始。";
-  const actions = result && !running
-    ? `<button id="doctor-rerun" type="button">重新检测</button><button id="doctor-copy" class="secondary" type="button">复制脱敏报告</button><button id="doctor-save" class="secondary" type="button">保存脱敏报告</button>`
-    : `<button id="doctor-rerun" type="button" disabled>正在检测…</button>`;
-  const message = notice ? `<p class="notice">${escapeHtml(notice)}</p>` : "";
-  const details = result ? `<section class="checks">${rows}</section>${diagnostics}` : "";
-  const html = `<!doctype html><meta charset="utf-8"><title>Mochi 环境诊断</title><style>
-    :root{color-scheme:dark}body{margin:0;background:#18211d;color:#edf3ed;font:15px/1.55 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.page{max-width:860px;margin:auto;padding:30px 24px 42px}h1{margin:0;font-size:25px}.intro{color:#c5d1c4;margin:7px 0 0}.privacy{margin:17px 0;padding:12px 14px;border-radius:12px;background:#24352c;color:#d6e4d3}.actions{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0}button{border:0;border-radius:10px;background:#d9973e;color:#1b211e;padding:10px 14px;font:inherit;font-weight:700;cursor:pointer}button.secondary{background:#ffffff18;color:#edf3ed}button:disabled{opacity:.62;cursor:wait}.notice{padding:10px 12px;border-radius:9px;background:#244b35;color:#d5f0da}.checks{display:grid;gap:10px}.check{border:1px solid #ffffff1c;border-radius:14px;padding:14px 16px;background:#213029}.check-title{display:flex;gap:12px;align-items:center;justify-content:space-between}.check h2{margin:0;font-size:17px}.check p{margin:7px 0}.action{color:#c9d9ca}.check small{color:#a7b8a8}.status{border-radius:999px;padding:3px 9px;font-size:13px;font-weight:700}.status.pass{background:#1f6b42;color:#e6ffef}.status.warn{background:#745318;color:#fff0c3}.status.fail{background:#782f35;color:#ffe9ea}.status.unavailable{background:#485652;color:#e6ece8}.diagnostics{color:#c5d1c4}.footer{margin-top:18px;color:#a7b8a8;font-size:13px}</style>
-    <main class="page"><h1>Mochi 环境诊断</h1><p class="intro">${escapeHtml(overview)}</p><p class="privacy">报告只包含检查状态、中文说明、建议和耗时；不会包含密钥、URL、查询参数、原始日志或学生内容。</p>${message}<div class="actions">${actions}</div>${details}<p class="footer">模型密钥仍由 DSH 凭据服务管理。当前窗口不读取凭据文件，完整密钥有效性检测将在受限服务桥接后提供。</p></main><script>
+  const codes = result?.recentDiagnostics.map(event => event.code) ?? [];
+  const recovery = codes.length ? `<section class="recovery" aria-labelledby="recovery-title"><h2 id="recovery-title">最近记录过工作界面启动失败</h2><p>${codes.includes("WEB_HOST_PROFILE_PREPARATION_FAILED") ? "旧配置升级准备未完成；原设置仍保留，请勿删除配置目录。" : "这是一条历史启动记录，环境检查通过并不代表工作界面已经恢复。"}</p><p>如果工作界面仍未打开，请退出 Mochi 后重新打开；仍失败时可复制下方脱敏报告。重新检测只检查环境，不会重启工作界面。</p><small>诊断代码：${codes.map(escapeHtml).join("、")}</small></section>` : "";
+  const overview = running ? "正在进行环境检测…" : result
+    ? `本次检测 ${statusLabel(result.overallStatus)}，总耗时 ${Math.max(0, Math.round(result.totalDurationMs))} ms。`
+    : notice?.error ? "这次环境检测未完成。" : "环境检测尚未开始。";
+  const disabled = running || exporting ? " disabled" : "";
+  const actions = `<button id="doctor-rerun" type="button"${disabled}>${running ? "正在检测…" : "重新检测"}</button>`
+    + (result ? `<button id="doctor-copy" class="secondary" type="button"${disabled}>${exporting === "copy" ? "正在复制…" : "复制脱敏报告"}</button><button id="doctor-save" class="secondary" type="button"${disabled}>${exporting === "save" ? "正在保存…" : "保存脱敏报告"}</button>` : "")
+    + `<button id="doctor-close" class="secondary" type="button">关闭</button>`;
+  const message = notice ? `<p class="notice${notice.error ? " error" : ""}" role="${notice.error ? "alert" : "status"}" aria-atomic="true">${escapeHtml(notice.text)}</p>` : "";
+  const html = `<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mochi 环境诊断</title><style>
+    ${PAPER_WINDOW_CSS}body{margin:0;background:var(--paper-canvas);color:var(--paper-ink);font:15px/1.55 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.page{max-width:860px;margin:auto;padding:30px 24px 42px}h1{margin:0;font-size:25px;line-height:1.2;letter-spacing:-.02em}.intro{color:var(--paper-muted);margin:10px 0 0}.privacy{margin:17px 0;padding:12px 14px;border-radius:12px;background:var(--paper-recess);color:var(--paper-muted)}.actions{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0}button{border:0;border-radius:10px;background:var(--paper-accent);color:#1b211e;min-height:44px;padding:10px 14px;font:inherit;font-weight:700;cursor:pointer}button.secondary{background:var(--paper-recess);color:var(--paper-ink)}button:disabled{opacity:.62;cursor:wait}.notice{padding:10px 12px;border-radius:9px;background:var(--paper-recess);color:var(--paper-success)}.notice.error{color:var(--paper-ink);border:1px solid var(--paper-line)}.checks{display:grid;gap:10px}.check,.recovery{border:1px solid var(--paper-line);border-radius:14px;padding:14px 16px;background:var(--paper-surface)}.recovery{margin-top:18px}.recovery h2,.check h2{margin:0;font-size:17px;line-height:1.35}.recovery p,.check p{margin:7px 0}.recovery small{overflow-wrap:anywhere;color:var(--paper-muted)}.check-title{display:flex;gap:12px;align-items:center;justify-content:space-between}.action,.check small{color:var(--paper-muted)}.status{border-radius:999px;padding:3px 9px;font-size:13px;font-weight:700;flex-shrink:0}.status.pass{background:#1f6b42;color:#e6ffef}.status.warn{background:#745318;color:#fff0c3}.status.fail{background:#782f35;color:#ffe9ea}.status.unavailable{background:#485652;color:#e6ece8}.footer{margin-top:18px;color:var(--paper-muted);font-size:13px}@media(max-width:680px){.page{padding:24px 18px 32px}}@media(prefers-contrast:more){.check,.recovery,button{outline:1px solid currentColor}}</style>
+    <main class="page" tabindex="-1" aria-labelledby="doctor-title"><h1 id="doctor-title">Mochi 环境诊断</h1><p class="intro" role="status" aria-live="polite" aria-atomic="true">${escapeHtml(overview)}</p>${recovery}<p class="privacy">报告包含检查状态和恢复建议，不含密钥或聊天内容。</p>${message}<div class="actions" aria-busy="${String(Boolean(running || exporting))}">${actions}</div>${result ? `<section class="checks" aria-label="详细检查结果">${rows}</section>` : ""}<p class="footer">“未检测”表示这项检查尚未完成，不代表功能不可用。工作界面恢复后，可到模型设置检查连接。</p></main><script>
       const go=(target)=>{location.href=target};
       document.getElementById("doctor-rerun")?.addEventListener("click",()=>go(${JSON.stringify(DOCTOR_RERUN_URL)}));
       document.getElementById("doctor-copy")?.addEventListener("click",()=>go(${JSON.stringify(DOCTOR_COPY_URL)}));
       document.getElementById("doctor-save")?.addEventListener("click",()=>go(${JSON.stringify(DOCTOR_SAVE_URL)}));
-    </script>`;
+      document.getElementById("doctor-close")?.addEventListener("click",()=>go(${JSON.stringify(DOCTOR_CLOSE_URL)}));
+      document.addEventListener("keydown",event=>{if(event.key==="Escape"){event.preventDefault();go(${JSON.stringify(DOCTOR_CLOSE_URL)})}});
+    </script></html>`;
   return `data:text/html;charset=utf-8,${encodeURIComponent(html)}`;
 }
 
@@ -162,7 +166,8 @@ class NativeDoctorWindow implements DoctorWindowController {
   private window: BrowserWindow | null = null;
   private currentPage: string | null = null;
   private currentResult: DoctorRunResult | undefined;
-  private notice: string | undefined;
+  private notice: DoctorNotice | undefined;
+  private exporting: ReportAction | undefined;
   private running = false;
   private abort: AbortController | null = null;
   private generation = 0;
@@ -191,7 +196,7 @@ class NativeDoctorWindow implements DoctorWindowController {
       minWidth: 640,
       minHeight: 520,
       title: "Mochi 环境诊断",
-      backgroundColor: "#18211d",
+      backgroundColor: "#f6f3ec",
       show: false,
       webPreferences: {
         contextIsolation: true,
@@ -209,6 +214,11 @@ class NativeDoctorWindow implements DoctorWindowController {
       const isActiveDoctorPage = this.currentPage !== null && window.webContents.getURL() === this.currentPage;
       if (!isActiveDoctorPage) {
         event.preventDefault();
+        return;
+      }
+      if (url === DOCTOR_CLOSE_URL) {
+        event.preventDefault();
+        window.close();
         return;
       }
       if (url === DOCTOR_RERUN_URL) {
@@ -242,27 +252,37 @@ class NativeDoctorWindow implements DoctorWindowController {
     this.abort?.abort();
     this.abort = null;
     this.running = false;
+    this.exporting = undefined;
   }
 
   private isCurrentWindow(window: BrowserWindow, generation: number): boolean {
     return this.window === window && !window.isDestroyed() && this.generation === generation;
   }
 
-  private async render(): Promise<void> {
+  private async render(focusId?: string): Promise<void> {
     const window = this.window;
     if (!window || window.isDestroyed()) return;
-    const page = doctorPage(this.currentResult, this.notice, this.running);
+    const page = doctorPage(this.currentResult, this.notice, this.running, this.exporting);
+    let scrollY = 0;
+    if (this.currentPage && window.webContents.getURL() === this.currentPage) {
+      try {
+        const state = await window.webContents.executeJavaScript("({focusId:document.activeElement?.id,scrollY:window.scrollY})");
+        focusId ??= typeof state?.focusId === "string" ? state.focusId : undefined;
+        scrollY = Number.isFinite(state?.scrollY) ? Math.max(0, state.scrollY) : 0;
+      } catch { /* A closing renderer has no focus to retain. */ }
+    }
     this.currentPage = page;
     try {
       await window.loadURL(page);
+      if (this.window !== window || window.isDestroyed() || this.currentPage !== page) return;
+      await window.webContents.executeJavaScript(`(()=>{window.scrollTo(0,${scrollY});const wanted=document.getElementById(${JSON.stringify(focusId ?? "doctor-rerun")});(wanted&&!wanted.disabled?wanted:document.querySelector('main')).focus({preventScroll:true})})()`);
     } catch {
-      // The page contains only static local markup. A window being closed while
-      // a render is pending is not user-visible failure state.
+      // Closing a local renderer while rendering is not a user-visible error.
     }
   }
 
   private async runChecks(): Promise<void> {
-    if (this.running) return;
+    if (this.running || this.exporting) return;
     const window = this.window;
     if (!window || window.isDestroyed()) return;
     const generation = ++this.generation;
@@ -272,13 +292,14 @@ class NativeDoctorWindow implements DoctorWindowController {
     this.notice = undefined;
     this.currentResult = undefined;
     await this.render();
+    if (!this.isCurrentWindow(window, generation)) return;
     try {
       const result = await this.run(this.options.createConfig(), abort.signal);
       if (!this.isCurrentWindow(window, generation)) return;
       this.currentResult = result;
     } catch {
       if (!this.isCurrentWindow(window, generation)) return;
-      this.notice = "环境检测未能完成，可稍后重新检测。";
+      this.notice = { text: "环境检测未能完成。请点“重新检测”再试；本次没有生成可导出的报告。", error: true };
     } finally {
       if (this.isCurrentWindow(window, generation)) {
         this.abort = null;
@@ -289,30 +310,51 @@ class NativeDoctorWindow implements DoctorWindowController {
   }
 
   private async copyReport(): Promise<void> {
-    if (!this.currentResult || this.running) return;
+    if (!this.currentResult || this.running || this.exporting) return;
+    const window = this.window;
+    if (!window || window.isDestroyed()) return;
+    const generation = this.generation;
+    this.exporting = "copy";
+    this.notice = undefined;
+    await this.render("doctor-copy");
+    if (!this.isCurrentWindow(window, generation)) return;
     try {
       this.writeClipboard(createRedactedDoctorReport(this.currentResult));
-      this.notice = "脱敏报告已复制。";
+      this.notice = { text: "脱敏报告已复制。" };
     } catch {
-      this.notice = "未能复制报告，请稍后重新尝试。";
+      this.notice = { text: "未能复制报告，请稍后重新尝试。", error: true };
+    } finally {
+      if (this.isCurrentWindow(window, generation)) {
+        this.exporting = undefined;
+        await this.render("doctor-copy");
+      }
     }
-    await this.render();
   }
 
   private async saveReport(): Promise<void> {
     const window = this.window;
-    if (!window || window.isDestroyed() || !this.currentResult || this.running) return;
+    if (!window || window.isDestroyed() || !this.currentResult || this.running || this.exporting) return;
     const report = createRedactedDoctorReport(this.currentResult);
+    const generation = this.generation;
+    this.exporting = "save";
+    this.notice = undefined;
+    await this.render("doctor-save");
+    if (!this.isCurrentWindow(window, generation)) return;
     try {
       const destination = await this.chooseSavePath(window);
-      if (!destination || window.isDestroyed()) return;
+      if (!destination || !this.isCurrentWindow(window, generation)) return;
       await this.writeReport(destination, report);
-      if (this.window === window) this.notice = "脱敏报告已保存。";
+      if (this.window === window) this.notice = { text: "脱敏报告已保存。" };
     } catch {
-      if (this.window === window) this.notice = "未能保存报告，请重新选择位置。";
+      if (this.window === window) this.notice = { text: "未能保存报告，请重新选择位置。", error: true };
+    } finally {
+      if (this.isCurrentWindow(window, generation)) {
+        this.exporting = undefined;
+        await this.render("doctor-save");
+      }
     }
-    if (this.window === window && !window.isDestroyed()) await this.render();
   }
+
 }
 
 export function createDoctorWindowController(options: DoctorWindowOptions): DoctorWindowController {
@@ -323,15 +365,29 @@ export function installDoctorMenu(controller: DoctorWindowController): void {
   const template: MenuItemConstructorOptions[] = [
     {
       label: "Mochi",
-      submenu: [{ role: "about" }, { type: "separator" }, { role: "quit" }],
+      submenu: [{ role: "about", label: "关于 Mochi" }, { type: "separator" }, { role: "quit", label: "退出 Mochi" }],
     },
-    { role: "editMenu" },
+    {
+      label: "编辑",
+      submenu: [
+        { role: "undo", label: "撤销" },
+        { role: "redo", label: "重做" },
+        { type: "separator" },
+        { role: "cut", label: "剪切" },
+        { role: "copy", label: "复制" },
+        { role: "paste", label: "粘贴" },
+        { role: "pasteAndMatchStyle", label: "粘贴并匹配样式" },
+        { role: "delete", label: "删除" },
+        { role: "selectAll", label: "全选" },
+      ],
+    },
     {
       label: "窗口",
-      submenu: [{ role: "minimize" }, { role: "zoom" }, { type: "separator" }, { role: "close" }],
+      submenu: [{ role: "minimize", label: "最小化" }, { role: "zoom", label: "缩放" }, { type: "separator" }, { role: "close", label: "关闭窗口" }],
     },
     {
       role: "help",
+      label: "帮助",
       submenu: [{
         id: "mochi-doctor-open",
         label: "环境诊断",

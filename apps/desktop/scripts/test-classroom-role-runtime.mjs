@@ -5,11 +5,13 @@
  * teacher tools through globally registered product plugins.
  *
  * The LAN plugin is configured in this disposable probe with loopback/port 0
- * and discovery disabled. No campus service, model request, LAN broadcast,
- * credential, or user DSH home is touched.
+ * and discovery disabled. Its first selected MiMo route is exercised against
+ * an in-process fake gateway with a fixture-only key; no real service, key,
+ * LAN broadcast, or user DSH home is touched.
  */
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
+import { createServer } from "node:http";
 import {
   existsSync,
   mkdirSync,
@@ -35,6 +37,7 @@ const dshBin = process.env.MOCHI_DSH_BIN ?? requireFromDesktop.resolve("@deepsee
 const testRoot = mkdtempSync(join(tmpdir(), "mochi-classroom-role-runtime-"));
 const classroomHome = join(testRoot, "classroom-home");
 const probeRoot = join(testRoot, "classroom-runtime-probe");
+const fixtureKey = "fixture-classroom-role-key-never-a-real-secret";
 const expectedProfilePlugins = Object.freeze({
   headless: ["mochi-hello", "mochi-llm-mimo", "mochi-knowledge"],
   mochi: ["mochi-hello", "mochi-llm-mimo", "mochi-knowledge", "mochi-approval"],
@@ -44,8 +47,10 @@ const expectedProfilePlugins = Object.freeze({
     "mochi-knowledge",
     "jxl-theme",
     "jxl-brand",
+    "mochi-model-presets",
     "mochi-lan",
     "mochi-lan-client",
+    "mochi-approval",
   ],
 });
 const excludedWebPlugins = Object.freeze([
@@ -58,7 +63,6 @@ const excludedWebPlugins = Object.freeze([
   "mochi-modeling",
   "mochi-memory",
   "jxl-campus",
-  "mochi-model-presets",
   "dsh-better-sidebar",
 ]);
 
@@ -92,7 +96,7 @@ function writeProbePackage() {
   }, null, 2)}\n`);
   writeFileSync(join(probeRoot, "index.mjs"), [
     'export const name = "classroom-runtime-probe";',
-    'export const inject = ["agents", "sessionController", "tools", "mochiLan", "llm"];',
+    'export const inject = ["agents", "sessionController", "tools", "mochiLan", "llm", "agentDefaultModel"];',
     'export function apply(ctx) {',
     '  setTimeout(() => { void (async () => {',
     '    try {',
@@ -103,12 +107,23 @@ function writeProbePackage() {
     '      const agent = ctx.agents.get(created.sessionId);',
     '      if (agent === undefined) throw new Error("classroom session did not mount an agent");',
     '      const tools = ctx.tools.schemas(agent).map((schema) => schema.name).sort();',
+    '      const backgroundResult = await ctx.tools.execute({ callId: "probe-background", name: "mochi_set_campus_background", arguments: { background: "campus-route" }, agent, signal: new AbortController().signal });',
+    '      if (backgroundResult.isError || backgroundResult.value?.background !== "campus-route") throw new Error("classroom background tool did not commit");',
     '      const models = (await ctx.llm.listModels("mochi-mimo")).map((model) => model.id).sort();',
+    '      const defaultModel = ctx.agentDefaultModel.currentSelection();',
+    '      for await (const _chunk of ctx.llm.stream({',
+    '        provider: defaultModel.provider,',
+    '        model: defaultModel.model,',
+    '        messages: [{ role: "user", content: [{ type: "text", text: "fixture route probe" }] }],',
+    '      })) {}',
     '      console.log("MOCHI_CLASSROOM_ROLE=" + JSON.stringify({',
     '        selected: created.agentPreset,',
     '        tools,',
+    '        backgroundChanged: true,',
     '        lockedRole: ctx.mochiLan.snapshot().lockedRole,',
     '        models,',
+    '        defaultModel,',
+    '        firstRequest: "completed",',
     '      }));',
     '      process.exit(0);',
     '    } catch (error) {',
@@ -133,6 +148,7 @@ async function runDsh() {
         NO_COLOR: "1",
         ELECTRON_RUN_AS_NODE: "1",
         MOCHI_CLASSROOM_PROBE_CWD: workspaceRoot,
+        MIMO_API_KEY: fixtureKey,
       },
       stdio: ["ignore", "pipe", "pipe"],
     });
@@ -260,15 +276,66 @@ try {
     `config: ${JSON.stringify(probeLanConfig)}`,
   );
   assert.notEqual(controlledPatch, webPatch, "probe did not replace the LAN network configuration");
-  writeFileSync(webPatchPath, `${controlledPatch}\n- insert:\n    - id: classroom-runtime-probe\n      name: classroom-runtime-probe\n`);
-
-  const runtimeResult = await runDsh();
+  const fakeGatewayRequests = [];
+  const fakeGateway = createServer((request, response) => {
+    const chunks = [];
+    request.on("data", (chunk) => chunks.push(chunk));
+    request.on("end", () => {
+      fakeGatewayRequests.push({
+        method: request.method,
+        url: request.url,
+        authorization: request.headers.authorization,
+        body: Buffer.concat(chunks).toString("utf8"),
+      });
+      response.writeHead(200, { "content-type": "text/event-stream" });
+      response.end('data: {"choices":[{"index":0,"delta":{"content":"fixture"},"finish_reason":null}]}\n\ndata: {"choices":[{"index":0,"delta":{},"finish_reason":"stop"}]}\n\ndata: [DONE]\n\n');
+    });
+  });
+  await new Promise((resolvePromise, reject) => {
+    fakeGateway.once("error", reject);
+    fakeGateway.listen(0, "127.0.0.1", resolvePromise);
+  });
+  const address = fakeGateway.address();
+  assert.ok(address && typeof address === "object");
+  let runtimeResult;
+  try {
+    const fakeGatewayURL = `http://127.0.0.1:${address.port}/v1`;
+    const runtimeManifest = JSON.parse(readFileSync(join(resourceRoot, "runtime-profile.json"), "utf8"));
+    const mimoDefaults = runtimeManifest.plugins["mochi-llm-mimo"].initialConfig;
+    const localMimoConfig = { ...mimoDefaults, baseURL: fakeGatewayURL };
+    const mimoConfigJson = JSON.stringify(mimoDefaults);
+    assert.ok(controlledPatch.includes(`config: ${mimoConfigJson}`), "probe did not find the seeded MiMo configuration");
+    const localPatch = controlledPatch.replace(`config: ${mimoConfigJson}`, `config: ${JSON.stringify(localMimoConfig)}`);
+    assert.notEqual(localPatch, controlledPatch, "probe did not redirect MiMo to its local fake gateway");
+    writeFileSync(webPatchPath, `${localPatch}\n- insert:\n    - id: classroom-runtime-probe\n      name: classroom-runtime-probe\n`);
+    runtimeResult = await runDsh();
+  } finally {
+    await new Promise((resolvePromise) => fakeGateway.close(resolvePromise));
+  }
   assert.deepEqual(runtimeResult, {
     selected: "classroom",
-    tools: ["mochi_knowledge_page", "mochi_knowledge_page_image", "mochi_knowledge_search"],
+    tools: [
+      "mochi_knowledge_page",
+      "mochi_knowledge_page_image",
+      "mochi_knowledge_search",
+      "mochi_lan_configure_identity",
+      "mochi_lan_decide_pairing",
+      "mochi_lan_send_student_request",
+      "mochi_lan_status",
+      "mochi_set_campus_background",
+    ],
+    backgroundChanged: true,
     lockedRole: "classroom",
     models: ["mimo-v2.5", "mimo-v2.5-pro"],
+    defaultModel: { provider: "mochi-mimo", model: "mimo-v2.5" },
+    firstRequest: "completed",
   });
+  assert.equal(fakeGatewayRequests.length, 1, "the selected default route must make exactly one model request");
+  const [firstRequest] = fakeGatewayRequests;
+  assert.equal(firstRequest.method, "POST");
+  assert.equal(firstRequest.url, "/v1/chat/completions");
+  assert.ok(firstRequest.authorization === `Bearer ${fixtureKey}`, "the first route request must use only the fixture credential");
+  assert.equal(JSON.parse(firstRequest.body).model, runtimeResult.defaultModel.model);
 
   const evidence = {
     schemaVersion: 1,
@@ -277,10 +344,10 @@ try {
     role: "classroom",
     profilePlugins: expectedProfilePlugins,
     runtime: runtimeResult,
-    network: "LAN discovery disabled; loopback port 0; no model request",
+    network: "LAN discovery disabled; loopback port 0; first MiMo request served by in-process fixture gateway",
   };
   writeEvidence(evidence);
-  console.log(`[test-classroom-role-runtime] PASS: classroom role has ${runtimeResult.tools.length} model tools and a locked local LAN service.`);
+  console.log(`[test-classroom-role-runtime] PASS: classroom role has ${runtimeResult.tools.length} model tools, a locked local LAN service, and a fixture-only first MiMo request.`);
 } finally {
   if (existsSync(testRoot)) rmSync(testRoot, { recursive: true, force: true });
 }

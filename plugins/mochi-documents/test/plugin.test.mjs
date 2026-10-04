@@ -48,8 +48,8 @@ async function copyFixture(root) {
   await Promise.all([mkdir(scoped, { recursive: true }), mkdir(deepseek, { recursive: true })]);
   const sourceRoot = repositoryRoot.pathname;
   await Promise.all([
-    symlink(join(sourceRoot, 'plugins', 'mochi-documents', 'node_modules.nosync', 'docx'), join(nodeModules, 'docx'), 'dir'),
-    symlink(join(sourceRoot, 'plugins', 'mochi-documents', 'node_modules.nosync', 'pdf-lib'), join(nodeModules, 'pdf-lib'), 'dir'),
+    symlink(join(sourceRoot, 'node_modules', 'docx'), join(nodeModules, 'docx'), 'dir'),
+    symlink(join(sourceRoot, 'node_modules', 'pdf-lib'), join(nodeModules, 'pdf-lib'), 'dir'),
     symlink(join(sourceRoot, 'packages', 'mochi-pdf-layout'), join(scoped, 'pdf-layout'), 'dir'),
   ]);
   const toolsRoot = join(deepseek, 'dsh-tools');
@@ -153,7 +153,6 @@ test('a symbolic-link output parent and an unavailable special template are reje
   const specialHarness = await createHarness(t);
   const special = validDocument({
     template: 'sichuan-2026-high-school-exam-base',
-    pages: undefined,
     exam: {
       subject: '数学',
       sourcePageCount: 1,
@@ -163,6 +162,7 @@ test('a symbolic-link output parent and an unavailable special template are reje
       }],
     },
   });
+  delete special.pages;
   await assertError(() => specialHarness.tool.execute(special, specialHarness.exec()), 'SPECIAL_TEMPLATE_UNAVAILABLE');
   assert.equal(await exists(join(specialHarness.workspace, 'Mochi Documents')), false);
 });

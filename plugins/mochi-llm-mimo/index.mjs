@@ -1,40 +1,99 @@
-/**
- * Mochi 双 LLM 路由插件：mochi-mimo。
- *
- * 背景：dsh 的 llm-deepseek 适配器是「单 baseURL 单凭据」，route 名
- * `deepseek-official` 硬编码——一个插件实例只能对一个端点。接入
- * mimo.ezlook.top 后智谱官方端点没有位置了。
- *
- * 方案：DeepSeekAdapter 是纯类（baseURL/凭据/模型目录全部来自注入的
- * config），本插件直接复用它，注册第二个 provider route `mochi-mimo`：
- *   - deepseek-official → 继续由 llm-deepseek 插件负责（指回智谱官方）
- *   - mochi-mimo        → 本插件负责（mimo.ezlook.top，MiMo 模型目录）
- *
- * 推理档位由模型目录的 reasoningEfforts 声明（llm-deepseek 产物的 Mochi
- * patch）：mimo 网关实测支持 low/medium/high + thinking:disabled(off)，
- * 不支持 max——目录里就不声明 max，UI 不会出现「极高」。
- *
- * config 来自 cordis.patch.yml 的实例 config（部署期事实，静态）：
- * {
- *   apiKeyEnv: "MIMO_API_KEY",
- *   baseURL: "https://mimo.ezlook.top/v1",
- *   models: [ { id, name, contextWindow, maxTokens, reasoningEfforts? } ]
- * }
- */
+/** MiMo route: alpha Chat Completions adapter; modern public pi-ai adapter. */
 
-import { DeepSeekAdapter, resolveAdapterOptions } from '@deepseek-ai/dsh-llm-deepseek'
+import { Config as DeepSeekConfig, DeepSeekAdapter, resolveAdapterOptions } from '@deepseek-ai/dsh-llm-deepseek'
+import llmPackage from '@deepseek-ai/dsh-llm/package.json' with { type: 'json' }
 import { getOrCreateAnonymousUserId } from '@deepseek-ai/dsh-anonymous-user-id'
-import { LlmError, assertUsableApiKey, resolveImageAttachmentAccess } from '@deepseek-ai/dsh-llm'
+import { LlmError, assertUsableApiKey, isQuotaExceededError, resolveImageAttachmentAccess } from '@deepseek-ai/dsh-llm'
+
+const modern = llmPackage.version === '0.2.0-rc.2'
+if (!modern && llmPackage.version !== '0.1.3-alpha.1') throw new Error(`Unsupported MiMo runtime: ${llmPackage.version}`)
+const modernAdapter = modern ? await import('./openai-adapter.mjs') : undefined
 
 export const name = 'mochi-llm-mimo'
-export const inject = ['llm']
+export const inject = ['llm', 'settings']
 
 /** 本插件拥有的 provider route。 */
 export const PROVIDER = 'mochi-mimo'
+// Older hand-declared routes may have stored this derived ref. The Mochi
+// Models card now saves config.apiKeyEnv (MIMO_API_KEY by default); keep the
+// derived ref only as a compatibility fallback.
+const DERIVED_ROUTE_CREDENTIAL_REF = 'MOCHI_MIMO_API_KEY'
+
+const PERMISSION_ERROR_CODES = new Set([
+  'access_denied',
+  'authorization_error',
+  'insufficient_scope',
+  'insufficient_permission',
+  'insufficient_permissions',
+  'model_access_denied',
+  'model_not_allowed',
+  'permission_denied',
+  'permission_error',
+])
+
+function providerErrorFields(error) {
+  const raw = error?.cause?.message
+  if (typeof raw !== 'string') return { code: '', type: '', detail: '', message: '' }
+  const fallback = { code: '', type: '', detail: raw.slice(0, 4096), message: '' }
+
+  try {
+    const parsed = JSON.parse(raw.slice(raw.indexOf('{')))
+    const providerError = parsed?.error ?? parsed
+    if (providerError === null || typeof providerError !== 'object' || Array.isArray(providerError)) {
+      return fallback
+    }
+    const code = typeof providerError.code === 'string' ? providerError.code : ''
+    const type = typeof providerError.type === 'string' ? providerError.type : ''
+    const message = typeof providerError.message === 'string' ? providerError.message : ''
+    return { code, type, message, detail: [code, type, message].join(' ') }
+  } catch {
+    return fallback
+  }
+}
+
+function isMimoQuotaError(detail) {
+  return isQuotaExceededError(detail)
+    || /(?:余额|额度|配额).{0,8}(?:不足|不够|耗尽|用尽|用完|已超|达到上限|已达上限)|(?:不足|不够|耗尽|用尽|用完).{0,8}(?:余额|额度|配额)/u.test(detail)
+}
+
+function isMimoPermissionError({ code, type, message }) {
+  const normalizedCodes = [code, type].map(value => value.toLowerCase().replace(/[\s-]+/gu, '_'))
+  if (normalizedCodes.some(value => PERMISSION_ERROR_CODES.has(value))) return true
+  return /\b(?:permission denied|insufficient permissions?|no permission|access denied|not authorized to (?:access|use)|not permitted to (?:access|use)|model\s+(?:access\s+)?(?:denied|not allowed))\b|\bdo not have permission to (?:access|use)\b|(?:权限|访问|使用).{0,12}(?:不足|拒绝|未授权|无权|不允许)|(?:无权限|没有权限|权限不足|未获授权|禁止访问)/iu.test(message)
+}
+
+function reclassifyMimoForbidden(error) {
+  const { code: providerCode, type, message: providerMessage, detail } = providerErrorFields(error)
+  const failure = error.failure
+  const quota = isMimoQuotaError(detail)
+  const permission = isMimoPermissionError({ code: providerCode, type, message: detail })
+
+  let code
+  let message
+  if (quota) {
+    code = 'QUOTA'
+    message = `MiMo 账户余额或调用额度不足${providerMessage ? `：${providerMessage}` : ''}`
+  } else if (permission) {
+    code = 'PERMISSION_DENIED'
+    message = `MiMo 服务权限不足${providerMessage ? `：${providerMessage}` : ''}`
+  } else {
+    code = 'PROVIDER_FORBIDDEN'
+    const detailMessage = providerMessage && !/^forbidden$/iu.test(providerMessage) ? `：${providerMessage}` : ''
+    message = `MiMo 服务返回 HTTP 403，原因待确认${detailMessage}`
+  }
+
+  return new LlmError(message, code, {
+    cause: error,
+    status: failure.status,
+    ...(failure.providerRetryAfterMs === undefined ? {} : { providerRetryAfterMs: failure.providerRetryAfterMs }),
+    ...(failure.requestId === undefined ? {} : { requestId: failure.requestId }),
+  })
+}
 
 export function apply(ctx, config) {
   // 部署期静态 config：load 时校验一次，fail loud。
-  const options = () => resolveAdapterOptions(config)
+  let current = () => config
+  const options = () => modern ? modernAdapter.resolveOptions(current()) : resolveAdapterOptions(current())
   options()
 
   const resolveApiKey = async (connection) => {
@@ -43,12 +102,24 @@ export function apply(ctx, config) {
     if (credentials !== void 0) {
       const hit = await credentials.resolve(ref)
       if (hit !== void 0) return assertUsableApiKey(hit.value, name, ref)
+      if (ref !== DERIVED_ROUTE_CREDENTIAL_REF) {
+        const legacyHit = await credentials.resolve(DERIVED_ROUTE_CREDENTIAL_REF)
+        if (legacyHit !== void 0) {
+          return assertUsableApiKey(legacyHit.value, name, DERIVED_ROUTE_CREDENTIAL_REF)
+        }
+      }
     }
     // 与 llm-deepseek 相同的降级顺序：凭据仓库 → 进程环境。
     const ambient = process.env[ref]
     if (ambient !== void 0 && ambient.length > 0) return assertUsableApiKey(ambient, name, ref)
+    if (ref !== DERIVED_ROUTE_CREDENTIAL_REF) {
+      const legacyAmbient = process.env[DERIVED_ROUTE_CREDENTIAL_REF]
+      if (legacyAmbient !== void 0 && legacyAmbient.length > 0) {
+        return assertUsableApiKey(legacyAmbient, name, DERIVED_ROUTE_CREDENTIAL_REF)
+      }
+    }
     throw new LlmError(
-      `mochi-llm-mimo: no API key for provider route "${PROVIDER}"; store ${ref} in .credentials.yaml or export it in the environment`,
+      `mochi-llm-mimo: no API key for provider route "${PROVIDER}"; configure MiMo in Settings → Models (the classroom profile stores it separately from the teacher profile) or provide ${ref}`,
       'MISSING_CREDENTIAL',
     )
   }
@@ -61,9 +132,22 @@ export function apply(ctx, config) {
     providerInfo(provider) {
       return { id: provider, name: 'MiMo' }
     }
+
+    // The installed upstream adapter maps both 401 and 403 to AUTH. Correct
+    // only MiMo's 403s here, keeping this route-specific gateway policy local.
+    async *stream(request) {
+      try {
+        yield* super.stream(request)
+      } catch (error) {
+        if (error?.code === 'AUTH' && error?.failure?.status === 403) {
+          throw reclassifyMimoForbidden(error)
+        }
+        throw error
+      }
+    }
   }
 
-  const adapter = new MimoAdapter({
+  const dependencies = {
     options,
     resolveApiKey,
     resolveUserId,
@@ -91,12 +175,28 @@ export function apply(ctx, config) {
       hostPath => ctx.get('fs')?.processPathFromHostPath(hostPath),
       ref,
     ),
-  })
+  }
+  const adapter = modern
+    ? modernAdapter.createMimoAdapter(dependencies, reclassifyMimoForbidden)
+    : new MimoAdapter(dependencies)
 
   ctx.llm.registerConfigurableProviders([
     { provider: PROVIDER, displayName: 'MiMo', settingsNs: name, settingsPath: [] },
   ])
   ctx.llm.registerAdapter([PROVIDER], adapter)
 
-  ctx.logger?.info?.(`[mochi-llm-mimo] route ${PROVIDER} 已注册 → ${options().baseURL}`)
+  // The native Models page only renders configurable providers whose settings
+  // namespace is installed. Reuse the upstream provider schema and settings
+  // store so its API-key editor writes via credentials.set to the configured
+  // apiKeyEnv ref in this DSH home.
+  ctx.settings.installSection(ctx, name, modernAdapter?.Config ?? DeepSeekConfig, config, {
+    setSource: (source) => {
+      current = source
+    },
+    // DSH requires this hook. Adapter options are resolved lazily from the
+    // current settings source, so no route re-registration is needed here.
+    onChange: () => {},
+  })
+
+  ctx.logger?.info?.(`[mochi-llm-mimo] route ${PROVIDER} 已注册 (${modern ? 'pi-ai' : 'alpha'})`)
 }

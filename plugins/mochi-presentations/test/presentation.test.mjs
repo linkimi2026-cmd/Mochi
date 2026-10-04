@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { chmod, lstat, mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -6,9 +7,11 @@ import test from 'node:test';
 import JSZip from 'jszip';
 
 import { inspectPdfArtifact } from '@mochi/pdf-layout';
+import { PDFDocument } from 'pdf-lib';
 import { demonstrationLessonPlan } from '../fixtures/lesson-plan.mjs';
 import { teacherLessonSample } from '../fixtures/teacher-lesson.mjs';
 import { generatePresentationBundle, MochiPresentationsError, revisePresentationBundle, validatePresentation } from '../index.mjs';
+import { resolveSoffice } from '../render.mjs';
 
 async function rootFor(t) {
   const root = await mkdtemp(join(tmpdir(), 'mochi-presentations-test-'));
@@ -37,6 +40,16 @@ async function presentationArchive(path) {
 async function slideXml(path, number) {
   const archive = await presentationArchive(path);
   return archive.file(`ppt/slides/slide${number}.xml`).async('text');
+}
+
+function tableRowGeometry(xml) {
+  const rowHeights = [...xml.matchAll(/<a:tr h="(\d+)"/gu)].map(([, height]) => Number(height));
+  const frameHeight = Number(xml.match(/<p:graphicFrame>[\s\S]*?<a:ext cx="\d+" cy="(\d+)"/u)?.[1]);
+  return { rowHeights, frameHeight };
+}
+
+function tableCellMargins(xml) {
+  return [...xml.matchAll(/<a:tcPr marL="(\d+)" marR="(\d+)" marT="(\d+)" marB="(\d+)"/gu)].map(([, left, right, top, bottom]) => [Number(left), Number(right), Number(top), Number(bottom)]);
 }
 
 test('ordinary lesson-plan input creates editable PPTX and same-input searchable PDF without an Office process', { timeout: 30_000 }, async (t) => {
@@ -69,6 +82,83 @@ test('ordinary lesson-plan input creates editable PPTX and same-input searchable
   assert.equal(manifest.sourceSlideCount, 3);
   assert.equal(manifest.renderedPageCount, 3);
   assert.equal(manifest.files.pptx.editable, true);
+  assert.equal(bundle.previewPdfPath, null);
+  assert.equal(manifest.preview.status, 'unavailable');
+  assert.equal(manifest.preview.reason, 'SOFFICE_UNAVAILABLE');
+  assert.equal(manifest.preview.previewOfPptxSha256, manifest.files.pptx.sha256);
+  assert.equal(manifest.files.previewPdf, undefined);
+  assert.equal(await exists(join(root, 'v1', 'presentation-preview.pdf')), false);
+});
+
+test('final PPTX creates an independent preview PDF, and revision never reuses an older preview', {
+  skip: !resolveSoffice() && 'LibreOffice unavailable; real PPTX preview not verified',
+  timeout: 120_000,
+}, async (t) => {
+  const root = await rootFor(t);
+  const first = await generatePresentationBundle({ presentation: demonstrationLessonPlan(), outputDirectory: join(root, 'v1') });
+  const revised = await revisePresentationBundle({
+    previousSourcePath: first.sourcePath,
+    revision: { slideId: 'process', title: '三个过程与观察记录' },
+    outputDirectory: join(root, 'v2'),
+  });
+  const pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');
+  const textOnPage = async (pdfPath, pageNumber) => {
+    const task = pdfjs.getDocument({ data: new Uint8Array(await readFile(pdfPath)), isEvalSupported: false });
+    try {
+      const document = await task.promise;
+      const page = await document.getPage(pageNumber);
+      return (await page.getTextContent()).items.map((item) => item.str).join('').replace(/\s+/gu, '');
+    } finally { await task.destroy(); }
+  };
+  for (const bundle of [first, revised]) {
+    const manifest = JSON.parse(await readFile(bundle.manifestPath, 'utf8'));
+    const bytes = await readFile(bundle.previewPdfPath);
+    assert.equal(manifest.preview.status, 'available');
+    assert.equal(manifest.preview.kind, 'pptx-rendered-pdf');
+    assert.equal(manifest.preview.renderer, 'LibreOffice');
+    assert.equal(manifest.preview.previewOfPptxSha256, manifest.files.pptx.sha256);
+    assert.equal(manifest.files.previewPdf.bytes, bytes.length);
+    assert.equal(manifest.files.previewPdf.sha256, createHash('sha256').update(bytes).digest('hex'));
+    assert.equal((await PDFDocument.load(bytes)).getPageCount(), 3);
+    assert.equal(manifest.preview.pageCount, 3);
+    assert.ok(bundle.previewPdfPath.startsWith(bundle.outputDirectory));
+    assert.notEqual(manifest.files.pdf.sha256, manifest.files.previewPdf.sha256, 'handout is separately laid out');
+    assert.deepEqual((await readdir(bundle.outputDirectory)).sort(), ['manifest.json', 'presentation-preview.pdf', 'presentation.pdf', 'presentation.pptx', 'source.json']);
+  }
+  assert.match(await textOnPage(first.previewPdfPath, 2), /三个过程/u);
+  assert.doesNotMatch(await textOnPage(first.previewPdfPath, 2), /观察记录/u);
+  assert.match(await textOnPage(revised.previewPdfPath, 2), /三个过程与观察记录/u);
+  assert.notEqual(first.manifest.files.pptx.sha256, revised.manifest.files.pptx.sha256);
+  assert.notEqual(first.manifest.files.previewPdf.sha256, revised.manifest.files.previewPdf.sha256);
+
+  const unavailable = await revisePresentationBundle({
+    previousSourcePath: revised.sourcePath,
+    revision: { slideId: 'process', title: '本次未能生成预览' },
+    outputDirectory: join(root, 'v3'),
+    converter: { sofficePath: join(root, 'missing-soffice') },
+  });
+  assert.equal(unavailable.previewPdfPath, null);
+  assert.equal(unavailable.manifest.preview.status, 'unavailable');
+  assert.equal(unavailable.manifest.files.previewPdf, undefined);
+  assert.equal(await exists(join(unavailable.outputDirectory, 'presentation-preview.pdf')), false);
+  assert.equal(await exists(revised.previewPdfPath), true, 'prior immutable preview remains intact');
+});
+
+test('a failing LibreOffice conversion leaves a valid editable deck and explicit unavailable state', { timeout: 30_000 }, async (t) => {
+  const root = await rootFor(t);
+  const failingSoffice = join(root, 'failing-soffice');
+  await writeFile(failingSoffice, '#!/bin/sh\nexit 2\n');
+  await chmod(failingSoffice, 0o700);
+  const bundle = await generatePresentationBundle({
+    presentation: demonstrationLessonPlan(),
+    outputDirectory: join(root, 'failed-preview'),
+    converter: { sofficePath: failingSoffice },
+  });
+  assert.equal(bundle.manifest.preview.status, 'unavailable');
+  assert.equal(bundle.manifest.preview.reason, 'CONVERSION_FAILED');
+  assert.equal(bundle.previewPdfPath, null);
+  assert.equal(await exists(join(bundle.outputDirectory, 'presentation-preview.pdf')), false);
+  assert.equal((await readFile(bundle.pptxPath)).subarray(0, 2).toString(), 'PK');
 });
 
 test('one-slide revision preserves untouched source/version/hash and generated slide XML', { timeout: 30_000 }, async (t) => {
@@ -91,7 +181,7 @@ test('teacher sample writes a native editable chart and preserves untouched slid
   const archive = await presentationArchive(first.pptxPath);
   const [chartXml, slideRelationships, manifest] = await Promise.all([
     archive.file('ppt/charts/chart1.xml').async('text'),
-    archive.file('ppt/slides/_rels/slide4.xml.rels').async('text'),
+    archive.file('ppt/slides/_rels/slide5.xml.rels').async('text'),
     readFile(first.manifestPath, 'utf8').then(JSON.parse),
   ]);
   assert.match(chartXml, /<c:barChart>/, 'chart must be an editable Office bar chart, not a rendered image');
@@ -99,6 +189,20 @@ test('teacher sample writes a native editable chart and preserves untouched slid
   assert.match(chartXml, /及时关水/);
   assert.ok(archive.file('ppt/embeddings/Microsoft_Excel_Worksheet1.xlsx'), 'native chart data workbook must be embedded');
   assert.match(slideRelationships, /relationships\/chart/);
+  const processXml = await archive.file('ppt/slides/slide3.xml').async('text');
+  assert.match(processXml, /地表水受热成为水蒸气/);
+  assert.match(processXml, /降到地面的水可以再次蒸发/);
+  assert.doesNotMatch(processXml, /<p:pic>/, 'water-cycle process remains editable shapes');
+  const tableXml = await archive.file('ppt/slides/slide4.xml').async('text');
+  const sparseTable = tableRowGeometry(tableXml);
+  const sparseMargins = tableCellMargins(tableXml);
+  assert.match(tableXml, /<a:bodyPr[^>]*anchor="ctr"/u, 'enlarged table rows vertically center their text');
+  assert.equal(sparseMargins.length, 12);
+  assert.ok(sparseMargins.every(([left, right, top, bottom]) => left === Math.round(0.12 * 914400) && right === Math.round(0.12 * 914400) && top === Math.round(0.06 * 914400) && bottom === Math.round(0.06 * 914400)), 'cells use 0.12 in horizontal margins and preserve 0.06 in vertical margins');
+  assert.equal(sparseTable.rowHeights.length, 4);
+  assert.deepEqual(sparseTable.rowHeights, Array(4).fill(Math.round(0.82 * 914400)), 'sparse table rows grow to the bounded projection height');
+  assert.ok(sparseTable.rowHeights.reduce((sum, height) => sum + height, 0) > 4 * 0.38 * 914400, 'sparse table is larger than the former fixed-height geometry');
+  assert.ok(sparseTable.rowHeights.reduce((sum, height) => sum + height, 0) <= sparseTable.frameHeight, 'row geometry remains inside its declared content box');
   assert.equal(manifest.slides.find((slide) => slide.id === 'action-chart').layout, 'title-chart');
   assert.ok(manifest.slides.find((slide) => slide.id === 'action-chart').projection.contentHeight >= 3.45);
 
@@ -112,14 +216,39 @@ test('teacher sample writes a native editable chart and preserves untouched slid
     outputDirectory: join(root, 'teacher-v2'),
   });
   assert.equal(await slideXml(first.pptxPath, 1), await slideXml(revised.pptxPath, 1));
-  assert.equal(await slideXml(first.pptxPath, 6), await slideXml(revised.pptxPath, 6));
-  assert.equal(await slideXml(first.pptxPath, 4), await slideXml(revised.pptxPath, 4), 'a chart data update keeps the slide relationship byte-identical');
+  assert.equal(await slideXml(first.pptxPath, 7), await slideXml(revised.pptxPath, 7));
+  assert.equal(await slideXml(first.pptxPath, 5), await slideXml(revised.pptxPath, 5), 'a chart data update keeps the slide relationship byte-identical');
   const updatedArchive = await presentationArchive(revised.pptxPath);
   const updatedChartName = Object.keys(updatedArchive.files).find((name) => /^ppt\/charts\/chart\d+\.xml$/u.test(name));
   assert.ok(updatedChartName, 'revised deck must retain one native chart OOXML part');
   const updatedChartXml = await updatedArchive.file(updatedChartName).async('text');
   assert.match(updatedChartXml, /小组投票示例（更新）/);
   assert.notEqual(updatedChartXml, chartXml, 'the target native chart OOXML must change');
+});
+
+test('crowded native tables keep all row heights inside their fixed content box', { timeout: 30_000 }, async (t) => {
+  const root = await rootFor(t);
+  const presentation = teacherLessonSample();
+  presentation.slides[3].table.rows = Array.from({ length: 8 }, () => [
+    '蒸发阶段的条件与水面变化观察记录',
+    '水面逐渐减少的现象与受热条件',
+    '雨滴从云中落下后再次蒸发回到水面',
+  ]);
+  const bundle = await generatePresentationBundle({ presentation, outputDirectory: join(root, 'crowded-table') });
+  const xml = await slideXml(bundle.pptxPath, 4);
+  const geometry = tableRowGeometry(xml);
+  const margins = tableCellMargins(xml);
+  const rowTotal = geometry.rowHeights.reduce((sum, height) => sum + height, 0);
+  const contentHeight = bundle.manifest.slides.find((slide) => slide.id === 'process-table').projection.contentHeight;
+
+  assert.equal(geometry.rowHeights.length, 9);
+  assert.ok(geometry.rowHeights.every((height) => height > 0));
+  assert.equal(margins.length, 27);
+  assert.ok(margins.every(([left, right, top, bottom]) => left === Math.round(0.12 * 914400) && right === Math.round(0.12 * 914400) && top === Math.round(0.06 * 914400) && bottom === Math.round(0.06 * 914400)), 'max-density table keeps the wider horizontal cell margins');
+  for (const value of presentation.slides[3].table.rows.flat()) assert.ok(xml.includes(value), `dense cell text remains in the editable table: ${value}`);
+  assert.ok(rowTotal <= geometry.frameHeight, 'the individual rows must not exceed the native table frame');
+  assert.ok(rowTotal <= contentHeight * 914400, 'the total row heights must fit the validated content area');
+  assert.ok(rowTotal > 9 * 0.38 * 914400, 'crowded tables still use available projection area instead of the old undersized fixed height');
 });
 
 test('capacity/type limits reject unsupported layouts while table cells may be blank', () => {
@@ -133,10 +262,10 @@ test('capacity/type limits reject unsupported layouts while table cells may be b
   overflow.slides[0].body = Array.from({ length: 6 }, () => '很长'.repeat(70));
   assert.throws(() => validatePresentation(overflow), (error) => error.code === 'INVALID_INPUT');
   const chartLabels = teacherLessonSample();
-  chartLabels.slides[3].chart.labels[0] = '很长的图表坐标轴标签'.repeat(3);
+  chartLabels.slides[4].chart.labels[0] = '很长的图表坐标轴标签'.repeat(3);
   assert.throws(() => validatePresentation(chartLabels), (error) => error.code === 'INVALID_INPUT');
   const chartSeries = teacherLessonSample();
-  chartSeries.slides[3].chart.series[0].values = [1, 2];
+  chartSeries.slides[4].chart.series[0].values = [1, 2];
   assert.throws(() => validatePresentation(chartSeries), (error) => error.code === 'INVALID_INPUT');
   const explicitBodyLines = demonstrationLessonPlan();
   explicitBodyLines.slides[0].body = Array.from({ length: 6 }, () => '第一行\n第二行\n第三行');

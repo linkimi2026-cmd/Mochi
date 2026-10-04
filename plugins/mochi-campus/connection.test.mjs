@@ -81,7 +81,7 @@ try {
     wrongOriginFetches += 1;
     return fakeResponse({ user: userA });
   });
-  await assert.rejects(() => wrongOrigin.binding(exec('wrong-origin')), /请先在侧栏任一校园页面登录账号/);
+  await assert.rejects(() => wrongOrigin.binding(exec('wrong-origin')), /请先打开设置/);
   assert.equal(wrongOriginFetches, 0);
   assert.equal(existsSync(sessionFile), false);
   console.log('③ 切换来源不会发送旧令牌，并要求重新登录');
@@ -93,7 +93,7 @@ try {
     legacyFetches += 1;
     return fakeResponse({ user: userA });
   });
-  await assert.rejects(() => legacy.binding(exec('legacy')), /请先在侧栏任一校园页面登录账号/);
+  await assert.rejects(() => legacy.binding(exec('legacy')), /请先打开设置/);
   assert.equal(legacyFetches, 0);
   assert.equal(existsSync(sessionFile), false);
   console.log('④ 无来源的旧记录不会被静默恢复');
@@ -105,7 +105,7 @@ try {
     mismatchFetches += 1;
     return fakeResponse({ user: userB });
   });
-  await assert.rejects(() => mismatch.binding(exec('identity-mismatch')), /请先在侧栏任一校园页面登录账号/);
+  await assert.rejects(() => mismatch.binding(exec('identity-mismatch')), /请先打开设置/);
   assert.equal(mismatchFetches, 1);
   assert.equal(existsSync(sessionFile), false);
   console.log('⑤ 恢复身份不一致会清除记录并拒绝绑定');
@@ -135,7 +135,7 @@ try {
   assert.equal(logoutRestoreFetches, 1);
   logoutDuringRestore.clear(TOKEN_A);
   logoutGate.resolve(fakeResponse({ user: userA }));
-  await assert.rejects(() => pendingLogoutBinding, /请先在侧栏任一校园页面登录账号/);
+  await assert.rejects(() => pendingLogoutBinding, /请先打开设置/);
   assert.equal(existsSync(sessionFile), false);
   console.log('⑦ 登出会使晚到的恢复响应失效');
 
@@ -208,7 +208,7 @@ try {
   clearDuringProbe.clear(TOKEN_A);
   clearProbeGate.resolve(fakeResponse({ user: userA }));
   await flushAsyncWork();
-  await assert.rejects(() => clearDuringProbe.binding(exec('clear-during-probe')), /请先在侧栏任一校园页面登录账号/);
+  await assert.rejects(() => clearDuringProbe.binding(exec('clear-during-probe')), /请先打开设置/);
   console.log('⑪ 登出后晚到被动探测不会复活账号');
 
   // Existing per-session protection remains in place after an account switch.

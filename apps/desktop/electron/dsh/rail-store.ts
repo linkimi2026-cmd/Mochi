@@ -20,6 +20,8 @@ const MAX_COORDINATE = 100_000;
 interface StoredShape {
   version: number;
   positions: Partial<Record<RailSurface, RailPosition>>;
+  sizes?: Partial<Record<RailSurface, number>>;
+  visibility: Partial<Record<RailSurface, boolean>>;
 }
 
 function isFiniteCoordinate(value: unknown): value is number {
@@ -34,7 +36,7 @@ function readPosition(value: unknown): RailPosition | null {
 }
 
 function readStored(filePath: string): StoredShape {
-  const empty: StoredShape = { version: FILE_VERSION, positions: {} };
+  const empty: StoredShape = { version: FILE_VERSION, positions: {}, visibility: {} };
   let raw: string;
   try {
     raw = readFileSync(filePath, "utf8");
@@ -55,7 +57,23 @@ function readStored(filePath: string): StoredShape {
     const position = readPosition((source as Record<string, unknown>)[surface]);
     if (position !== null) positions[surface] = position;
   }
-  return { version: FILE_VERSION, positions };
+  const visibility: StoredShape["visibility"] = {};
+  const rawVisibility = (parsed as Record<string, unknown>).visibility;
+  if (rawVisibility && typeof rawVisibility === "object" && !Array.isArray(rawVisibility)) {
+    for (const surface of ["teacher-rail", "classroom-board"] as const) {
+      const value = (rawVisibility as Record<string, unknown>)[surface];
+      if (typeof value === "boolean") visibility[surface] = value;
+    }
+  }
+  const sizes: NonNullable<StoredShape["sizes"]> = {};
+  const rawSizes = (parsed as Record<string, unknown>).sizes;
+  if (rawSizes && typeof rawSizes === "object" && !Array.isArray(rawSizes)) {
+    for (const surface of ["teacher-rail", "classroom-board"] as const) {
+      const size = (rawSizes as Record<string, unknown>)[surface];
+      if (typeof size === "number" && Number.isFinite(size)) sizes[surface] = Math.max(72, Math.min(160, Math.round(size)));
+    }
+  }
+  return { version: FILE_VERSION, positions, visibility, sizes };
 }
 
 export function createRailPositionStore(filePath: string): RailPositionStore {
@@ -81,6 +99,26 @@ export function createRailPositionStore(filePath: string): RailPositionStore {
   }
 
   return {
+    loadPetSize(surface: RailSurface): number | null {
+      return load().sizes?.[surface] ?? null;
+    },
+    savePetSize(surface: RailSurface, size: number): void {
+      if (!Number.isFinite(size)) return;
+      size = Math.max(72, Math.min(160, Math.round(size)));
+      const current = load();
+      if (current.sizes?.[surface] === size) return;
+      cache = { ...current, sizes: { ...current.sizes, [surface]: size } };
+      persist(cache);
+    },
+    loadVisible(surface: RailSurface): boolean | null {
+      return load().visibility[surface] ?? null;
+    },
+    saveVisible(surface: RailSurface, visible: boolean): void {
+      const current = load();
+      if (current.visibility[surface] === visible) return;
+      cache = { ...current, visibility: { ...current.visibility, [surface]: visible } };
+      persist(cache);
+    },
     load(surface: RailSurface): RailPosition | null {
       return load().positions[surface] ?? null;
     },
@@ -89,6 +127,7 @@ export function createRailPositionStore(filePath: string): RailPositionStore {
       const previous = current.positions[surface];
       if (previous !== undefined && previous.x === position.x && previous.y === position.y) return;
       const next: StoredShape = {
+        ...current,
         version: FILE_VERSION,
         positions: { ...current.positions, [surface]: position },
       };

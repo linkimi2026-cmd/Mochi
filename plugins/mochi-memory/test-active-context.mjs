@@ -4,9 +4,10 @@ import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { apply } from './index.mjs';
-import { createActiveMemoryContext, installActiveMemoryPrompt, ACTIVE_CONTEXT_MAX_CHARS, ACTIVE_MEMORY_MAX_ITEMS, ACTIVE_TODO_MAX_ITEMS } from './active-context.mjs';
+import { createActiveMemoryContext, installActiveMemoryPrompt, currentSessionText, installCurrentSessionInput, ACTIVE_CONTEXT_MAX_CHARS, ACTIVE_MEMORY_MAX_ITEMS, ACTIVE_TODO_MAX_ITEMS, ACTIVE_QUERY_MAX_CHARS } from './active-context.mjs';
 import { createStore, openStore } from './mem-store.mjs';
 import { openWorldState } from './world-state.mjs';
+import { ProactiveMemory } from './proactive.mjs';
 
 function makeSession(text) {
   return {
@@ -30,6 +31,34 @@ function rootServices(prefix) {
     store: createStore(openStore(join(root, 'memory', 'mochi-memories.sqlite'))),
     world: openWorldState(join(root, 'memory')),
   };
+}
+
+console.log('⓪ 公开 claimed 输入在首轮 assembly 可用，逐轮更新；取消/销毁清理，非用户输入不参与');
+{
+  const listeners = new Map();
+  const ctx = { on: (name, fn) => listeners.set(name, fn) };
+  installCurrentSessionInput(ctx);
+  installCurrentSessionInput(ctx);
+  assert.equal(listeners.size, 3, 'same context installs the public bridge once');
+  const session = makeSession('上一轮已提交文本');
+  const agent = { session };
+  const assembly = { agent };
+  const claim = (text, kind = 'user') => listeners.get('agent/inbox/claimed')({ agent, message: { role: 'user', source: { kind }, content: [{ type: 'text', text }] } });
+  claim('第一轮尚未提交的Word请求');
+  assert.equal(currentSessionText(session, assembly), '第一轮尚未提交的Word请求');
+  claim('系统注入内容', 'runtime');
+  assert.equal(currentSessionText(session, assembly), '第一轮尚未提交的Word请求');
+  const other = { session: { snapshotEvents: () => [] } };
+  assert.equal(currentSessionText(other.session, { agent: other }), '', 'isolated per Agent');
+  claim('下一轮最新用户请求');
+  assert.equal(currentSessionText(session, assembly), '下一轮最新用户请求');
+  claim('长'.repeat(ACTIVE_QUERY_MAX_CHARS + 50));
+  assert.equal(Array.from(currentSessionText(session, assembly)).length, ACTIVE_QUERY_MAX_CHARS);
+  listeners.get('agent/status')({ agent, status: 'idle' });
+  assert.equal(currentSessionText(session, assembly), '上一轮已提交文本', 'cancel convergence to idle clears uncommitted text');
+  claim('销毁前输入');
+  listeners.get('agent/disposed')({ agent });
+  assert.equal(currentSessionText(session, assembly), '上一轮已提交文本');
 }
 
 console.log('① 两个独立 DSH_HOME 根不串记忆；新会话不调用 recall 也能得到字面相关偏好与待办');
@@ -125,8 +154,9 @@ console.log('④ 插件注册一个静态写入纪律和一个动态历史上下
       },
       logger: { debug: (message) => diagnostics.push(message) },
     }, services.store, services.world);
-    assert.equal(tools.size, 6);
-    assert.equal(sections.length, 1);
+    assert.equal(tools.size, 7);
+    assert.equal(sections.length, 2);
+    assert.match(sections[1].text(), /主动学习已开启/);
     assert.equal(contexts.length, 1);
     assert.match(sections[0].text, /mochi_memory_note/u);
     // 工具名不许带点：模型网关会因非法工具名把整轮对话 400 掉（2026-09-12 定的硬约束）。
@@ -170,4 +200,60 @@ console.log('⑤ 自动召回的审计写失败不阻断已读到的上下文，
   assert.ok(warnings.every((line) => !line.includes(storedText) && !line.includes('sqlite quota')), '固定错误码不记录正文或底层错误');
 }
 
-console.log('mochi active-memory tests passed: 隔离/主动召回/删除更新/敏感防线/上限/公开 prompt hook 全绿');
+console.log('⑥ 旧教师观察按真实topic关联过滤，明确用户记忆与教室集体观察保留');
+{
+  const services = rootServices('mochi-active-role-');
+  try {
+    const teacher = new ProactiveMemory(services.store,{role:'teacher'});
+    for(let i=0;i<3;i++) teacher.capture({id:'teacher-'+i},{type:'user/message',data:{id:'word-'+i,role:'user',source:{kind:'user'},content:[{type:'text',text:'帮我生成 Word 文件'}]}});
+    const word=services.store.listAll()[0];services.store.pin(word.id,true);
+    const quote='我们班喜欢一起讨论为什么';
+    for(let i=0;i<3;i++)teacher.observe({topic:'class_portrait',value:'discussion',summary:'班级喜欢共同讨论和提问。',quote},{sessionId:'class-'+i,messageId:'quote-'+i,text:quote});
+    const collective=services.store.listAll().find(row=>row.kind==='convention');
+    const explicit=services.store.note({kind:'preference',content:'用户明确要求Word课件保留讨论题。',source:'explicit_request',pinned:true});
+    const session=makeSession('继续制作Word课件，介绍我们班的讨论习惯');
+    const classroom = new ProactiveMemory(services.store,{role:'classroom'});
+    const roomContext=createActiveMemoryContext({store:services.store,session,proactive:classroom});
+    assert.ok(!roomContext.memoryIds.includes(word.id),'pinned teacher observation cannot bypass classroom topic restriction');
+    assert.ok(roomContext.memoryIds.includes(collective.id),'classroom retains real class observation');
+    assert.ok(roomContext.memoryIds.includes(explicit.id),'explicit Word memory is not a prohibited automatic class format preference');
+    const teacherContext=createActiveMemoryContext({store:services.store,session,proactive:teacher});
+    assert.ok(teacherContext.memoryIds.includes(word.id));
+    const unknown=createActiveMemoryContext({store:services.store,session});
+    assert.deepEqual(unknown.memoryIds,[explicit.id],'missing locked role does not inject any automatic observation');
+    const contexts=[],sections=[];
+    installActiveMemoryPrompt({systemPrompt:{section:entry=>sections.push(entry),context:entry=>contexts.push(entry)}},services.store,services.world,classroom);
+    assert.match(sections[0].text,/主动观察仅限班级共同/);
+    assert.doesNotMatch(sections[0].text,/主动留意用户常用的文件格式/);
+    const actualText=contexts[0].text({agent:{session}});
+    assert.ok(actualText.includes('用户明确要求Word课件'));
+    assert.ok(!actualText.includes('选择 Word 作为交付文件格式'),'installed dynamic prompt filters the payload, not only the UI');
+    teacher.dismissMemory(collective.id);
+    assert.ok(!createActiveMemoryContext({store:services.store,session,proactive:classroom}).memoryIds.includes(collective.id),'dismissed linked observations no longer auto-inject');
+  } finally {
+    services.store.db.close();rmSync(services.root,{recursive:true,force:true});
+  }
+}
+
+console.log('⑦ 未关联或来源读取失败的自动观察不自动注入，也不阻断明确用户记忆');
+{
+  const services=rootServices('mochi-active-provenance-');
+  try {
+    const classroom=new ProactiveMemory(services.store,{role:'classroom'});
+    const unlinked=services.store.note({kind:'convention',content:'暂定班级印象：课件必须用Word。',source:'observed',pinned:true});
+    const explicit=services.store.note({kind:'preference',content:'用户明确要求Word课件。',source:'explicit_request'});
+    const session=makeSession('继续制作Word课件');
+    assert.deepEqual(createActiveMemoryContext({store:services.store,session,proactive:classroom}).memoryIds,[explicit.id],'the wording class impression does not invent a verified class topic');
+    const inaccessible={listAll:()=>services.store.listAll(),db:{prepare(){throw Error('provenance unavailable')}}};
+    assert.deepEqual(createActiveMemoryContext({store:inaccessible,session,proactive:classroom}).memoryIds,[explicit.id]);
+    assert.ok(services.store.listAll().some(row=>row.id===unlinked.id),'legacy data remains stored; filtering never deletes it');
+    for(const role of ['teacher','classroom','unknown']){
+      const sections=[];installActiveMemoryPrompt({systemPrompt:{section:entry=>sections.push(entry),context(){}}},services.store,null,new ProactiveMemory(services.store,{role}));
+      assert.match(sections[0].text,role==='teacher'?/教师个人工作伙伴/:role==='classroom'?/班级共同伙伴/:/角色尚未明确/);
+    }
+  } finally {
+    services.store.db.close();rmSync(services.root,{recursive:true,force:true});
+  }
+}
+
+console.log('mochi active-memory tests passed: 隔离/主动召回/删除更新/敏感防线/上限/公开 prompt hook/角色与来源关联 全绿');

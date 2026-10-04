@@ -1,5 +1,12 @@
+import { installMicrophonePermissions } from "./dsh/microphone-permissions";
+import { CLASSROOM_STARTUP_ARG, createClassroomStartup } from "./dsh/classroom-startup";
+import { isPetPalette, type PetPaletteId } from "./dsh/pet-palettes.generated";
+import { verifyTeacherIdentity } from "./dsh/role-verification";
+import { PAPER_WINDOW_CSS } from "./dsh/window-theme";
+import { randomUUID } from "node:crypto";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { app, BrowserWindow, clipboard, dialog, ipcMain, Notification, shell, type IpcMainEvent, type IpcMainInvokeEvent } from "electron";
+import { app, BrowserWindow, clipboard, dialog, ipcMain, nativeImage, nativeTheme, Notification, shell, systemPreferences, type IpcMainEvent, type IpcMainInvokeEvent, type NativeImage } from "electron";
 import {
   createDesktopDoctorConfig,
   createDoctorWindowController,
@@ -11,17 +18,21 @@ import {
   adoptLegacyLaunchRole,
   LAUNCH_ROLE_ARG_PREFIX,
   launchRoleLabel,
+  launchRolePathFor,
   persistLaunchRole,
   resolveLaunchRole as resolveRecordedLaunchRole,
   resolveRequestedRole,
   type MochiRuntimeRole,
 } from "./dsh/launch-role";
 import { resolveMochiServiceDefaults } from "./dsh/profile";
-import { IPC, type LanAttentionKind, type RailAction, type RailSnapshot, type RailSurface } from "./dsh/protocol";
+import { IPC, type LanAttentionKind, type RailAction, type RailSnapshot, type RailSurface, type RailSyncHealth } from "./dsh/protocol";
 import { createMochiRail, type MochiRailHandle } from "./dsh/rail";
-import { classroomRailSnapshot, newAttentionPayloads, teacherRailSnapshot } from "./dsh/rail-model";
+import { classroomRailSnapshot, newAttentionPayloads, railSnapshotSignature, teacherRailSnapshot } from "./dsh/rail-model";
 import { createRailPositionStore } from "./dsh/rail-store";
 import { destroyMochiTray, initializeMochiTray, type MochiTrayHandle } from "./dsh/tray";
+import { createClassroomCallObserver } from "./dsh/voice-call";
+import { prepareClassroomVoice, speakClassroomCall, speakVoiceReply, registerLanSpeechActivity } from "./dsh/voice-synthesis";
+import { createVoiceReply, isVoiceRequestId } from "./dsh/voice-reply";
 import { DshWebHost } from "./dsh/web-host";
 
 /**
@@ -52,6 +63,7 @@ const LAN_ATTENTION_THROTTLE_MS = 3_000;
 
 type StartupStage = "starting" | "stopping" | "restoring";
 type StartupDiagnosticCode =
+  | "WEB_HOST_PROFILE_PREPARATION_FAILED"
   | "WEB_HOST_RUNTIME_MISSING"
   | "WEB_HOST_TIMEOUT"
   | "WEB_HOST_EXITED"
@@ -63,6 +75,7 @@ interface StartupDiagnostic {
 }
 
 let mainWindow: BrowserWindow | null = null;
+let pendingRailFocusMessageId: string | null = null;
 let webHost: DshWebHost | null = null;
 let failedWebHost: DshWebHost | null = null;
 let failedWebHostStop: Promise<void> | null = null;
@@ -83,21 +96,36 @@ let appIsQuitting = false;
 let quitStopPromise: Promise<void> | null = null;
 let quitStopComplete = false;
 let runtimeRole: MochiRuntimeRole | null = null;
+let automaticClassroomLaunch = process.argv.includes(CLASSROOM_STARTUP_ARG);
+let classroomStartup: ReturnType<typeof createClassroomStartup> | undefined;
 let roleSwitchedTo: MochiRuntimeRole | null = null;
 let lanAttentionInstalled = false;
 let lastLanAttentionAt = 0;
 // [Mochi 2026-09-18] 常驻条：教师端一条待办横条、教室端一块名单常驻屏。
 // 两块屏都由本进程持有，页面只把原始 LAN 快照推上来，派生在本进程做一次。
 let mochiRail: MochiRailHandle | null = null;
+let uiSoundEnabled = false;
+let petPalette: PetPaletteId = "caramel";
 let railBridgeInstalled = false;
 let railVisible = true;
+let classroomCallObserver: ReturnType<typeof createClassroomCallObserver> | null = null;
 /**
  * 上一份派生结果。弹窗只对「这一份里新出现的行」触发，所以必须记住上一份；
  * 它同时提供了「首次拿到快照不弹窗」的依据——否则每次启动都会把历史待办全弹一遍。
  */
 let railLastSnapshot: RailSnapshot | null = null;
-/** 上一份派生结果的内容指纹；轮询每 3 秒推一次，内容没变就不再重绘窗口。 */
+/** 上一份内容指纹；也包含隐藏预约 ID，以便可见行不变时仍能提醒。 */
 let railLastSignature = "";
+let railSyncHealth: RailSyncHealth = { status: "waiting" };
+let railSyncTimeout: ReturnType<typeof setTimeout> | null = null;
+const RAIL_SYNC_TIMEOUT_MS = 20_000;
+const RAIL_SEEN_TIMEOUT_MS = 12_000;
+const pendingRailSeen = new Map<string, {
+  popupId: string;
+  senderId: number;
+  rail: MochiRailHandle;
+  timer: ReturnType<typeof setTimeout>;
+}>();
 
 /**
  * [Mochi 2026-09-11] WO-7 每个角色一个 Electron userData 目录。教师端沿用
@@ -145,7 +173,7 @@ function migrateLaunchRoleFiles(): void {
 }
 
 function recordedLaunchRole(): MochiRuntimeRole | null {
-  const requested = resolveRequestedRole(process.argv, process.env);
+  const requested = requestedRole();
   if (requested !== null) return requested;
   const directory = currentUserDataDir();
   const recorded = resolveRecordedLaunchRole(directory);
@@ -167,7 +195,7 @@ function recordedLaunchRole(): MochiRuntimeRole | null {
 }
 
 function requestedRole(): MochiRuntimeRole | null {
-  return resolveRequestedRole(process.argv, process.env);
+  return resolveRequestedRole(process.argv, process.env) ?? (automaticClassroomLaunch ? "classroom" : null);
 }
 
 async function resolveLaunchRole(): Promise<MochiRuntimeRole | null> {
@@ -220,6 +248,94 @@ function isCurrentHarnessMainFrame(event: IpcMainInvokeEvent): boolean {
     && event.senderFrame === event.sender.mainFrame
     && isHarnessUrl(event.sender.getURL());
 }
+
+function installClassroomDesktopBridge(): void {
+  registerLanSpeechActivity(busy => {
+    lanAudioActivity = { busy, revision: lanAudioActivity.revision + 1 };
+    if (runtimeRole !== 'classroom' || !mainWindow || mainWindow.isDestroyed()
+      || mainWindow.webContents.isDestroyed() || !isHarnessUrl(mainWindow.webContents.getURL())) return;
+    mainWindow.webContents.send('mochi:audio-busy', lanAudioActivity);
+  });
+  const allowed = (event: IpcMainInvokeEvent) => runtimeRole === "classroom" && isCurrentHarnessMainFrame(event);
+  ipcMain.handle('mochi:audio-status', event => allowed(event) ? lanAudioActivity : null);
+  ipcMain.handle("mochi:classroom:startup-get", event => {
+    if (!allowed(event)) throw new Error("课堂启动设置不可用");
+    return classroomStartup?.get() ?? { supported: false, enabled: false, needsApproval: false };
+  });
+  ipcMain.handle("mochi:classroom:startup-set", (event, enabled: unknown) => {
+    if (!allowed(event) || typeof enabled !== "boolean") throw new Error("课堂启动设置不可用");
+    return classroomStartup?.set(enabled) ?? { supported: false, enabled: false, needsApproval: false };
+  });
+  ipcMain.handle("mochi:classroom:wake", event => {
+    if (!allowed(event)) return false;
+    setDesktopRailVisible(true);
+    focusOrRestoreMainWindow();
+    return true;
+  });
+  ipcMain.handle("mochi:classroom:listening-ready", event => {
+    if (!allowed(event)) return false;
+    if (automaticClassroomLaunch && mainWindow && !mainWindow.isDestroyed() && hasLiveMochiTray()) {
+      automaticClassroomLaunch = false;
+      mainWindow.hide();
+    }
+    return true;
+  });
+  ipcMain.handle("mochi:classroom:letter-ready", (event, value: unknown) => {
+    if (!allowed(event) || !value || typeof value !== 'object') return false;
+    const letter = value as Record<string, unknown>;
+    if (!isVoiceRequestId(letter.id) || typeof letter.body !== 'string' || letter.body.length > 100000
+      || typeof letter.endedAt !== 'number' || !Number.isFinite(letter.endedAt)
+      || letter.endedAt < 0 || letter.endedAt > 8.64e15) return false;
+    return mochiRail?.attention({ id: `classroom-letter:${letter.id}`, kind: 'request',
+      title: 'Mochi 把作业记好啦', subject: '一封课堂作业小信',
+      detail: letter.body.length > 235 ? `${letter.body.slice(0,235)}…` : letter.body,
+      at: new Date(letter.endedAt).toISOString() }) ?? false;
+  });
+  ipcMain.handle("mochi:classroom:take-letter", event => {
+    if (!allowed(event)) return null;
+    const id = pendingClassroomLetter;
+    pendingClassroomLetter = null;
+    return id;
+  });
+  ipcMain.handle('mochi:classroom:reminder-ready', (event, value: unknown) => {
+    if (!allowed(event) || !value || typeof value !== 'object') return false;
+    const paper = value as Record<string, unknown>;
+    if (!isVoiceRequestId(paper.id) || typeof paper.title !== 'string' || paper.title.length > 120
+      || typeof paper.body !== 'string' || paper.body.length > 10000 || typeof paper.at !== 'number'
+      || !Number.isFinite(paper.at) || paper.at < 0 || paper.at > 8.64e15) return false;
+    return mochiRail?.attention({ id: `classroom-reminder:${paper.id}`, kind: 'request',
+      title: paper.title, subject: 'Mochi 的课堂日历', detail: paper.body.slice(0, 240),
+      at: new Date(paper.at).toISOString() }) ?? false;
+  });
+  ipcMain.handle('mochi:classroom:take-reminder', event => {
+    if (!allowed(event)) return false;
+    const pending = pendingClassroomReminder;
+    pendingClassroomReminder = false;
+    return pending;
+  });
+  ipcMain.handle("mochi:voice-chat:speak", (event, request: unknown) => {
+    if (!isCurrentHarnessMainFrame(event)) return { ok: false, error: '当前页面不可朗读' };
+    return voiceReply.speak(request);
+  });
+  ipcMain.handle('mochi:voice-chat:state', event => {
+    if (!isCurrentHarnessMainFrame(event)) return { enabled: false, error: '当前页面不可设置朗读' };
+    return voiceReply.getState();
+  });
+  ipcMain.handle('mochi:voice-chat:set-enabled', (event, enabled: unknown) => {
+    if (!isCurrentHarnessMainFrame(event)) return { enabled: false, error: '当前页面不可设置朗读' };
+    return voiceReply.setEnabled(enabled);
+  });
+  ipcMain.handle("mochi:voice-chat:stop", (event, request: unknown) => {
+    if (!isCurrentHarnessMainFrame(event)) return { ok: false };
+    return voiceReply.stop(request);
+  });
+}
+
+let pendingClassroomLetter: string | null = null;
+let pendingClassroomReminder = false;
+let lanAudioActivity = { busy: false, revision: 0 };
+const voiceReply = createVoiceReply((text, signal) => speakVoiceReply(app.getPath('userData'), text, signal),
+  () => runtimeRole ? join(app.getPath('userData'), `mochi-reply-audio-${runtimeRole}.json`) : null);
 
 function lanAttentionCopy(kind: LanAttentionKind): { title: string; body: string } {
   return kind === "incoming-message"
@@ -281,18 +397,6 @@ function isRailWindowSender(event: IpcMainEvent): boolean {
 }
 
 /**
- * 内容指纹：只覆盖会显示出来的部分，**不含 updatedAt**。
- * 含时间戳的话每次轮询都算「变了」，窗口每 3 秒重绘一次——那是无意义的重绘。
- * 代价是「更新于」显示的是最后一次数据变更时间，而不是最后一次拉取时间；
- * 对老师来说前者更有用（后者永远是「刚刚」，等于没有信息）。
- */
-function railSignature(snapshot: RailSnapshot): string {
-  return snapshot.rows
-    .map((row) => [row.id, row.seq, row.name, row.meta, row.note, row.badge, row.tone].join("\u0000"))
-    .join("\u0001");
-}
-
-/**
  * 已认证 Harness 页面推来的原始 LAN 快照 → 常驻条。
  *
  * 派生放在主进程而不是页面里：两块屏共用同一份判断——「什么算新待办」「什么值得
@@ -303,15 +407,36 @@ function railSignature(snapshot: RailSnapshot): string {
  * 这里只负责选面、去抖、算差集。
  */
 function applyLanStateToRail(lanState: unknown): void {
+  if (runtimeRole === "classroom") {
+    // The signed LAN snapshot arrives even when the rail window is temporarily absent.
+    // A persisted baseline and message-ID ledger prevent announcing old calls on restart.
+    void classroomCallObserver?.observe(lanState).catch((error: unknown) => {
+      console.warn("[mochi] 教室叫号观察失败：", error instanceof Error ? error.message : "unknown");
+    });
+  }
   const rail = mochiRail;
   if (rail === null || runtimeRole === null) return;
+  const inbox = lanState !== null && typeof lanState === "object" && !Array.isArray(lanState)
+    ? (lanState as Record<string, unknown>).inbox : null;
+  const receipted = new Set<string>();
+  if (Array.isArray(inbox)) {
+    for (const row of inbox) {
+      if (row === null || typeof row !== "object" || Array.isArray(row)) continue;
+      const item = row as Record<string, unknown>;
+      if (item.seenReceipt === "ACKNOWLEDGED" && typeof item.messageId === "string"
+        && /^[A-Za-z0-9][A-Za-z0-9._:-]{0,119}$/u.test(item.messageId)) receipted.add(item.messageId);
+    }
+  }
+  // A manual confirmation in the main LAN panel may not change the board's
+  // visible rows. Reconcile queued reminders before the snapshot signature exit.
+  rail.dismissReceipted([...receipted]);
   const surface = railSurfaceForRole(runtimeRole);
   const now = new Date().toISOString();
   const next = surface === "classroom-board"
     ? classroomRailSnapshot(lanState, now)
     : teacherRailSnapshot(lanState, now);
 
-  const signature = railSignature(next);
+  const signature = railSnapshotSignature(next);
   if (signature === railLastSignature) return;
 
   // 差集必须在替换上一份之前算：它要的是「上一份」与「这一份」的差。
@@ -320,30 +445,136 @@ function applyLanStateToRail(lanState: unknown): void {
   railLastSignature = signature;
 
   rail.apply(next);
-  for (const payload of attention) rail.attention(payload);
+  for (const payload of attention) {
+    if (!payload.receiptMessageId || !receipted.has(payload.receiptMessageId)) rail.attention(payload);
+  }
+}
+
+function reportRailSyncHealth(ok: boolean): void {
+  if (railSyncTimeout !== null) clearTimeout(railSyncTimeout);
+  railSyncTimeout = null;
+  if (ok) {
+    railSyncHealth = { status: "live", lastSuccessAt: new Date().toISOString() };
+    railSyncTimeout = setTimeout(() => {
+      railSyncTimeout = null;
+      if (appIsQuitting) return;
+      railSyncHealth = { status: "stale", lastSuccessAt: railSyncHealth.lastSuccessAt };
+      mochiRail?.syncHealth(railSyncHealth);
+    }, RAIL_SYNC_TIMEOUT_MS);
+  } else {
+    railSyncHealth = { status: "stale", ...(railSyncHealth.lastSuccessAt ? { lastSuccessAt: railSyncHealth.lastSuccessAt } : {}) };
+  }
+  mochiRail?.syncHealth(railSyncHealth);
 }
 
 function installRailBridge(): void {
   if (railBridgeInstalled) return;
   railBridgeInstalled = true;
+  ipcMain.on(IPC.petPalette, (event, palette: unknown) => {
+    if (!isCurrentHarnessMainFrame(event) || !isPetPalette(palette)) return;
+    petPalette = palette;
+    mochiRail?.setPetPalette(palette);
+  });
+  ipcMain.on(IPC.uiSound, (event, enabled: unknown) => {
+    if (!isCurrentHarnessMainFrame(event) || typeof enabled !== "boolean") return;
+    uiSoundEnabled = enabled;
+    mochiRail?.setSoundEnabled(enabled);
+  });
+  ipcMain.on(IPC.appearance, (event, preference: unknown) => {
+    if (!isCurrentHarnessMainFrame(event)) return;
+    if (preference !== "light" && preference !== "dark" && preference !== "system") return;
+    nativeTheme.themeSource = preference;
+  });
 
   // Harness 页面 → 主进程。页面只被允许推「原始 LAN 快照」，不认识常驻条的形状。
   ipcMain.on(IPC.railLanState, (event, lanState: unknown) => {
     if (!isCurrentHarnessMainFrame(event)) return;
     applyLanStateToRail(lanState);
   });
+  ipcMain.on(IPC.railSyncHealth, (event, ok: unknown) => {
+    if (!isCurrentHarnessMainFrame(event) || typeof ok !== "boolean") return;
+    reportRailSyncHealth(ok);
+  });
   // 常驻条窗口 → 主进程。
   ipcMain.on(IPC.railAction, (event, action: unknown) => {
     if (!isRailWindowSender(event)) return;
     mochiRail?.dispatch(action);
   });
+  ipcMain.handle(IPC.railTakeFocusMessage, (event) => {
+    if (!isCurrentHarnessMainFrame(event)) return null;
+    const messageId = pendingRailFocusMessageId;
+    pendingRailFocusMessageId = null;
+    return messageId;
+  });
+  ipcMain.on(IPC.railMarkSeenResult, (event, value: unknown) => {
+    if (!isCurrentHarnessMainFrame(event) || value === null || typeof value !== "object") return;
+    const result = value as Record<string, unknown>;
+    if (typeof result.requestId !== "string" || typeof result.ok !== "boolean") return;
+    const pending = pendingRailSeen.get(result.requestId);
+    if (!pending || pending.senderId !== event.sender.id) return;
+    pendingRailSeen.delete(result.requestId);
+    clearTimeout(pending.timer);
+    if (mochiRail !== pending.rail) return;
+    if (result.ok) {
+      pending.rail.dispatch({ type: "dismiss", id: pending.popupId });
+      return;
+    }
+    const message = typeof result.message === "string" ? result.message.slice(0, 120) : "";
+    pending.rail.feedback(pending.popupId, false, message || "发送已看到回执失败，请重试。");
+  });
 }
 
 function handleRailAction(action: RailAction): void {
+  if (action.type === "acknowledge") {
+    const rail = mochiRail;
+    const target = mainWindow;
+    if (typeof action.receiptMessageId !== "string" || !/^[A-Za-z0-9][A-Za-z0-9._:-]{0,119}$/u.test(action.receiptMessageId)) return;
+    if (!rail || !target || target.isDestroyed() || target.webContents.isDestroyed()
+      || !isHarnessUrl(target.webContents.getURL())) {
+      rail?.feedback(action.id, false, "Mochi 页面尚未就绪，请打开后重试。");
+      return;
+    }
+    if ([...pendingRailSeen.values()].some((item) => item.popupId === action.id && item.rail === rail)) return;
+    const requestId = randomUUID();
+    const timer = setTimeout(() => {
+      const pending = pendingRailSeen.get(requestId);
+      if (!pending) return;
+      pendingRailSeen.delete(requestId);
+      if (mochiRail === pending.rail) pending.rail.feedback(pending.popupId, false, "确认超时，请重试或打开 Mochi 查看。");
+    }, RAIL_SEEN_TIMEOUT_MS);
+    pendingRailSeen.set(requestId, { popupId: action.id, senderId: target.webContents.id, rail, timer });
+    try {
+      target.webContents.send(IPC.railMarkSeenRequest, { requestId, messageId: action.receiptMessageId });
+    } catch {
+      clearTimeout(timer);
+      pendingRailSeen.delete(requestId);
+      rail.feedback(action.id, false, "Mochi 页面暂时不可用，请重试。");
+    }
+    return;
+  }
   if (action.type === "open") {
-    // 常驻条只负责「把人叫回来」。具体定位到哪一条由 Harness 页面自己决定：
-    // 主进程不认识业务 id，也不该认识。
+    if (runtimeRole === 'classroom' && action.id?.startsWith('classroom-reminder:')) {
+      if (!isVoiceRequestId(action.id.slice('classroom-reminder:'.length))) return;
+      pendingClassroomReminder = true;
+      focusOrRestoreMainWindow();
+      mainWindow?.webContents.send('mochi:classroom:open-reminder');
+      return;
+    }
+    if (runtimeRole === 'classroom' && action.id?.startsWith('classroom-letter:')) {
+      const id = action.id.slice('classroom-letter:'.length);
+      if (!isVoiceRequestId(id)) return;
+      pendingClassroomLetter = id;
+      focusOrRestoreMainWindow();
+      mainWindow?.webContents.send('mochi:classroom:open-letter');
+      return;
+    }
+    // 主进程只转交待办 id；已认证 Harness 页面决定如何展示和处理。
+    if (action.id) pendingRailFocusMessageId = action.id;
     focusOrRestoreMainWindow();
+    if (action.id && mainWindow !== null && !mainWindow.isDestroyed()) {
+      const target = mainWindow;
+      if (!target.webContents.isDestroyed()) target.webContents.send(IPC.railFocusMessage);
+    }
     return;
   }
   if (action.type === "hide") railVisible = false;
@@ -374,10 +605,12 @@ function rebuildDesktopRail(): void {
 
 function initializeDesktopRail(): void {
   if (mochiRail !== null || appIsQuitting || runtimeRole === null) return;
+  const store = createRailPositionStore(join(app.getPath("userData"), "mochi-rail-positions.json"));
+  railVisible = store.loadVisible?.(railSurfaceForRole(runtimeRole)) ?? railVisible;
   mochiRail = createMochiRail({
     surface: railSurfaceForRole(runtimeRole),
     preload: join(__dirname, "rail-preload.js"),
-    store: createRailPositionStore(join(app.getPath("userData"), "mochi-rail-positions.json")),
+    store,
     onAction: handleRailAction,
     onClosed: () => {
       mochiRail = null;
@@ -387,7 +620,10 @@ function initializeDesktopRail(): void {
   // 窗口是在「数据可能早就到了」之后才建的（托盘重新显示、崩溃重建），
   // 而 applyLanStateToRail 会因为内容没变而提前返回。这里补推一次，
   // 否则重建出来的窗口会一直空着，直到数据下一次变化。
+  mochiRail.setSoundEnabled(uiSoundEnabled);
+  mochiRail.setPetPalette(petPalette);
   if (railLastSnapshot !== null) mochiRail.apply(railLastSnapshot);
+  mochiRail.syncHealth(railSyncHealth);
   setDesktopRailVisible(railVisible);
 }
 
@@ -443,11 +679,14 @@ function startupStagePage(stage: StartupStage): string {
     stopping: "正在停止上一次本地服务…",
     restoring: "正在恢复本地工作区…",
   }[stage];
-  const html = `<!doctype html><meta charset="utf-8"><title>Mochi</title><style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#45584e;color:#f1f4ee;font:16px/1.6 system-ui}.card{max-width:440px;padding:32px;border:1px solid #ffffff24;border-radius:24px;background:#2a3931;box-shadow:0 18px 56px #111a14aa}h1{margin:0 0 8px;font-size:23px}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:10px;background:#d9973e}</style><main class="card"><h1><span class="dot"></span>Mochi</h1><p>${text}</p><p>本地服务就绪后会自动打开工作区。</p></main>`;
+  const html = `<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mochi</title><style>${PAPER_WINDOW_CSS}body{margin:0;min-height:100vh;display:grid;place-items:center;background:var(--paper-canvas);color:var(--paper-ink);font:16px/1.6 system-ui}.card{box-sizing:border-box;width:min(440px,calc(100% - 40px));padding:32px;border:1px solid var(--paper-line);border-radius:24px;background:var(--paper-surface);box-shadow:0 6px 24px #51422b0d}h1{margin:0 0 8px;font-size:23px;line-height:1.25;letter-spacing:-.02em}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:10px;background:var(--paper-accent)}p{margin:10px 0}.hint{color:var(--paper-muted);font-size:14px}</style><main class="card" aria-labelledby="startup-title" aria-busy="true"><h1 id="startup-title"><span class="dot" aria-hidden="true"></span>Mochi</h1><p role="status" aria-live="polite" aria-atomic="true">${text}</p><p class="hint">服务就绪后会自动打开工作区，无需重复点击。</p></main></html>`;
   return `data:text/html;charset=utf-8,${encodeURIComponent(html)}`;
 }
 
 function diagnosticFor(error: unknown): StartupDiagnostic {
+  if (error instanceof Error && "code" in error && error.code === "WEB_HOST_PROFILE_PREPARATION_FAILED") {
+    return { stage: "web-host", code: "WEB_HOST_PROFILE_PREPARATION_FAILED" };
+  }
   const message = error instanceof Error ? error.message : String(error);
   if (message.includes("找不到 @deepseek-ai/dsh")) {
     return { stage: "web-host", code: "WEB_HOST_RUNTIME_MISSING" };
@@ -462,17 +701,27 @@ function diagnosticFor(error: unknown): StartupDiagnostic {
 }
 
 function diagnosticText(diagnostic: StartupDiagnostic): string {
-  return [
-    "Mochi 启动诊断",
-    `阶段: ${diagnostic.stage}`,
-    `代码: ${diagnostic.code}`,
-    "建议: 检查 DSH 运行时和 mochi-web profile，然后重新尝试。",
-  ].join("\n");
+  const guidance: Record<string, string[]> = {
+    WEB_HOST_PROFILE_PREPARATION_FAILED: ["旧配置升级准备未完成。", "原设置已保留，请勿删除配置目录。修复兼容问题后点“重新尝试”；仍失败时复制诊断供排查。"],
+    WEB_HOST_RUNTIME_MISSING: ["本地运行组件缺失，工作界面无法打开。", "请使用完整安装包重新安装 Mochi；保留原设置和历史，不要删除用户数据。"],
+    WEB_HOST_TIMEOUT: ["本地服务未能在等待时间内就绪。", "请点“重新尝试”。仍失败时复制诊断，便于继续排查。"],
+    WEB_HOST_EXITED: ["本地服务在打开工作界面前退出。", "请点“重新尝试”。仍失败时复制诊断，便于继续排查。"],
+  };
+  const [reason, action] = guidance[diagnostic.code] ?? ["本地服务未能启动，工作界面暂时无法打开。", "请点“重新尝试”。仍失败时复制诊断；环境诊断位于“帮助”菜单。"];
+  return ["Mochi 启动诊断", `阶段: ${diagnostic.stage}`, `代码: ${diagnostic.code}`, `原因: ${reason}`, `建议: ${action}`].join("\n");
 }
 
 function errorPage(diagnostic: StartupDiagnostic, copied = false): string {
-  const copyStatus = copied ? "<p class=\"copied\">诊断已复制。</p>" : "";
-  const html = `<!doctype html><meta charset="utf-8"><title>Mochi 启动失败</title><style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#1b211e;color:#e7ebe7;font:16px/1.6 system-ui}.card{max-width:640px;padding:32px;border:1px solid #ffffff1a;border-radius:24px;background:#242c28}h1{font-size:22px;margin-top:0}code{color:#d9973e}.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}button{border:0;border-radius:12px;padding:10px 15px;background:#d9973e;color:#1b211e;font:inherit;font-weight:600;cursor:pointer}.secondary{background:#ffffff14;color:#e7ebe7}.copied{color:#b9d9b7}</style><main class="card"><h1>Mochi 暂时没有启动</h1><p>本地服务未能就绪。此页面不会显示原始日志、学生内容或凭据。</p><p>诊断代码：<code>${diagnostic.code}</code></p>${copyStatus}<div class="actions"><button id="retry" type="button">重新尝试</button><button id="copy" class="secondary" type="button">复制诊断</button></div></main><script>document.getElementById("retry").addEventListener("click",()=>{location.href="${STARTUP_RETRY_URL}"});document.getElementById("copy").addEventListener("click",()=>{location.href="${STARTUP_COPY_DIAGNOSTIC_URL}"});</script>`;
+  const escapeHtml = (value: string) => value.replace(/[&<>"']/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character] ?? character);
+  const guidance = diagnosticText(diagnostic).split("\n").slice(3);
+  const copyStatus = copied ? '<p class="copied" role="status" aria-live="polite">诊断已复制，可粘贴给协助排查的人。</p>' : '';
+  const html = `<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mochi 启动失败</title><style>${PAPER_WINDOW_CSS}body{margin:0;min-height:100vh;display:grid;place-items:center;background:var(--paper-canvas);color:var(--paper-ink);font:16px/1.6 system-ui}.card{box-sizing:border-box;width:min(640px,calc(100% - 40px));margin:24px 0;padding:32px;border:1px solid var(--paper-line);border-radius:24px;background:var(--paper-surface)}h1{font-size:24px;line-height:1.25;letter-spacing:-.02em;margin:0 0 16px}p{margin:10px 0}.privacy,.diagnostic{color:var(--paper-muted);font-size:14px}code{overflow-wrap:anywhere}.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}button{border:0;border-radius:12px;min-height:44px;padding:10px 15px;background:var(--paper-accent);color:#1b211e;font:inherit;font-weight:600;cursor:pointer}.secondary{background:var(--paper-recess);color:var(--paper-ink)}.copied{color:var(--paper-success)}button:disabled{cursor:wait}.actions:focus-within{isolation:isolate}@media(max-width:500px){.card{padding:24px}.actions button{flex:1}}</style><main class="card" aria-labelledby="failure-title" aria-describedby="failure-guidance"><h1 id="failure-title" tabindex="-1">Mochi 的工作界面暂时没能打开</h1><div id="failure-guidance">${guidance.map(line => `<p>${escapeHtml(line.replace(/^(原因|建议): /, ""))}</p>`).join("")}</div><p class="diagnostic">诊断代码：<code>${escapeHtml(diagnostic.code)}</code></p><p class="privacy">诊断包含错误代码和恢复建议，不含密钥或聊天内容。</p>${copyStatus}<div class="actions" aria-busy="false"><button id="retry" type="button">重新尝试</button><button id="copy" class="secondary" type="button">复制诊断</button></div></main><script>
+    const actions=document.querySelector('.actions');
+    const go=(target,button,label)=>{if(actions.getAttribute('aria-busy')==='true')return;actions.setAttribute('aria-busy','true');document.querySelectorAll('button').forEach(item=>item.disabled=true);button.textContent=label;location.href=target};
+    document.getElementById('retry').addEventListener('click',event=>go(${JSON.stringify(STARTUP_RETRY_URL)},event.currentTarget,'正在重新启动…'));
+    document.getElementById('copy').addEventListener('click',event=>go(${JSON.stringify(STARTUP_COPY_DIAGNOSTIC_URL)},event.currentTarget,'正在复制…'));
+    ${copied ? "document.getElementById('copy').focus({preventScroll:true});" : "document.getElementById('failure-title').focus({preventScroll:true});"}
+    </script></html>`;
   return `data:text/html;charset=utf-8,${encodeURIComponent(html)}`;
 }
 
@@ -521,26 +770,40 @@ function clearReadyWorkspace(): void {
 }
 
 function createWindow(): BrowserWindow {
+  let closeRequestedBeforeReady = false;
   const window = new BrowserWindow({
     width: 1080,
     height: 720,
     minWidth: 880,
     minHeight: 600,
     title: "Mochi",
-    backgroundColor: "#45584e", // 深绿画布，与 calm-tokens 的 --sage-800 一致，避免启动白闪
+    ...(process.platform === "win32" && !app.isPackaged ? { icon: join(app.getAppPath(), "build", "icon.ico") } : {}),
+    backgroundColor: "#f6f3ec", // 与纸白工作台一致，避免启动时深绿闪屏
     show: false,
     webPreferences: {
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: true,
+      // The 3-second LAN state poll lives in the authenticated renderer and
+      // feeds the detached desktop rail. Keep that cadence while the main
+      // window is hidden (macOS close or Windows tray); this also keeps the
+      // hidden renderer drawing, so it trades some idle power for timely pets.
+      backgroundThrottling: false,
       preload: join(__dirname, "lan-attention-preload.js"),
     },
   });
   mainWindow = window;
+  installMicrophonePermissions(window.webContents.session,
+    () => mainWindow && !mainWindow.isDestroyed() ? mainWindow.webContents : undefined,
+    isHarnessUrl,
+    {
+      granted: kind => process.platform !== "darwin" || systemPreferences.getMediaAccessStatus(kind) === "granted",
+      request: kind => process.platform === "darwin" ? systemPreferences.askForMediaAccess(kind) : Promise.resolve(true),
+    });
 
   // 首个 data: 启动页就绪即显示，不再等待 sidecar 先完成。
   window.once("ready-to-show", () => {
-    if (isLiveWindow(window)) window.show();
+    if (isLiveWindow(window) && !closeRequestedBeforeReady) window.show();
   });
 
   // 站外链接交给系统浏览器；Harness 本地同源导航留在窗口内。
@@ -548,6 +811,10 @@ function createWindow(): BrowserWindow {
     if (!isHarnessUrl(url)) openExternalIfAllowed(url);
     return { action: isHarnessUrl(url) ? "allow" : "deny" };
   });
+  window.webContents.on('did-start-navigation', (_event, _url, isInPlace, isMainFrame) => {
+    if (isMainFrame && !isInPlace) voiceReply.stopAll();
+  });
+  window.webContents.on('render-process-gone', () => voiceReply.stopAll());
   window.webContents.on("will-navigate", (event, url) => {
     if (url === permittedLocalPageUrl) return;
     const isTrustedDiagnosticPage = activeDiagnosticPageUrl !== null
@@ -568,13 +835,26 @@ function createWindow(): BrowserWindow {
   });
 
   window.on("close", (event) => {
+    // macOS convention is to keep the app and its authenticated workspace alive
+    // when the last window closes. The hidden WebContents continues receiving
+    // LAN updates for the desktop rail; Dock activation / a second instance can
+    // reveal this same page without reloading it. Explicit app.quit() still
+    // proceeds because before-quit sets appIsQuitting first.
+    if (process.platform === "darwin" && !appIsQuitting) {
+      closeRequestedBeforeReady = true;
+      event.preventDefault();
+      window.hide();
+      return;
+    }
     if (process.platform === "win32" && !appIsQuitting && hasLiveMochiTray()) {
+      closeRequestedBeforeReady = true;
       event.preventDefault();
       window.hide();
     }
   });
 
   window.on("closed", () => {
+    voiceReply.stopAll();
     if (mainWindow === window) mainWindow = null;
     activeDiagnosticPageUrl = null;
     quitIfMainWindowWasLastSurface();
@@ -835,7 +1115,7 @@ async function switchLaunchRole(role: MochiRuntimeRole): Promise<void> {
       `当前角色：${fromLabel}。\n`
       + "切换只影响下次启动的角色，不会删除任何数据；"
       + "教师端与教室端使用互相隔离的数据目录，切回原角色后内容仍在。\n"
-      + `切换后 Mochi 会立即重启，并以「${targetLabel}」重新启动本地服务。`,
+      + (current === "classroom" && role === "teacher" ? "重启后需登录班主任校园账号验证身份；取消或验证失败将留在教室端。" : `切换后 Mochi 会立即重启，并以「${targetLabel}」重新启动本地服务。`),
     buttons: ["切换并重启", "取消"],
     defaultId: 1,
     cancelId: 1,
@@ -881,11 +1161,28 @@ function quitFromTray(): void {
   app.quit();
 }
 
+async function loadDesktopTrayIcon(): Promise<NativeImage> {
+  const directory = app.isPackaged ? join(process.resourcesPath, "icons") : join(app.getAppPath(), "build");
+  if (process.platform === "darwin") {
+    const icon = nativeImage.createFromBuffer(readFileSync(join(directory, "MochiTemplate.png")));
+    icon.addRepresentation({
+      scaleFactor: 2,
+      dataURL: `data:image/png;base64,${readFileSync(join(directory, "MochiTemplate@2x.png")).toString("base64")}`,
+    });
+    if (icon.isEmpty()) throw new Error("Mochi 菜单栏图标资源不可用");
+    icon.setTemplateImage(true);
+    return icon;
+  }
+  const icon = nativeImage.createFromPath(join(directory, "icon.ico"));
+  if (icon.isEmpty()) throw new Error("Mochi 托盘图标资源不可用");
+  return icon;
+}
+
 function initializeDesktopTray(): void {
   if (trayInitializationPromise !== null || appIsQuitting) return;
   const run = (async () => {
     try {
-      const icon = await app.getFileIcon(process.execPath, { size: "normal" });
+      const icon = await loadDesktopTrayIcon();
       if (appIsQuitting) return;
       mochiTray = initializeMochiTray({
         icon,
@@ -935,6 +1232,11 @@ if (process.type !== "browser") {
 
 // 用户数据目录要叫 Mochi，而不是 package.json 的 name（mochi-desktop）。
 app.setName("Mochi");
+// macOS login items do not accept startup arguments; resolve the classroom role
+// before selecting its single-instance directory.
+if (process.platform === "darwin" && app.isPackaged) {
+  try { automaticClassroomLaunch ||= app.getLoginItemSettings().wasOpenedAtLogin; } catch { /* ordinary launch */ }
+}
 
 // [Mochi 2026-09-11] WO-7 单实例锁按角色隔离。锁与缓存都位于 userData，
 // 因此必须在 requestSingleInstanceLock() 之前决定目录：教师端沿用 `Mochi`
@@ -954,8 +1256,7 @@ if (!hasSingleInstanceLock) {
     // 此时当前进程自己重启到新角色目录。
     const incomingRole = resolveRequestedRole(argv, {});
     if (incomingRole !== null && incomingRole !== runtimeRole) {
-      roleSwitchedTo ??= incomingRole;
-      relaunchForRoleSwitch();
+      void switchLaunchRole(incomingRole);
       return;
     }
     if (app.isReady()) focusOrRestoreMainWindow();
@@ -964,7 +1265,20 @@ if (!hasSingleInstanceLock) {
 
   app.whenReady().then(async () => {
     try {
-      const selectedRole = await resolveLaunchRole();
+      if (process.platform === "darwin" && !app.isPackaged) {
+        app.dock?.setIcon(join(app.getAppPath(), "build", "icon.png"));
+      }
+      let selectedRole = await resolveLaunchRole();
+      if (selectedRole === "teacher" && [currentUserDataDir(), roleUserDataDir("classroom"), ...legacyUserDataDirs()]
+        .some(directory => existsSync(launchRolePathFor(directory, "classroom")))) {
+        const verified = await verifyTeacherIdentity(resolveMochiServiceDefaults().campusApiUrl);
+        if (!verified) {
+          // Reacquire the classroom single-instance lock before opening its runtime.
+          roleSwitchedTo = "classroom";
+          relaunchForRoleSwitch();
+          return;
+        }
+      }
       if (selectedRole === null) {
         app.quit();
         return;
@@ -973,7 +1287,24 @@ if (!hasSingleInstanceLock) {
       // [Mochi 2026-09-11] WO-7 角色由存量文件/首启对话框决定时也要落到
       // 角色专属 userData 目录，保证下次启动的单实例锁落在同一处。
       applyRoleUserDataPath(selectedRole);
+      if (selectedRole === "classroom") {
+        persistLaunchRole(currentUserDataDir(), "classroom");
+        const dataPath = app.getPath("userData");
+        classroomStartup = createClassroomStartup(app, {
+          platform: process.platform,
+          packaged: app.isPackaged && process.env.MOCHI_DESKTOP_SMOKE !== "1" && !hasExplicitUserDataDir(process.argv),
+          dataPath,
+          executable: process.execPath,
+        });
+        try { classroomStartup.initialize(); } catch (error) { console.warn("[Mochi] 无法注册课堂开机启动", error); }
+        classroomCallObserver = createClassroomCallObserver(join(dataPath, "voice-call-delivery.json"),
+          ({ text, messageId }) => speakClassroomCall(dataPath, text, messageId));
+        // The packaged-app smoke verifies startup; the native voice smoke tests
+        // the optional download separately. Avoid fetching 164 MB into its temp profile.
+        if (process.env.MOCHI_DESKTOP_SMOKE !== "1") prepareClassroomVoice(dataPath);
+      }
       installLanAttentionBridge();
+      installClassroomDesktopBridge();
       installRailBridge();
       initializeDoctorWindow();
       openWindowForCurrentState();
@@ -995,6 +1326,7 @@ if (!hasSingleInstanceLock) {
 
   app.on("before-quit", (event) => {
     appIsQuitting = true;
+    voiceReply.stopAll();
     disposeDesktopRail();
     destroyDesktopTray();
     doctorWindow?.cancel();

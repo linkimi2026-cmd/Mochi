@@ -208,6 +208,16 @@ export function openWorldState(homeDir = defaultMemoryHome()) {
       conventions.lines.push(entry);
       save(parsed);
     },
+    removeConvention(text) {
+      const parsed = load().parsed;
+      const conventions = sectionOf(parsed, '已知约定');
+      const target = String(text).trim();
+      const kept = conventions.lines.filter(line => stripBullet(line).trim() !== target);
+      if (kept.length === conventions.lines.length) return false;
+      conventions.lines = kept;
+      save(parsed);
+      return true;
+    },
     appendEvent,
     readEvents,
   };

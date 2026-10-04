@@ -24,6 +24,9 @@ const scriptDir = dirname(fileURLToPath(import.meta.url));
 const desktopRoot = dirname(scriptDir);
 const compiledRail = join(desktopRoot, "dist-electron", "dsh", "rail.js");
 const compiledStore = join(desktopRoot, "dist-electron", "dsh", "rail-store.js");
+const compiledPages = join(desktopRoot, "dist-electron", "dsh", "rail-pages.js");
+const { railPageHtml } = require(compiledPages);
+const { advanceRailSpring, isRailSpringSettled } = require(join(desktopRoot, "dist-electron", "dsh", "rail-spring.js"));
 
 /* ───────────────────────── Electron 替身 ───────────────────────── */
 
@@ -117,12 +120,17 @@ class FakeBrowserWindow extends EventEmitter {
     return { ...this.bounds };
   }
 
-  setBounds(patch) {
+  setBounds(patch, animate = false) {
     Object.assign(this.bounds, patch);
+    if (animate) this.emit("resized");
   }
 
   getPosition() {
     return [this.bounds.x, this.bounds.y];
+  }
+
+  getSize() {
+    return [this.bounds.width, this.bounds.height];
   }
 
   setPosition(x, y) {
@@ -147,12 +155,14 @@ class FakeBrowserWindow extends EventEmitter {
   }
 }
 
+const primaryDisplay = { workArea: { x: 0, y: 25, width: 1920, height: 1055 } };
+let connectedDisplays = [primaryDisplay];
 const fakeScreen = {
   getPrimaryDisplay() {
-    return { workArea: { x: 0, y: 25, width: 1920, height: 1055 } };
+    return primaryDisplay;
   },
   getAllDisplays() {
-    return [fakeScreen.getPrimaryDisplay()];
+    return connectedDisplays;
   },
 };
 
@@ -169,6 +179,7 @@ const {
   normalizeRailAction,
   normalizeRailAttention,
   normalizeRailSnapshot,
+  normalizeRailSyncHealth,
   clampPositionToDisplays,
   RAIL_WINDOW,
 } = require(compiledRail);
@@ -188,6 +199,39 @@ function equal(actual, expected, message) {
 function deepEqual(actual, expected, message) {
   assert.deepEqual(actual, expected, message);
   checks += 1;
+}
+
+{
+  let value = { position: 76, velocity: 0 };
+  let previous = value.position;
+  let monotonic = true;
+  for (let frame = 0; frame < 120 && !isRailSpringSettled(value, 336); frame += 1) {
+    value = advanceRailSpring(value, 336, 1 / 60);
+    monotonic &&= value.position >= previous;
+    previous = value.position;
+  }
+  ok(monotonic, "a rest-to-rest critically damped move does not bounce");
+  ok(isRailSpringSettled(value, 336), "a rest-to-rest spring settles without a wall-clock dependency");
+  ok(value.position <= 336, "a rest-to-rest critically damped move does not overshoot its target");
+
+  const moving = advanceRailSpring({ position: 76, velocity: 0 }, 336, 0.032);
+  ok(moving.velocity > 0, "an expanding rail has positive width velocity");
+  const firstReverseFrame = advanceRailSpring(moving, 76, 1 / 60);
+  ok(firstReverseFrame.position > moving.position, "retargeting carries current velocity through the reversal");
+  ok(firstReverseFrame.velocity > 0 && firstReverseFrame.velocity < moving.velocity,
+    "reversal brakes the existing velocity instead of resetting it");
+
+  let reversed = firstReverseFrame;
+  let previousVelocitySign = Math.sign(reversed.velocity);
+  let directionChanges = 0;
+  for (let frame = 0; frame < 180 && !isRailSpringSettled(reversed, 76); frame += 1) {
+    reversed = advanceRailSpring(reversed, 76, 1 / 60);
+    const velocitySign = Math.sign(reversed.velocity);
+    if (velocitySign !== 0 && velocitySign !== previousVelocitySign) directionChanges += 1;
+    if (velocitySign !== 0) previousVelocitySign = velocitySign;
+  }
+  equal(directionChanges, 1, "an interrupted spring turns once, then settles without oscillation");
+  ok(isRailSpringSettled(reversed, 76), "an interrupted spring reaches its new target");
 }
 
 function memoryStore() {
@@ -230,7 +274,7 @@ function snapshot(overrides = {}) {
 }
 
 function attention(id, subject) {
-  return { id, kind: "call", title: "有人喊你", subject, detail: "预约讲题：第 3 题", at: "2026-09-18T13:00:00.000Z" };
+  return { id, kind: "call", title: "学生呼叫", subject, detail: "预约讲题：第 3 题", at: "2026-09-18T13:00:00.000Z" };
 }
 
 /* ───────────────────────── 1. 纯校验函数 ───────────────────────── */
@@ -261,9 +305,12 @@ equal(normalized.detail.length, 80, "detail 必须被截断到上限");
 
 const capped = normalizeRailSnapshot({
   surface: "teacher-rail",
+  actionRequiredCount: 80,
   rows: Array.from({ length: 80 }, (_value, index) => ({ id: `r${index}` })),
 });
 equal(capped.rows.length, 50, "行数必须被夹到上限 50");
+equal(capped.actionRequiredCount, 80, "裁剪可见行不应裁剪真实待处理总数");
+equal(normalizeRailSnapshot({ surface: "classroom-board", totalRowCount: 64, rows: capped.rows }).totalRowCount, 64, "教室结果总数独立于可见行上限");
 
 equal(normalizeRailAttention({ id: "", kind: "call" }), null, "缺 id 的弹窗必须被拒绝");
 equal(normalizeRailAttention({ id: "x", kind: "nope" }), null, "未知 kind 的弹窗必须被拒绝");
@@ -271,10 +318,25 @@ equal(normalizeRailAttention(attention("x", "s")).kind, "call", "合法弹窗必
 
 deepEqual(normalizeRailAction({ type: "hide" }), { type: "hide" }, "hide 必须通过");
 deepEqual(normalizeRailAction({ type: "sync" }), { type: "sync" }, "sync 必须通过");
-equal(normalizeRailAction({ type: "open" }), null, "缺 id 的 open 必须被拒绝");
+deepEqual(normalizeRailAction({ type: "toggle" }), { type: "toggle" }, "teacher pet toggle 必须通过");
+deepEqual(normalizeRailAction({ type: "open" }), { type: "open" }, "通用打开动作可以不带 id");
 equal(normalizeRailAction({ type: "open", id: "m1" }).id, "m1", "带 id 的 open 必须通过");
 equal(normalizeRailAction({ type: "evil" }), null, "未知动作必须被拒绝");
 equal(normalizeRailAction(null), null, "null 动作必须被拒绝");
+deepEqual(normalizeRailSyncHealth({ status: "waiting" }), { status: "waiting" }, "首次同步前有明确状态");
+equal(normalizeRailSyncHealth({ status: "live" }), null, "已同步状态必须带主进程记录的成功时间");
+equal(normalizeRailSyncHealth({ status: "stale", lastSuccessAt: "not a date" }), null, "无效时间不得进入桌宠");
+
+{
+  const teacherPage = railPageHtml("teacher-rail");
+  const boardPage = railPageHtml("classroom-board");
+  ok(teacherPage.includes("MochiMotion.mountMotion") && teacherPage.includes("data-engine"), "compact pet uses the shared live bloub engine");
+  ok(teacherPage.includes("viewBox='24 10 72 54'") && teacherPage.includes("fill='#4A3826'"), "compact pet includes Mochi's own laptop");
+  ok(teacherPage.includes("pet-breathe") && teacherPage.includes("pet-alert") && teacherPage.includes("pet-blink"), "pet includes idle, attention and blink motion");
+  ok(teacherPage.includes("prefers-reduced-motion:reduce"), "reduced motion disables pet loops");
+  ok(teacherPage.includes("prefers-reduced-transparency:reduce"), "reduced transparency makes the panel solid");
+  equal(boardPage.includes("id='toggle'"), false, "classroom board does not inherit the compact pet toggle");
+}
 
 // 位置夹取：全部屏幕之外必须回到主屏内。
 deepEqual(
@@ -287,6 +349,13 @@ deepEqual(
   { x: 100, y: 100 },
   "屏幕内的位置必须原样保留",
 );
+connectedDisplays = [primaryDisplay, { workArea: { x: 1920, y: 0, width: 1280, height: 900 } }];
+deepEqual(
+  clampPositionToDisplays({ x: 3188, y: 850 }, RAIL_WINDOW.width, RAIL_WINDOW.maxHeight),
+  { x: 2864, y: 428 },
+  "部分悬出副屏的窗口应完整夹回副屏工作区",
+);
+connectedDisplays = [primaryDisplay];
 
 /* ───────────────────────── 2. 窗口形态 ───────────────────────── */
 
@@ -295,7 +364,7 @@ deepEqual(
   rail.setVisible(true);
   const window = railWindows()[0];
   ok(window !== undefined, "setVisible(true) 必须创建常驻条窗口");
-  equal(window.options.width, RAIL_WINDOW.width, "常驻条宽度必须固定");
+  equal(window.options.width, RAIL_WINDOW.petSize, "教师端首次以桌宠尺寸出现");
   equal(window.options.frame, false, "常驻条必须无边框");
   equal(window.options.skipTaskbar, true, "常驻条必须不进任务栏");
   equal(window.options.resizable, false, "常驻条必须不可缩放");
@@ -304,8 +373,22 @@ deepEqual(
   equal(window.alwaysOnTopLevel, "floating", "教师条必须用 floating 层级，不压全屏演示");
   equal(window.options.webPreferences.sandbox, true, "常驻条页面必须在沙箱里");
   equal(window.options.webPreferences.contextIsolation, true, "常驻条必须开启上下文隔离");
+  equal(window.options.transparent, true, "教师桌宠使用透明悬浮窗");
   ok(window.url.startsWith("data:text/html"), "常驻条页面必须是自包含 data: URL");
-  equal(window.webContents.sent.length, 0, "没有快照时不应发送任何内容");
+  equal(window.webContents.sent.filter((entry) => entry.channel === "mochi:rail:apply").length, 0, "没有快照时不应伪造待办内容");
+  deepEqual(window.webContents.last("mochi:rail:health"), { status: "waiting" }, "没有快照时仍明确提示尚未同步");
+  // Renderer-provided presentation fields must be ignored; sync only reads main state.
+  rail.dispatch({ type: "sync", expanded: true });
+  deepEqual(window.webContents.last("mochi:rail:apply"), { type: "state", expanded: false, petSize: 96 }, "没有业务快照时 sync 仍须下发主进程展开态");
+  equal(window.bounds.width, RAIL_WINDOW.petSize, "renderer 不能借 sync payload 展开原生窗口");
+  const compactX = window.bounds.x;
+  rail.dispatch({ type: "toggle" });
+  equal(window.bounds.width, RAIL_WINDOW.width, "展开后呈现待办面板宽度");
+  rail.dispatch({ type: "sync" });
+  equal(window.webContents.last("mochi:rail:apply").expanded, true, "展开动作后页面状态由主进程回推");
+  equal(window.bounds.x + window.bounds.width, compactX + RAIL_WINDOW.petSize, "展开时固定右缘");
+  rail.dispatch({ type: "toggle" });
+  equal(window.bounds.width, RAIL_WINDOW.petSize, "再次点击收回桌宠");
   rail.dispose();
 }
 
@@ -313,8 +396,36 @@ deepEqual(
   const { rail } = makeRail("classroom-board");
   rail.setVisible(true);
   const window = railWindows()[0];
+  equal(window.options.transparent, false, "教室板保持不透明以便全班阅读");
   equal(window.alwaysOnTopLevel, "screen-saver", "教室屏必须用 screen-saver 层级，要压在全屏之上");
   equal(window.workspaces, 1, "教室屏必须在所有工作区可见");
+  rail.dispose();
+}
+
+// 首帧比用户关闭更晚到达时，不得把已隐藏的桌宠重新唤醒。
+{
+  const { rail } = makeRail();
+  rail.setVisible(true);
+  const window = railWindows()[0];
+  rail.dispatch({ type: "hide" });
+  window.emit("ready-to-show");
+  equal(window.visible, false, "迟到的首帧不得覆盖用户隐藏");
+  rail.syncHealth({ status: "live", lastSuccessAt: new Date().toISOString() });
+  rail.dispatch({ type: "sync" });
+  equal(window.visible, false, "同步健康与页面重载不得唤醒桌宠");
+  rail.setVisible(true);
+  equal(window.visible, true, "显式托盘操作可恢复桌宠");
+  rail.dispatch({ type: "resize", size: 999 });
+  equal(window.bounds.width, 160, "缩放不超过上限");
+  rail.dispatch({ type: "resize", size: 1 });
+  equal(window.bounds.width, 72, "缩放不低于下限");
+  equal(window.bounds.height, 72, "缩放保持正方形");
+  equal(rail.dispatch({ type: "resize", size: NaN }), false, "非法尺寸被拒绝");
+  rail.dispatch({ type: "toggle", reducedMotion: true });
+  equal(rail.dispatch({ type: "resize", size: 100 }), false, "待办面板不能被桌宠缩放动作改变");
+
+  window.emit("close", { preventDefault() {} });
+  equal(window.visible, false, "原生关闭同样隐藏桌宠");
   rail.dispose();
 }
 
@@ -324,10 +435,27 @@ deepEqual(
   const { rail } = makeRail();
   equal(rail.apply(snapshot()), true, "合法快照必须被应用");
   const window = railWindows()[0];
+  rail.dispatch({ type: "toggle" });
+  rail.dispatch({ type: "sync" });
   const pushed = window.webContents.last("mochi:rail:apply");
   equal(pushed.rows.length, 2, "快照必须整份下发");
+  equal(pushed.expanded, true, "快照同步同时携带主进程展开态");
   equal(pushed.heading, "学生预约", "标题必须下发");
-  equal(window.bounds.height, 64 + 2 * 52, "高度必须按行数增长");
+  equal(window.bounds.height, 148 + 2 * 112, "展开面板需为预约时间、页头页脚和每行卡片预留完整高度");
+
+  const firstSuccess = "2026-09-24T07:00:00.000Z";
+  const newerSuccess = "2026-09-24T07:00:03.000Z";
+  equal(rail.syncHealth({ status: "live", lastSuccessAt: firstSuccess }), true, "成功轮询可标记快照为新鲜");
+  const sentHealth = window.webContents.sent.filter((entry) => entry.channel === "mochi:rail:health").length;
+  equal(rail.syncHealth({ status: "live", lastSuccessAt: newerSuccess }), true, "无内容变化的成功轮询仍刷新最后成功时间");
+  equal(window.webContents.sent.filter((entry) => entry.channel === "mochi:rail:health").length, sentHealth, "正常心跳不应每 3 秒重绘桌宠");
+  equal(rail.syncHealth({ status: "stale", lastSuccessAt: newerSuccess }), true, "失败轮询必须标记旧快照");
+  deepEqual(window.webContents.last("mochi:rail:health"), { status: "stale", lastSuccessAt: newerSuccess }, "旧数据提示保留最近一次成功时间");
+  equal(window.webContents.last("mochi:rail:apply").rows.length, 2, "同步中断不能清空待办");
+  rail.dispatch({ type: "sync" });
+  deepEqual(window.webContents.last("mochi:rail:health"), { status: "stale", lastSuccessAt: newerSuccess }, "页面重载仍能取回旧数据标记");
+  equal(rail.syncHealth({ status: "live", lastSuccessAt: "2026-09-24T07:00:06.000Z" }), true, "恢复后撤销旧数据标记");
+  equal(window.webContents.last("mochi:rail:health").status, "live", "恢复状态下发给桌宠");
 
   // 串屏：教室端快照不能进教师条，且必须整份拒绝、保留上一份。
   equal(rail.apply(snapshot({ surface: "classroom-board" })), false, "跨 surface 的推送必须被拒绝");
@@ -340,7 +468,7 @@ deepEqual(
 
   // 空列表也必须能下发（老师处理完最后一件事）。
   equal(rail.apply(snapshot({ rows: [], heading: "学生预约", detail: "暂无待处理" })), true, "空列表快照必须被接受");
-  equal(window.bounds.height, RAIL_WINDOW.minHeight, "空列表必须收回到最小高度");
+  equal(window.bounds.height, 148, "空列表保留纸面页头页脚所需高度");
   equal(window.webContents.last("mochi:rail:apply").rows.length, 0, "空列表必须如实下发");
 
   // 隐藏期间来了新内容，重新显示时高度必须跟着新内容走——否则老师会看到被裁掉
@@ -348,9 +476,9 @@ deepEqual(
   rail.setVisible(false);
   equal(window.visible, false, "隐藏后窗口不可见");
   rail.apply(snapshot({ rows: Array.from({ length: 4 }, (_value, index) => ({ id: `h${index}`, name: `学生${index}` })) }));
-  equal(window.bounds.height, 64 + 4 * 52, "隐藏期间的高度必须已经按新内容更新");
+  equal(window.bounds.height, RAIL_WINDOW.maxHeight, "隐藏期间的高度必须已经按新内容更新并受上限约束");
   rail.setVisible(true);
-  equal(window.bounds.height, 64 + 4 * 52, "重新显示后高度必须与新内容一致");
+  equal(window.bounds.height, RAIL_WINDOW.maxHeight, "重新显示后高度必须与新内容一致");
   rail.dispose();
 }
 
@@ -360,6 +488,7 @@ deepEqual(
   rail.apply(snapshot({
     rows: Array.from({ length: 50 }, (_value, index) => ({ id: `r${index}`, name: `学生${index}` })),
   }));
+  rail.dispatch({ type: "toggle" });
   equal(railWindows()[0].bounds.height, RAIL_WINDOW.maxHeight, "高度必须被夹在上限");
   rail.dispose();
 }
@@ -392,15 +521,17 @@ deepEqual(
   equal(popup.webContents.last("mochi:rail:popup").subject, "张小明 · 高一（3）班", "未确认前内容不得被抢走");
 
   // 确认第一条 → 轮换到第二条，复用同一个窗口。
-  rail.dispatch({ type: "acknowledge", id: "a1" });
+  equal(rail.dispatch({ type: "acknowledge", id: "a1" }), false, "无真实收件 ID 的弹窗不得确认或关闭");
+  equal(popupWindows().length, 1, "拒绝无收件 ID 的确认后仍显示当前提醒");
+  rail.dispatch({ type: "dismiss", id: "a1" });
   equal(popup.webContents.last("mochi:rail:popup").subject, "李小红 · 高一（3）班", "确认后必须轮换到下一条");
   equal(popupWindows().length, 1, "轮换必须复用同一个窗口");
-  deepEqual(actions, [{ type: "acknowledge", id: "a1" }], "确认动作必须转发给宿主");
+  deepEqual(actions, [], "关闭提醒不得转发收件确认");
 
   // 确认第二条 → 队列排空，窗口关闭。
-  rail.dispatch({ type: "acknowledge", id: "b2" });
+  rail.dispatch({ type: "dismiss", id: "b2" });
   equal(popupWindows().length, 0, "队列排空后弹窗必须关闭");
-  equal(actions.length, 2, "第二次确认必须被转发");
+  equal(actions.length, 0, "关闭提醒不发起收件确认");
 
   // 队列排空后再来一条：必须重新开一个弹窗（不能复用已销毁的那个）。
   equal(rail.attention(attention("c3", "王大力 · 高一（3）班")), true, "排空后的新弹窗必须能入队");
@@ -412,6 +543,51 @@ deepEqual(
   rail.dispatch({ type: "acknowledge", id: "not-this-one" });
   equal(popupWindows().length, 1, "id 不匹配的确认不得关闭弹窗");
   equal(reopened.webContents.last("mochi:rail:popup").subject, "王大力 · 高一（3）班", "id 不匹配的确认不得改变内容");
+  rail.dispose();
+}
+
+{
+  const actions = [];
+  const { rail } = makeRail("teacher-rail", memoryStore(), (action) => actions.push(action));
+  rail.attention({ ...attention("real-popup", "李明"), receiptMessageId: "raw.message-1" });
+  equal(rail.dispatch({ type: "acknowledge", id: "real-popup" }), true, "真实收件允许确认动作");
+  deepEqual(actions, [{ type: "acknowledge", id: "real-popup", receiptMessageId: "raw.message-1" }], "宿主收到真实 messageId");
+  equal(popupWindows().length, 1, "确认 pending 时弹窗不提前关闭");
+  equal(rail.feedback("real-popup", false, "relay failed"), true, "失败反馈送达当前弹窗");
+  equal(popupWindows()[0].webContents.last("mochi:rail:receipt-feedback").message, "relay failed", "失败反馈含错误文案");
+  equal(rail.dispatch({ type: "dismiss", id: "real-popup" }), true, "确认成功后宿主可 dismiss");
+  equal(popupWindows().length, 0, "成功结果关闭弹窗");
+  rail.dispose();
+}
+
+{
+  const actions = [];
+  const { rail } = makeRail("teacher-rail", memoryStore(), (action) => actions.push(action));
+  rail.setVisible(true);
+  rail.attention({ ...attention("pending", "李明"), receiptMessageId: "inbox.pending" });
+  rail.attention(attention("queued", "王芳"));
+  equal(rail.dispatch({ type: "acknowledge", id: "pending", receiptMessageId: "inbox.pending" }), true, "当前弹窗只签收一次");
+
+  rail.setVisible(false);
+  equal(popupWindows().length, 0, "显式隐藏必须关闭当前弹窗");
+  equal(rail.dispatch({ type: "sync" }), true, "隐藏期间页面 sync 仍应被接受");
+  equal(popupWindows().length, 0, "隐藏期间 sync 不得重新弹出提醒");
+  rail.attention(attention("arrived-hidden", "赵敏"));
+  equal(popupWindows().length, 0, "隐藏期间到达的新提醒只进入队列");
+
+  rail.setVisible(true);
+  equal(popupWindows().length, 1, "重新显示必须恢复一个队首弹窗");
+  equal(popupWindows()[0].webContents.last("mochi:rail:popup").id, "pending", "恢复时保留原队首与签收状态");
+  equal(actions.length, 1, "隐藏和恢复不得重复发送签收动作");
+  rail.dispatch({ type: "dismiss", id: "pending" });
+  equal(popupWindows()[0].webContents.last("mochi:rail:popup").id, "queued", "恢复后仍按原顺序轮换队列");
+  rail.dispatch({ type: "hide" });
+  equal(popupWindows().length, 0, "页面 hide 也必须关闭提醒");
+  rail.dispatch({ type: "sync" });
+  equal(popupWindows().length, 0, "页面 hide 后的 sync 不得绕过隐藏态");
+  rail.setVisible(true);
+  equal(popupWindows()[0].webContents.last("mochi:rail:popup").id, "queued", "托盘恢复后弹出剩余队首");
+  equal(actions.filter((action) => action.type === "acknowledge").length, 1, "页面 hide 与托盘恢复不得重复签收");
   rail.dispose();
 }
 
@@ -454,10 +630,15 @@ deepEqual(
   rail.setVisible(true);
   const window = railWindows()[0];
   const origin = window.getBounds();
-  window.setPosition(origin.x - 40, origin.y + 40);
-  equal(store.saves.length, 1, "拖动后必须落盘一次");
+  equal(rail.dispatch({ type: "drag-move", x: 300, y: 300 }), true, "未按下的移动不会移动桌宠");
+  equal(window.getBounds().x, origin.x, "悬停不移动窗口");
+  rail.dispatch({ type: "drag-start", x: 300, y: 300 });
+  rail.dispatch({ type: "drag-move", x: 260, y: 340 });
+  rail.dispatch({ type: "drag-end" });
+  rail.dispatch({ type: "drag-move", x: 500, y: 500 });
+  ok(store.saves.length >= 1, "拖动后位置必须保存");
   equal(store.saves[0].surface, "teacher-rail", "落盘必须带 surface");
-  deepEqual(store.saves[0].position, { x: origin.x - 40, y: origin.y + 40 }, "落盘坐标必须与拖动一致");
+  deepEqual(store.saves[0].position, { x: origin.x - 40 + RAIL_WINDOW.petSize - RAIL_WINDOW.width, y: origin.y + 40 }, "桌宠落盘时归一为展开面板坐标");
 
   // 关掉再建：必须用记住的位置，而不是默认位置。
   rail.dispose();
@@ -515,6 +696,24 @@ deepEqual(
     deepEqual(reopened.load("teacher-rail"), { x: 100, y: 200 }, "跨实例必须读回教师条位置");
     deepEqual(reopened.load("classroom-board"), { x: 300, y: 400 }, "跨实例必须读回教室屏位置");
     equal(readFileSync(filePath, "utf8").endsWith("\n"), true, "落盘必须是完整的一行 JSON");
+
+    store.savePetSize("teacher-rail", 132);
+    store.saveVisible("teacher-rail", false);
+    store.saveVisible("classroom-board", true);
+    store.save("teacher-rail", { x: 110, y: 210 });
+    const restoredVisibility = createRailPositionStore(filePath);
+    equal(restoredVisibility.loadVisible("teacher-rail"), false, "重启后教师桌宠保持隐藏");
+    equal(restoredVisibility.loadVisible("classroom-board"), true, "教师隐藏不影响教室端");
+    deepEqual(restoredVisibility.load("teacher-rail"), { x: 110, y: 210 }, "位置更新保留可见性");
+    const restarted = makeRail("teacher-rail", restoredVisibility);
+    restarted.rail.syncHealth({ status: "live", lastSuccessAt: new Date().toISOString() });
+    const hiddenWindow = railWindows()[0];
+    equal(hiddenWindow.bounds.width, 132, "跨重启保留桌宠尺寸");
+    hiddenWindow.emit("ready-to-show");
+    equal(hiddenWindow.visible, false, "重启首帧保持已保存的隐藏状态");
+    restarted.rail.setVisible(true);
+    equal(createRailPositionStore(filePath).loadVisible("teacher-rail"), true, "显式恢复同样持久化");
+    restarted.rail.dispose();
 
     // 损坏文件必须降级为「无记忆」而不是抛错。
     writeFileSync(filePath, "{ 这不是 JSON", "utf8");

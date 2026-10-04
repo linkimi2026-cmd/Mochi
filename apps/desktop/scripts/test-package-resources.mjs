@@ -45,6 +45,7 @@ const {
   STAGING_MARKER_CONTENT,
   stageMochiResources,
 } = requireFromHere(join(scriptDir, "prepare-mochi-resources.cjs"));
+const { renderSettingsDefaults } = requireFromHere(join(scriptDir, "seed-packaging-keys.cjs"));
 
 class CaptureResponse extends Writable {
   constructor() {
@@ -130,11 +131,13 @@ function createToolRegistrationContext() {
     },
     // mochi-modes 用 ctx.inject 挂命令与 session 投影；这里只保证 apply 不炸，
     // 注册面的细节由插件自己的单测覆盖。
-    inject(_services, callback) {
-      callback({
+    inject(services, callback) {
+      const available = {
         commands: { register() { return () => undefined; } },
         sessionProjections: { register() { return () => undefined; } },
-      });
+        systemPrompt: { section() { return () => undefined; }, getSectionOrder() { return 500; } },
+      };
+      if (services.every(name => available[name])) callback(available);
     },
   };
   return { ctx, tools };
@@ -293,7 +296,7 @@ function pluginEntrypoint(pluginRoot, pluginId) {
 
 // 2026-09-18 由 26 降为 25：教师工作台面板（mochi-workbench）连同其内嵌 Office
 // 入口一并下线，白名单、runtime-profile 与快照清单三处同步移除。
-const EXPECTED_BUNDLED_PLUGIN_COUNT = 25;
+const EXPECTED_BUNDLED_PLUGIN_COUNT = 35;
 const CRITICAL_PLUGIN_ENTRYPOINTS = Object.freeze({
   "mochi-grades": "plugin.mjs",
   "mochi-memory": "index.mjs",
@@ -327,7 +330,7 @@ const playwrightBrowserTemporaryRoot = mkdtempSync(join(tmpdir(), "mochi-package
 const symlinkedParent = join(tmpdir(), `mochi-package-resources-test-parent-link-${process.pid}-${Date.now()}`);
 try {
   const playwrightBrowserMetadata = createPlaywrightBrowserResource(playwrightBrowserTemporaryRoot);
-  const stageEnvironment = { ...process.env, [PLAYWRIGHT_BROWSER_RESOURCE_ENV]: playwrightBrowserTemporaryRoot };
+  const stageEnvironment = { ...process.env, MOCHI_BROWSER_MODE: "bundled", [PLAYWRIGHT_BROWSER_RESOURCE_ENV]: playwrightBrowserTemporaryRoot };
   const unmarkedStageRoot = join(unmarkedTemporaryRoot, STAGING_DIRECTORY_NAME);
   mkdirSync(unmarkedStageRoot);
   writeFileSync(join(unmarkedStageRoot, "must-remain.txt"), "unmanaged\n");
@@ -367,7 +370,7 @@ try {
   assert.throws(
     () => stageMochiResources({
       outputRoot: stageRoot,
-      env: { ...process.env, [PLAYWRIGHT_BROWSER_RESOURCE_ENV]: bloatedPlaywrightRoot },
+      env: { ...stageEnvironment, [PLAYWRIGHT_BROWSER_RESOURCE_ENV]: bloatedPlaywrightRoot },
     }),
     /多余条目/,
     "资源根带着多余条目时打包必须直接失败，而不是把它打进安装包",
@@ -389,10 +392,17 @@ try {
   writeFileSync(join(explicitAssets, "style.css"), ".release-artifact { color: #123456; }\n");
   writeFileSync(join(explicitAssets, "jxl-campus-watercolor-v1.webp"), "release-artifact-image\n");
   const explicitStageRoot = join(explicitStaticTemporaryRoot, STAGING_DIRECTORY_NAME);
+  const fixtureProfileRoot = join(explicitStaticTemporaryRoot, "profile-with-stale-seeds");
+  mkdirSync(join(fixtureProfileRoot, "seeds"), { recursive: true });
+  writeFileSync(join(fixtureProfileRoot, "runtime-profile.json"), "{}\n");
+  const staleKeySentinel = "MOCHI_TEST_SECRET_VALUE_MUST_NOT_SHIP_7d43";
+  writeFileSync(join(fixtureProfileRoot, "seeds", "credentials.json"), JSON.stringify({ apiKey: staleKeySentinel }));
   stageMochiResources({
     outputRoot: explicitStageRoot,
+    profileSourceRoot: fixtureProfileRoot,
     env: {
       ...stageEnvironment,
+      MOCHI_WITHOUT_KEY_SEEDS: "1",
       MOCHI_CAMPUS_STATIC_ROOT: explicitClientRoot,
       // Deliberately invalid: this proves static packaging does not resolve a
       // source checkout when an explicit reviewed static client is supplied.
@@ -404,13 +414,30 @@ try {
     "export const releaseArtifact = true;\n",
     "explicit static release input was not used",
   );
+  const safeSeedRoot = join(explicitStageRoot, "profile", "seeds");
+  assert.deepEqual(readdirSync(safeSeedRoot), ["settings-defaults.json"], "key-seed opt-out must retain only the generated non-secret model default");
+  assert.deepEqual(
+    JSON.parse(readFileSync(join(safeSeedRoot, "settings-defaults.json"), "utf8")),
+    renderSettingsDefaults(),
+    "the safe default must come from the provider table, not stale source seeds",
+  );
+  assert.equal(existsSync(join(safeSeedRoot, "credentials-seed.json")), false, "key-seed opt-out must omit credential seeds");
+  assert.equal(
+    allFiles(explicitStageRoot).some((path) => readFileSync(path).includes(staleKeySentinel)),
+    false,
+    "staged resource output must not contain key values from stale source seeds",
+  );
 
   const desktopPackage = JSON.parse(readFileSync(join(desktopRoot, "package.json"), "utf8"));
   const profileManifest = JSON.parse(readFileSync(join(stageRoot, "profile", "runtime-profile.json"), "utf8"));
   const stagedIntegrity = JSON.parse(readFileSync(join(stageRoot, "package-integrity.json"), "utf8"));
 
   assert.equal(desktopPackage.build.beforePack, "./scripts/prepare-mochi-resources.cjs");
-  assert.deepEqual(desktopPackage.build.extraResources, [{ from: STAGING_DIRECTORY_NAME, to: "mochi" }]);
+  assert.deepEqual(desktopPackage.build.extraResources, [
+    { from: STAGING_DIRECTORY_NAME, to: "mochi" },
+    { from: "build", to: "icons", filter: ["MochiTemplate.png", "MochiTemplate@2x.png", "icon.ico", "icon.png"] },
+    { from: "resources/browser-on-demand.cjs", to: "browser-on-demand.cjs" },
+  ]);
   assert.equal(desktopPackage.dependencies["better-sqlite3"], undefined, "legacy migration database must not be a production dependency");
   assert.equal(desktopPackage.devDependencies["better-sqlite3"], "^11.10.0", "legacy migration database remains available to its test");
   assert.equal(desktopPackage.build.asarUnpack.includes("node_modules/better-sqlite3/**/*"), false, "legacy migration database must not be shipped in app.asar.unpacked");
@@ -444,8 +471,8 @@ try {
 
   const profilePluginIds = new Set(Object.values(profileManifest.profiles).flatMap((profile) => profile.plugins));
   assert.equal(PLUGINS.length, EXPECTED_BUNDLED_PLUGIN_COUNT, `packaged plugin whitelist must contain all ${EXPECTED_BUNDLED_PLUGIN_COUNT} runtime plugins`);
-  assert.deepEqual([...profilePluginIds].sort(), PLUGINS.map(({ id }) => id).sort());
-  assert.equal(profilePluginIds.size, EXPECTED_BUNDLED_PLUGIN_COUNT, `runtime profile must require exactly ${EXPECTED_BUNDLED_PLUGIN_COUNT} bundled plugins`);
+  assert.deepEqual(Object.keys(profileManifest.plugins).sort(), PLUGINS.map(({ id }) => id).sort());
+  for (const id of profilePluginIds) assert.ok(PLUGINS.some(plugin => plugin.id === id), `legacy profile plugin ${id} must be staged`);
   for (const plugin of PLUGINS) {
     for (const file of plugin.files) {
       assert.equal(existsSync(join(stageRoot, "plugins", plugin.id, file)), true, `${plugin.id}/${file} was not staged`);
@@ -453,7 +480,7 @@ try {
   }
   for (const [plugin, files] of Object.entries({
     "mochi-hello": ["work-quality.mjs", "work-quality.md"],
-    "mochi-presentations": ["process-layout.mjs"],
+    "mochi-presentations": ["process-layout.mjs", "comparison-layout.mjs", "client.js"],
   })) {
     for (const file of files) assert.equal(
       readFileSync(join(stageRoot, "plugins", plugin, file), "utf8"),
@@ -493,6 +520,7 @@ try {
   }
   for (const file of [
     "assets/mochi-loading.json",
+    "assets/icons/icon.svg",
     "assets/brand/jiaxing-jellyfish-v1.png",
     "assets/campus/jxl-campus-watercolor-v1.webp",
   ]) {
@@ -599,21 +627,23 @@ try {
   const stagedLanClient = JSON.parse(readFileSync(join(stageRoot, "plugins", "mochi-lan-client", "package.json"), "utf8"));
   assert.equal(stagedLanClient.dsh.client.platform, "web", "LAN client package lost its web entry metadata");
   assert.equal(existsSync(join(stageRoot, "plugins", "mochi-lan-client", "client.js")), true, "LAN client browser entry was not staged");
+  const stagedPresentations = JSON.parse(readFileSync(join(stageRoot, "plugins", "mochi-presentations", "package.json"), "utf8"));
+  assert.equal(stagedPresentations.dsh.client.platform, "web", "presentations package lost its web tool-view metadata");
+  assert.ok(stagedPresentations.dsh.client.inject.includes("@deepseek-ai/dsh-client-ui-tool"), "presentations tool-view omitted the DSH tool slot dependency");
+  assert.equal(existsSync(join(stageRoot, "plugins", "mochi-presentations", "client.js")), true, "presentations browser tool-view was not staged");
   const teacherPatch = readFileSync(join(homeDir, "profiles", "mochi-web", "cordis.patch.yml"), "utf8");
   assert.ok(teacherPatch.includes(JSON.stringify(join(stageRoot, "teacher-agent-presets"))), "teacher profile omitted its staged preset root");
-  // 2026-09-12 用户裁定：教师端只保留「创造模式」。底座自带的 标准/PTC/极简 三项
-  // 是编程向预设，不能出现在老师的预设选择器里。上游 roots 没有逐条排除能力，
-  // 所以生成器改落一份只含 cordis 的可见根，root 指向它而不是原始安装目录。
+  // 历史会话仍需解析原有预设；使用受控副本并逐字节保留。
   const visiblePresetRoot = join(homeDir, "presets-visible");
-  assert.ok(teacherPatch.includes(JSON.stringify(visiblePresetRoot)), "teacher profile omitted the filtered visible preset root");
-  assert.equal(
-    teacherPatch.includes(JSON.stringify(join(desktopRoot, "node_modules", "@deepseek-ai", "dsh-agent-presets", "presets"))),
-    false,
-    "teacher profile must not point at the raw installed preset root (it would re-expose 标准/PTC/极简)",
-  );
-  assert.equal(existsSync(join(visiblePresetRoot, "cordis", "preset.yml")), true, "创造模式 preset was not materialized into the visible preset root");
-  for (const hidden of ["standard", "ptc", "minimal"]) {
-    assert.equal(existsSync(join(visiblePresetRoot, hidden)), false, `hidden coding preset ${hidden} leaked into the teacher-visible preset root`);
+  const installedPresetRoot = join(desktopRoot, "node_modules", "@deepseek-ai", "dsh-agent-presets", "presets");
+  assert.ok(teacherPatch.includes(JSON.stringify(visiblePresetRoot)), "teacher profile omitted the managed preset root");
+  assert.equal(teacherPatch.includes(JSON.stringify(installedPresetRoot)), false, "teacher profile must use its managed preset copy");
+  for (const preset of ["standard", "ptc", "minimal", "cordis"]) {
+    assert.deepEqual(
+      readFileSync(join(visiblePresetRoot, preset, "preset.yml")),
+      readFileSync(join(installedPresetRoot, preset, "preset.yml")),
+      `historical preset ${preset} was not preserved`,
+    );
   }
   assert.equal(typeof modules["dsh-better-sidebar"].apply, "function", "dsh-better-sidebar did not expose its real server entry");
   assert.match(
@@ -624,10 +654,15 @@ try {
 
   assertPluginToolRegistration("mochi-grades", modules["mochi-grades"], ["mochi_grade_analyze"]);
   assertPluginToolRegistration("mochi-modeling", modules["mochi-modeling"], ["mochi_model_create"]);
+  const memoryStorage = await import(pathToFileURL(join(stageRoot, "plugins/mochi-memory/mem-store.mjs")).href);
+  const memoryWorld = await import(pathToFileURL(join(stageRoot, "plugins/mochi-memory/world-state.mjs")).href);
+  const memoryStore = memoryStorage.createStore(memoryStorage.openStore(join(temporaryRoot, "memory-fixture.sqlite")));
+  try {
   assertPluginToolRegistration(
     "mochi-memory",
     modules["mochi-memory"],
     [
+      "mochi_memory_observe",
       "mochi_memory_note",
       "mochi_memory_recall",
       "mochi_memory_forget",
@@ -635,8 +670,9 @@ try {
       "mochi_memory_world",
       "mochi_memory_clear",
     ],
-    [{}, {}],
+    [memoryStore, memoryWorld.openWorldState(join(temporaryRoot, "memory-world"))],
   );
+  } finally { memoryStore.db.close(); }
   assertPluginToolRegistration(
     "mochi-presentations",
     modules["mochi-presentations"],
@@ -662,8 +698,8 @@ try {
     modules["mochi-visuals"],
     ["image_find", "image_edit", "diagram_draw", "teaching_image_match"],
   );
-  assertPluginToolRegistration("mochi-modes", modules["mochi-modes"], ["mochi_request_work_mode"]);
-  // 客户端半边不注册工具，但必须能在打包产物里被解析到（否则模式开关永远不出现）。
+  assertPluginToolRegistration("mochi-modes", modules["mochi-modes"], []);
+  // 客户端场景入口不注册工具，仍须在打包资源中可解析。
   assertPluginToolRegistration("mochi-modes-client", modules["mochi-modes-client"], []);
   assertKnowledgeToolRegistration(modules["mochi-knowledge"]);
   // 覆盖 mochi-campus / mochi-dispatch 等未在此重放注册面的插件。
@@ -695,6 +731,10 @@ try {
   assert.equal(logo.statusCode, 200);
   assert.equal(logo.headers["content-type"], "image/png");
   assert.ok(logo.body.length > 100, "Mochi brand illustration is empty");
+  const mark = await requestRoute(themeStatic, "/jxl-assets/icons/icon.svg");
+  assert.equal(mark.statusCode, 200);
+  assert.equal(mark.headers["content-type"], "image/svg+xml");
+  assert.match(mark.body.toString(), /viewBox="246 236 762 748"/, "Mochi sidebar mark must use the supplied vectorized outline");
 
   console.log(`package resource test passed: ${PLUGINS.length} plugins, ${PLUGIN_RUNTIME_MODULES.length} DSH modules, ${expectedAdditionalRuntimeModules.length} additional modules, staged static client assets`);
 } finally {

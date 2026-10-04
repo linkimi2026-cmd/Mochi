@@ -12,12 +12,14 @@
  *     mochi:approval:respond { requestId, decision }       用户对确认卡的答复
  *     mochi:lan:attention    LanAttentionKind               已认证 LAN 页面请求本机提醒
  *     mochi:rail:snapshot    RailSnapshot                    常驻条整份快照（教师/教室各自一块屏）
+ *     mochi:rail:sync-health boolean                         LAN 轮询是否成功
  *     mochi:rail:attention   RailAttentionPayload            请求弹一次喊人弹窗
  *   main → renderer
  *     mochi:event:stream     DshStreamEvent                 dsh 事件流（状态/思考/工具/文本/最终回答）
  *     mochi:approval:request ApprovalRequest               需要用户确认的工具（Batch 2 后半段由 answerer IPC 化触发）
  *   main → 常驻条窗口
  *     mochi:rail:apply       RailSnapshot                    下发当前快照
+ *     mochi:rail:health      RailSyncHealth                  下发同步健康状态
  *     mochi:rail:popup       RailAttentionPayload            下发弹窗内容
  *   常驻条窗口 → main
  *     mochi:rail:action      RailAction                      用户动作（打开/隐藏/知道了/同步）
@@ -157,8 +159,16 @@ export interface RailRow {
   meta: string;
   /** 详情：预约内容 / 不过关原因。 */
   note: string;
+  /** 教室提醒中供完整核对的原消息摘要；仅模型层从已签名收件生成。 */
+  popupDetail?: string;
+  /** 姓名、动作、名目、交代和正文均未截断，才允许弹窗尝试签收。 */
+  popupComplete?: boolean;
+  /** 预约时间与真实回复投递状态；其文案只由已签名 LAN 快照派生。 */
+  context?: string;
   /** 状态徽标文案：待处理 / 已看到 / 不过关 …。 */
   badge: string;
+  /** 是否仍需老师处理。宠物角标不依赖可本地化的 badge 文案。 */
+  actionRequired?: boolean;
   tone: RailTone;
   /** 到达或变更时间（ISO 字符串，仅用于显示与排序稳定性）。 */
   at: string;
@@ -167,6 +177,10 @@ export interface RailRow {
 /** 一次完整推送。整份替换，主进程不做增量合并，避免出现两个事实源。 */
 export interface RailSnapshot {
   surface: RailSurface;
+  /** Total actionable items before the visible row limit is applied. */
+  actionRequiredCount?: number;
+  /** Total classroom result rows before an overflow summary replaces hidden rows. */
+  totalRowCount?: number;
   /** 条头大标题，例如「学生预约」。 */
   heading: string;
   /** 条头副标题，例如「3 条待处理」。 */
@@ -174,6 +188,12 @@ export interface RailSnapshot {
   /** 本次推送时间（ISO）。 */
   updatedAt: string;
   rows: RailRow[];
+}
+
+/** LAN 数据可以保留显示，但轮询失败后必须明确标记其时效。时间由主进程记录。 */
+export interface RailSyncHealth {
+  status: 'waiting' | 'live' | 'stale';
+  lastSuccessAt?: string;
 }
 
 /**
@@ -184,23 +204,32 @@ export interface RailAttentionPayload {
   /** 去重键；同一 id 在冷却期内只弹一次。 */
   id: string;
   kind: 'call' | 'request' | 'pairing';
-  /** 弹窗标题，例如「有人喊你」。 */
+  /** 弹窗标题，例如「学生呼叫」。 */
   title: string;
   /** 弹窗主行，例如「张小明 · 高一（3）班」。 */
   subject: string;
   /** 弹窗副行，例如「预约讲题 · 第 3 题」。 */
   detail: string;
+  /** Raw LAN inbox id, only present when this popup represents one real message. */
+  receiptMessageId?: string;
   at: string;
 }
 
 /** 常驻条窗口给主进程的动作。 */
 export type RailAction =
+  | { type: 'resize'; size: number }
+  | { type: 'drag-start' | 'drag-move'; x: number; y: number }
+  | { type: 'drag-end' }
+  /** 教师宠物条展开/收起待办面板；教室板不响应。 */
+  | { type: 'toggle'; reducedMotion?: boolean }
   /** 点某一行的「处理」：把主窗口拉起来并聚焦该条。 */
-  | { type: 'open'; id: string }
+  | { type: 'open'; id?: string }
   /** 临时隐藏常驻条（托盘菜单可恢复）。 */
   | { type: 'hide' }
-  /** 弹窗上的「我知道了」。 */
-  | { type: 'acknowledge'; id: string }
+  /** 弹窗已请求主进程确认真实 inbox 收件；不会立即关闭。 */
+  | { type: 'acknowledge'; id: string; receiptMessageId?: string }
+  /** 关闭当前提醒且不确认收件。 */
+  | { type: 'dismiss'; id: string }
   /** 列出自己当前的期望快照（窗口首帧后主动拉一次）。 */
   | { type: 'sync' };
 
@@ -223,10 +252,27 @@ export const IPC = {
   lanAttention: 'mochi:lan:attention',
   /** renderer → main：推一份**原始 LAN 快照**（就是 /api/mochi-lan/state 的响应体）。 */
   railLanState: 'mochi:rail:lan-state',
+  uiSound: "mochi:ui-sound",
+  petPalette: "mochi:pet-palette",
+  appearance: 'mochi:appearance',
+  /** 已认证页面 → main：本次 LAN 状态轮询成功/失败。 */
+  railSyncHealth: 'mochi:rail:sync-health',
   /** main → 常驻条窗口：下发当前快照。 */
   railApply: 'mochi:rail:apply',
+  /** main → 常驻条窗口：独立于内容快照的同步健康状态。 */
+  railHealth: 'mochi:rail:health',
   /** main → 常驻条窗口：弹窗内容。 */
   railPopup: 'mochi:rail:popup',
+  /** main → 已认证 Harness 页面：请求确认真实 inbox 收件。 */
+  railMarkSeenRequest: 'mochi:rail:mark-seen-request',
+  /** 已认证 Harness 页面 → main：签名回执结果。 */
+  railMarkSeenResult: 'mochi:rail:mark-seen-result',
+  /** 主进程 → 弹窗：异步确认收件结果。 */
+  railReceiptFeedback: 'mochi:rail:receipt-feedback',
+  /** 桌宠选择一条 LAN 待办后 main → 主窗口：定位到其 messageId。 */
+  railFocusMessage: 'mochi:rail:focus-message',
+  /** 主窗口完成启动后读取等待中的桌宠待办定位请求。 */
+  railTakeFocusMessage: 'mochi:rail:take-focus-message',
   /** 常驻条窗口 → main：用户动作。 */
   railAction: 'mochi:rail:action',
 } as const;

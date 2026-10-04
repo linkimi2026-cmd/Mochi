@@ -25,6 +25,10 @@ release/*
 apps/desktop/release/
 apps/desktop/release/*/**/release/
 out/
+/output/
+/deliverables/
+/Mochi Documents/
+/Mochi Models/
 **/__pycache__/
 *.py[cod]
 
