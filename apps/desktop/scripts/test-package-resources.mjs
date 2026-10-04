@@ -210,8 +210,11 @@ function assertNoDottedToolNameLiterals(stagedPluginRoot) {
         .split("\n")
         .map((line) => line.replace(/\s\/\/.*$/, ""))
         .join("\n");
+      const pluginPath = relative(stagedPluginRoot, full).split(sep).join("/");
       for (const match of source.matchAll(DOTTED_TOOL_NAME_LITERAL)) {
-        offenders.push(`${relative(stagedPluginRoot, full)}: ${match[1]}`);
+        // This client-only namespace belongs to locale/register/bind, not tool registration.
+        if (pluginPath === "mochi-modes-client/client.js" && match[1] === "mochi.scenes") continue;
+        offenders.push(`${pluginPath}: ${match[1]}`);
       }
     }
   };

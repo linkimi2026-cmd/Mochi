@@ -6,7 +6,7 @@
     "manifestPath": ".github/windows-native-package-inputs.json",
     "manifestIsTheOnlyUnhashedSnapshotFile": true,
     "expectedFileCount": 810,
-    "expectedFileBytes": 95011221
+    "expectedFileBytes": 95011473
   },
   "externalBuildInputs": [
     {
@@ -663,8 +663,8 @@
     },
     {
       "path": "apps/desktop/scripts/test-package-resources.mjs",
-      "sha256": "1fb3aa8a62aed1a7744609642df8ea62aa3abb7be58a661f884c39772c38b395",
-      "bytes": 38135,
+      "sha256": "799f6f3e48603be64aa87d9de97300f4153877459b413059e6e1c25dce0ced25",
+      "bytes": 38387,
       "categories": [
         "desktop-source"
       ]
