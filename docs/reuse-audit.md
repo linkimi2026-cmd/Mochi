@@ -2116,3 +2116,7 @@ Muse 已定位官方：https://about.fb.com/news/2026/09/introducing-muse-person
 视觉素材采用项目原Logo、Mo和真实产品截图，并生成无文字的纸张静物作为封面背景，明确只是装饰，不代表真实产品界面。20页主讲、4页备用与原讲述时间保持，独立输出精修版。检验范围仍为PPTX结构、可编辑文字与表格、逐页视觉检查和最终文件渲染；目标比赛电脑另行核对字体与播放。
 
 Windows 37168955975的桌宠渲染、LAN发现、自定义UDP、中文语音和浏览器依赖步骤通过；资源测试将客户端i18n的mochi.scenes误认作工具名。仅对mochi-modes-client/client.js的已核locale/register/bind命名空间豁免，其他带点名字继续拒绝；本地完整资源测试通过35插件、29 DSH模块、106附加模块与静态资源。快照810项/95011473B，私有fe6096ee3fe72b812924b61a739f23efd9f251a8重跑；同时修正私有草稿说明为不含工厂凭据。Mac公开草稿资产SHA256已与本地一致。
+
+视觉精修交付：24页全部渲染并逐页检查，修正5页断行后对照最终渲染，其余19页图像一致。PPTX包、几何、字体声明与重新导入检查通过，保留5张原生表格、24页备注及900秒主讲分配。原版保留，新文件名为`Mochi_十五分钟参赛答辩_视觉精修定稿.pptx`，配套PDF从同一最终文件的渲染生成。未新增产品依赖。
+
+Windows 37169305445已生成Electron44的0.2.0 NSIS安装器，但后置探针在完整成功标记后非零退出，未发布该失败候选。检索`site:github.com/microsoft/node-pty process exits onExit conpty timeout handles`，读上游https://github.com/microsoft/node-pty/issues/887和windowsPtyAgent.ts；锁定node-pty1.2.0-beta.15/MIT，未升级依赖。已确认探针成功分支未清8秒计时器；Windows残留句柄为与上游报告一致的合理解释，旧日志未记录退出码，不能确定具体退出原因。改为PTY真实exit0且收到预期输出后清计时器、写完证据再显式exit0，错误仍失败并显示退出码/信号。这只定义短命验收进程结束，不宣称修复生产PTY资源回收。已用实际Mac安装App验证同一探针通过，Windows需重跑验证。
