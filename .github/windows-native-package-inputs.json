@@ -6,7 +6,7 @@
     "manifestPath": ".github/windows-native-package-inputs.json",
     "manifestIsTheOnlyUnhashedSnapshotFile": true,
     "expectedFileCount": 810,
-    "expectedFileBytes": 95011635
+    "expectedFileBytes": 95011876
   },
   "externalBuildInputs": [
     {
@@ -4495,8 +4495,8 @@
     },
     {
       "path": "apps/desktop/scripts/check-packaged-browser.mjs",
-      "sha256": "12e1e16332f06c9f435faec4c811568b162c8467eefd15062de2ba890b61f7cf",
-      "bytes": 2648,
+      "sha256": "ce6e2e1ad2a4334fae2fcd2f26fe09cf01b45af92d36defbb01fce565285f82e",
+      "bytes": 2889,
       "categories": [
         "desktop-source"
       ]

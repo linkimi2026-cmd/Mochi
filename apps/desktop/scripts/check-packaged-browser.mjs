@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { readFileSync, mkdtempSync, rmSync, statSync } from 'node:fs';
+import { readFileSync, mkdtempSync, rmSync, statSync, existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join, resolve, sep } from 'node:path';
@@ -17,10 +17,13 @@ if (metadata.mode === 'on-demand') {
   const resources = resolve(root, '../..');
   process.env.MOCHI_BROWSER_MODE = 'on-demand';
   process.env.PLAYWRIGHT_BROWSERS_PATH = process.env.MOCHI_BROWSER_PROBE_CACHE || join(tmpdir(), 'mochi-browser-probe-cache-1187');
-  process.env.NODE_PATH = join(resources, 'app.asar.unpacked', 'node_modules');
+  const modernModules = join(resources, 'mochi', 'node_modules');
+  const modules = existsSync(modernModules) ? modernModules : join(resources, 'app.asar.unpacked', 'node_modules');
+  assert.equal(JSON.parse(readFileSync(join(modules, 'playwright', 'package.json'), 'utf8')).version, metadata.playwrightVersion);
+  process.env.NODE_PATH = modules;
   Module._initPaths();
   require(join(resources, 'browser-on-demand.cjs'));
-  ({ chromium } = require(join(resources, 'app.asar.unpacked', 'node_modules', 'playwright')));
+  ({ chromium } = require(join(modules, 'playwright')));
 } else {
   const browserRoot = join(root, 'browsers');
   executablePath = resolve(browserRoot, metadata.browserExecutable);
