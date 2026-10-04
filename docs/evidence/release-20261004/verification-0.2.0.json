@@ -1,0 +1,57 @@
+{
+  "version": "0.2.0",
+  "date": "2026-10-04",
+  "state": "verified",
+  "mac": {
+    "installer": "Mochi-0.2.0-mac-arm64.dmg",
+    "bytes": 336647671,
+    "sha256": "b5d60275d8909ed80754a74a3de3c4e516c35cc52ad7d68c0be94924f54c51b7",
+    "hdiutilVerify": true,
+    "seeds": [
+      "settings-defaults.json"
+    ],
+    "installedRoleSmoke": [
+      "teacher",
+      "classroom"
+    ],
+    "installedUi": {
+      "passed": true,
+      "checkpoints": 45,
+      "errors": [],
+      "gaps": [],
+      "packageHashes": {
+        "appAsar": "34c3266d687f4820f18e5b47d19289fe214deabcac78ea383df6159a6d7741bb",
+        "manifest": "25bcbe059d2baee2617ffd5d8666e9d9f01cac239d5a7db91b530a9897135b1d",
+        "themeClient": "aaa9164dd55fbf39acc03061e6a16a7838cc6c751ea2e788e7df9177d52ef639"
+      }
+    },
+    "onDemandBrowser": "Chromium 140.0.7339.16: launch, DOM and screenshot passed"
+  },
+  "sourceChecks": {
+    "rootQuality": 173,
+    "profileClosure": 16
+  },
+  "windows": {
+    "run": 37170653554,
+    "sourceCommit": "57bc469cbc34e32e7fd7acad94a36bd3792f9e76",
+    "state": "verified",
+    "installer": "Mochi-Setup-0.2.0-win-x64.exe",
+    "bytes": 319344437,
+    "sha256": "08dc0289f41ec02e1dc57cc0f0b4251dc74345ae52c855f017688fab897c51fd",
+    "installedRoleSmoke": [
+      "teacher",
+      "classroom"
+    ],
+    "seedFiles": [
+      "settings-defaults.json"
+    ]
+  },
+  "limitations": [
+    "Unsigned installers; macOS not notarized.",
+    "Physical school-device camera, microphone, speakers and network not covered by this release automation."
+  ],
+  "release": {
+    "tag": "v0.2.0",
+    "url": "https://github.com/linkimi2026-cmd/Mochi/releases/tag/v0.2.0"
+  }
+}

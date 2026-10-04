@@ -2122,3 +2122,5 @@ Windows 37168955975的桌宠渲染、LAN发现、自定义UDP、中文语音和�
 Windows 37169305445已生成Electron44的0.2.0 NSIS安装器，但后置探针在完整成功标记后非零退出，未发布该失败候选。检索`site:github.com/microsoft/node-pty process exits onExit conpty timeout handles`，读上游https://github.com/microsoft/node-pty/issues/887和windowsPtyAgent.ts；锁定node-pty1.2.0-beta.15/MIT，未升级依赖。已确认探针成功分支未清8秒计时器；Windows残留句柄为与上游报告一致的合理解释，旧日志未记录退出码，不能确定具体退出原因。改为PTY真实exit0且收到预期输出后清计时器、写完证据再显式exit0，错误仍失败并显示退出码/信号。这只定义短命验收进程结束，不宣称修复生产PTY资源回收。已用实际Mac安装App验证同一探针通过，Windows需重跑验证。
 
 Windows 37170015646已通过原生探针及构建内置的教师/教室真实Host smoke，后续独立browser检查仍引用旧app.asar.unpacked/node_modules路径而失败。确认新版依赖在resources/mochi/node_modules；检查脚本按实际存在的运行树选路径并校验Playwright版本，不新增生产依赖。已在Mac复制安装App内通过按需下载、Chromium140真实启动、DOM与截图验证。私有57bc469cbc34e32e7fd7acad94a36bd3792f9e76重跑，安装后Windows结果仍待验证。
+
+0.2.0最终候选：Windows37170653554在57bc469cbc34e32e7fd7acad94a36bd3792f9e76完整成功，Actions artifact11291741090下载并解压；EXE319344437B，SHA256 08dc0289f41ec02e1dc57cc0f0b4251dc74345ae52c855f017688fab897c51fd，与CI边车一致。实际全新NSIS安装后浏览器与双角色启动通过；原生探针显式结束正常。Mac与Windows均进入独立v0.2.0发布草稿，不覆盖v0.1.0。安装器哈希与验收范围见交付台账；产品内容/样式未修改。

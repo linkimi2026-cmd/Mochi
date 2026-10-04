@@ -1,0 +1,104 @@
+{
+  "run": 37170653554,
+  "url": "https://github.com/linkimi2026-cmd/jyl-campus-health/actions/runs/37170653554",
+  "headSha": "57bc469cbc34e32e7fd7acad94a36bd3792f9e76",
+  "conclusion": "success",
+  "steps": [
+    {
+      "name": "Set up job",
+      "conclusion": "success"
+    },
+    {
+      "name": "Refuse non-private build hosts",
+      "conclusion": "success"
+    },
+    {
+      "name": "Preserve reviewed snapshot bytes",
+      "conclusion": "success"
+    },
+    {
+      "name": "Check out private campus source and approved snapshot",
+      "conclusion": "success"
+    },
+    {
+      "name": "Verify approved Mochi source snapshot",
+      "conclusion": "success"
+    },
+    {
+      "name": "Set up Node 22 and fixed npm",
+      "conclusion": "success"
+    },
+    {
+      "name": "Install fixed npm 11.6",
+      "conclusion": "success"
+    },
+    {
+      "name": "Verify shared campus release input",
+      "conclusion": "success"
+    },
+    {
+      "name": "Install and verify desktop runtime closure",
+      "conclusion": "success"
+    },
+    {
+      "name": "Verify native Windows rail rendering and capture fixture screens",
+      "conclusion": "success"
+    },
+    {
+      "name": "Verify LAN pairing-code discovery and configured UDP port on Windows",
+      "conclusion": "success"
+    },
+    {
+      "name": "Synthesize and validate classroom Chinese voice on Windows",
+      "conclusion": "success"
+    },
+    {
+      "name": "Verify pinned on-demand browser runtime",
+      "conclusion": "success"
+    },
+    {
+      "name": "Validate staged desktop resources",
+      "conclusion": "success"
+    },
+    {
+      "name": "Install locked modern Host runtime",
+      "conclusion": "success"
+    },
+    {
+      "name": "Build native Windows installer",
+      "conclusion": "success"
+    },
+    {
+      "name": "Smoke packaged Windows teacher and classroom roles",
+      "conclusion": "success"
+    },
+    {
+      "name": "Install NSIS package and smoke installed roles",
+      "conclusion": "success"
+    },
+    {
+      "name": "Retain private Windows installer",
+      "conclusion": "success"
+    },
+    {
+      "name": "Retain private draft release if artifact upload fails",
+      "conclusion": "skipped"
+    },
+    {
+      "name": "Post Set up Node 22 and fixed npm",
+      "conclusion": "success"
+    },
+    {
+      "name": "Post Check out private campus source and approved snapshot",
+      "conclusion": "success"
+    },
+    {
+      "name": "Complete job",
+      "conclusion": "success"
+    }
+  ],
+  "boundaries": [
+    "Windows Server 2022 CI; not a school device field test.",
+    "Rail fixture captures are not Windows DWM transparency verification."
+  ]
+}

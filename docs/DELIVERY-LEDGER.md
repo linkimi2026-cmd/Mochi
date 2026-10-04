@@ -1,12 +1,25 @@
 # Mochi 交付与验收台账
 
 > **status**: active
-> **last_verified**: 2026-09-25（macOS arm64 最终教室板样式已进入新 DMG，经镜像、资源和复制后双角色启动验收；Windows run 36092244751 原生安装器及安装后双角色启动通过，教室板两张截图确认为不同；学校实机验收待做）
-> **verified_by**: Codex（Mac DMG 的 SHA-256、镜像、包内 rail/资源/无密钥种子、arm64 原生模块及复制后双角色启动；Windows run 36092244751 的完整原生 CI、私有草稿 Release 资源元数据；该 Windows 快照 548 项 / 93,113,336 B 本地零差异；未在学校 Windows 电脑安装）
+> **last_verified**: 2026-10-04（0.2.0 Mac arm64 镜像与复制安装验收；Windows x64 run 37170653554 完整原生构建及全新安装双角色验收通过）
+> **verified_by**: Codex（实际产物哈希、Mac 45 项包内 UI 检查、Windows CI 原生/浏览器/资源/安装后启动；学校物理设备验收未覆盖）
 
 本台账只回答“交付物在哪里、验证到了哪一层”。文件存在、构建成功、用户实测和完整验收必须分别记录。
 
-## 当前优先交付物
+## 0.2.0 交付物（2026-10-04）
+
+发布页：[Mochi v0.2.0](https://github.com/linkimi2026-cmd/Mochi/releases/tag/v0.2.0)。[v0.1.0](https://github.com/linkimi2026-cmd/Mochi/releases/tag/v0.1.0) 及两个原安装包继续保留。产品内容与现有样式保持不变，本轮只修复打包闭包与验收脚本。
+
+| 平台 | 安装器 | 字节 | SHA-256 |
+|---|---|---:|---|
+| macOS arm64 | `Mochi-0.2.0-mac-arm64.dmg` | 336647671 | `b5d60275d8909ed80754a74a3de3c4e516c35cc52ad7d68c0be94924f54c51b7` |
+| Windows x64 | `Mochi-Setup-0.2.0-win-x64.exe` | 319344437 | `08dc0289f41ec02e1dc57cc0f0b4251dc74345ae52c855f017688fab897c51fd` |
+
+两份安装器均提供 `.sha256` 边车。Mac 镜像校验、挂载内容与受测 App 一致性、复制安装后双角色启动及45项真实包内界面检查通过。Windows [run 37170653554](https://github.com/linkimi2026-cmd/jyl-campus-health/actions/runs/37170653554) 对精确源码快照 `57bc469cbc34e32e7fd7acad94a36bd3792f9e76` 完成原生构建、终端/绘图/语音模块探针、桌宠fixture、LAN发现、中文合成、按需Chromium、NSIS全新安装及教师/教室启动。两平台校园静态资源共享133文件清单，安装包只含非密钥settings-defaults种子。
+
+边界：安装器未签名，Mac未公证；原生模块加载不等于真实ASR/麦克风验收，Windows fixture截图不等于DWM透明合成验收，学校实际网络/音视频设备仍需现场核对。原始构建与传输记录保留在本地 `output/release-20261004/`；可随源码查看的摘要在 [verification-0.2.0.json](evidence/release-20261004/verification-0.2.0.json) 和 [windows-0.2.0-ci.json](evidence/release-20261004/windows-0.2.0-ci.json)。
+
+## 历史交付记录（截至2026-09-25）
 
 | 类型 | 路径 | 文件大小 | 当前证据 |
 |---|---|---:|---|
