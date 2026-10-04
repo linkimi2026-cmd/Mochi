@@ -2108,3 +2108,11 @@ Muse 已定位官方：https://about.fb.com/news/2026/09/introducing-muse-person
 十五分钟PPT交付补记：独立输出位于`参赛PPT/Mochi十五分钟答辩/output/`。20页主讲计时900秒，4页问答备用；文字、5张表格与24页演讲者备注保留PPTX原生结构。导出后实际检查全24页渲染，修正截图展示区域与断行；最终包结构、几何与重新导入检查通过，PDF预览来自同一最终PPTX。未宣称目标Windows/WPS或PowerPoint实机验收，STHeiti字体替代与播放须在比赛电脑核对。10月3日测试数字作为明确注明日期的历史证据，后续发布测试不自动混算。完整正式手册和现场时长仍未确认，本版本以用户约15分钟要求编排，不将独立完整影片计入主讲。
 
 0.2.0 发布续办：Mac 镜像复制安装后的真实 App 界面自动化45项通过，errors/gaps均为空；包括两角色实际Host子进程、preload桥、称呼保存重载、教师预设、记忆、课堂助手、课表、设置及自动化入口。旧测试里的预设名称和已移除的工作/对话门控按当前产品更新，未改产品样式或内容。Windows 第二轮37168260190停在另一个写死0.1.0的release-input断言；改为读取package.json，新快照810文件/95011221B零漂移，提交96f412157b927bda5a82f97c659890e2425389a6触发37168955975。Git HTTP/1.1配合扩大postBuffer后公开main已同步6df4d7e；旧release未修改。
+
+## 2026-10-04 · 十五分钟PPT视觉精修
+
+按用户“要精美”重新设计版式。先检索完整演示生态与官方主题：`site:github.com slidevjs themes seriph apple presentation theme`、`site:github.com marp-team marp-core themes presentation`。检索与源码读取成功。核对 https://github.com/slidevjs/themes 的 `6bb2889af4c66c1fbab4c1beb2e8d962a3b55648`（2025-07-29），LICENSE为MIT，仓库图片为CC BY-NC-SA，Node>=14；实际读取apple-basic/intro.vue和seriph/styles/layouts.css。核对 https://github.com/marp-team/marp-core 的 `01ef3a4ef0888403097e2c8f7988ea71c460cf97`（2026-09-04）、5.0.2/MIT，并读取uncover.scss的明暗色板实现。部分采用大标题、statement页、重点页明暗变化和图像主导构图的方法，不复制第三方主题图片，也不新增Vue/Marp导出链；继续使用已验证的artifact-tool作者工程与原生表格，避免维护第二套演示源码。
+
+视觉素材采用项目原Logo、Mo和真实产品截图，并生成无文字的纸张静物作为封面背景，明确只是装饰，不代表真实产品界面。20页主讲、4页备用与原讲述时间保持，独立输出精修版。检验范围仍为PPTX结构、可编辑文字与表格、逐页视觉检查和最终文件渲染；目标比赛电脑另行核对字体与播放。
+
+Windows 37168955975的桌宠渲染、LAN发现、自定义UDP、中文语音和浏览器依赖步骤通过；资源测试将客户端i18n的mochi.scenes误认作工具名。仅对mochi-modes-client/client.js的已核locale/register/bind命名空间豁免，其他带点名字继续拒绝；本地完整资源测试通过35插件、29 DSH模块、106附加模块与静态资源。快照810项/95011473B，私有fe6096ee3fe72b812924b61a739f23efd9f251a8重跑；同时修正私有草稿说明为不含工厂凭据。Mac公开草稿资产SHA256已与本地一致。
