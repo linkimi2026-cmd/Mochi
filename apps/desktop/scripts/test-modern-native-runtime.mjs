@@ -13,12 +13,12 @@ const {DatabaseSync}=require('node:sqlite');const db=new DatabaseSync(':memory:'
 const canvas=r('@napi-rs/canvas').createCanvas(20,20);if(!canvas.toBuffer('image/png').length)throw Error('Empty PNG');
 const sherpa=r('sherpa-onnx-node');if(typeof sherpa.OfflineRecognizer!=='function')throw Error('Missing recognizer');
 const win=process.platform==='win32';const p=r('node-pty').spawn(win?'cmd.exe':'/bin/sh',win?['/d','/c','echo mochi-pty-ok']:['-c','printf mochi-pty-ok'],{name:'xterm',cols:80,rows:20,cwd:require('node:os').tmpdir(),env:{...process.env}});
-let output='';p.onData(value=>output+=value);p.onExit(event=>{if(event.exitCode!==0||!output.includes('mochi-pty-ok'))process.exit(1);console.log('NATIVE_PROBE='+JSON.stringify({platform:process.platform,arch:process.arch,electron:process.versions.electron,node:process.versions.node,sqlite:true,canvasPng:true,sherpaModuleLoaded:true,ptyChildExited:true,realAsrTested:false,physicalMicrophoneTested:false}));});
-setTimeout(()=>{p.kill();process.exit(2)},8000).unref();`;
+const timeout=setTimeout(()=>{p.kill();process.exit(2)},8000);
+let output='';p.onData(value=>output+=value);p.onExit(event=>{clearTimeout(timeout);if(event.exitCode!==0||!output.includes('mochi-pty-ok'))process.exit(1);process.stdout.write('NATIVE_PROBE='+JSON.stringify({platform:process.platform,arch:process.arch,electron:process.versions.electron,node:process.versions.node,sqlite:true,canvasPng:true,sherpaModuleLoaded:true,ptyChildExited:true,realAsrTested:false,physicalMicrophoneTested:false,probeExitExplicit:true})+'\\n',()=>process.exit(0));});`;
 const result=await new Promise((done,reject)=>{
   const child=spawn(electron,['--expose-internals','-e',code],{env:{...process.env,ELECTRON_RUN_AS_NODE:'1'},stdio:['ignore','pipe','pipe']});
   let output='';child.stdout.on('data',value=>output+=value);child.stderr.on('data',value=>output+=value);
-  child.once('error',reject);child.once('exit',status=>status===0?done(output):reject(new Error(output)));
+  child.once('error',reject);child.once('exit',(status,signal)=>status===0?done(output):reject(new Error(`Native probe exited with status ${status}, signal ${signal}:\n${output}`)));
 });
 const marker=result.split('\n').find(line=>line.startsWith('NATIVE_PROBE='));assert.ok(marker,result);
 const evidence=JSON.parse(marker.slice('NATIVE_PROBE='.length));

@@ -6,7 +6,7 @@
     "manifestPath": ".github/windows-native-package-inputs.json",
     "manifestIsTheOnlyUnhashedSnapshotFile": true,
     "expectedFileCount": 810,
-    "expectedFileBytes": 95011473
+    "expectedFileBytes": 95011635
   },
   "externalBuildInputs": [
     {
@@ -5615,8 +5615,8 @@
     },
     {
       "path": "apps/desktop/scripts/test-modern-native-runtime.mjs",
-      "sha256": "35a50aebfd97e34bcb5aa8c1caa8b0b91ba96fa0a14fad44f72c3b6bd0e64443",
-      "bytes": 2467,
+      "sha256": "20621674151072a813486e8cf8964676d59968d052c7d5c6a669183835724637",
+      "bytes": 2629,
       "categories": [
         "desktop-source"
       ]
