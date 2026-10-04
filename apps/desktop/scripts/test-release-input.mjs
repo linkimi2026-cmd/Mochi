@@ -56,7 +56,7 @@ try {
   assert.equal(existsSync(prepared.staticRoot), true);
   assert.equal(existsSync(prepared.manifestPath), true);
   const manifest = JSON.parse(readFileSync(prepared.manifestPath, "utf8"));
-  assert.equal(manifest.desktop.version, "0.1.0");
+  assert.equal(manifest.desktop.version, JSON.parse(readFileSync(join(scriptDir, "..", "package.json"), "utf8")).version);
   assert.equal(manifest.source.kind, "explicit");
   assert.equal(manifest.source.packageVersion, "7.2.1");
   assert.equal(manifest.source.git.dirty, true, "dirty canonical source must be recorded, not hidden");

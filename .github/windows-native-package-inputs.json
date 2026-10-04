@@ -6,7 +6,7 @@
     "manifestPath": ".github/windows-native-package-inputs.json",
     "manifestIsTheOnlyUnhashedSnapshotFile": true,
     "expectedFileCount": 810,
-    "expectedFileBytes": 95011158
+    "expectedFileBytes": 95011221
   },
   "externalBuildInputs": [
     {
@@ -679,8 +679,8 @@
     },
     {
       "path": "apps/desktop/scripts/test-release-input.mjs",
-      "sha256": "8f6793d4b5bb20dd017dabe570f6b247a1e42abbfb9241ac494522e4efcc3152",
-      "bytes": 4186,
+      "sha256": "160e49cfa6a5ea061263e3ba437cdd45afadfe86390d1351ab898495ec57a2e9",
+      "bytes": 4258,
       "categories": [
         "desktop-source"
       ]
@@ -5703,8 +5703,8 @@
     },
     {
       "path": "apps/desktop/scripts/test-packaged-modern-ui.cjs",
-      "sha256": "ea8dda5cab7d351e52fbbda48f8d37c9b9fab61cbe50ca146845dd256e43809b",
-      "bytes": 11872,
+      "sha256": "92a957a07e1bf7cf39c136ae087e3caee216cce9516e95fad44809517bb600e3",
+      "bytes": 11863,
       "categories": [
         "desktop-source"
       ]

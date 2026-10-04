@@ -575,7 +575,7 @@ jobs:
           }
           $tag = "mochi-windows-ci-$env:GITHUB_RUN_ID-$env:GITHUB_RUN_ATTEMPT"
           $title = "Mochi Windows CI $env:GITHUB_RUN_ID.$env:GITHUB_RUN_ATTEMPT"
-          $notes = "Private draft for a verified Windows build at $env:GITHUB_SHA. The installer is unsigned and contains factory model credentials for this private distribution; verify its attached SHA-256 before use. Rail PNGs are synthetic fixture-only webContents captures; they do not prove Windows DWM desktop transparency."
+          $notes = "Private draft for a verified Windows build at $env:GITHUB_SHA. The installer is unsigned and contains only non-secret settings defaults, with no factory model credentials; verify its attached SHA-256 before use. Rail PNGs are synthetic fixture-only webContents captures; they do not prove Windows DWM desktop transparency."
           $releaseAssets = @($installer.FullName, $checksum) + $railScreenshots
           gh release create $tag @releaseAssets --draft --target $env:GITHUB_SHA --title $title --notes $notes --repo $env:GITHUB_REPOSITORY
           if ($LASTEXITCODE -ne 0) { throw "Private draft release upload failed." }

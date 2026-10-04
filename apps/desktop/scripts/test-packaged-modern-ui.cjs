@@ -56,9 +56,9 @@ function save(){fs.writeFileSync(out+'/checkpoints.json',JSON.stringify({passed,
    await checkpoint('conversation','[data-conversation-content]');await checkpoint('composer','[data-composer-card]');
    const preload=await page.evaluate(()=>({lan:!!window.mochiLanDesktop,classroom:!!window.mochiClassroomDesktop,voiceChat:!!window.mochiVoiceChatDesktop,rail:!!window.mochiRailDesktop}));assert.ok(Object.values(preload).every(Boolean),'actual packaged preload bridges');results.push({role,name:'actual-preload',preload});
    if(role==='teacher'){
-    const preset=page.getByRole('button',{name:'通用',exact:true});assert.ok(await preset.isVisible(),'new teacher defaults to general mode');await preset.click();const modeText=await page.locator('body').innerText();for(const id of ['备课与课件','资料与试卷','成绩分析','班级与教室'])assert.ok(modeText.includes(id),'specialized '+id+' remains visible');await page.keyboard.press('Escape');
+    const preset=page.getByRole('button',{name:'通用',exact:true});assert.ok(await preset.isVisible(),'new teacher defaults to general mode');await preset.click();const modeText=await page.locator('body').innerText();for(const id of ['备课与教学设计','资料与练习测评','成绩分析','班级协作'])assert.ok(modeText.includes(id),'specialized '+id+' remains visible');await page.keyboard.press('Escape');
    }
-   if(role==='teacher'){assert.ok(await page.getByRole('button',{name:'工作',exact:true}).isVisible());assert.ok(await page.getByRole('button',{name:'对话',exact:true}).isVisible())}
+   if(role==='teacher'){for(const name of ['工作','对话'])assert.equal(await page.getByRole('button',{name,exact:true}).count(),0,'obsolete mode gates are absent')}
    else results.push({role,name:'existing-role-composition',preset:'教室助手',chatWorkToggle:false,reason:'classroom profile excludes mochi-modes and teacher presets'});
    await page.getByRole('button',{name:'查看记忆',exact:true}).click();await checkpoint('memory','.mochi-memory-panel');for(const name of ['日记','历史','偏好与观察'])assert.ok(await page.locator('.mochi-memory-panel').getByRole('tab',{name,exact:true}).isVisible());await page.locator('.mochi-memory-panel').getByRole('button',{name:'关闭',exact:true}).click();
    if(role==='classroom'){
